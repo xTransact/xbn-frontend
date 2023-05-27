@@ -152,11 +152,20 @@ const NftAssetDetail = () => {
     }
   }, [timer])
 
-  // 利差 X 0.1
-  const [
-    interestSpread,
-    // setInterestSpread
-  ] = useState<number>(0.1)
+  // 读取利差 X 0.1
+  const fetchInterestSpread = async () => {
+    // const xBankContract = createXBankContract()
+    // const listLoan = await xBankContract.methods.listLoan().call()
+    // console.log(
+    //   '🚀 ~ file: NftAssetDetail.tsx:164 ~ fetchInterestSpread ~ listLoan:',
+    //   listLoan,
+    // )
+    return 0.1
+  }
+
+  const { loading: fetchSpreadLoading, data: interestSpread } =
+    useRequest(fetchInterestSpread)
+
   const [commodityWeiPrice, setCommodityWeiPrice] = useState(BigNumber(0))
   // const [, setUpdatedAt] = useState('')
 
@@ -280,7 +289,8 @@ const NftAssetDetail = () => {
       !originPoolList ||
       isEmpty(originPoolList) ||
       latestBalanceMap?.size === 0 ||
-      loanWeiAmount?.eq(0)
+      loanWeiAmount?.eq(0) ||
+      fetchSpreadLoading
     ) {
       setSelectPool(undefined)
       return []
@@ -343,7 +353,7 @@ const NftAssetDetail = () => {
                 loan_ratio_preferential_flexibility
             return {
               pool_id,
-              pool_apr_with_spread: lp_pool_apr * (1 + interestSpread),
+              pool_apr_with_spread: lp_pool_apr * (1 + (interestSpread || 0)),
               lp_pool_apr,
               pool_days: item,
               lp_address: owner_address,
@@ -364,9 +374,9 @@ const NftAssetDetail = () => {
     loanWeiAmount,
     originPoolList,
     interestSpread,
+    fetchSpreadLoading,
   ])
 
-  console.log(pools)
   // number of installments
   const [installmentOptions, setInstallmentOptions] = useState<(1 | 2 | 3)[]>()
   const [installmentValue, setInstallmentValue] = useState<1 | 2 | 3>(1)
@@ -911,7 +921,10 @@ const NftAssetDetail = () => {
           label='Loan Period'
           isEmpty={isEmpty(pools)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           <Flex gap={'8px'} flexWrap='wrap'>
@@ -977,7 +990,10 @@ const NftAssetDetail = () => {
           label='Number of installments'
           isEmpty={isEmpty(selectPool)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           <Flex gap={'8px'} flexWrap='wrap'>
@@ -1022,7 +1038,8 @@ const NftAssetDetail = () => {
             loading={
               balanceFetchLoading ||
               assetFetchLoading ||
-              ordersPriceFetchLoading
+              ordersPriceFetchLoading ||
+              fetchSpreadLoading
             }
           >
             <VStack
@@ -1060,7 +1077,10 @@ const NftAssetDetail = () => {
           borderBottom={'none'}
           isEmpty={isEmpty(pools)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           {!loanWeiAmount.eq(0) && !commodityWeiPrice.eq(0) && (
@@ -1164,7 +1184,8 @@ const NftAssetDetail = () => {
               balanceFetchLoading ||
               isEmpty(selectPool) ||
               assetFetchLoading ||
-              ordersPriceFetchLoading
+              ordersPriceFetchLoading ||
+              fetchSpreadLoading
             }
             isLoading={clickLoading}
             loadingText='The loan is being generated, please wait'
