@@ -325,11 +325,17 @@ const Loans = () => {
         loan_start_time,
         loan_interest_rate,
         loan_duration,
+        // repayedPrincipal,
+        // repayedInterest
       } = info
 
       // 应还本金 = 贷款本金 -  已还本金
       const outstandingPrincipal =
         BigNumber(total_repayment).minus(repayed_amount)
+      // const outstandingPrincipal =
+      //   BigNumber(total_repayment).minus(repayedPrincipal)
+
+      // const repayed_amount = BigNumber(repayedPrincipal).plus(repayedInterest)
 
       // 日利率 = 年利率 / 365
       const dayRate = BigNumber(loan_interest_rate).dividedBy(365)
@@ -468,7 +474,12 @@ const Loans = () => {
                         repay_times,
                         loan_start_time,
                         loan_duration,
+                        // repayedPrincipal
+                        // repayedInterest
                       } = info
+
+                      // const repayed_amount = BigNumber(repayedPrincipal).plus(repayedInterest)
+
                       // 每期还款期限 = 还款期限 / 还款期数
                       const perLoanDuration =
                         BigNumber(loan_duration).dividedBy(repay_times)
