@@ -284,12 +284,7 @@ const MobileDrawBtn = () => {
                 </Text>
                 <AccordionPanel px={8} py={'28px'}>
                   <Flex flexDir={'column'} gap={8} onClick={closeDraw}>
-                    {[
-                      'Market',
-
-                      // 'My assets',
-                      'Loans',
-                    ].map((item) => (
+                    {['Market', 'My assets', 'Loans'].map((item) => (
                       <Link
                         to={`/xlending/buy-nfts/${kebabCase(item)}`}
                         key={item}
@@ -384,11 +379,7 @@ const Header = () => {
             <PopoverWrapper
               route='buy-nfts'
               pageName='Buy NFTs'
-              routes={[
-                'Market',
-                // 'My assets',
-                'Loans',
-              ]}
+              routes={['Market', 'My assets', 'Loans']}
             />
           </Flex>
 

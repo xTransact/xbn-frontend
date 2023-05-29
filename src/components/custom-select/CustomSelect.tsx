@@ -11,11 +11,13 @@ function CustomSelect<
 >({
   img,
   w,
+  h,
   isDisabled,
   borderColor = 'var(--chakra-colors-blue-4)',
   ...restProps
 }: Props<Option, IsMulti, Group> & {
   w?: string
+  h?: string
   img?: React.ReactElement
   isDisabled?: boolean
   borderColor?: string
@@ -84,23 +86,16 @@ function CustomSelect<
           // boxShadow: isFocused
           //   ? '-2px 1px 4px -3px var(--chakra-colors-blue-1), 2px -2px 4px -3px var(--chakra-colors-blue-1)'
           //   : 'none',
-          height: 44,
+          height: h || 44,
           backgroundColor: 'white',
           ':hover': {
             ...baseStyles[':hover'],
             borderColor: 'var(--chakra-colors-blue-1)',
           },
         }),
-        option: (
-          baseStyles,
-          { isDisabled: _isDisabled, isSelected, isFocused },
-        ) => ({
+        option: (baseStyles, { isDisabled: _isDisabled, isSelected }) => ({
           ...baseStyles,
-          backgroundColor: isSelected
-            ? `var(--chakra-colors-blue-2)`
-            : isFocused
-            ? 'var(--chakra-colors-gray-5)'
-            : 'white',
+          backgroundColor: isSelected ? `var(--chakra-colors-blue-2)` : 'white',
           color: `var(--chakra-colors-black-1)`,
           fontSize: 14,
           fontWeight: 500,
@@ -110,6 +105,10 @@ function CustomSelect<
             backgroundColor: !_isDisabled
               ? 'var(--chakra-colors-blue-2)'
               : undefined,
+          },
+          ':hover': {
+            ...baseStyles[':hover'],
+            backgroundColor: 'var(--chakra-colors-gray-5)',
           },
         }),
         input(base) {
@@ -148,6 +147,19 @@ function CustomSelect<
             </components.SingleValue>
           )
         },
+        Placeholder: ({ children, ...rest }) => (
+          <components.Placeholder {...rest}>
+            <Flex
+              ml={!!img ? '-10px' : 0}
+              gap='8px'
+              lineHeight={2}
+              alignItems='center'
+            >
+              {img}
+              {children}
+            </Flex>
+          </components.Placeholder>
+        ),
       }}
     />
   )

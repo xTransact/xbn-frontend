@@ -66,6 +66,7 @@ export const LP_BASE_RATE: Record<string, number> = {
 }
 
 export const TENORS = [7, 14, 30, 60, 90]
+export const LIST_DURATION = [1, 3, 7, 30, 60, 90]
 export const COLLATERALS = [
   1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
 ]
@@ -97,4 +98,14 @@ export const TOAST_OPTION_CONFIG: UseToastOptions = {
   containerStyle: {
     mt: 20,
   },
+}
+
+export const CHAIN_BASE_URL: Record<string, string> = {
+  '0x1': 'https://etherscan.io/address/',
+  '0x5': 'https://goerli.etherscan.io/address/',
+}
+
+export enum LISTING_TYPE {
+  LISTING = 1,
+  CANCEL = 2,
 }

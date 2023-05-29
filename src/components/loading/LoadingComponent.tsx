@@ -1,6 +1,4 @@
-import { Flex, Spinner } from '@chakra-ui/react'
-
-import type { FlexProps } from '@chakra-ui/react'
+import { Flex, Spinner, type FlexProps } from '@chakra-ui/react'
 
 const Index = ({
   loading,
@@ -26,7 +24,7 @@ const Index = ({
       {...rest}
     >
       <Spinner
-        thickness='4px'
+        thickness='6px'
         speed='0.65s'
         emptyColor='gray.200'
         color='blue.1'

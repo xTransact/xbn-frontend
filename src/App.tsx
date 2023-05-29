@@ -22,6 +22,9 @@ const PoolCreateAndEdit = lazyWithRetries(() => import('./pages/Lend/Create'))
 const Market = lazyWithRetries(() => import('./pages/buy-nfts/Market'))
 const MyAssets = lazyWithRetries(() => import('./pages/buy-nfts/MyAssets'))
 const LoansForBuyer = lazyWithRetries(() => import('./pages/buy-nfts/Loans'))
+const CompleteList = lazyWithRetries(
+  () => import('./pages/complete-list/CompleteList'),
+)
 
 // nft detail
 const NftAssetDetail = lazyWithRetries(
@@ -117,6 +120,14 @@ function App() {
           element={
             <Suspense fallback={<Fallback />}>
               <MyAssets />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/xlending/buy-nfts/complete'
+          element={
+            <Suspense fallback={<Fallback />}>
+              <CompleteList />
             </Suspense>
           }
         />

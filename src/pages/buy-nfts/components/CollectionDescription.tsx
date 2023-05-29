@@ -39,7 +39,13 @@ const CollectionDescription: FunctionComponent<{
           rowGap={'16px'}
           wrap='wrap'
           justify='flex-start'
-          columnGap={{ md: '80px', sm: '40px', xs: '40px' }}
+          columnGap={{
+            xl: '80px',
+            lg: '50px',
+            md: '50px',
+            sm: '40px',
+            xs: '40px',
+          }}
         >
           {[
             range(5).map((i) => (
@@ -147,7 +153,13 @@ const CollectionDescription: FunctionComponent<{
         rowGap={'16px'}
         wrap='wrap'
         justify='flex-start'
-        columnGap={{ md: '80px', sm: '60px', xs: '60px' }}
+        columnGap={{
+          xl: '80px',
+          lg: '50px',
+          md: '50px',
+          sm: '40px',
+          xs: '40px',
+        }}
       >
         <Flex flexDir='column' alignItems='center' m={0}>
           <Flex alignItems={'center'}>
