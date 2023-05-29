@@ -154,13 +154,14 @@ const NftAssetDetail = () => {
 
   // 读取利差 X 0.1
   const fetchInterestSpread = async () => {
-    // const xBankContract = createXBankContract()
-    // const listLoan = await xBankContract.methods.listLoan().call()
-    // console.log(
-    //   '🚀 ~ file: NftAssetDetail.tsx:164 ~ fetchInterestSpread ~ listLoan:',
-    //   listLoan,
-    // )
-    return 0.1
+    const xBankContract = createXBankContract()
+    const res = await xBankContract.methods.getProtocolIRMultiplier().call()
+    console.log(
+      '🚀 ~ file: NftAssetDetail.tsx:159 ~ fetchInterestSpread ~ res:',
+      res,
+    )
+
+    return res / 10000
   }
 
   const { loading: fetchSpreadLoading, data: interestSpread } =
