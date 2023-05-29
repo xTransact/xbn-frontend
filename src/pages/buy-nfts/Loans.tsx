@@ -443,7 +443,7 @@ const Loans = () => {
             tables={[
               {
                 tableTitle: () => (
-                  <Heading fontSize={'20px'}>Current Loans as Borrower</Heading>
+                  <Heading fontSize={'20px'}>Current Loans</Heading>
                 ),
                 styleConfig: {
                   thTextProps: {
@@ -591,7 +591,7 @@ const Loans = () => {
                       }}
                       query='(Paid Off)'
                     >
-                      Previous Loans as Borrower(Paid Off)
+                      Previous Loans(Paid Off)
                     </Highlight>
                   </Heading>
                 ),
@@ -622,7 +622,7 @@ const Loans = () => {
                       }}
                       query='(Overdue)'
                     >
-                      Previous Loans as Borrower(Overdue)
+                      Previous Loans(Overdue)
                     </Highlight>
                   </Heading>
                 ),
