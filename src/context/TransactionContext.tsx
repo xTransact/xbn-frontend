@@ -1,6 +1,5 @@
 import { useToast } from '@chakra-ui/react'
 import { useLocalStorageState, useRequest } from 'ahooks'
-import debounce from 'lodash-es/debounce'
 import isEmpty from 'lodash-es/isEmpty'
 import {
   useEffect,
@@ -13,6 +12,7 @@ import {
 
 import { apiGetActiveCollection } from '@/api'
 import { useNftCollectionsByContractAddressesQuery } from '@/hooks'
+import useAuth from '@/hooks/useAuth'
 
 const COLLECTION_DEMO = {
   contractAddress: '',
@@ -141,105 +141,6 @@ export const TransactionsProvider = ({
     },
   )
 
-  const handleSwitchNetwork = useCallback(async () => {
-    if (!ethereum) {
-      return
-    }
-    try {
-      await ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: import.meta.env.VITE_TARGET_CHAIN_ID }],
-      })
-    } catch (switchError: any) {
-      // This error code indicates that the chain has not been added to MetaMask.
-      if (switchError.code === 4902) {
-        toast({
-          status: 'error',
-          title: 'please add Ethereum Chain',
-        })
-        // try {
-        //   await ethereum.request({
-        //     method: 'wallet_addEthereumChain',
-        //     params: [
-        //       {
-        //         chainId: '0xf00',
-        //         chainName: '...',
-        //         rpcUrls: ['https://...'] /* ... */,
-        //       },
-        //     ],
-        //   })
-        // } catch (addError) {
-        //   // handle "add" error
-        // }
-      } else {
-        toast({
-          status: 'info',
-          title: 'please switch Ethereum Chain first',
-        })
-      }
-    }
-  }, [toast])
-
-  // const getAllTransactions = async () => {
-  //   try {
-  //     if (ethereum) {
-  //       const transactionsContract = createXBankContract();
-
-  //       const availableTransactions =
-  //         await transactionsContract.getAllTransactions();
-
-  //       const structuredTransactions = availableTransactions.map(
-  //         (transaction) => ({
-  //           addressTo: transaction.receiver,
-  //           addressFrom: transaction.sender,
-  //           timestamp: new Date(
-  //             transaction.timestamp.toNumber() * 1000
-  //           ).toLocaleString(),
-  //           message: transaction.message,
-  //           keyword: transaction.keyword,
-  //           amount: parseInt(transaction.amount._hex) / 10 ** 18,
-  //         })
-  //       );
-
-  //       console.log(structuredTransactions);
-
-  //       setTransactions(structuredTransactions);
-  //     } else {
-  //       console.log('Ethereum is not present');
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  useEffect(() => {
-    if (!ethereum) return
-
-    ethereum.on('accountsChanged', () => {
-      // 一旦切换账号这里就会执行
-      window.location.reload()
-      debounce(() => {
-        window.location.reload()
-      }, 100)()
-      // if (isEmpty(accounts)) {
-      //   // setCurrentAccount('')
-      //   window.location.reload()
-      //   return
-      // }
-    })
-    ethereum.on('chainChanged', () => {
-      // alert('reload chainChanged')
-      // window.location.reload()
-      // setCurrentAccount('')
-    })
-    ethereum.on('disconnect', () => {
-      debounce(() => {
-        window.location.reload()
-        setCurrentAccount('')
-      }, 100)()
-    })
-  }, [setCurrentAccount])
-
   const checkIfWalletIsConnect = useCallback(async () => {
     try {
       if (window.location.pathname === '/xlending/demo') return
@@ -270,6 +171,61 @@ export const TransactionsProvider = ({
     }
   }, [toast, setCurrentAccount])
 
+  const handleSwitchNetwork = useCallback(async () => {
+    if (!ethereum) {
+      return
+    }
+    try {
+      await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: import.meta.env.VITE_TARGET_CHAIN_ID }],
+      })
+      const accounts = await ethereum.request({ method: 'eth_accounts' })
+
+      if (accounts.length) {
+        setCurrentAccount(accounts[0])
+        // getAllTransactions();
+      } else {
+        setConnectLoading(true)
+        const requestedAccounts = await ethereum.request({
+          method: 'eth_requestAccounts',
+        })
+
+        setCurrentAccount(requestedAccounts[0])
+        setConnectLoading(false)
+      }
+    } catch (switchError: any) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        toast({
+          status: 'error',
+          title: 'please add Ethereum Chain',
+        })
+        // try {
+        //   await ethereum.request({
+        //     method: 'wallet_addEthereumChain',
+        //     params: [
+        //       {
+        //         chainId: '0xf00',
+        //         chainName: '...',
+        //         rpcUrls: ['https://...'] /* ... */,
+        //       },
+        //     ],
+        //   })
+        // } catch (addError) {
+        //   // handle "add" error
+        // }
+      } else {
+        toast({
+          status: 'info',
+          title: 'please switch Ethereum Chain first',
+        })
+      }
+    }
+  }, [toast, setCurrentAccount])
+
+  const { runAsync } = useAuth()
+
   const connectWallet = useCallback(async () => {
     try {
       if (window.location.pathname === '/xlending/demo') return
@@ -293,6 +249,7 @@ export const TransactionsProvider = ({
         method: 'eth_requestAccounts',
       })
 
+      await runAsync(accounts[0])
       setCurrentAccount(accounts[0])
       setConnectLoading(false)
     } catch (error) {
@@ -301,7 +258,7 @@ export const TransactionsProvider = ({
 
       throw new Error('No ethereum object')
     }
-  }, [toast, handleSwitchNetwork, setCurrentAccount])
+  }, [toast, handleSwitchNetwork, setCurrentAccount, runAsync])
 
   // const sendTransaction = async () => {
   //   try {

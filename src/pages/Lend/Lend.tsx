@@ -59,6 +59,12 @@ import MyPoolActionRender from './components/MyPoolActionRender'
 
 type Dictionary<T> = Record<string, T>
 
+enum TAB_KEY {
+  COLLECTION_TAB = 0,
+  MY_POOLS_TAB = 1,
+  LOANS_TAB = 2,
+}
+
 const TabWrapper: FunctionComponent<TabProps> = ({ children, ...rest }) => {
   return (
     <Tab
@@ -99,7 +105,7 @@ const TabWrapper: FunctionComponent<TabProps> = ({ children, ...rest }) => {
  * @returns Collections  MyPools Loans
  */
 const Lend = () => {
-  const [tabKey, setTabKey] = useState<0 | 1 | 2>(0)
+  const [tabKey, setTabKey] = useState<TAB_KEY>(TAB_KEY.COLLECTION_TAB)
 
   const { isOpen: showSearch, onToggle: toggleShowSearch } = useDisclosure()
 
@@ -119,15 +125,15 @@ const Lend = () => {
     setTabKey(() => {
       switch (pathname) {
         case '/xlending/lending/collections':
-          return 0
+          return TAB_KEY.COLLECTION_TAB
         case '/xlending/lending/my-pools':
           interceptFn()
-          return 1
+          return TAB_KEY.MY_POOLS_TAB
         case '/xlending/lending/loans':
           interceptFn()
-          return 2
+          return TAB_KEY.LOANS_TAB
         default:
-          return 0
+          return TAB_KEY.COLLECTION_TAB
       }
     })
   }, [pathname, interceptFn])
@@ -559,11 +565,17 @@ const Lend = () => {
         width: 180,
         thAlign: 'left',
         render: (_: any, info: any) => {
+          // const currentInfo = batchNftListInfo?.get(
+          //   JSON.stringify({
+          //     address: info.nft_collateral_contract.toLowerCase(),
+          //     tokenId: info.nft_collateral_id,
+          //   }),
+          // )
           const currentInfo = batchNftListInfo?.find(
             (i) =>
-              i?.tokenID === info.nft_collateral_id &&
-              i?.assetContractAddress.toLowerCase() ===
-                info.nft_collateral_contract.toLowerCase(),
+              i.assetContractAddress.toLowerCase() ===
+                info.nft_collateral_contract.toLowerCase() &&
+              i.tokenID === info.nft_collateral_id,
           )
           return (
             <Flex alignItems={'center'} gap={'8px'}>
@@ -699,7 +711,7 @@ const Lend = () => {
           }
         }}
       >
-        {[0, 1].includes(tabKey) && (
+        {[TAB_KEY.COLLECTION_TAB, TAB_KEY.MY_POOLS_TAB].includes(tabKey) && (
           <Flex
             position={'absolute'}
             right={0}
@@ -714,15 +726,15 @@ const Lend = () => {
             <ScaleFade in={showSearch} initialScale={0.9}>
               <SearchInput
                 value={
-                  tabKey === 0
+                  tabKey === TAB_KEY.COLLECTION_TAB
                     ? activeCollectionSearchValue
                     : myPoolsSearchValue
                 }
                 onChange={(e) => {
-                  if (tabKey === 0) {
+                  if (tabKey === TAB_KEY.COLLECTION_TAB) {
                     setActiveCollectionSearchValue(e.target.value)
                   }
-                  if (tabKey === 1) {
+                  if (tabKey === TAB_KEY.MY_POOLS_TAB) {
                     setMyPoolsSearchValue(e.target.value)
                   }
                 }}
@@ -800,20 +812,23 @@ const Lend = () => {
           }}
           mt='20px'
           hidden={
-            tabKey === 2 ||
-            (tabKey === 0 && isEmpty(activeCollectionList)) ||
-            (tabKey === 1 && isEmpty(poolList))
+            tabKey === TAB_KEY.LOANS_TAB ||
+            (tabKey === TAB_KEY.COLLECTION_TAB &&
+              isEmpty(activeCollectionList)) ||
+            (tabKey === TAB_KEY.MY_POOLS_TAB && isEmpty(poolList))
           }
         >
           <SearchInput
             value={
-              tabKey === 0 ? activeCollectionSearchValue : myPoolsSearchValue
+              tabKey === TAB_KEY.COLLECTION_TAB
+                ? activeCollectionSearchValue
+                : myPoolsSearchValue
             }
             onChange={(e) => {
-              if (tabKey === 0) {
+              if (tabKey === TAB_KEY.COLLECTION_TAB) {
                 setActiveCollectionSearchValue(e.target.value)
               }
-              if (tabKey === 1) {
+              if (tabKey === TAB_KEY.MY_POOLS_TAB) {
                 setMyPoolsSearchValue(e.target.value)
               }
             }}
@@ -1056,34 +1071,35 @@ const Lend = () => {
         </TabPanels>
       </Tabs>
 
-      {[0, 1].includes(tabKey) && !isEmpty(myPoolsData) && (
-        <Flex
-          bg='white'
-          position={'fixed'}
-          bottom={0}
-          left={0}
-          right={0}
-          h='74px'
-          display={{ md: 'none', sm: 'flex', xs: 'flex' }}
-          alignItems='center'
-          justify={'center'}
-          zIndex={5}
-          px={8}
-        >
-          <Button
-            variant={'primary'}
-            w='100%'
-            h='42px'
-            onClick={() =>
-              interceptFn(() => navigate('/xlending/lending/create'))
-            }
+      {[TAB_KEY.COLLECTION_TAB, TAB_KEY.MY_POOLS_TAB].includes(tabKey) &&
+        !isEmpty(myPoolsData) && (
+          <Flex
+            bg='white'
+            position={'fixed'}
+            bottom={0}
+            left={0}
+            right={0}
+            h='74px'
+            display={{ md: 'none', sm: 'flex', xs: 'flex' }}
+            alignItems='center'
+            justify={'center'}
+            zIndex={5}
+            px={8}
           >
-            + Create New Pool
-          </Button>
-        </Flex>
-      )}
+            <Button
+              variant={'primary'}
+              w='100%'
+              h='42px'
+              onClick={() =>
+                interceptFn(() => navigate('/xlending/lending/create'))
+              }
+            >
+              + Create New Pool
+            </Button>
+          </Flex>
+        )}
 
-      {tabKey === 2 && (
+      {tabKey === TAB_KEY.LOANS_TAB && (
         <Flex
           bg='white'
           position={'fixed'}

@@ -188,6 +188,12 @@ const Loans = () => {
             i?.assetContractAddress.toLowerCase() ===
               info.nft_collateral_contract.toLowerCase(),
         )
+        // const currentInfo = bactNftListInfo?.get(
+        //   JSON.stringify({
+        //     address: info.nft_collateral_contract.toLowerCase(),
+        //     tokenId: info.nft_collateral_id,
+        //   }),
+        // )
         return (
           <Flex alignItems={'center'} gap={'8px'}>
             <ImageWithFallback
