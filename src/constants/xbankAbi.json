@@ -405,6 +405,19 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "loanID",
+        "type": "uint256"
+      }
+    ],
+    "name": "collateralTransfer",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "supportERC20Denomination",
         "type": "address"
@@ -520,12 +533,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "loanInstallment",
+            "name": "loanRepaymentAmount",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "lpScheduledReceived",
+            "name": "LPReceiveAmount",
             "type": "uint256"
           },
           {
@@ -545,7 +558,7 @@
           },
           {
             "internalType": "uint32",
-            "name": "protocolIRMultiplier",
+            "name": "protocolInterestRate",
             "type": "uint32"
           },
           {
@@ -742,32 +755,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getProtocolIRMultiplier",
-    "outputs": [
-      {
-        "internalType": "uint32",
-        "name": "",
-        "type": "uint32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "loanID",
-        "type": "uint256"
-      }
-    ],
-    "name": "liquidateAfterSelling",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -838,12 +825,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "loanInstallment",
+            "name": "loanRepaymentAmount",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "lpScheduledReceived",
+            "name": "LPReceiveAmount",
             "type": "uint256"
           },
           {
@@ -863,7 +850,7 @@
           },
           {
             "internalType": "uint32",
-            "name": "protocolIRMultiplier",
+            "name": "protocolInterestRate",
             "type": "uint32"
           },
           {

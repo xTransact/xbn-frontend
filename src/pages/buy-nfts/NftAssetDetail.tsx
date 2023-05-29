@@ -75,9 +75,10 @@ enum LOAN_DAYS_ENUM {
 
 type PoolType = {
   pool_id: number
-  pool_apr: number
+  pool_apr_with_spread: number
   pool_days: LOAN_DAYS_ENUM
   lp_address: string
+  lp_pool_apr: number
 }
 
 const NFTDetailContainer: FunctionComponent<FlexProps> = ({
@@ -144,6 +145,21 @@ const NftAssetDetail = () => {
       }
     }
   }, [timer])
+
+  // 读取利差 X 0.1
+  const fetchInterestSpread = async () => {
+    const xBankContract = createXBankContract()
+    const res = await xBankContract.methods.getProtocolIRMultiplier().call()
+    console.log(
+      '🚀 ~ file: NftAssetDetail.tsx:159 ~ fetchInterestSpread ~ res:',
+      res,
+    )
+
+    return res / 10000
+  }
+
+  const { loading: fetchSpreadLoading, data: interestSpread } =
+    useRequest(fetchInterestSpread)
 
   const [commodityWeiPrice, setCommodityWeiPrice] = useState(BigNumber(0))
 
@@ -230,7 +246,8 @@ const NftAssetDetail = () => {
       !originPoolList ||
       isEmpty(originPoolList) ||
       latestBalanceMap?.size === 0 ||
-      loanWeiAmount?.eq(0)
+      loanWeiAmount?.eq(0) ||
+      fetchSpreadLoading
     ) {
       setSelectPool(undefined)
       return []
@@ -283,22 +300,24 @@ const NftAssetDetail = () => {
             loan_ratio_preferential_flexibility,
             owner_address,
           }) => {
+            const lp_pool_apr =
+              pool_maximum_interest_rate -
+              (TENORS.indexOf(pool_maximum_days) - index) *
+                loan_time_concession_flexibility -
+              // percentage 与最大贷款比例的 差
+              // 4000 6000 => 1
+              ((pool_maximum_percentage - loanPercentage) / 1000) *
+                loan_ratio_preferential_flexibility
             return {
               pool_id,
-              pool_apr:
-                pool_maximum_interest_rate -
-                (TENORS.indexOf(pool_maximum_days) - index) *
-                  loan_time_concession_flexibility -
-                // percentage 与最大贷款比例的 差
-                // 4000 6000 => 1
-                ((pool_maximum_percentage - loanPercentage) / 1000) *
-                  loan_ratio_preferential_flexibility,
+              pool_apr_with_spread: lp_pool_apr * (1 + (interestSpread || 0)),
+              lp_pool_apr,
               pool_days: item,
               lp_address: owner_address,
             }
           },
         ),
-        (i) => i.pool_apr,
+        (i) => i.pool_apr_with_spread,
       )
       if (!currentPool) break
       currentPools.push(currentPool)
@@ -306,7 +325,14 @@ const NftAssetDetail = () => {
     setSelectPool(currentPools?.length > 1 ? currentPools[1] : currentPools[0])
 
     return currentPools
-  }, [latestBalanceMap, loanPercentage, loanWeiAmount, originPoolList])
+  }, [
+    latestBalanceMap,
+    loanPercentage,
+    loanWeiAmount,
+    originPoolList,
+    interestSpread,
+    fetchSpreadLoading,
+  ])
 
   // number of installments
   const [installmentOptions, setInstallmentOptions] = useState<(1 | 2 | 3)[]>()
@@ -336,9 +362,9 @@ const NftAssetDetail = () => {
       if (!loanWeiAmount || isEmpty(selectPool)) {
         return BigNumber(0)
       }
-      const { pool_days, pool_apr } = selectPool
+      const { pool_days, pool_apr_with_spread } = selectPool
       const loanEthAmount = Number(wei2Eth(loanWeiAmount))
-      const apr = pool_apr / 10000
+      const apr = pool_apr_with_spread / 10000
       return amortizationCalByDays(loanEthAmount, apr, pool_days, value)
     },
     [selectPool, loanWeiAmount],
@@ -358,7 +384,7 @@ const NftAssetDetail = () => {
         return
       }
       const xBankContract = createXBankContract()
-      const { pool_apr, pool_days, pool_id, lp_address } = selectPool
+      const { pool_days, pool_id, lp_address, lp_pool_apr } = selectPool
       let transferBlock
 
       try {
@@ -388,7 +414,7 @@ const NftAssetDetail = () => {
           repay_times: installmentValue,
           total_repayment: loanWeiAmount.toNumber().toString(),
           loan_duration: pool_days * 24 * 60 * 60,
-          loan_interest_rate: pool_apr,
+          loan_interest_rate: lp_pool_apr,
         }
         await generateLoanOrder({
           ...postParams,
@@ -745,52 +771,67 @@ const NftAssetDetail = () => {
           label='Loan Period'
           isEmpty={isEmpty(pools)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           <Flex gap={'8px'} flexWrap='wrap'>
-            {pools.map(({ pool_id, pool_apr, pool_days, lp_address }) => {
-              return (
-                <Flex
-                  key={`${pool_id}-${pool_apr}-${pool_days}`}
-                  w={{
-                    md: `${100 / pools.length}%`,
-                    sm: '100%',
-                    xs: '100%',
-                  }}
-                  minW={{
-                    md: '112px',
-                    sm: '100%',
-                    xs: '100%',
-                  }}
-                  maxW={{
-                    md: '112px',
-                    sm: '100%',
-                    xs: '100%',
-                  }}
-                >
-                  <RadioCard
-                    isDisabled={clickLoading}
-                    onClick={() =>
-                      setSelectPool({
-                        pool_apr,
-                        pool_id,
-                        pool_days,
-                        lp_address,
-                      })
-                    }
-                    isActive={selectPool?.pool_days === pool_days}
+            {pools.map(
+              ({
+                pool_id,
+                pool_apr_with_spread,
+                pool_days,
+                lp_address,
+                lp_pool_apr,
+              }) => {
+                return (
+                  <Flex
+                    key={`${pool_id}-${pool_apr_with_spread}-${pool_days}`}
+                    w={{
+                      md: `${100 / pools.length}%`,
+                      sm: '100%',
+                      xs: '100%',
+                    }}
+                    minW={{
+                      md: '112px',
+                      sm: '100%',
+                      xs: '100%',
+                    }}
+                    maxW={{
+                      md: '112px',
+                      sm: '100%',
+                      xs: '100%',
+                    }}
                   >
-                    <Text fontWeight={700}>{pool_days} Days</Text>
-                    <Text fontWeight={500} fontSize='12px' color='blue.1'>
-                      <Highlight query={'APR'} styles={{ color: `black.1` }}>
-                        {`${pool_apr && floor(pool_apr / 100, 4)} % APR`}
-                      </Highlight>
-                    </Text>
-                  </RadioCard>
-                </Flex>
-              )
-            })}
+                    <RadioCard
+                      isDisabled={clickLoading}
+                      onClick={() =>
+                        setSelectPool({
+                          pool_apr_with_spread,
+                          pool_id,
+                          pool_days,
+                          lp_address,
+                          lp_pool_apr,
+                        })
+                      }
+                      isActive={selectPool?.pool_days === pool_days}
+                    >
+                      <Text fontWeight={700}>{pool_days} Days</Text>
+                      <Text fontWeight={500} fontSize='12px' color='blue.1'>
+                        <Highlight query={'APR'} styles={{ color: `black.1` }}>
+                          {`${
+                            pool_apr_with_spread &&
+                            floor(pool_apr_with_spread / 100, 4)
+                          } % APR`}
+                        </Highlight>
+                      </Text>
+                    </RadioCard>
+                  </Flex>
+                )
+              },
+            )}
           </Flex>
         </LabelComponent>
 
@@ -799,7 +840,10 @@ const NftAssetDetail = () => {
           label='Number of installments'
           isEmpty={isEmpty(selectPool)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           <Flex gap={'8px'} flexWrap='wrap'>
@@ -844,7 +888,8 @@ const NftAssetDetail = () => {
             loading={
               balanceFetchLoading ||
               assetFetchLoading ||
-              ordersPriceFetchLoading
+              ordersPriceFetchLoading ||
+              fetchSpreadLoading
             }
           >
             <VStack
@@ -882,7 +927,10 @@ const NftAssetDetail = () => {
           borderBottom={'none'}
           isEmpty={isEmpty(pools)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           {!loanWeiAmount.eq(0) && !commodityWeiPrice.eq(0) && (
@@ -987,7 +1035,8 @@ const NftAssetDetail = () => {
               balanceFetchLoading ||
               isEmpty(selectPool) ||
               assetFetchLoading ||
-              ordersPriceFetchLoading
+              ordersPriceFetchLoading ||
+              fetchSpreadLoading
             }
             isLoading={clickLoading}
             loadingText='The loan is being generated, please wait'

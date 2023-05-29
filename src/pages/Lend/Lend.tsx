@@ -49,7 +49,6 @@ import {
 } from '@/components'
 import { FORMAT_NUMBER, UNIT } from '@/constants'
 import { useWallet, useBatchAsset } from '@/hooks'
-import { amortizationCalByDays } from '@/utils/calculation'
 import { formatAddress } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
@@ -645,27 +644,22 @@ const Lend = () => {
       },
       {
         title: 'Interest',
-        dataIndex: 'pool_interest_rate',
-        align: 'right',
-        key: 'pool_interest_rate',
-        thAlign: 'right',
-        render: (_: any, data: Record<string, any>) => (
-          <Text>
-            {BigNumber(
-              wei2Eth(
-                amortizationCalByDays(
-                  data.total_repayment,
-                  data.loan_interest_rate / 10000,
-                  (data.loan_duration / 24 / 60 / 60) as 7 | 14 | 30 | 60 | 90,
-                  data.repay_times,
-                )
-                  .multipliedBy(data.repay_times)
-                  .minus(data.total_repayment),
-              ),
-            ).toFormat(FORMAT_NUMBER)}
-            &nbsp; ETH
-          </Text>
-        ),
+        dataIndex: 'loan_interest',
+        key: 'loan_interest',
+        render: (_: any, item: Record<string, any>) => {
+          return (
+            <Text>
+              {BigNumber(
+                wei2Eth(
+                  BigNumber(item.loan_interest)
+                    .multipliedBy(item?.repay_times)
+                    .minus(item.total_repayment),
+                ),
+              ).toFormat(FORMAT_NUMBER)}
+              {UNIT}
+            </Text>
+          )
+        },
       },
     ]
   }, [batchNftListInfo])
