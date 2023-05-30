@@ -28,11 +28,9 @@ const SliderWrapper: FunctionComponent<
       py='8px'
       pr='20px'
     >
-      {value && (
-        <Box bg='gray.2' p='4px' borderRadius={4} fontWeight={'700'}>
-          {label}
-        </Box>
-      )}
+      <Box bg='gray.2' p='4px' borderRadius={4} fontWeight={'700'}>
+        {label}
+      </Box>
       <Slider w='240px' mt={'10px'} mb={'10px'} value={value} {...rest}>
         {data.map((item) => (
           <SliderMark value={item} fontSize='14px' key={item} zIndex={1}>

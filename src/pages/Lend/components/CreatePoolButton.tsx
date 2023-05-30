@@ -15,8 +15,10 @@ import {
   NumberInputField,
   NumberInput,
   useDisclosure,
+  Flex,
 } from '@chakra-ui/react'
 import { useRequest } from 'ahooks'
+import BigNumber from 'bignumber.js'
 import debounce from 'lodash-es/debounce'
 import {
   useCallback,
@@ -90,6 +92,14 @@ const CreatePoolButton: FunctionComponent<
   }, [])
 
   const [amount, setAmount] = useState('')
+  const defaultAmount = useMemo(() => {
+    if (!floorPrice || !poolMaximumPercentage) return ''
+    return `${(floorPrice * poolMaximumPercentage) / 10000}`
+  }, [floorPrice, poolMaximumPercentage])
+  useEffect(() => {
+    if (!defaultAmount) return
+    setAmount(defaultAmount)
+  }, [defaultAmount])
 
   const initialRef = useRef(null)
   const finalRef = useRef(null)
@@ -372,11 +382,23 @@ const CreatePoolButton: FunctionComponent<
                 )}
               </InputGroup>
 
-              <Text mt={'8px'} color={isError ? 'red.1' : 'gray.3'}>
-                {isError
-                  ? errorMsg
-                  : `Minimum input: ${formatFloat(floorPrice * 0.1)}`}
-              </Text>
+              {isError && (
+                <Text mt={'8px'} color={'red.1'}>
+                  {errorMsg}
+                </Text>
+              )}
+              {!isError && (
+                <Flex mt={'8px'} color={'gray.3'}>
+                  <Text>
+                    Expected to lend&nbsp;
+                    {BigNumber(amount)
+                      .dividedBy(defaultAmount)
+                      .integerValue(BigNumber.ROUND_DOWN)
+                      .toNumber()}
+                    &nbsp;loans
+                  </Text>
+                </Flex>
+              )}
             </FormControl>
             <Text
               fontSize={'12px'}

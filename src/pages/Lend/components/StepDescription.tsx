@@ -15,27 +15,28 @@ const StepDescription: FunctionComponent<
 > = ({ data: { step, title, text }, ...rest }) => {
   return (
     <Box {...rest}>
-      <Tooltip label={text} placement='auto-start'>
-        <Flex mb={'20px'} alignItems='center' gap={'16px'}>
-          <Flex
-            bg='blue.1'
-            color='white'
-            borderRadius={'50%'}
-            w={'32px'}
-            h={'32px'}
-            justifyContent='center'
-            fontSize='18px'
-            lineHeight={2}
-          >
-            {step}
-          </Flex>
-
-          <Heading fontSize={'18px'} color='black.1'>
-            {title}
-          </Heading>
-          <SvgComponent svgId='icon-tip' />
+      <Flex mb={'20px'} alignItems='center' gap={'10px'}>
+        <Flex
+          bg='blue.1'
+          color='white'
+          borderRadius={'50%'}
+          boxSize={'32px'}
+          justifyContent='center'
+          fontSize='18px'
+          lineHeight={2}
+        >
+          {step}
         </Flex>
-      </Tooltip>
+
+        <Heading fontSize={'18px'} color='black.1'>
+          {title}
+        </Heading>
+        <Tooltip label={text} placement='auto-start'>
+          <Box>
+            <SvgComponent svgId='icon-tip' />
+          </Box>
+        </Tooltip>
+      </Flex>
     </Box>
   )
 }
