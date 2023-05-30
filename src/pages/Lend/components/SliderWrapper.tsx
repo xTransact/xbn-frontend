@@ -1,5 +1,6 @@
 import {
   Box,
+  Divider,
   Flex,
   SlideFade,
   Slider,
@@ -27,12 +28,21 @@ const SliderWrapper: FunctionComponent<
       borderRadius={8}
       py='8px'
       pr='20px'
+      justify={'space-between'}
     >
-      <Box bg='gray.2' p='4px' borderRadius={4} fontWeight={'700'}>
+      <Box
+        bg='gray.2'
+        p='4px'
+        borderRadius={4}
+        fontWeight={'700'}
+        w='100px'
+        textAlign={'center'}
+      >
         {label}
       </Box>
-      <Slider w='240px' mt={'10px'} mb={'10px'} value={value} {...rest}>
-        {data.map((item) => (
+      <Divider orientation='vertical' w='1px' h='30px' bg='pink' />
+      <Slider w='340px' mt={'10px'} mb={'10px'} value={value} {...rest}>
+        {data?.map((item) => (
           <SliderMark value={item} fontSize='14px' key={item} zIndex={1}>
             <Box
               w={'12px'}

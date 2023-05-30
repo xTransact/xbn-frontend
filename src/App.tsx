@@ -42,7 +42,7 @@ function App() {
       <Routes>
         <Route
           path='/xlending'
-          element={<Navigate replace to='/xlending/lending/collections' />}
+          element={<Navigate replace to='/xlending/buy-nfts/market' />}
         />
         <Route
           path='/xlending/lending'

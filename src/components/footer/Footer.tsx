@@ -37,7 +37,7 @@ const EMAIL = (
   </svg>
 )
 
-const COMMUNITY_DATA = [
+export const COMMUNITY_DATA = [
   {
     title: 'Twitter',
     url: TWITTER_URL,

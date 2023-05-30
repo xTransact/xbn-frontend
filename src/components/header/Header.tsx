@@ -22,6 +22,7 @@ import {
   AccordionIcon,
   AccordionButton,
   AccordionPanel,
+  chakra,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import kebabCase from 'lodash-es/kebabCase'
@@ -36,6 +37,7 @@ import { createXBankContract } from '@/utils/createContract'
 import { formatAddress } from '@/utils/format'
 
 import { ConnectWalletModal, SvgComponent } from '..'
+import { COMMUNITY_DATA } from '../footer/Footer'
 
 const useActivePath = () => {
   const { pathname } = useLocation()
@@ -125,7 +127,76 @@ const PopoverWrapper: FunctionComponent<{
   )
 }
 
+const CommunityPopover = () => {
+  return (
+    <Popover isLazy trigger='hover' placement='bottom-start'>
+      {({ isOpen: visible }) => {
+        return (
+          <>
+            <PopoverTrigger>
+              <Flex
+                fontSize='16px'
+                px={0}
+                gap={'4px'}
+                _focus={{ bg: 'transparent' }}
+                _hover={{
+                  bg: 'transparent',
+                  color: 'var(--chakra-colors-blue-1)',
+                }}
+                color={visible ? 'blue.1' : 'black.1'}
+                fontWeight='700'
+                alignItems={'center'}
+                cursor='pointer'
+              >
+                Community
+                <SvgComponent
+                  svgId={'icon-arrow-down'}
+                  fill={
+                    visible
+                      ? 'var(--chakra-colors-blue-1)'
+                      : 'var(--chakra-colors-black-1)'
+                  }
+                  transition='all 0.2s'
+                  transform={`rotate(${visible ? '180deg' : '0deg'})`}
+                />
+              </Flex>
+              {/* </Link> */}
+            </PopoverTrigger>
+            <PopoverContent w={40} top='16px' borderRadius={8}>
+              <PopoverBody px={0} p={'20px'}>
+                <Flex flexDir={'column'} gap='20px'>
+                  {COMMUNITY_DATA.map(({ icon, title, url }) => (
+                    <chakra.a key={title} href={url} target='_blank'>
+                      <Flex
+                        borderBottomColor='gray.5'
+                        alignItems={'center'}
+                        gap='8px'
+                      >
+                        <SvgComponent svgId={icon} />
+                        <Text
+                          fontSize='16px'
+                          _hover={{
+                            color: `blue.1`,
+                          }}
+                          color='black.1'
+                        >
+                          {title}
+                        </Text>
+                      </Flex>
+                    </chakra.a>
+                  ))}
+                </Flex>
+              </PopoverBody>
+            </PopoverContent>
+          </>
+        )
+      }}
+    </Popover>
+  )
+}
+
 const ConnectedIconWallet: FunctionComponent = () => {
+  const navigate = useNavigate()
   const { currentAccount, handleOpenEtherscan } = useWallet()
   const fetchDataFromContract = useCallback(async () => {
     // const wethContract = createWethContract()
@@ -172,6 +243,16 @@ const ConnectedIconWallet: FunctionComponent = () => {
             onClick={handleOpenEtherscan}
           >
             {formatAddress(currentAccount)}
+          </Button>
+          <Button
+            variant={'link'}
+            color='black.1'
+            p={'10px'}
+            onClick={() => {
+              navigate('/xlending/buy-nfts/loans')
+            }}
+          >
+            Repay Loans
           </Button>
           {/* <Button
             variant={'link'}
@@ -306,7 +387,6 @@ const MobileDrawBtn = () => {
 }
 const Header = () => {
   const { pathname } = useLocation()
-  const navigate = useNavigate()
 
   const { isOpen, onClose, currentAccount, interceptFn, handleOpenEtherscan } =
     useWallet()
@@ -342,11 +422,11 @@ const Header = () => {
             alignItems={'center'}
             onClick={() => {
               if (pathname === '/xlending/demo') return
-              navigate('/xlending/lending/collections')
+              window.open(import.meta.env.VITE_BASE_URL)
             }}
             cursor='pointer'
           >
-            <Flex gap={'8px'} onClick={() => {}} alignItems='center'>
+            <Flex gap={'8px'} alignItems='center'>
               <Image
                 src={Icon}
                 h={{
@@ -371,16 +451,33 @@ const Header = () => {
             hidden={pathname === '/xlending/demo'}
           >
             <PopoverWrapper
-              routes={['Collections', 'My Pools', 'Loans']}
-              route='lending'
-              pageName='Lend'
-            />
-
-            <PopoverWrapper
               route='buy-nfts'
               pageName='Buy NFTs'
               routes={['Market', 'My assets', 'Loans']}
             />
+            <PopoverWrapper
+              routes={['Collections', 'My Pools', 'Loans']}
+              route='lending'
+              pageName='Lend'
+            />
+            <chakra.a
+              fontSize='16px'
+              px={0}
+              _focus={{ bg: 'transparent' }}
+              _hover={{
+                bg: 'transparent',
+                color: 'var(--chakra-colors-blue-1)',
+              }}
+              color={'black.1'}
+              fontWeight='700'
+              alignItems={'center'}
+              cursor='pointer'
+              href={import.meta.env.VITE_DOCS_URL}
+              target='_blank'
+            >
+              Docs
+            </chakra.a>
+            <CommunityPopover />
           </Flex>
 
           <Flex
@@ -395,30 +492,12 @@ const Header = () => {
             cursor='pointer'
           >
             {currentAccount ? (
-              <IconButton
-                onClick={handleOpenEtherscan}
-                justifyContent={'center'}
-                aria-label=''
-                bg='white'
-                icon={
-                  <Jazzicon
-                    diameter={30}
-                    seed={parseInt(currentAccount.slice(2, 10), 16)}
-                  />
-                }
-              />
+              <ConnectedIconWallet />
             ) : (
-              <IconButton
-                onClick={handleClickWallet}
-                justifyContent={'center'}
-                aria-label=''
-                bg='white'
-                icon={
-                  <SvgComponent svgId='icon-wallet-outline' svgSize='30px' />
-                }
-              />
+              <Button variant={'primary'} onClick={handleClickWallet}>
+                Connect Wallet
+              </Button>
             )}
-            <ConnectedIconWallet />
           </Flex>
 
           {/*  移动端 */}

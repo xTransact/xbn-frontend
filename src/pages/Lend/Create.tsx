@@ -14,10 +14,10 @@ import {
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
-import { range, slice } from 'lodash-es'
+import { pick, range, slice } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
-import { useMemo, useState, type FunctionComponent } from 'react'
-import { useParams } from 'react-router-dom'
+import { useMemo, useState, type FunctionComponent, useEffect } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
 
 import { apiGetPools } from '@/api'
 import {
@@ -89,6 +89,13 @@ const Wrapper: FunctionComponent<
 const Create = () => {
   const params = useParams() as {
     action: 'create' | 'edit'
+  }
+  const { state } = useLocation() as {
+    state: {
+      contractAddress: string
+      nftCollection: NftCollection
+      // poolData: PoolsListItemType
+    }
   }
   const { isOpen: showFlexibility, onToggle: toggleShowFlexibility } =
     useDisclosure({
@@ -184,8 +191,16 @@ const Create = () => {
     sliderRightKey,
   ])
 
+  useEffect(() => {
+    if (!state) return
+    setSelectCollection(pick(state, ['contractAddress', 'nftCollection']))
+  }, [state])
+
   const collectionSelectorProps = useMemo(
     () => ({
+      defaultValue: state
+        ? pick(state, ['contractAddress', 'nftCollection'])
+        : undefined,
       placeholder: 'Please select',
       onChange: (e: {
         contractAddress: string
@@ -194,7 +209,7 @@ const Create = () => {
         setSelectCollection(e)
       },
     }),
-    [],
+    [state],
   )
 
   if (!params || !['edit', 'create'].includes(params?.action)) {
@@ -297,7 +312,6 @@ const Create = () => {
             onChange={(target) => {
               setSelectCollateralKey(target)
             }}
-            w='340px'
           />
           {!isEmpty(selectCollection) && (
             <Text position={'absolute'} right={0} bottom={'-20px'}>
@@ -331,7 +345,6 @@ const Create = () => {
             min={RATE_POWER_KEYS[0]}
             max={RATE_POWER_KEYS[RATE_POWER_KEYS.length - 1]}
             step={1}
-            w='340px'
             label={`${(baseRatePower / 100)?.toFixed(2)}%`}
             onChange={(target) => {
               setInterestPower(target)
