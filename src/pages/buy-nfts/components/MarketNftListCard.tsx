@@ -11,9 +11,11 @@ import {
   CardFooter,
   type ImageProps,
 } from '@chakra-ui/react'
-import { useMemo, useState, type FunctionComponent } from 'react'
+import useHover from 'ahooks/lib/useHover'
+import { useMemo, type FunctionComponent, useRef } from 'react'
 
 import { ImageWithFallback, SvgComponent } from '@/components'
+import { useIsMobile } from '@/hooks'
 
 const MarketNftListCard: FunctionComponent<
   {
@@ -23,7 +25,6 @@ const MarketNftListCard: FunctionComponent<
 > = ({ data: { node, highestRate }, imageSize, ...rest }) => {
   const { imageThumbnailUrl, orderPrice, name, backgroundColor, tokenID } =
     node || {}
-  const [show, setShow] = useState(false)
   const formattedDownPayment = useMemo(() => {
     if (!orderPrice || !highestRate) {
       return '--'
@@ -32,6 +33,13 @@ const MarketNftListCard: FunctionComponent<
     // const eth = wei2Eth(orderPrice)
     return (Number(orderPrice) * (10000 - Number(highestRate))) / 10000
   }, [orderPrice, highestRate])
+
+  const ish5 = useIsMobile()
+
+  const ref = useRef(null)
+  const isHovering = useHover(ref)
+
+  const show = useMemo(() => isHovering || ish5, [ish5, isHovering])
   return (
     <Card
       {...rest}
@@ -39,14 +47,13 @@ const MarketNftListCard: FunctionComponent<
         boxShadow: `var(--chakra-colors-gray-2) 0px 0px 3px`,
       }}
       cursor='pointer'
-      onMouseOver={() => setShow(true)}
-      onMouseLeave={() => setShow(false)}
       borderRadius={8}
       w='100%'
       h={'100%'}
       boxShadow='none'
       borderColor={'gray.2'}
       borderWidth='1px'
+      ref={ref}
     >
       <CardBody p={0}>
         <Box

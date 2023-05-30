@@ -20,6 +20,8 @@ export const apiGetLoans: (query: {
   pool_id?: number
   lender_address?: string
   borrower_address?: string
+  nft_collateral_contract?: string
+  nft_collateral_id?: string
 }) => Promise<LoanListItemType[]> = async (params) => {
   return await request.get('/lending/api/v1/loans', {
     params,

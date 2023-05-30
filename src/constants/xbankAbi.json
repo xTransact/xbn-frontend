@@ -548,7 +548,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "repayedAmount",
+            "name": "repayedPrincipal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "repayedInterest",
             "type": "uint256"
           },
           {
@@ -835,7 +840,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "repayedAmount",
+            "name": "repayedPrincipal",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "repayedInterest",
             "type": "uint256"
           },
           {

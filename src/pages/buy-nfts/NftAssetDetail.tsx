@@ -14,24 +14,17 @@ import {
   Divider,
   Skeleton,
   type FlexProps,
-  Spinner,
-  Container,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
-import map from 'lodash/map'
 import ceil from 'lodash-es/ceil'
 import debounce from 'lodash-es/debounce'
 import floor from 'lodash-es/floor'
-import get from 'lodash-es/get'
-import head from 'lodash-es/head'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
-import min from 'lodash-es/min'
 import minBy from 'lodash-es/minBy'
 import range from 'lodash-es/range'
-import Lottie from 'lottie-react'
 import {
   useCallback,
   useEffect,
@@ -42,34 +35,31 @@ import {
 } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { apiGetXCurrency, apiPostLoanOrder } from '@/api'
-import uiSuccessJson from '@/assets/ui-sucess.json'
+import { apiGetAssetPrice, apiGetXCurrency, apiPostLoanOrder } from '@/api'
 import {
   ConnectWalletModal,
   NotFound,
   SvgComponent,
   NftMedia,
   H5SecondaryHeader,
+  MiddleStatus,
 } from '@/components'
 import { COLLATERALS, FORMAT_NUMBER, TENORS, UNIT } from '@/constants'
 import {
   useWallet,
-  useAssetOrdersPriceLazyQuery,
   useAssetQuery,
   useBatchWethBalance,
   useCatchContractError,
-  type AssetOrdersPriceQuery,
-  type AssetQueryVariables,
-  type NftOrder,
   type NftCollection,
 } from '@/hooks'
 import { amortizationCalByDays } from '@/utils/calculation'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
-import { wei2Eth } from '@/utils/unit-conversion'
+import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
 import BelongToCollection from './components/BelongToCollection'
 import DetailComponent from './components/DetailComponent'
+import EmptyPools from './components/EmptyPools'
 import ImageToolBar from './components/ImageToolBar'
 import LabelComponent from './components/LabelComponent'
 import PlanItem from './components/PlanItem'
@@ -85,9 +75,10 @@ enum LOAN_DAYS_ENUM {
 
 type PoolType = {
   pool_id: number
-  pool_apr: number
+  pool_apr_with_spread: number
   pool_days: LOAN_DAYS_ENUM
   lp_address: string
+  lp_pool_apr: number
 }
 
 const NFTDetailContainer: FunctionComponent<FlexProps> = ({
@@ -134,7 +125,11 @@ const NftAssetDetail = () => {
     state: {
       collection: NftCollection
       poolsList: PoolsListItemType[]
-      assetVariable: AssetQueryVariables
+      assetVariable: {
+        assetId?: string
+        assetContractAddress?: string
+        assetTokenID?: string
+      }
     }
   } = useLocation()
 
@@ -151,92 +146,65 @@ const NftAssetDetail = () => {
     }
   }, [timer])
 
+  // 读取利差 X 0.1
+  const fetchInterestSpread = async () => {
+    const xBankContract = createXBankContract()
+    const res = await xBankContract.methods.getProtocolIRMultiplier().call()
+    console.log(
+      '🚀 ~ file: NftAssetDetail.tsx:159 ~ fetchInterestSpread ~ res:',
+      res,
+    )
+
+    return res / 10000
+  }
+
+  const { loading: fetchSpreadLoading, data: interestSpread } =
+    useRequest(fetchInterestSpread)
+
   const [commodityWeiPrice, setCommodityWeiPrice] = useState(BigNumber(0))
-  // const [, setUpdatedAt] = useState('')
 
   const { collection, poolsList: originPoolList, assetVariable } = state || {}
   const { data: detail, loading: assetFetchLoading } = useAssetQuery({
     variables: assetVariable,
   })
 
-  const [openSeaOrders, setOpenSeaOrders] = useState<{ node: NftOrder }[]>()
-  /* 查询 NFT 在 OpenSea 上的 Orders */
-  const [
-    queryOpenSeaAssetOrders,
-    {
-      loading: ordersPriceFetchLoading,
-      startPolling: startPollingOpenSeaAssetOrders,
-      stopPolling: stopPollingOpenSeaAssetOrders,
-    },
-  ] = useAssetOrdersPriceLazyQuery({
-    fetchPolicy: 'network-only',
-    onCompleted: (data: AssetOrdersPriceQuery) => {
-      const _openSeaOrders = get(data, 'assetOrders.edges', []) as {
-        node: NftOrder
-      }[]
-      setOpenSeaOrders(_openSeaOrders)
-    },
-  })
-  const fetchOrderPrice = useCallback(() => {
-    if (!detail) return
-    queryOpenSeaAssetOrders({
-      variables: {
-        assetTokenId: detail?.asset.tokenID,
-        assetContractAddress: detail?.asset.assetContractAddress,
-        withUpdate: true,
-      },
-    })
-  }, [detail, queryOpenSeaAssetOrders])
-  useEffect(() => {
-    if (!fetchOrderPrice) return
-    fetchOrderPrice()
-  }, [fetchOrderPrice])
-
-  useEffect(() => {
-    const updatedAt = get(head(openSeaOrders), 'node.updatedAt', '')
-    if (updatedAt) {
-      const updatedAtObj = dayjs(updatedAt)
-      if (updatedAtObj.isValid()) {
-        const msTime = dayjs(Date.now()).diff(updatedAtObj, 'minute')
-        if (msTime > 1) {
-          // 如果更新时间距离现在大于一分钟，则需要重新请求 OpenSea Orders 数据
-          // 在一分钟之内 每隔 5s 请求一次数据，如果数据 updatedAt 距离当前时间小于一分钟，则停止请求
-          stopPollingOpenSeaAssetOrders()
-          startPollingOpenSeaAssetOrders(5000)
-          setTimeout(() => {
-            stopPollingOpenSeaAssetOrders()
-          }, 1000 * 60)
-        } else {
-          stopPollingOpenSeaAssetOrders()
+  const { loading: ordersPriceFetchLoading, refresh: refreshOrderPrice } =
+    useRequest(apiGetAssetPrice, {
+      ready: !!assetVariable,
+      defaultParams: [
+        {
+          contract_address: assetVariable?.assetContractAddress || '',
+          token_id: assetVariable?.assetTokenID || '',
+        },
+      ],
+      onSuccess({ data }) {
+        if (!data || !data?.length) {
+          setCommodityWeiPrice(BigNumber(0))
+          return
         }
-      }
-    }
-  }, [
-    openSeaOrders,
-    stopPollingOpenSeaAssetOrders,
-    startPollingOpenSeaAssetOrders,
-    queryOpenSeaAssetOrders,
-  ])
-
-  useEffect(() => {
-    const priceArr = map(openSeaOrders, (row) => {
-      const x = get(row, 'node')
-      const decimals = get(x, 'nftPaymentToken.decimals', 0)
-      const weiDiffDecimals = 18 - Number(decimals)
-      const price = get(x, 'price')
-      const _price = new BigNumber(price).dividedBy(
-        new BigNumber(10).pow(weiDiffDecimals),
-      )
-      return _price.toNumber()
+        // const minBlurPrice = minBy(data, (item) => item.blur_price?.amount)
+        const minOpenseaPrice = minBy(
+          data,
+          (item) => item.opensea_price?.amount,
+        )
+        // 先只是考虑 opensea 的
+        if (!minOpenseaPrice) {
+          setCommodityWeiPrice(BigNumber(0))
+          return
+        }
+        const weiPrice = eth2Wei(Number(minOpenseaPrice?.opensea_price?.amount))
+        setCommodityWeiPrice(BigNumber(weiPrice))
+      },
+      onError() {
+        setCommodityWeiPrice(BigNumber(0))
+      },
+      debounceWait: 100,
     })
-    const minPrice = min(priceArr) || 0
-    setCommodityWeiPrice(BigNumber(minPrice))
-  }, [openSeaOrders])
 
   const [percentage, setPercentage] = useState(COLLATERALS[4])
   const loanPercentage = useMemo(() => 10000 - percentage, [percentage])
 
-  useEffect(() => {
+  const handleSetDefaultPercentage = useCallback(() => {
     if (isEmpty(originPoolList) || !originPoolList) {
       setPercentage(COLLATERALS[4])
       return
@@ -252,6 +220,10 @@ const NftAssetDetail = () => {
     const defaultPercentage = ceil(percentagesMax / 1000 / 2) * 1000
     setPercentage(10000 - defaultPercentage)
   }, [originPoolList])
+
+  useEffect(() => {
+    handleSetDefaultPercentage()
+  }, [handleSetDefaultPercentage])
 
   // 首付价格
   const downPaymentWei = useMemo(() => {
@@ -274,7 +246,8 @@ const NftAssetDetail = () => {
       !originPoolList ||
       isEmpty(originPoolList) ||
       latestBalanceMap?.size === 0 ||
-      loanWeiAmount?.eq(0)
+      loanWeiAmount?.eq(0) ||
+      fetchSpreadLoading
     ) {
       setSelectPool(undefined)
       return []
@@ -327,22 +300,24 @@ const NftAssetDetail = () => {
             loan_ratio_preferential_flexibility,
             owner_address,
           }) => {
+            const lp_pool_apr =
+              pool_maximum_interest_rate -
+              (TENORS.indexOf(pool_maximum_days) - index) *
+                loan_time_concession_flexibility -
+              // percentage 与最大贷款比例的 差
+              // 4000 6000 => 1
+              ((pool_maximum_percentage - loanPercentage) / 1000) *
+                loan_ratio_preferential_flexibility
             return {
               pool_id,
-              pool_apr:
-                pool_maximum_interest_rate -
-                (TENORS.indexOf(pool_maximum_days) - index) *
-                  loan_time_concession_flexibility -
-                // percentage 与最大贷款比例的 差
-                // 4000 6000 => 1
-                ((pool_maximum_percentage - loanPercentage) / 1000) *
-                  loan_ratio_preferential_flexibility,
+              pool_apr_with_spread: lp_pool_apr * (1 + (interestSpread || 0)),
+              lp_pool_apr,
               pool_days: item,
               lp_address: owner_address,
             }
           },
         ),
-        (i) => i.pool_apr,
+        (i) => i.pool_apr_with_spread,
       )
       if (!currentPool) break
       currentPools.push(currentPool)
@@ -350,7 +325,14 @@ const NftAssetDetail = () => {
     setSelectPool(currentPools?.length > 1 ? currentPools[1] : currentPools[0])
 
     return currentPools
-  }, [latestBalanceMap, loanPercentage, loanWeiAmount, originPoolList])
+  }, [
+    latestBalanceMap,
+    loanPercentage,
+    loanWeiAmount,
+    originPoolList,
+    interestSpread,
+    fetchSpreadLoading,
+  ])
 
   // number of installments
   const [installmentOptions, setInstallmentOptions] = useState<(1 | 2 | 3)[]>()
@@ -380,9 +362,9 @@ const NftAssetDetail = () => {
       if (!loanWeiAmount || isEmpty(selectPool)) {
         return BigNumber(0)
       }
-      const { pool_days, pool_apr } = selectPool
+      const { pool_days, pool_apr_with_spread } = selectPool
       const loanEthAmount = Number(wei2Eth(loanWeiAmount))
-      const apr = pool_apr / 10000
+      const apr = pool_apr_with_spread / 10000
       return amortizationCalByDays(loanEthAmount, apr, pool_days, value)
     },
     [selectPool, loanWeiAmount],
@@ -402,7 +384,7 @@ const NftAssetDetail = () => {
         return
       }
       const xBankContract = createXBankContract()
-      const { pool_apr, pool_days, pool_id, lp_address } = selectPool
+      const { pool_days, pool_id, lp_address, lp_pool_apr } = selectPool
       let transferBlock
 
       try {
@@ -432,7 +414,7 @@ const NftAssetDetail = () => {
           repay_times: installmentValue,
           total_repayment: loanWeiAmount.toNumber().toString(),
           loan_duration: pool_days * 24 * 60 * 60,
-          loan_interest_rate: pool_apr,
+          loan_interest_rate: lp_pool_apr,
         }
         await generateLoanOrder({
           ...postParams,
@@ -518,139 +500,22 @@ const NftAssetDetail = () => {
     )
   if (!!loanStep) {
     return (
-      <Container px={0}>
-        <H5SecondaryHeader />
-        <Flex
-          justify={{
-            md: 'space-between',
-            sm: 'center',
-            xs: 'center',
-          }}
-          mt={{
-            md: '44px',
-            sm: '32px',
-            xs: '32px',
-          }}
-        >
-          <Button
-            leftIcon={<SvgComponent svgId='icon-arrow-left' />}
-            onClick={() => {
-              if (loanStep === 'loading') {
-                setLoanStep(undefined)
-                return
-              }
-              if (loanStep === 'success') {
-                setLoanStep(undefined)
-                navigate('/xlending/buy-nfts/loans')
-                return
-              }
-              if (loanStep === 'delay') {
-                setLoanStep(undefined)
-              }
-            }}
-            display={{
-              md: 'flex',
-              sm: 'none',
-              xs: 'none',
-            }}
-          >
-            Back
-          </Button>
-          <Flex
-            mr={{
-              xl: '290px',
-              lg: '200px',
-              md: '100px',
-              sm: 0,
-              xs: 0,
-            }}
-            flexDir='column'
-            justifyContent={'center'}
-            alignItems='center'
-          >
-            <Flex
-              position={'relative'}
-              mb={{ md: '40px', sm: '28px', xs: '28px' }}
-              w={{ md: '285px', sm: '244px', xs: '244px' }}
-              alignItems={'center'}
-              justify='center'
-            >
-              <NftMedia
-                data={{
-                  imagePreviewUrl: detail?.asset.imagePreviewUrl,
-                  animationUrl: detail?.asset.animationUrl,
-                }}
-                borderRadius={16}
-                boxSize={{
-                  md: '240px',
-                  sm: '160px',
-                  xs: '160px',
-                }}
-                fit='contain'
-              />
-              {loanStep === 'success' && (
-                <Flex
-                  pos='absolute'
-                  bottom={{
-                    md: '-20px',
-                    sm: '-10px',
-                    xs: '-10px',
-                  }}
-                  right={{ md: '6px', sm: '30px', xs: '30px' }}
-                  bg='white'
-                  borderRadius={'100%'}
-                  boxSize={{
-                    md: '64px',
-                    sm: '40px',
-                    xs: '40px',
-                  }}
-                  zIndex={10}
-                >
-                  <Lottie animationData={uiSuccessJson} loop={false} />
-                </Flex>
-              )}
-            </Flex>
-            {loanStep === 'loading' && (
-              <Spinner
-                color='blue.1'
-                boxSize={'52px'}
-                thickness='3px'
-                speed='0.6s'
-              />
-            )}
-            {loanStep === 'success' && (
-              <Box textAlign={'center'}>
-                <Text
-                  fontWeight={'700'}
-                  fontSize={{
-                    md: '28px',
-                    sm: '24px',
-                    xs: '24px',
-                  }}
-                >
-                  Purchase completed
-                </Text>
-                <Text
-                  color={'gray.3'}
-                  fontSize={{
-                    md: '16px',
-                    xs: '14px',
-                    sm: '14px',
-                  }}
-                  mt={{
-                    md: '16px',
-                    sm: '8px',
-                    xs: '8px',
-                  }}
-                  fontWeight={'500'}
-                >
-                  Loan has been initialized.
-                </Text>
-              </Box>
-            )}
-          </Flex>
-        </Flex>
-      </Container>
+      <MiddleStatus
+        imagePreviewUrl={detail?.asset?.imagePreviewUrl}
+        animationUrl={detail?.asset?.animationUrl}
+        onLoadingBack={() => {
+          setLoanStep(undefined)
+          return
+        }}
+        onSuccessBack={() => {
+          setLoanStep(undefined)
+          navigate('/xlending/buy-nfts/loans')
+          return
+        }}
+        successTitle='Purchase completed'
+        successDescription='Loan has been initialized.'
+        step={loanStep}
+      />
     )
   }
 
@@ -786,7 +651,7 @@ const NftAssetDetail = () => {
           }}
           // onReFresh={}
           loading={assetFetchLoading}
-          onRefreshPrice={fetchOrderPrice}
+          onRefreshPrice={refreshOrderPrice}
           refreshLoading={ordersPriceFetchLoading}
           display={{
             md: 'block',
@@ -844,7 +709,7 @@ const NftAssetDetail = () => {
               value={percentage}
               w={{
                 xl: '436px',
-                lg: '300px',
+                lg: '250px',
                 md: '436px',
                 sm: '230px',
                 xs: '230px',
@@ -891,57 +756,82 @@ const NftAssetDetail = () => {
           </Flex>
         </LabelComponent>
 
+        {/* 当没有匹配到 pool */}
+        <EmptyPools
+          isShow={
+            isEmpty(selectPool) &&
+            !assetFetchLoading &&
+            !ordersPriceFetchLoading &&
+            !balanceFetchLoading
+          }
+          onReset={handleSetDefaultPercentage}
+        />
         {/* Loan Period */}
         <LabelComponent
           label='Loan Period'
           isEmpty={isEmpty(pools)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           <Flex gap={'8px'} flexWrap='wrap'>
-            {pools.map(({ pool_id, pool_apr, pool_days, lp_address }) => {
-              return (
-                <Flex
-                  key={`${pool_id}-${pool_apr}-${pool_days}`}
-                  w={{
-                    md: `${100 / pools.length}%`,
-                    sm: '100%',
-                    xs: '100%',
-                  }}
-                  minW={{
-                    md: '112px',
-                    sm: '100%',
-                    xs: '100%',
-                  }}
-                  maxW={{
-                    md: '112px',
-                    sm: '100%',
-                    xs: '100%',
-                  }}
-                >
-                  <RadioCard
-                    isDisabled={clickLoading}
-                    onClick={() =>
-                      setSelectPool({
-                        pool_apr,
-                        pool_id,
-                        pool_days,
-                        lp_address,
-                      })
-                    }
-                    isActive={selectPool?.pool_days === pool_days}
+            {pools.map(
+              ({
+                pool_id,
+                pool_apr_with_spread,
+                pool_days,
+                lp_address,
+                lp_pool_apr,
+              }) => {
+                return (
+                  <Flex
+                    key={`${pool_id}-${pool_apr_with_spread}-${pool_days}`}
+                    w={{
+                      md: `${100 / pools.length}%`,
+                      sm: '100%',
+                      xs: '100%',
+                    }}
+                    minW={{
+                      md: '112px',
+                      sm: '100%',
+                      xs: '100%',
+                    }}
+                    maxW={{
+                      md: '112px',
+                      sm: '100%',
+                      xs: '100%',
+                    }}
                   >
-                    <Text fontWeight={700}>{pool_days} Days</Text>
-                    <Text fontWeight={500} fontSize='12px' color='blue.1'>
-                      <Highlight query={'APR'} styles={{ color: `black.1` }}>
-                        {`${pool_apr && floor(pool_apr / 100, 4)} % APR`}
-                      </Highlight>
-                    </Text>
-                  </RadioCard>
-                </Flex>
-              )
-            })}
+                    <RadioCard
+                      isDisabled={clickLoading}
+                      onClick={() =>
+                        setSelectPool({
+                          pool_apr_with_spread,
+                          pool_id,
+                          pool_days,
+                          lp_address,
+                          lp_pool_apr,
+                        })
+                      }
+                      isActive={selectPool?.pool_days === pool_days}
+                    >
+                      <Text fontWeight={700}>{pool_days} Days</Text>
+                      <Text fontWeight={500} fontSize='12px' color='blue.1'>
+                        <Highlight query={'APR'} styles={{ color: `black.1` }}>
+                          {`${
+                            pool_apr_with_spread &&
+                            floor(pool_apr_with_spread / 100, 4)
+                          } % APR`}
+                        </Highlight>
+                      </Text>
+                    </RadioCard>
+                  </Flex>
+                )
+              },
+            )}
           </Flex>
         </LabelComponent>
 
@@ -950,7 +840,10 @@ const NftAssetDetail = () => {
           label='Number of installments'
           isEmpty={isEmpty(selectPool)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           <Flex gap={'8px'} flexWrap='wrap'>
@@ -995,7 +888,8 @@ const NftAssetDetail = () => {
             loading={
               balanceFetchLoading ||
               assetFetchLoading ||
-              ordersPriceFetchLoading
+              ordersPriceFetchLoading ||
+              fetchSpreadLoading
             }
           >
             <VStack
@@ -1033,7 +927,10 @@ const NftAssetDetail = () => {
           borderBottom={'none'}
           isEmpty={isEmpty(pools)}
           loading={
-            balanceFetchLoading || assetFetchLoading || ordersPriceFetchLoading
+            balanceFetchLoading ||
+            assetFetchLoading ||
+            ordersPriceFetchLoading ||
+            fetchSpreadLoading
           }
         >
           {!loanWeiAmount.eq(0) && !commodityWeiPrice.eq(0) && (
@@ -1125,6 +1022,7 @@ const NftAssetDetail = () => {
             xs: '32px',
           }}
           mb='40px'
+          hidden={isEmpty(selectPool)}
         >
           <Button
             variant={'primary'}
@@ -1137,7 +1035,8 @@ const NftAssetDetail = () => {
               balanceFetchLoading ||
               isEmpty(selectPool) ||
               assetFetchLoading ||
-              ordersPriceFetchLoading
+              ordersPriceFetchLoading ||
+              fetchSpreadLoading
             }
             isLoading={clickLoading}
             loadingText='The loan is being generated, please wait'
