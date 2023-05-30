@@ -20,11 +20,11 @@ import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
 import ceil from 'lodash-es/ceil'
 import debounce from 'lodash-es/debounce'
-import floor from 'lodash-es/floor'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
 import minBy from 'lodash-es/minBy'
 import range from 'lodash-es/range'
+import round from 'lodash-es/round'
 import {
   useCallback,
   useEffect,
@@ -44,7 +44,8 @@ import {
   H5SecondaryHeader,
   MiddleStatus,
 } from '@/components'
-import { COLLATERALS, FORMAT_NUMBER, TENORS, UNIT } from '@/constants'
+import { FORMAT_NUMBER, UNIT } from '@/constants'
+import { TENOR_VALUES } from '@/constants/interest'
 import {
   useWallet,
   useAssetQuery,
@@ -65,7 +66,11 @@ import LabelComponent from './components/LabelComponent'
 import PlanItem from './components/PlanItem'
 import RadioCard from './components/RadioCard'
 
-enum LOAN_DAYS_ENUM {
+const COLLATERAL = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]
+
+export enum LOAN_DAYS_ENUM {
+  LOAN1Days = 1,
+  LOAN3Days = 3,
   Loan7Days = 7,
   Loan14Days = 14,
   Loan30Days = 30,
@@ -155,7 +160,7 @@ const NftAssetDetail = () => {
       res,
     )
 
-    return res / 10000
+    return res / 10000 || 0
   }
 
   const { loading: fetchSpreadLoading, data: interestSpread } =
@@ -201,12 +206,12 @@ const NftAssetDetail = () => {
       debounceWait: 100,
     })
 
-  const [percentage, setPercentage] = useState(COLLATERALS[4])
+  const [percentage, setPercentage] = useState(COLLATERAL[4])
   const loanPercentage = useMemo(() => 10000 - percentage, [percentage])
 
   const handleSetDefaultPercentage = useCallback(() => {
     if (isEmpty(originPoolList) || !originPoolList) {
-      setPercentage(COLLATERALS[4])
+      setPercentage(COLLATERAL[4])
       return
     }
     const percentagesMax = maxBy(
@@ -269,10 +274,10 @@ const NftAssetDetail = () => {
           : latestWeth
         return (
           item.pool_maximum_percentage >= loanPercentage &&
-          loanWeiAmount.lte(forCompareWei) &&
+          loanWeiAmount.lte(forCompareWei)
           //  存在一些脏数据
-          item.loan_ratio_preferential_flexibility <= 200 &&
-          item.loan_ratio_preferential_flexibility <= 200
+          // item.loan_ratio_preferential_flexibility <= 200 &&
+          // item.loan_ratio_preferential_flexibility <= 200
         )
       },
     )
@@ -282,9 +287,9 @@ const NftAssetDetail = () => {
     )
 
     const currentPools: PoolType[] = []
-    for (let index = 0; index < TENORS.length; index++) {
-      // 7 14 30 60 90
-      const item = TENORS[index]
+    for (let index = 0; index < TENOR_VALUES.length; index++) {
+      // 1 3 7 14 30 60 90
+      const item = TENOR_VALUES[index]
       const currentFilterPools = filterPercentageAndLatestBalancePools.filter(
         (i) => i.pool_maximum_days >= item,
       )
@@ -300,14 +305,26 @@ const NftAssetDetail = () => {
             loan_ratio_preferential_flexibility,
             owner_address,
           }) => {
+            const loanBottomPower = loan_time_concession_flexibility / 10000
+            const bottomDistance =
+              TENOR_VALUES.indexOf(pool_maximum_days) - index
+
+            const loanRightPower = loan_ratio_preferential_flexibility / 10000
+            const rightDistance =
+              (pool_maximum_percentage - loanPercentage) / 1000
             const lp_pool_apr =
-              pool_maximum_interest_rate -
-              (TENORS.indexOf(pool_maximum_days) - index) *
-                loan_time_concession_flexibility -
-              // percentage 与最大贷款比例的 差
-              // 4000 6000 => 1
-              ((pool_maximum_percentage - loanPercentage) / 1000) *
-                loan_ratio_preferential_flexibility
+              pool_maximum_interest_rate *
+              Math.pow(loanBottomPower, bottomDistance) *
+              Math.pow(loanRightPower, rightDistance)
+
+            // const lp_pool_apr =
+            //   pool_maximum_interest_rate -
+            //   (TENOR_VALUES.indexOf(pool_maximum_days) - index) *
+            //     loan_time_concession_flexibility -
+            //   // percentage 与最大贷款比例的 差
+            //   // 4000 6000 => 1
+            //   ((pool_maximum_percentage - loanPercentage) / 1000) *
+            //     loan_ratio_preferential_flexibility
             return {
               pool_id,
               pool_apr_with_spread: lp_pool_apr * (1 + (interestSpread || 0)),
@@ -344,7 +361,13 @@ const NftAssetDetail = () => {
       return
     }
     const { pool_days } = selectPool
-    if (pool_days === LOAN_DAYS_ENUM.Loan7Days) {
+    if (
+      [
+        LOAN_DAYS_ENUM.Loan7Days,
+        LOAN_DAYS_ENUM.LOAN3Days,
+        LOAN_DAYS_ENUM.LOAN1Days,
+      ].includes(pool_days)
+    ) {
       setInstallmentOptions([1])
       setInstallmentValue(1)
       return
@@ -699,8 +722,8 @@ const NftAssetDetail = () => {
 
             <Divider orientation='vertical' h={'24px'} />
             <Slider
-              min={COLLATERALS[0]}
-              max={COLLATERALS[COLLATERALS.length - 1]}
+              min={COLLATERAL[0]}
+              max={COLLATERAL[COLLATERAL.length - 1]}
               step={1000}
               onChange={(target) => {
                 setPercentage(target)
@@ -708,14 +731,14 @@ const NftAssetDetail = () => {
               isDisabled={balanceFetchLoading || clickLoading}
               value={percentage}
               w={{
-                xl: '436px',
+                xl: '450px',
                 lg: '250px',
                 md: '436px',
                 sm: '230px',
                 xs: '230px',
               }}
             >
-              {COLLATERALS.map((item) => (
+              {COLLATERAL.map((item) => (
                 <SliderMark value={item} fontSize='14px' key={item} zIndex={1}>
                   <Box
                     w={'8px'}
@@ -823,7 +846,7 @@ const NftAssetDetail = () => {
                         <Highlight query={'APR'} styles={{ color: `black.1` }}>
                           {`${
                             pool_apr_with_spread &&
-                            floor(pool_apr_with_spread / 100, 4)
+                            round(pool_apr_with_spread / 100, 2)
                           } % APR`}
                         </Highlight>
                       </Text>

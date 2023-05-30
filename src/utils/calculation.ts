@@ -1,4 +1,6 @@
 import BigNumber from 'bignumber.js'
+
+import type { LOAN_DAYS_ENUM } from '@/pages/buy-nfts/NftAssetDetail'
 /**
  *
  * @param p 贷款本金
@@ -21,7 +23,7 @@ const amortizationCal = (p: number, i: number, n: number) => {
 const amortizationCalByDays = (
   principal: number,
   interest_rate: number,
-  loan_period_days: 7 | 14 | 30 | 60 | 90,
+  loan_period_days: LOAN_DAYS_ENUM,
   x: 1 | 2 | 3,
 ) => {
   if (

@@ -12,8 +12,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  NumberInputField,
-  NumberInput,
   useDisclosure,
   Flex,
 } from '@chakra-ui/react'
@@ -31,7 +29,11 @@ import {
 import { useNavigate } from 'react-router-dom'
 import Web3 from 'web3/dist/web3.min.js'
 
-import { ConnectWalletModal, SvgComponent } from '@/components'
+import {
+  ConnectWalletModal,
+  CustomNumberInput,
+  SvgComponent,
+} from '@/components'
 import { WETH_CONTRACT_ADDRESS, XBANK_CONTRACT_ADDRESS } from '@/constants'
 import { useCatchContractError, useWallet } from '@/hooks'
 import {
@@ -336,16 +338,13 @@ const CreatePoolButton: FunctionComponent<
                   pointerEvents='none'
                   color='gray.300'
                   fontSize='1.2em'
-                  top='14px'
+                  top='12px'
                 >
                   <SvgComponent svgId='icon-eth' fill={'black.1'} />
                 </InputLeftElement>
-                <NumberInput
+                <CustomNumberInput
                   w='100%'
                   value={amount}
-                  onChange={(v) => {
-                    setAmount(v)
-                  }}
                   errorBorderColor='red.1'
                   isInvalid={isError}
                   // lineHeight='60px'
@@ -359,21 +358,17 @@ const CreatePoolButton: FunctionComponent<
                     subscribeLoading
                   }
                   top={'2px'}
-                >
-                  <NumberInputField
-                    h='60px'
-                    px={'32px'}
-                    _focus={{
-                      borderColor: isError ? 'red.1' : 'blue.1',
-                    }}
-                    _focusVisible={{
-                      boxShadow: `0 0 0 1px var(--chakra-colors-${
-                        isError ? 'red-1' : 'blue-1'
-                      })`,
-                    }}
-                    placeholder='Enter the approve ETH amount...'
-                  />
-                </NumberInput>
+                  onSetValue={(v) => setAmount(v)}
+                  px={'32px'}
+                  _focus={{
+                    borderColor: isError ? 'red.1' : 'blue.1',
+                  }}
+                  _focusVisible={{
+                    boxShadow: `0 0 0 1px var(--chakra-colors-${
+                      isError ? 'red-1' : 'blue-1'
+                    })`,
+                  }}
+                />
 
                 {isError && (
                   <InputRightElement top='14px' mr='8px'>
