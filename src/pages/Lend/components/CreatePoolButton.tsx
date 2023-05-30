@@ -195,9 +195,9 @@ const CreatePoolButton: FunctionComponent<
             // uint32 poolMaximumInterestRate,
             poolMaximumInterestRate,
             // uint32 loanTimeConcessionFlexibility,
-            loanTimeConcessionFlexibility,
+            loanTimeConcessionFlexibility * 10000,
             // uint32 loanRatioPreferentialFlexibility
-            loanRatioPreferentialFlexibility,
+            loanRatioPreferentialFlexibility * 10000,
           )
           .send({
             from: currentAccount,
