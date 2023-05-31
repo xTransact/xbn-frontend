@@ -625,10 +625,10 @@ const Lend = () => {
       },
       {
         title: 'Loan value',
-        dataIndex: 'total_repayment',
+        dataIndex: 'loan_amount',
         align: 'right',
         thAlign: 'right',
-        key: 'total_repayment',
+        key: 'loan_amount',
         render: (value: any) => (
           <Text>
             {wei2Eth(value)} {UNIT}
@@ -645,16 +645,16 @@ const Lend = () => {
       },
       {
         title: 'Interest',
-        dataIndex: 'loan_interest',
-        key: 'loan_interest',
+        dataIndex: 'installment',
+        key: 'installment',
         render: (_: any, item: Record<string, any>) => {
           return (
             <Text>
               {BigNumber(
                 wei2Eth(
-                  BigNumber(item.loan_interest)
-                    .multipliedBy(item?.repay_times)
-                    .minus(item.total_repayment),
+                  BigNumber(item.installment)
+                    .multipliedBy(item?.number_of_installments)
+                    .minus(item.loan_amount),
                 ),
               ).toFormat(FORMAT_NUMBER)}
               {UNIT}

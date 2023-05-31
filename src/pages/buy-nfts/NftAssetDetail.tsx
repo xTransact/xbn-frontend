@@ -432,10 +432,10 @@ const NftAssetDetail = () => {
           borrower_address: currentAccount,
           commodity_price: `${commodityWeiPrice.toNumber()}`,
           oracle_floor_price: `${commodityWeiPrice.toNumber()}`,
-          load_principal_amount: downPaymentWei.toNumber().toString(),
+          down_payment: downPaymentWei.toNumber().toString(),
           nft_collateral_id: `${detail?.asset?.tokenID}`,
-          repay_times: installmentValue,
-          total_repayment: loanWeiAmount.toNumber().toString(),
+          number_of_installments: installmentValue,
+          loan_amount: loanWeiAmount.toNumber().toString(),
           loan_duration: pool_days * 24 * 60 * 60,
           loan_interest_rate: lp_pool_apr,
         }
