@@ -57,15 +57,15 @@ interface LoanOrderDataType {
   // 地板价 传 commodity_price
   oracle_floor_price: string
   // 首付价格
-  load_principal_amount: string
+  down_payment: string
   // 贷款金额
-  total_repayment: string
+  loan_amount: string
   // 利率
   loan_interest_rate: number
   //
   loan_duration: number
   // n 期
-  repay_times: number
+  number_of_installments: number
   // token ID
   nft_collateral_id: string
 }
@@ -81,15 +81,18 @@ interface LoanListItemType {
   loan_ratio_preferential_flexibility: number
   lender_address: string
   borrower_address: string
-  load_principal_amount: string
-  total_repayment: string
-  repayed_amount: string
+  down_payment: string
+  loan_amount: string
+  repaid_principal: string
+  repaid_interest: string
   loan_status: 1 | 2 | 3
-  loan_interest: string
+  installment: string
+  lp_scheduled_received: string
+  protocol_ir_multiplier: string
   loan_interest_rate: number
   loan_start_time: number
   loan_duration: number
-  repay_times: number
+  number_of_installments: number
   commodity_price: string
   oracle_floor_price: string
   nft_collateral_contract: string
