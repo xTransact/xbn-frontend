@@ -301,10 +301,6 @@ const Market = () => {
           pt='20px'
           top={'79px'}
           bg='white'
-          height={{
-            xl: '70vh',
-            lg: '70vh',
-          }}
           w={{
             xl: '360px',
             lg: '260px',
@@ -322,6 +318,7 @@ const Market = () => {
             px={{ md: '24px', sm: 0, xs: 0 }}
             overflowY='auto'
             overflowX={'visible'}
+            minH={'300px'}
           >
             <Heading size={'md'} mb='16px'>
               Collections
