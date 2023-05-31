@@ -613,10 +613,10 @@ const Lend = () => {
       },
       {
         title: 'Loan value',
-        dataIndex: 'total_repayment',
+        dataIndex: 'loan_amount',
         align: 'right',
         thAlign: 'right',
-        key: 'total_repayment',
+        key: 'loan_amount',
         render: (value: any) => (
           <Text>
             {wei2Eth(value)} {UNIT}
@@ -642,13 +642,13 @@ const Lend = () => {
             {BigNumber(
               wei2Eth(
                 amortizationCalByDays(
-                  data.total_repayment,
+                  data.loan_amount,
                   data.loan_interest_rate / 10000,
                   (data.loan_duration / 24 / 60 / 60) as 7 | 14 | 30 | 60 | 90,
-                  data.repay_times,
+                  data.number_of_installments,
                 )
-                  .multipliedBy(data.repay_times)
-                  .minus(data.total_repayment),
+                  .multipliedBy(data.number_of_installments)
+                  .minus(data.loan_amount),
               ),
             ).toFormat(FORMAT_NUMBER)}
             &nbsp; ETH

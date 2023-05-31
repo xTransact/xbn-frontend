@@ -186,8 +186,8 @@ const Loans = () => {
     },
     {
       title: 'Loan value',
-      dataIndex: 'total_repayment',
-      key: 'total_repayment',
+      dataIndex: 'loan_amount',
+      key: 'loan_amount',
       render: (value: any) => (
         <Text>
           {wei2Eth(value)} {UNIT}
@@ -210,13 +210,13 @@ const Loans = () => {
             {BigNumber(
               wei2Eth(
                 amortizationCalByDays(
-                  item?.total_repayment,
+                  item?.loan_amount,
                   item?.loan_interest_rate / 10000,
                   (item?.loan_duration / 24 / 60 / 60) as 7 | 14 | 30 | 60 | 90,
-                  item?.repay_times,
+                  item?.number_of_installments,
                 )
-                  .multipliedBy(item?.repay_times)
-                  .minus(item.total_repayment),
+                  .multipliedBy(item?.number_of_installments)
+                  .minus(item.loan_amount),
               ),
             ).toFormat(FORMAT_NUMBER)}
             {UNIT}
@@ -259,14 +259,14 @@ const Loans = () => {
                   // },
                   {
                     title: 'Next payment amount',
-                    dataIndex: 'col9',
-                    key: 'col9',
+                    dataIndex: 'number_of_installments',
+                    key: 'number_of_installments',
                     render: (_: any, item: Record<string, any>) => (
                       <Text>
                         {BigNumber(
                           wei2Eth(
                             amortizationCalByDays(
-                              item.total_repayment,
+                              item.loan_amount,
                               item.loan_interest_rate / 10000,
                               (item.loan_duration / 24 / 60 / 60) as
                                 | 7
@@ -274,7 +274,7 @@ const Loans = () => {
                                 | 30
                                 | 60
                                 | 90,
-                              item.repay_times,
+                              item.number_of_installments,
                             ),
                           ),
                         ).toFormat(8)}
