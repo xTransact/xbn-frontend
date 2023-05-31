@@ -83,6 +83,10 @@ export const STEPS_DESCRIPTIONS = [
     text: 'Indicate the ratio which will determine how much money borrowers can receive to borrow against expected NFT collection. The higher the ratio, the more money they can borrow from the pool. A 50% of collateral factor will be more commonly used.',
   },
   {
+    title: 'Set maximum single loan amount',
+    text: `This determines the maximum single loan amount that borrowers can acquire under your loan offer. When the collection floor price rises rapidly, this limit can help you avoid lending too much money for a single loan`,
+  },
+  {
     title: 'Set Maximum loan tenor',
     text: 'Please choose the max length of duration acceptable for potential borrowers. A 60-day length of duration will be more commonly used.',
   },

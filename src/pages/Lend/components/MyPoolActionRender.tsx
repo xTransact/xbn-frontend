@@ -103,6 +103,11 @@ const MyPoolActionRender: FunctionComponent<
                             nftCollection: data?.nftCollection,
                             poolData: {
                               ...omit(data, ['nftCollection']),
+                              // loan_ratio_preferential_flexibility: 10000,
+                              // loan_time_concession_flexibility: 9800,
+                              // pool_maximum_days: 3,
+                              // pool_maximum_percentage: 2000,
+                              // pool_maximum_interest_rate: 2290,
                             },
                           },
                         })

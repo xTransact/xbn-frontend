@@ -427,6 +427,7 @@ const Lend = () => {
               <Text
                 color={info.isContainMyPool ? 'gray.1' : 'blue.1'}
                 onClick={() => {
+                  if (info.isContainMyPool) return
                   navigate(`/xlending/lending/create`, {
                     state: {
                       contractAddress: info.contractAddress,

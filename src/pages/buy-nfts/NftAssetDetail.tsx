@@ -18,6 +18,7 @@ import {
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
+import { min } from 'lodash-es'
 import ceil from 'lodash-es/ceil'
 import debounce from 'lodash-es/debounce'
 import isEmpty from 'lodash-es/isEmpty'
@@ -268,10 +269,14 @@ const NftAssetDetail = () => {
         const poolLatestCanUseAmount = BigNumber(item.pool_amount).minus(
           item.pool_used_amount,
         )
+        // 单笔最大贷款金额
+        const maxSingleLoanAmount = Infinity
         // 二者取较小值用于比较
-        const forCompareWei = poolLatestCanUseAmount.lte(latestWeth)
-          ? poolLatestCanUseAmount
-          : latestWeth
+        const forCompareWei = min([
+          poolLatestCanUseAmount,
+          latestWeth,
+          maxSingleLoanAmount,
+        ])
         return (
           item.pool_maximum_percentage >= loanPercentage &&
           loanWeiAmount.lte(forCompareWei)
