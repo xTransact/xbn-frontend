@@ -55,11 +55,13 @@ const CusCard = (props: {
           borderTopRightRadius={48}
           overflow={'hidden'}
           p={'1px'}
-          marginBottom={'-6px'}
+          marginBottom={'-7px'}
         >
           <Box
             display={'inline-block'}
             p={'10px 60px 10px 20px'}
+            borderTopLeftRadius={16}
+            borderTopRightRadius={48}
             bgGradient={
               'linear-gradient(272.41deg, #0000FF 0.82%, #071E38 87.36%)'
             }
@@ -78,7 +80,7 @@ const CusCard = (props: {
       )}
       <Box
         bgGradient={'linear-gradient(0deg, #32E8FC 0.82%, #FFFFFF 87.36%)'}
-        padding={'1px'}
+        padding={'1.5px'}
         borderRadius={props.titleHidden ? '10px' : '0 10px 10px 10px'}
         boxShadow='0px 3px 1px #32E8FC'
         overflow={'hidden'}
@@ -89,7 +91,7 @@ const CusCard = (props: {
           dropShadow={'base'}
           backgroundColor={'#022650'}
           color={'#FFFFFF'}
-          borderRadius={0}
+          borderRadius={props.titleHidden ? '10px' : '0 10px 10px 10px'}
         >
           {props.children}
         </Card>
