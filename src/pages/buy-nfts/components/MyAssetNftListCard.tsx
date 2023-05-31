@@ -61,7 +61,7 @@ import { FORMAT_NUMBER, LIST_DURATION, UNIT, LISTING_TYPE } from '@/constants'
 import { useIsMobile, useWallet } from '@/hooks'
 import { wei2Eth } from '@/utils/unit-conversion'
 
-const MODEL_HEADER_PROPS: ModalHeaderProps = {
+export const MODEL_HEADER_PROPS: ModalHeaderProps = {
   pt: {
     md: '40px',
     sm: '20px',

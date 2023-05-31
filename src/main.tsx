@@ -5,7 +5,6 @@ import {
   createHttpLink,
 } from '@apollo/client'
 import { ChakraProvider, Heading, Spinner } from '@chakra-ui/react'
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { PhotoProvider } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
@@ -36,33 +35,31 @@ const client = new ApolloClient({
 })
 const rootElement = document.getElementById('root')
 createRoot(rootElement as HTMLElement).render(
-  <StrictMode>
-    <ApolloProvider client={client}>
-      <ChakraProvider
-        theme={theme}
-        toastOptions={{
-          defaultOptions: { ...TOAST_OPTION_CONFIG },
-        }}
-      >
-        <TransactionsProvider>
-          <BrowserRouter>
-            <RootLayout>
-              <PhotoProvider
-                maskOpacity={0.4}
-                bannerVisible={false}
-                maskClosable
-                photoClosable
-                loadingElement={<Spinner colorScheme={'blue'} color='blue.1' />}
-                brokenElement={
-                  <Heading color={'gray.1'}>something went wrong...</Heading>
-                }
-              >
-                <App />
-              </PhotoProvider>
-            </RootLayout>
-          </BrowserRouter>
-        </TransactionsProvider>
-      </ChakraProvider>
-    </ApolloProvider>
-  </StrictMode>,
+  <ApolloProvider client={client}>
+    <ChakraProvider
+      theme={theme}
+      toastOptions={{
+        defaultOptions: { ...TOAST_OPTION_CONFIG },
+      }}
+    >
+      <TransactionsProvider>
+        <BrowserRouter>
+          <RootLayout>
+            <PhotoProvider
+              maskOpacity={0.4}
+              bannerVisible={false}
+              maskClosable
+              photoClosable
+              loadingElement={<Spinner colorScheme={'blue'} color='blue.1' />}
+              brokenElement={
+                <Heading color={'gray.1'}>something went wrong...</Heading>
+              }
+            >
+              <App />
+            </PhotoProvider>
+          </RootLayout>
+        </BrowserRouter>
+      </TransactionsProvider>
+    </ChakraProvider>
+  </ApolloProvider>,
 )

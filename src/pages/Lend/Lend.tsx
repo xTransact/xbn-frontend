@@ -47,9 +47,10 @@ import {
   ImageWithFallback,
   type ColumnProps,
   SearchInput,
+  GuideModal,
 } from '@/components'
-import { FORMAT_NUMBER, UNIT } from '@/constants'
-import { useWallet, useBatchAsset } from '@/hooks'
+import { FORMAT_NUMBER, LP_GUIDES, UNIT } from '@/constants'
+import { useWallet, useBatchAsset, useGuide } from '@/hooks'
 import { formatAddress } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
@@ -106,6 +107,10 @@ const TabWrapper: FunctionComponent<TabProps> = ({ children, ...rest }) => {
  * @returns Collections  MyPools Loans
  */
 const Lend = () => {
+  const { isOpen: guideVisible, onClose: closeGuide } = useGuide({
+    key: 'has-read-lp-guide',
+  })
+
   const [tabKey, setTabKey] = useState<TAB_KEY>(TAB_KEY.COLLECTION_TAB)
 
   const { isOpen: showSearch, onToggle: toggleShowSearch } = useDisclosure()
@@ -675,6 +680,12 @@ const Lend = () => {
 
   return (
     <Box mb='100px'>
+      <GuideModal
+        steps={LP_GUIDES}
+        isOpen={guideVisible}
+        onClose={closeGuide}
+      />
+
       <Box
         my={{
           md: '60px',

@@ -1,3 +1,6 @@
+import img from '@/assets/IMAGE.png'
+import type { StepItemType } from '@/components/guide-modal/GuideModal'
+
 import type { UseToastOptions } from '@chakra-ui/react'
 
 export { XBANK_CONTRACT_ABI, WETH_CONTRACT_ABI } from './contractABI'
@@ -120,3 +123,19 @@ export enum LISTING_TYPE {
   LISTING = 1,
   CANCEL = 2,
 }
+
+export const LP_GUIDES: StepItemType[] = [
+  {
+    index: 1,
+    title: '这是第一步',
+    description: '这是第一步这是第一步这是第一步这是第一步这是第一步这是第一步',
+    img,
+  },
+  {
+    index: 2,
+    title: '这是第二步',
+    description: '这是第二步这是第二步这是第二步这是第二步这是第二步这是第二步',
+    video:
+      'https://www.motionelements.com/zh-hant/stock-video-25485291-film-noise-like-material',
+  },
+]
