@@ -162,7 +162,7 @@ const CommunityPopover = () => {
               </Flex>
               {/* </Link> */}
             </PopoverTrigger>
-            <PopoverContent w={40} top='16px' borderRadius={8}>
+            <PopoverContent w={'140px'} top='16px' borderRadius={8}>
               <PopoverBody px={0} p={'20px'}>
                 <Flex flexDir={'column'} gap='20px'>
                   {COMMUNITY_DATA.map(({ icon, title, url }) => (
@@ -172,7 +172,7 @@ const CommunityPopover = () => {
                         alignItems={'center'}
                         gap='8px'
                       >
-                        <SvgComponent svgId={icon} />
+                        <SvgComponent svgId={icon} fill='gray.6' />
                         <Text
                           fontSize='16px'
                           _hover={{

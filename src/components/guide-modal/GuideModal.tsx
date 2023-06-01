@@ -19,6 +19,8 @@ import {
 
 import { MODEL_HEADER_PROPS } from '@/pages/buy-nfts/components/MyAssetNftListCard'
 
+import icon from '@/assets/icon-guide.svg'
+
 import { SvgComponent } from '../'
 
 export type StepItemType = {
@@ -53,7 +55,10 @@ const GuideModal: FunctionComponent<{
         // hidden={index !== step}
       >
         <ModalHeader {...MODEL_HEADER_PROPS}>
-          {title}
+          <Flex alignItems={'center'} gap='4px'>
+            <Image src={icon} />
+            {title}
+          </Flex>
           <SvgComponent
             svgId='icon-close'
             onClick={onClose}

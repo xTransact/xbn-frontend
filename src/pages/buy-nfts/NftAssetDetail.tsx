@@ -827,13 +827,8 @@ const NftAssetDetail = () => {
                 return (
                   <Flex
                     key={`${pool_id}-${pool_apr_with_spread}-${pool_days}`}
-                    w={{
-                      md: `${100 / pools.length}%`,
-                      sm: '100%',
-                      xs: '100%',
-                    }}
                     minW={{
-                      md: '112px',
+                      md: '90px',
                       sm: '100%',
                       xs: '100%',
                     }}
@@ -890,17 +885,18 @@ const NftAssetDetail = () => {
                 <Flex
                   key={value}
                   w={{
-                    md: `${100 / installmentOptions.length}%`,
+                    md: `${100 / installmentOptions.length - 2}%`,
                     sm: '100%',
                     xs: '100%',
                   }}
                   maxW={{
-                    md: '206px',
+                    md: '200px',
                     sm: '100%',
                     xs: '100%',
                   }}
                 >
                   <RadioCard
+                    p='10px'
                     isDisabled={clickLoading}
                     onClick={() => setInstallmentValue(value)}
                     isActive={value === installmentValue}

@@ -8,6 +8,7 @@ const useGuide = ({ key }: { key: string }) => {
   })
 
   const { isOpen, onClose, onOpen } = useDisclosure()
+  console.log('🚀 ~ file: useGuide.ts:11 ~ useGuide ~ isOpen:', isOpen)
   useEffect(() => {
     if (!hasReadGuide) onOpen()
   }, [hasReadGuide, onOpen])
@@ -17,7 +18,7 @@ const useGuide = ({ key }: { key: string }) => {
   }, [onClose, setHasReadGuide])
 
   return {
-    isOpen,
+    isOpen: false,
     onClose: onCloseGuide,
     onOpen,
   }
