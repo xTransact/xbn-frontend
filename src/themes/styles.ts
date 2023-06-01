@@ -12,9 +12,6 @@ const styles = {
     a: {
       color: 'blue.1',
     },
-    '.banner-bg': {
-      'background-color': 'red'
-    }
   },
 }
 

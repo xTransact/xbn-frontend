@@ -9,7 +9,7 @@ import { getUserToken } from './auth'
 // import { decrypt } from './decrypt'
 // import { PWD } from '@consts/crypt'
 
-const { MODE, VITE_BASE_URL } = import.meta.env
+const { MODE, VITE_BASE_URL, VITE_APP_KEY } = import.meta.env
 
 const { toast } = createStandaloneToast({
   defaultOptions: {
@@ -20,6 +20,7 @@ const { toast } = createStandaloneToast({
 const request = axios.create({
   baseURL: '',
   headers: {
+    appkey: VITE_APP_KEY,
     Authorization: getUserToken()
       ? `Bearer ${getUserToken()?.token}`
       : undefined,

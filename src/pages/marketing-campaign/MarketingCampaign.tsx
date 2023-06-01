@@ -12,7 +12,10 @@ import {
   Flex,
   Link,
 } from '@chakra-ui/react'
+import { useBoolean, useSetState } from 'ahooks'
+import BigNumber from 'bignumber.js'
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { apiGetBoxes } from '@/api/marketing-campaign'
 import ImgBanner from '@/assets/marketing/banner.png'
@@ -36,6 +39,7 @@ import IconTelegram from '@/assets/marketing/telegram.png'
 import IconTwitter from '@/assets/marketing/twitter.png'
 import IconLogo from '@/assets/marketing/xbank-logo.png'
 import { Header } from '@/components'
+import { useWallet } from '@/hooks'
 
 const CusCard = (props: {
   title?: string
@@ -118,7 +122,18 @@ const TitleWithQuestionBox = (props: { title: string }) => {
   )
 }
 export default function MarketingCampaign() {
+  const navigate = useNavigate()
+  const { currentAccount, connectWallet } = useWallet()
+  const [hasUsedXBN, setHasUsedXBN] = useBoolean(false)
+  const [boxAmounts, setBoxAmounts] = useSetState({
+    box_bronze: 0,
+    box_diamond: 0,
+    box_gold: 0,
+    box_platinum: 0,
+    box_silver: 0,
+  })
   useEffect(() => {
+    console.log('rendered')
     apiGetBoxes()
       .then((resp) => {
         console.log(resp)
@@ -128,7 +143,7 @@ export default function MarketingCampaign() {
       })
   }, [])
   return (
-    <>
+    <div>
       <Header />
       <Box bgGradient={'linear-gradient(0deg, #071E38, #071E38), #F9F9FF;'}>
         <Container width={'100%'} maxW='1440px'>
@@ -186,7 +201,7 @@ export default function MarketingCampaign() {
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          4, 000
+                          {BigNumber(boxAmounts.box_bronze).toFormat()}
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
@@ -204,7 +219,7 @@ export default function MarketingCampaign() {
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          5, 690
+                          {BigNumber(boxAmounts.box_silver).toFormat()}
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
@@ -222,7 +237,7 @@ export default function MarketingCampaign() {
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          160
+                          {BigNumber(boxAmounts.box_gold).toFormat()}
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
@@ -240,7 +255,7 @@ export default function MarketingCampaign() {
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          40
+                          {BigNumber(boxAmounts.box_platinum).toFormat()}
                         </Text>
                       </Flex>
                     </Flex>
@@ -406,69 +421,137 @@ export default function MarketingCampaign() {
                   </Text>
                 </Flex>
               </Flex>
-              <Box
-                mb={'86px'}
-                bgColor={'#022650'}
-                border='1px solid #32E8FC'
-                padding='24px 28px'
-                borderRadius={'16px'}
-              >
-                <Flex mb='40px' alignItems={'center'}>
-                  <Text fontSize={'24px'} fontWeight={900} w='189px' mr='81px'>
-                    Invitation Link:
-                  </Text>
-                  <Box
-                    border='1px solid #B3B3FF'
-                    borderRadius={'28px'}
-                    w='733px'
+              {!currentAccount ? (
+                <Flex justifyContent={'center'} mb='205px' pt='27px'>
+                  <Button
+                    bgColor={'rgba(80, 176, 248, 1)'}
+                    _hover={{
+                      bgColor: 'rgba(80, 176, 248, 0.9)',
+                    }}
+                    w='100%'
+                    maxW='600px'
+                    fontSize={20}
+                    fontFamily={'HarmonyOS Sans SC Bold'}
+                    onClick={() => {
+                      connectWallet()
+                    }}
                   >
-                    <Flex
-                      padding={'3px 2px'}
-                      justifyContent={'space-between'}
-                      alignItems={'center'}
-                    >
-                      <Flex alignItems={'center'}>
-                        <Text
-                          color='#B5C4D7'
-                          fontSize={'24px'}
-                          fontWeight={400}
-                          padding={'0 18px'}
-                          maxW={'300px'}
-                          noOfLines={1}
-                        >
-                          Lorem ipsum dolor sit amet consectetur, adipisicing
-                          elit. Non, sunt? Perferendis numquam animi tenetur
-                          laudantium, sunt libero beatae rerum voluptates,
-                          accusamus hic exercitationem blanditiis itaque vel
-                          provident atque dicta distinctio?
-                        </Text>
-                        <Image src={IconCopy} w='24px' h='24px' />
-                      </Flex>
+                    Connect Wallet
+                  </Button>
+                </Flex>
+              ) : (
+                <>
+                  {!!hasUsedXBN ? (
+                    <Flex justifyContent={'center'} mb='205px' pt='27px'>
                       <Button
-                        fontSize={'20px'}
+                        bgColor={'rgba(80, 176, 248, 1)'}
+                        _hover={{
+                          bgColor: 'rgba(80, 176, 248, 0.9)',
+                        }}
+                        w='100%'
+                        maxW='600px'
+                        fontSize={20}
                         fontFamily={'HarmonyOS Sans SC Bold'}
-                        color='#0000FF'
-                        paddingX={'83px'}
+                        onClick={() => {
+                          navigate('/xlending/buy-nfts/market')
+                        }}
                       >
-                        Get Sliver Box
+                        Unlock invitations by completing a lending or borrowing
                       </Button>
                     </Flex>
-                  </Box>
-                </Flex>
-                <Flex alignItems={'center'}>
-                  <Text fontSize={'24px'} fontWeight={900} w='189px' mr='81px'>
-                    Share To:
-                  </Text>
-                  <Flex direction={'column'} alignItems={'center'} w='120px'>
-                    <Image src={IconTwitter} w='32px' fontSize={'16px'} />
-                    <Text>Twitter</Text>
-                  </Flex>
-                  <Flex direction={'column'} alignItems={'center'} w='120px'>
-                    <Image src={IconTelegram} w='32px' fontSize={'16px'} />
-                    <Text>Telegram</Text>
-                  </Flex>
-                </Flex>
-              </Box>
+                  ) : (
+                    <Box
+                      mb={'86px'}
+                      bgColor={'#022650'}
+                      border='1px solid #32E8FC'
+                      padding='24px 28px'
+                      borderRadius={'16px'}
+                    >
+                      <Flex mb='40px' alignItems={'center'}>
+                        <Text
+                          fontSize={'24px'}
+                          fontWeight={900}
+                          w='189px'
+                          mr='81px'
+                        >
+                          Invitation Link:
+                        </Text>
+                        <Box
+                          border='1px solid #B3B3FF'
+                          borderRadius={'28px'}
+                          w='733px'
+                        >
+                          <Flex
+                            padding={'3px 2px'}
+                            justifyContent={'space-between'}
+                            alignItems={'center'}
+                          >
+                            <Flex alignItems={'center'}>
+                              <Text
+                                color='#B5C4D7'
+                                fontSize={'24px'}
+                                fontWeight={400}
+                                padding={'0 18px'}
+                                maxW={'300px'}
+                                noOfLines={1}
+                              >
+                                Lorem ipsum dolor sit amet consectetur,
+                                adipisicing elit. Non, sunt? Perferendis numquam
+                                animi tenetur laudantium, sunt libero beatae
+                                rerum voluptates, accusamus hic exercitationem
+                                blanditiis itaque vel provident atque dicta
+                                distinctio?
+                              </Text>
+                              <Image src={IconCopy} w='24px' h='24px' />
+                            </Flex>
+                            <Button
+                              fontSize={'20px'}
+                              fontFamily={'HarmonyOS Sans SC Bold'}
+                              paddingX={'83px'}
+                              bgColor={'rgba(80, 176, 248, 1)'}
+                              _hover={{
+                                bgColor: 'rgba(80, 176, 248, 0.9)',
+                              }}
+                            >
+                              Get Sliver Box
+                            </Button>
+                          </Flex>
+                        </Box>
+                      </Flex>
+                      <Flex alignItems={'center'}>
+                        <Text
+                          fontSize={'24px'}
+                          fontWeight={900}
+                          w='189px'
+                          mr='81px'
+                        >
+                          Share To:
+                        </Text>
+                        <Flex
+                          direction={'column'}
+                          alignItems={'center'}
+                          w='120px'
+                        >
+                          <Image src={IconTwitter} w='32px' fontSize={'16px'} />
+                          <Text>Twitter</Text>
+                        </Flex>
+                        <Flex
+                          direction={'column'}
+                          alignItems={'center'}
+                          w='120px'
+                        >
+                          <Image
+                            src={IconTelegram}
+                            w='32px'
+                            fontSize={'16px'}
+                          />
+                          <Text>Telegram</Text>
+                        </Flex>
+                      </Flex>
+                    </Box>
+                  )}
+                </>
+              )}
             </Box>
           </Box>
         </Container>
@@ -522,6 +605,6 @@ export default function MarketingCampaign() {
           </Container>
         </Box>
       </Box>
-    </>
+    </div>
   )
 }
