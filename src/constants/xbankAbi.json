@@ -420,6 +420,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "maximumLoanAmount",
+        "type": "uint256"
+      },
+      {
         "internalType": "uint32",
         "name": "poolMaximumPercentage",
         "type": "uint32"
@@ -698,6 +703,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "uint256",
+            "name": "maximumLoanAmount",
+            "type": "uint256"
+          },
+          {
             "internalType": "uint32",
             "name": "loanCount",
             "type": "uint32"
@@ -969,6 +979,11 @@
           {
             "internalType": "uint256",
             "name": "poolUsedAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maximumLoanAmount",
             "type": "uint256"
           },
           {
