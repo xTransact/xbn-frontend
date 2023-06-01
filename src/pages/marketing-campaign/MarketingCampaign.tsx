@@ -4,8 +4,6 @@ import {
   CardBody,
   Image,
   Container,
-  Grid,
-  GridItem,
   SimpleGrid,
   Text,
   HStack,
@@ -16,6 +14,7 @@ import {
 } from '@chakra-ui/react'
 import React, { useEffect } from 'react'
 
+import { apiGetBoxes } from '@/api/marketing-campaign'
 import ImgBanner from '@/assets/marketing/banner.png'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
 import Box1 from '@/assets/marketing/box1.png'
@@ -89,7 +88,7 @@ const CusCard = (props: {
           variant={'outline'}
           borderWidth={0}
           dropShadow={'base'}
-          backgroundColor={'#022650'}
+          bgColor={'#022650'}
           color={'#FFFFFF'}
           borderRadius={props.titleHidden ? '10px' : '0 10px 10px 10px'}
         >
@@ -120,10 +119,13 @@ const TitleWithQuestionBox = (props: { title: string }) => {
 }
 export default function MarketingCampaign() {
   useEffect(() => {
-    document.querySelector('html')?.classList.add('.banner-bg')
-    return () => {
-      document.querySelector('html')?.classList.remove('.banner-bg')
-    }
+    apiGetBoxes()
+      .then((resp) => {
+        console.log(resp)
+      })
+      .catch((e) => {
+        console.log('e', e)
+      })
   }, [])
   return (
     <>
