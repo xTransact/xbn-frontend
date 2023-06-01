@@ -1,51 +1,34 @@
-import { Flex, Image, Text } from '@chakra-ui/react'
 import { useMemo, type FunctionComponent } from 'react'
 
-import { SvgComponent } from '@/components'
+import imgBlur from '@/assets/blur-logo.png'
+import imgOpensea from '@/assets/opensea-logo.png'
 
-import IconX2y2 from '@/assets/icon-x2y2.svg'
+import ImageWithFallback from '../image-with-fallback/ImageWithFallback'
 
-/**
- * 1: looksrare
- * 2. opensea
- * 3. x2y2
- */
-const NftOrigin: FunctionComponent<{ type: 1 | 2 | 3 }> = ({ type }) => {
-  const { img, name } = useMemo(() => {
+import type { ImageProps } from '@chakra-ui/react'
+
+export enum MarketType {
+  OPENSEA,
+  BLUR,
+}
+
+const NftOrigin: FunctionComponent<{ type?: MarketType } & ImageProps> = ({
+  type,
+  ...rest
+}) => {
+  const img = useMemo(() => {
     switch (type) {
-      case 1:
-        return {
-          img: <SvgComponent svgId='icon-loosrare' />,
-          name: 'LooksRare',
-        }
+      case MarketType.BLUR:
+        return imgBlur
 
-      case 2:
-        return {
-          img: <SvgComponent svgId='icon-opensea' />,
-
-          name: 'OpenSea',
-        }
-      case 3:
-        return {
-          img: <Image src={IconX2y2} alt='x2y2' />,
-          name: 'X2Y2',
-        }
+      case MarketType.OPENSEA:
+        return imgOpensea
 
       default:
-        return {
-          img: <SvgComponent svgId='icon-loosrare' />,
-          name: 'LooksRare',
-        }
+        return ''
     }
   }, [type])
-  return (
-    <Flex gap={'4px'}>
-      {img}
-      <Text fontSize={'14px'} fontWeight={500} color='gray.3'>
-        {name}
-      </Text>
-    </Flex>
-  )
+  return <ImageWithFallback src={img} alt='market' h='20px' {...rest} />
 }
 
 export default NftOrigin

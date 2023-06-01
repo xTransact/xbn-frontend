@@ -7,7 +7,8 @@ import {
   type BoxProps,
 } from '@chakra-ui/react'
 
-import { SvgComponent } from '@/components'
+import { NftOrigin, SvgComponent } from '@/components'
+import { type MarketType } from '@/components/nft-origin/NftOrigin'
 
 import type { FunctionComponent } from 'react'
 
@@ -19,13 +20,14 @@ const DetailComponent: FunctionComponent<
       price: string
       verified: boolean
       usdPrice?: string
+      platform?: MarketType
     }
     loading?: boolean
     onRefreshPrice?: () => void
     refreshLoading?: boolean
   }
 > = ({
-  data: { name1, name2, price, verified, usdPrice },
+  data: { name1, name2, price, verified, usdPrice, platform },
   loading,
   onRefreshPrice,
   refreshLoading,
@@ -76,7 +78,7 @@ const DetailComponent: FunctionComponent<
             )}
           </Flex>
         </Box>
-        {/* <NftOrigin type={1} /> */}
+        <NftOrigin type={platform} />
       </Flex>
     </Box>
   )

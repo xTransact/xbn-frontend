@@ -44,6 +44,7 @@ import {
   H5SecondaryHeader,
   MiddleStatus,
 } from '@/components'
+import { MarketType } from '@/components/nft-origin/NftOrigin'
 import { COLLATERALS, FORMAT_NUMBER, TENORS, UNIT } from '@/constants'
 import {
   useWallet,
@@ -119,6 +120,7 @@ const NftAssetDetail = () => {
   const timer = useRef<NodeJS.Timeout>()
   const [loanStep, setLoanStep] = useState<'loading' | 'success' | undefined>()
   const { isOpen, onClose, currentAccount, interceptFn } = useWallet()
+  const [platform, setPlatform] = useState<MarketType | undefined>()
   const {
     state,
   }: {
@@ -182,18 +184,25 @@ const NftAssetDetail = () => {
           setCommodityWeiPrice(BigNumber(0))
           return
         }
-        // const minBlurPrice = minBy(data, (item) => item.blur_price?.amount)
-        const minOpenseaPrice = minBy(
-          data,
-          (item) => item.opensea_price?.amount,
-        )
-        // 先只是考虑 opensea 的
-        if (!minOpenseaPrice) {
+        const formatData = data.map((item) => ({
+          marketplace: item.marketplace,
+          amount: item.opensea_price?.amount || item.blur_price?.amount,
+        }))
+        const minMarketPrice = minBy(formatData, (item) => item?.amount)
+
+        if (!minMarketPrice) {
           setCommodityWeiPrice(BigNumber(0))
           return
         }
-        const weiPrice = eth2Wei(Number(minOpenseaPrice?.opensea_price?.amount))
+        const weiPrice = eth2Wei(Number(minMarketPrice.amount))
         setCommodityWeiPrice(BigNumber(weiPrice))
+        setPlatform(
+          minMarketPrice.marketplace === 'OPENSEA'
+            ? MarketType.OPENSEA
+            : minMarketPrice.marketplace === 'BLUR'
+            ? MarketType.BLUR
+            : undefined,
+        )
       },
       onError() {
         setCommodityWeiPrice(BigNumber(0))
@@ -648,6 +657,7 @@ const NftAssetDetail = () => {
                 )
               : '',
             verified: collection?.safelistRequestStatus === 'verified',
+            platform,
           }}
           // onReFresh={}
           loading={assetFetchLoading}
