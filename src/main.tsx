@@ -14,7 +14,6 @@ import 'video-react/dist/video-react.css' // import css
 
 import '@/assets/iconfont/iconfont.js'
 import { TransactionsProvider } from '@/context/TransactionContext'
-import RootLayout from '@/layouts/RootLayout'
 import theme from '@/themes'
 
 import App from './App'
@@ -46,20 +45,18 @@ createRoot(rootElement as HTMLElement).render(
       >
         <TransactionsProvider>
           <BrowserRouter>
-            <RootLayout>
-              <PhotoProvider
-                maskOpacity={0.4}
-                bannerVisible={false}
-                maskClosable
-                photoClosable
-                loadingElement={<Spinner colorScheme={'blue'} color='blue.1' />}
-                brokenElement={
-                  <Heading color={'gray.1'}>something went wrong...</Heading>
-                }
-              >
-                <App />
-              </PhotoProvider>
-            </RootLayout>
+            <PhotoProvider
+              maskOpacity={0.4}
+              bannerVisible={false}
+              maskClosable
+              photoClosable
+              loadingElement={<Spinner colorScheme={'blue'} color='blue.1' />}
+              brokenElement={
+                <Heading color={'gray.1'}>something went wrong...</Heading>
+              }
+            >
+              <App />
+            </PhotoProvider>
           </BrowserRouter>
         </TransactionsProvider>
       </ChakraProvider>
