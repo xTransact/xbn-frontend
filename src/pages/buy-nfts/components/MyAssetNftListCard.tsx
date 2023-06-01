@@ -869,7 +869,7 @@ const MyAssetNftListCard: FunctionComponent<
                         {isAmountError && (
                           <InputRightElement mr='110px' h='60px'>
                             <SvgComponent
-                              svgId='icon-info'
+                              svgId='icon-tip'
                               svgSize='24px'
                               fill={'red.1'}
                             />
@@ -917,7 +917,7 @@ const MyAssetNftListCard: FunctionComponent<
                             lineHeight={'24px'}
                           >
                             <SvgComponent
-                              svgId='icon-info'
+                              svgId='icon-tip'
                               fill={'orange.1'}
                               svgSize='16px'
                             />

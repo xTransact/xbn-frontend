@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Container,
   Flex,
   Heading,
   Text,
@@ -32,7 +31,7 @@ import {
   SvgComponent,
   CustomNumberInput,
 } from '@/components'
-import { STEPS_DESCRIPTIONS, RESPONSIVE_MAX_W, UNIT } from '@/constants'
+import { STEPS_DESCRIPTIONS } from '@/constants'
 import {
   BASE_RATE,
   COLLATERAL_KEYS,
@@ -70,7 +69,7 @@ const Wrapper: FunctionComponent<
   return (
     <Flex
       justify={'space-between'}
-      alignItems='start'
+      alignItems='center'
       flexWrap={{
         md: 'nowrap',
         sm: 'wrap',
@@ -83,8 +82,10 @@ const Wrapper: FunctionComponent<
         xs: 'block',
         sm: 'block',
       }}
+      borderRadius={16}
       mb='24px'
-      pos='relative'
+      bg='gray.5'
+      p='32px'
     >
       <StepDescription
         data={{
@@ -165,6 +166,7 @@ const Create = () => {
       return prev
     }
   }, [state, params, collectionAddressWithPool])
+
   const initialItems = useMemo(() => {
     let collateralKey = 4
     let tenorKey = 5
@@ -294,7 +296,6 @@ const Create = () => {
 
   const collectionSelectorProps = useMemo(
     () => ({
-      defaultValue: initialCollection,
       placeholder: 'Please select',
       onChange: (e: {
         contractAddress: string
@@ -303,7 +304,7 @@ const Create = () => {
         setSelectCollection(e)
       },
     }),
-    [initialCollection],
+    [],
   )
 
   if (!params || !['edit', 'create'].includes(params?.action)) {
@@ -313,14 +314,7 @@ const Create = () => {
   //   return <NotFound title='pool not found' />
   // }
   return (
-    <Container
-      maxW={{
-        ...RESPONSIVE_MAX_W,
-        lg: 1024,
-        xl: 1024,
-      }}
-      px={'2px'}
-    >
+    <>
       <H5SecondaryHeader />
 
       <Box mb={8}>
@@ -349,73 +343,91 @@ const Create = () => {
         )}
       </Box>
 
-      <Flex
-        px='20px'
-        py='24px'
-        bg='gray.5'
-        borderRadius={24}
-        mb='24px'
-        flexDir={'column'}
-        gap={'30px'}
-      >
+      <Flex borderRadius={24} mb='24px' flexDir={'column'} gap={'30px'}>
         {/* collection */}
         <Wrapper stepIndex={1}>
-          <Box
-            display={{
-              md: 'block',
-              sm: 'none',
-              xs: 'none',
-            }}
-          >
-            <AsyncSelectCollection
-              {...collectionSelectorProps}
-              w='240px'
-              disabledArr={collectionAddressWithPool}
-            />
-          </Box>
+          <Box>
+            <Box
+              display={{
+                md: 'block',
+                sm: 'none',
+                xs: 'none',
+              }}
+            >
+              <AsyncSelectCollection
+                {...collectionSelectorProps}
+                w='480px'
+                disabledArr={collectionAddressWithPool}
+                defaultValue={initialCollection}
+              />
+            </Box>
 
-          <Box
-            display={{
-              md: 'none',
-              sm: 'block',
-              xs: 'block',
-            }}
-            mt='24px'
-          >
-            <AsyncSelectCollection {...collectionSelectorProps} />
+            <Box
+              display={{
+                md: 'none',
+                sm: 'block',
+                xs: 'block',
+              }}
+              mt='24px'
+            >
+              <AsyncSelectCollection
+                {...collectionSelectorProps}
+                defaultValue={initialCollection}
+              />
+            </Box>
+            {!isEmpty(selectCollection) && (
+              <Flex
+                mt='12px'
+                justify={'flex-end'}
+                alignItems={'center'}
+                fontSize={'14px'}
+                fontWeight={'700'}
+                color='gray.3'
+              >
+                Current Floor Price
+                <SvgComponent svgId='icon-eth' />
+                {selectCollection?.nftCollection?.nftCollectionStat?.floorPrice}
+              </Flex>
+            )}
           </Box>
-          {!isEmpty(selectCollection) && (
-            <Text position={'absolute'} right={0} bottom={'-20px'}>
-              Current Floor Price:
-              {selectCollection?.nftCollection?.nftCollectionStat?.floorPrice}
-              {UNIT}
-            </Text>
-          )}
         </Wrapper>
         {/* 贷款比例 collateral */}
         <Wrapper stepIndex={2}>
-          <SliderWrapper
-            defaultValue={initialItems?.collateralKey}
-            data={COLLATERAL_KEYS}
-            min={COLLATERAL_KEYS[0]}
-            max={COLLATERAL_KEYS[COLLATERAL_KEYS.length - 1]}
-            step={1}
-            label={`${
-              (COLLATERAL_MAP.get(selectCollateralKey) as number) / 100
-            } %`}
-            onChange={(target) => {
-              setSelectCollateralKey(target)
-            }}
-          />
-          {!isEmpty(selectCollection) && (
-            <Text position={'absolute'} right={0} bottom={'-20px'}>
-              Current Maxdmum Loan Amount:
-              {(selectCollection?.nftCollection?.nftCollectionStat?.floorPrice *
-                (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
-                10000}
-              {UNIT}
-            </Text>
-          )}
+          <Box>
+            <SliderWrapper
+              unit='%'
+              value={selectCollateralKey}
+              svgId='icon-intersect'
+              defaultValue={initialItems?.collateralKey}
+              data={COLLATERAL_KEYS}
+              min={COLLATERAL_KEYS[0]}
+              max={COLLATERAL_KEYS[COLLATERAL_KEYS.length - 1]}
+              step={1}
+              label={`${
+                (COLLATERAL_MAP.get(selectCollateralKey) as number) / 100
+              }`}
+              onChange={(target) => {
+                setSelectCollateralKey(target)
+              }}
+            />
+            {!isEmpty(selectCollection) && (
+              <Flex
+                mt='12px'
+                justify={'flex-start'}
+                alignItems={'center'}
+                fontSize={'14px'}
+                fontWeight={'700'}
+                color='gray.3'
+              >
+                Current Maxdmum Loan Amount:
+                <SvgComponent svgId='icon-eth' />
+                {(selectCollection?.nftCollection?.nftCollectionStat
+                  ?.floorPrice *
+                  (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
+                  10000}
+              </Flex>
+            )}
+          </Box>
         </Wrapper>
         {/* 单笔最大贷款金额 */}
         <Wrapper stepIndex={3}>
@@ -486,12 +498,15 @@ const Create = () => {
         {/* 贷款天数 tenor */}
         <Wrapper stepIndex={4}>
           <SliderWrapper
+            unit='days'
+            value={selectTenorKey}
             defaultValue={initialItems?.tenorKey}
             data={TENOR_KEYS}
+            svgId='icon-calendar'
             min={TENOR_KEYS[0]}
             max={TENOR_KEYS[TENOR_KEYS.length - 1]}
             step={1}
-            label={`${TENOR_MAP.get(selectTenorKey)} Days`}
+            label={`${TENOR_MAP.get(selectTenorKey)}`}
             onChange={(target) => {
               setSelectTenorKey(target)
             }}
@@ -500,15 +515,18 @@ const Create = () => {
         {/* 贷款比率 */}
         <Wrapper stepIndex={5}>
           <SliderWrapper
+            unit='%'
+            value={interestPower}
             defaultValue={initialItems?.ratePowerKey}
             data={RATE_POWER_KEYS}
             min={RATE_POWER_KEYS[0]}
             max={RATE_POWER_KEYS[RATE_POWER_KEYS.length - 1]}
             step={1}
-            label={`${(baseRatePower / 100)?.toFixed(2)}%`}
+            label={`${(baseRatePower / 100)?.toFixed(2)}`}
             onChange={(target) => {
               setInterestPower(target)
             }}
+            svgId='icon-intersect'
           />
         </Wrapper>
 
@@ -736,7 +754,7 @@ const Create = () => {
           </UpdatePoolItemsButton>
         )}
       </Flex>
-    </Container>
+    </>
   )
 }
 

@@ -1,6 +1,6 @@
 import {
   Box,
-  Divider,
+  Fade,
   Flex,
   SlideFade,
   Slider,
@@ -9,6 +9,9 @@ import {
   SliderThumb,
   SliderTrack,
 } from '@chakra-ui/react'
+import { useState } from 'react'
+
+import { SvgComponent } from '@/components'
 
 import type { SliderProps } from '@chakra-ui/react'
 import type { FunctionComponent } from 'react'
@@ -17,50 +20,69 @@ const SliderWrapper: FunctionComponent<
   SliderProps & {
     data: number[]
     label: string
+    svgId: string
+    unit: string
   }
-> = ({ value, label, data, ...rest }) => {
+> = ({ svgId, value, label, data, unit, ...rest }) => {
+  // 是否正在拖动中
+  const [isOnSlide, setIsOnSlide] = useState(false)
   return (
     <Flex
       alignItems={'center'}
-      borderWidth={1}
       px='12px'
       gap='4px'
-      borderRadius={8}
       py='8px'
-      pr='20px'
       justify={'space-between'}
+      w='480px'
     >
-      <Box
-        bg='gray.2'
-        p='4px'
-        borderRadius={4}
-        fontWeight={'700'}
-        w='100px'
-        textAlign={'center'}
+      <Slider
+        w='320px'
+        mt={'10px'}
+        mb={'10px'}
+        value={value}
+        onChangeStart={() => {
+          console.log('start')
+          setIsOnSlide(true)
+        }}
+        onChangeEnd={() => {
+          console.log('end')
+          setIsOnSlide(false)
+        }}
+        {...rest}
       >
-        {label}
-      </Box>
-      <Divider orientation='vertical' w='1px' h='30px' bg='pink' />
-      <Slider w='340px' mt={'10px'} mb={'10px'} value={value} {...rest}>
+        <Fade in={isOnSlide}>
+          <SliderMark
+            value={value as number}
+            textAlign='center'
+            bg='blue.500'
+            color='white'
+            mt='-10'
+            ml='-5'
+            w='12'
+          >
+            {label}
+          </SliderMark>
+        </Fade>
+
         {data?.map((item) => (
           <SliderMark value={item} fontSize='14px' key={item} zIndex={1}>
             <Box
-              w={'12px'}
-              h={'12px'}
               boxSize={{
-                md: '12px',
+                md: '10px',
                 sm: '6px',
                 xs: '6px',
               }}
               borderRadius={8}
-              borderWidth={{ md: 3, sm: 1, xs: 1 }}
+              borderWidth={'2px'}
               borderColor='white'
               mt={{
-                md: '-6px',
+                md: '-5px',
                 sm: -1,
                 xs: -1,
               }}
               bg={value && value > item ? `blue.1` : `gray.1`}
+              left={'-4px'}
+              position={'relative'}
             />
           </SliderMark>
         ))}
@@ -72,8 +94,8 @@ const SliderWrapper: FunctionComponent<
           />
         </SliderTrack>
         <SliderThumb
-          boxSize='24px'
-          borderWidth={'5px'}
+          boxSize='14px'
+          borderWidth={'3px'}
           borderColor={`blue.1`}
           _focus={{
             boxShadow: 'none',
@@ -81,6 +103,21 @@ const SliderWrapper: FunctionComponent<
         />
         <SlideFade />
       </Slider>
+      <Flex
+        borderRadius={8}
+        borderColor={'blue.4'}
+        borderWidth={'1px'}
+        py='12px'
+        fontWeight={'700'}
+        w='120px'
+        alignItems={'center'}
+        justify={'center'}
+        lineHeight={'20px'}
+      >
+        <SvgComponent svgId={svgId} />
+        {label}
+        {unit}
+      </Flex>
     </Flex>
   )
 }

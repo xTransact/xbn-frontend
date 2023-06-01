@@ -33,7 +33,7 @@ const StepDescription: FunctionComponent<
         </Heading>
         <Tooltip label={text} placement='auto-start'>
           <Box>
-            <SvgComponent svgId='icon-tip-round' />
+            <SvgComponent svgId='icon-tip' fill='gray.1' />
           </Box>
         </Tooltip>
       </Flex>
