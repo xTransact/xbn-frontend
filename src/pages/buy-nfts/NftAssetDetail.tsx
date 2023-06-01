@@ -279,8 +279,8 @@ const NftAssetDetail = () => {
           item.pool_used_amount,
         )
         // 单笔最大贷款金额
-        const maxSingleLoanAmount = Infinity
-        // 二者取较小值用于比较
+        const maxSingleLoanAmount = BigNumber(item.maximum_loan_amount)
+        // 三者取较小值用于比较
         const forCompareWei = min([
           poolLatestCanUseAmount,
           latestWeth,

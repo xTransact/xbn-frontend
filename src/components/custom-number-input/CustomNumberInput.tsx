@@ -1,6 +1,5 @@
-import { Input } from '@chakra-ui/react'
+import { Input, type InputProps } from '@chakra-ui/react'
 
-import type { InputProps } from '@chakra-ui/react'
 import type { FunctionComponent } from 'react'
 
 const CustomNumberInput: FunctionComponent<

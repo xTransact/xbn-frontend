@@ -289,6 +289,7 @@ const Market = () => {
 
       <Flex
         mt={'10px'}
+        mb='100px'
         gap={9}
         flexWrap={{ lg: 'nowrap', md: 'wrap', sm: 'wrap', xs: 'wrap' }}
       >

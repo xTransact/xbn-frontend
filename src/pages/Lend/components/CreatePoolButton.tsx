@@ -42,7 +42,7 @@ import {
   createXBankContract,
 } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
-import { wei2Eth } from '@/utils/unit-conversion'
+import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
 /**
  * create pool
@@ -58,6 +58,7 @@ const CreatePoolButton: FunctionComponent<
       loanRatioPreferentialFlexibility: number
       allowCollateralContract: string
       floorPrice: number
+      maxSingleLoanAmount: string
     }
   }
 > = ({ children, data, ...rest }) => {
@@ -69,6 +70,7 @@ const CreatePoolButton: FunctionComponent<
     loanRatioPreferentialFlexibility,
     allowCollateralContract,
     floorPrice,
+    maxSingleLoanAmount,
   } = data
   const { toast, toastError } = useCatchContractError()
   const timer = useRef<NodeJS.Timeout>()
@@ -157,7 +159,9 @@ const CreatePoolButton: FunctionComponent<
       const UNIT256MAX =
         '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
       try {
-        const parsedWeiAmount = Web3.utils.toWei(amount, 'ether')
+        const parsedWeiAmount = eth2Wei(amount)
+        const parsedWeiMaximumLoanAmount = eth2Wei(maxSingleLoanAmount)
+
         const wethContract = createWethContract()
         setApproveLoading(true)
         const _allowance = await wethContract.methods
@@ -187,9 +191,9 @@ const CreatePoolButton: FunctionComponent<
             supportERC20Denomination,
             // allowCollateralContract
             allowCollateralContract,
-            // '0x8ADC4f1EFD5f71E538525191C5575387aaf41391',
             // poolAmount
             parsedWeiAmount,
+            parsedWeiMaximumLoanAmount,
             // poolMaximumPercentage,
             poolMaximumPercentage,
             // uint32 poolMaximumDays,
@@ -265,6 +269,7 @@ const CreatePoolButton: FunctionComponent<
     flag,
     navigate,
     onCloseApprove,
+    maxSingleLoanAmount,
   ])
 
   const handleClose = useCallback(() => {
@@ -343,13 +348,9 @@ const CreatePoolButton: FunctionComponent<
                   <SvgComponent svgId='icon-eth' fill={'black.1'} />
                 </InputLeftElement>
                 <CustomNumberInput
-                  w='100%'
                   value={amount}
-                  errorBorderColor='red.1'
                   isInvalid={isError}
                   // lineHeight='60px'
-                  borderRadius={8}
-                  borderColor='gray.3'
                   placeholder='Enter the approve ETH amount...'
                   isDisabled={
                     approveLoading ||
@@ -357,17 +358,8 @@ const CreatePoolButton: FunctionComponent<
                     refreshLoading ||
                     subscribeLoading
                   }
-                  top={'2px'}
                   onSetValue={(v) => setAmount(v)}
                   px={'32px'}
-                  _focus={{
-                    borderColor: isError ? 'red.1' : 'blue.1',
-                  }}
-                  _focusVisible={{
-                    boxShadow: `0 0 0 1px var(--chakra-colors-${
-                      isError ? 'red-1' : 'blue-1'
-                    })`,
-                  }}
                 />
 
                 {isError && (

@@ -395,6 +395,27 @@ const Create = () => {
         <Wrapper stepIndex={2}>
           <Box>
             <SliderWrapper
+              extraTip={
+                !isEmpty(selectCollection) ? (
+                  <Flex
+                    bg='white'
+                    fontSize={'14px'}
+                    borderRadius={2}
+                    justify={'flex-start'}
+                    alignItems={'center'}
+                    fontWeight={'700'}
+                    color='gray.3'
+                    minW='280px'
+                  >
+                    Current Maxdmum Loan Amount:
+                    <SvgComponent svgId='icon-eth' fill='gray.3' />
+                    {(selectCollection?.nftCollection?.nftCollectionStat
+                      ?.floorPrice *
+                      (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
+                      10000}
+                  </Flex>
+                ) : null
+              }
               unit='%'
               value={selectCollateralKey}
               svgId='icon-intersect'
@@ -410,23 +431,6 @@ const Create = () => {
                 setSelectCollateralKey(target)
               }}
             />
-            {!isEmpty(selectCollection) && (
-              <Flex
-                mt='12px'
-                justify={'flex-start'}
-                alignItems={'center'}
-                fontSize={'14px'}
-                fontWeight={'700'}
-                color='gray.3'
-              >
-                Current Maxdmum Loan Amount:
-                <SvgComponent svgId='icon-eth' />
-                {(selectCollection?.nftCollection?.nftCollectionStat
-                  ?.floorPrice *
-                  (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
-                  10000}
-              </Flex>
-            )}
           </Box>
         </Wrapper>
         {/* 单笔最大贷款金额 */}
@@ -446,30 +450,12 @@ const Create = () => {
                 </InputLeftElement>
                 <CustomNumberInput
                   isDisabled={!selectCollection}
-                  w='100%'
-                  value={maxSingleLoanAmount}
-                  errorBorderColor='red.1'
+                  value={maxSingleLoanAmount || ''}
                   isInvalid={maxSingleLoanAmountStatus?.status === 'error'}
                   // lineHeight='60px'
-                  borderRadius={8}
-                  borderColor='gray.3'
                   placeholder='Please enter amount...'
-                  top={'2px'}
                   onSetValue={(v) => setMaxSingleLoanAmount(v)}
                   px={'32px'}
-                  _focus={{
-                    borderColor:
-                      maxSingleLoanAmountStatus?.status === 'error'
-                        ? 'red.1'
-                        : 'blue.1',
-                  }}
-                  _focusVisible={{
-                    boxShadow: `0 0 0 1px var(--chakra-colors-${
-                      maxSingleLoanAmountStatus?.status === 'error'
-                        ? 'red-1'
-                        : 'blue-1'
-                    })`,
-                  }}
                 />
 
                 {maxSingleLoanAmountStatus?.status === 'error' && (
@@ -482,11 +468,11 @@ const Create = () => {
 
             {!!maxSingleLoanAmountStatus && (
               <Text
-                mt='20px'
+                mt='12px'
                 color={
                   maxSingleLoanAmountStatus?.status === 'error'
                     ? 'red.1'
-                    : 'gray.1'
+                    : 'orange.1'
                 }
                 fontSize={'14px'}
               >
@@ -531,11 +517,16 @@ const Create = () => {
         </Wrapper>
 
         {/* 表格 */}
-        <Flex
-          alignItems={'center'}
-          justify={showFlexibility ? 'space-between' : 'center'}
-        >
-          <Box bg='white' w={'90%'} borderRadius={16}>
+        <Box bg='gray.5' p='32px' borderRadius={16} pos={'relative'}>
+          <Flex
+            justify={'center'}
+            mb='46px'
+            fontSize={'18px'}
+            fontWeight={'700'}
+          >
+            Generate the interest rate table for outstanding loans
+          </Flex>
+          <Box bg='white' w={'90%'} borderRadius={16} margin={'0 auto'}>
             <Flex>
               {[
                 'Collateral Factor/ Tenor',
@@ -635,11 +626,16 @@ const Create = () => {
               )
             })}
           </Box>
+
           <Flex
             flexDir={'column'}
             alignItems='center'
             gap={'4px'}
             hidden={!showFlexibility}
+            pos={'absolute'}
+            right={'32px'}
+            top={'50%'}
+            transform={'translateY(-50%)'}
           >
             <Slider
               orientation='vertical'
@@ -667,40 +663,41 @@ const Create = () => {
               />
             </Slider>
           </Flex>
-        </Flex>
-        {/* 切换展示微调滑杆 */}
-        <Flex
-          justify={'center'}
-          hidden={showFlexibility}
-          onClick={toggleShowFlexibility}
-        >
-          <Button variant={'link'}>Fine-tune interest rates</Button>
-        </Flex>
-
-        <Flex hidden={!showFlexibility} justify={'center'} mt='20px'>
-          <Slider
-            min={BOTTOM_RATE_POWER_KEYS[0]}
-            max={BOTTOM_RATE_POWER_KEYS[BOTTOM_RATE_POWER_KEYS.length - 1]}
-            w='140px'
-            step={1}
-            defaultValue={initialItems?.bottomFlex}
-            onChange={(target) => {
-              setSliderBottomKey(target)
-            }}
+          {/* 切换展示微调滑杆 */}
+          <Flex
+            justify={'center'}
+            hidden={showFlexibility}
+            onClick={toggleShowFlexibility}
+            mt='20px'
           >
-            <SliderTrack bg={`gray.1`}>
-              <SliderFilledTrack bg={`blue.1`} />
-            </SliderTrack>
-            <SliderThumb
-              boxSize={'16px'}
-              borderWidth={'2px'}
-              borderColor={`blue.1`}
-              _focus={{
-                boxShadow: 'none',
+            <Button variant={'link'}>Fine-tune interest rates</Button>
+          </Flex>
+
+          <Flex hidden={!showFlexibility} justify={'center'} mt='20px'>
+            <Slider
+              min={BOTTOM_RATE_POWER_KEYS[0]}
+              max={BOTTOM_RATE_POWER_KEYS[BOTTOM_RATE_POWER_KEYS.length - 1]}
+              w='140px'
+              step={1}
+              defaultValue={initialItems?.bottomFlex}
+              onChange={(target) => {
+                setSliderBottomKey(target)
               }}
-            />
-          </Slider>
-        </Flex>
+            >
+              <SliderTrack bg={`gray.1`}>
+                <SliderFilledTrack bg={`blue.1`} />
+              </SliderTrack>
+              <SliderThumb
+                boxSize={'16px'}
+                borderWidth={'2px'}
+                borderColor={`blue.1`}
+                _focus={{
+                  boxShadow: 'none',
+                }}
+              />
+            </Slider>
+          </Flex>
+        </Box>
       </Flex>
 
       <Flex justify={'center'} mb={'40px'}>
@@ -733,6 +730,7 @@ const Create = () => {
               loanTimeConcessionFlexibility: BOTTOM_RATE_POWER_MAP.get(
                 sliderBottomKey,
               ) as number,
+              maxSingleLoanAmount: maxSingleLoanAmount as string,
             }}
           >
             Confirm

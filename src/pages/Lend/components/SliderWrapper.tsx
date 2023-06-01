@@ -14,7 +14,7 @@ import { useState } from 'react'
 import { SvgComponent } from '@/components'
 
 import type { SliderProps } from '@chakra-ui/react'
-import type { FunctionComponent } from 'react'
+import type { FunctionComponent, ReactNode } from 'react'
 
 const SliderWrapper: FunctionComponent<
   SliderProps & {
@@ -22,8 +22,9 @@ const SliderWrapper: FunctionComponent<
     label: string
     svgId: string
     unit: string
+    extraTip?: ReactNode
   }
-> = ({ svgId, value, label, data, unit, ...rest }) => {
+> = ({ svgId, value, extraTip, label, data, unit, ...rest }) => {
   // 是否正在拖动中
   const [isOnSlide, setIsOnSlide] = useState(false)
   return (
@@ -54,15 +55,32 @@ const SliderWrapper: FunctionComponent<
           <SliderMark
             value={value as number}
             textAlign='center'
-            bg='blue.500'
-            color='white'
+            color='blue.1'
             mt='-10'
+            bg='white'
             ml='-5'
             w='12'
+            fontSize={'14px'}
+            borderRadius={2}
+            fontWeight={'900'}
           >
             {label}
           </SliderMark>
         </Fade>
+
+        {extraTip && (
+          <Fade in={!isOnSlide}>
+            <SliderMark
+              value={value as number}
+              left={'50%'}
+              position={'absolute'}
+              transform={'translateX(-50%)'}
+              mt='24px'
+            >
+              {extraTip}
+            </SliderMark>
+          </Fade>
+        )}
 
         {data?.map((item) => (
           <SliderMark value={item} fontSize='14px' key={item} zIndex={1}>

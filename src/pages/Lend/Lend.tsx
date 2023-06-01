@@ -512,6 +512,13 @@ const Lend = () => {
         render: (value: any) => <EthText>{wei2Eth(value)}</EthText>,
       },
       {
+        title: 'Maximum Loan Amount',
+        dataIndex: 'maximum_loan_amount',
+        key: 'maximum_loan_amount',
+        align: 'center',
+        render: (value: any) => <EthText>{wei2Eth(value)}</EthText>,
+      },
+      {
         title: 'Collateral Factor',
         dataIndex: 'pool_maximum_percentage',
         key: 'pool_maximum_percentage',

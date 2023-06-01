@@ -1,6 +1,7 @@
 interface PoolsListItemType {
   id: number
   pool_id: number
+  created_at: string
   owner_address: string
   allow_collateral_contract: string
   support_erc20_denomination: string
@@ -13,7 +14,7 @@ interface PoolsListItemType {
   loan_time_concession_flexibility: number
   loan_ratio_preferential_flexibility: number
   activity: boolean
-  collection_info: CollectionListItemType
+  maximum_loan_amount: number
 }
 
 interface CollectionListItemType {

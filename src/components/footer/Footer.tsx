@@ -109,7 +109,7 @@ const Footer = () => {
           </Box>
 
           {/* 社媒 */}
-          <Flex gap='24px'>
+          <Flex gap='70px'>
             {COMMUNITY_DATA.map(({ title, url, icon }) => (
               <Flex
                 key={title}
@@ -122,7 +122,7 @@ const Footer = () => {
                 cursor={'pointer'}
               >
                 <SvgComponent svgId={`${icon}`} fontSize={'24px'} />
-                <Text fontSize={'12px'}>{title}</Text>
+                <Text color='black.4'>{title}</Text>
               </Flex>
             ))}
           </Flex>
