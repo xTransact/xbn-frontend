@@ -332,14 +332,20 @@ const Market = () => {
               }}
               pb='40px'
             >
-              <SearchInput
-                placeholder='Collections...'
-                isDisabled={collectionLoading || poolsLoading}
-                value={collectionSearchValue}
-                onChange={(e) => {
-                  setCollectionSearchValue(e.target.value)
-                }}
-              />
+              <Box
+                hidden={
+                  !collectionSearchValue && !filteredCollectionList?.length
+                }
+              >
+                <SearchInput
+                  placeholder='Collections...'
+                  isDisabled={collectionLoading || poolsLoading}
+                  value={collectionSearchValue}
+                  onChange={(e) => {
+                    setCollectionSearchValue(e.target.value)
+                  }}
+                />
+              </Box>
 
               {/* pc 端 */}
               <List
@@ -356,9 +362,9 @@ const Market = () => {
                   loading={collectionLoading || poolsLoading}
                   top={0}
                 />
-                {filteredCollectionList &&
-                  isEmpty(filteredCollectionList) &&
-                  !collectionLoading && <EmptyComponent />}
+                {isEmpty(filteredCollectionList) && !collectionLoading && (
+                  <EmptyComponent />
+                )}
 
                 {filteredCollectionList?.map((item) => (
                   <CollectionListItem
@@ -408,20 +414,27 @@ const Market = () => {
                     <Heading fontSize={'24px'} pt='40px' pb='32px'>
                       Collections
                     </Heading>
-                    <SearchInput
-                      placeholder='Collections...'
-                      value={collectionSearchValue}
-                      onChange={(e) => {
-                        setCollectionSearchValue(e.target.value)
-                      }}
-                    />
+                    <Box
+                      hidden={
+                        !collectionSearchValue &&
+                        !filteredCollectionList?.length
+                      }
+                    >
+                      <SearchInput
+                        placeholder='Collections...'
+                        value={collectionSearchValue}
+                        onChange={(e) => {
+                          setCollectionSearchValue(e.target.value)
+                        }}
+                      />
+                    </Box>
+
                     <List spacing='16px' mt='16px' position='relative'>
                       <LoadingComponent
                         loading={collectionLoading || poolsLoading}
                         top={0}
                       />
-                      {filteredCollectionList &&
-                        isEmpty(filteredCollectionList) &&
+                      {!filteredCollectionList?.length &&
                         !collectionLoading && <EmptyComponent />}
 
                       {filteredCollectionList?.map((item) => (

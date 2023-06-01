@@ -934,11 +934,20 @@ const Lend = () => {
                 <Heading mb='16px' fontSize={'16px'}>
                   My Collection Pools
                 </Heading>
-                <SearchInput
-                  placeholder='Collections...'
-                  value={loanCollectionSearchValue}
-                  onChange={(e) => setLoanCollectionSearchValue(e.target.value)}
-                />
+                <Box
+                  hidden={
+                    !loanCollectionSearchValue &&
+                    !filteredPoolCollectionList?.length
+                  }
+                >
+                  <SearchInput
+                    placeholder='Collections...'
+                    value={loanCollectionSearchValue}
+                    onChange={(e) =>
+                      setLoanCollectionSearchValue(e.target.value)
+                    }
+                  />
+                </Box>
 
                 <List spacing='16px' mt='16px' position='relative'>
                   <LoadingComponent
@@ -1148,11 +1157,19 @@ const Lend = () => {
             <Heading fontSize={'24px'} pt='40px' pb='32px'>
               My Collection Pools
             </Heading>
-            <SearchInput
-              placeholder='Collections...'
-              value={loanCollectionSearchValue}
-              onChange={(e) => setLoanCollectionSearchValue(e.target.value)}
-            />
+            <Box
+              hidden={
+                !loanCollectionSearchValue &&
+                !filteredPoolCollectionList?.length
+              }
+            >
+              <SearchInput
+                placeholder='Collections...'
+                value={loanCollectionSearchValue}
+                onChange={(e) => setLoanCollectionSearchValue(e.target.value)}
+              />
+            </Box>
+
             <List spacing={'16px'} position='relative' mt='16px'>
               <LoadingComponent
                 loading={poolsLoading || collectionLoading}
