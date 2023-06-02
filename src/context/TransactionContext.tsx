@@ -84,7 +84,7 @@ const COLLECTION_DEMO = {
 }
 
 export const TransactionContext = createContext({
-  connectWallet: () => {},
+  connectWallet: async () => {},
   currentAccount: '',
   connectLoading: false,
   handleSwitchNetwork: async () => {},

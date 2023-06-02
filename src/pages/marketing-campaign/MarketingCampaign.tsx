@@ -14,11 +14,11 @@ import {
 } from '@chakra-ui/react'
 import { useBoolean, useSetState } from 'ahooks'
 import BigNumber from 'bignumber.js'
-import React, { useEffect } from 'react'
+import moment from 'moment'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { apiGetBoxes } from '@/api/marketing-campaign'
-import ImgBanner from '@/assets/marketing/banner.png'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
 import Box1 from '@/assets/marketing/box1.png'
 import Box2 from '@/assets/marketing/box2.png'
@@ -40,6 +40,9 @@ import IconTwitter from '@/assets/marketing/twitter.png'
 import IconLogo from '@/assets/marketing/xbank-logo.png'
 import { Header } from '@/components'
 import { useWallet } from '@/hooks'
+import { getUserToken } from '@/utils/auth'
+
+import ImgBannerSvg from '@/assets/marketing/banner.svg'
 
 const CusCard = (props: {
   title?: string
@@ -110,7 +113,7 @@ const TitleWithQuestionBox = (props: { title: string }) => {
         display={'inline-block'}
         fontSize={'64px'}
         lineHeight={'74px'}
-        fontFamily={'HarmonyOS Sans SC Bold'}
+        fontFamily={'HarmonyOS Sans SC Black'}
         bgGradient={
           'linear-gradient(45deg, #1CFEF0 23%, #458FFF 46%, #FFBADB 90%)'
         }
@@ -123,6 +126,7 @@ const TitleWithQuestionBox = (props: { title: string }) => {
 }
 export default function MarketingCampaign() {
   const navigate = useNavigate()
+  const [expired, setExpired] = useState(true)
   const { currentAccount, connectWallet } = useWallet()
   const [hasUsedXBN, setHasUsedXBN] = useBoolean(false)
   const [boxAmounts, setBoxAmounts] = useSetState({
@@ -132,8 +136,7 @@ export default function MarketingCampaign() {
     box_platinum: 0,
     box_silver: 0,
   })
-  useEffect(() => {
-    console.log('rendered')
+  const queryUserBoxes = useCallback(() => {
     apiGetBoxes()
       .then((resp) => {
         console.log(resp)
@@ -141,6 +144,18 @@ export default function MarketingCampaign() {
       .catch((e) => {
         console.log('e', e)
       })
+  }, [expired])
+  useEffect(() => {
+    if (!expired) {
+      console.log('执行查询')
+      queryUserBoxes()
+    }
+  }, [expired, queryUserBoxes])
+  useEffect(() => {
+    const userToken = getUserToken()
+    setExpired(
+      !userToken?.expires ? true : moment().isAfter(moment(userToken?.expires)),
+    )
   }, [])
   return (
     <div>
@@ -148,114 +163,132 @@ export default function MarketingCampaign() {
       <Box bgGradient={'linear-gradient(0deg, #071E38, #071E38), #F9F9FF;'}>
         <Container width={'100%'} maxW='1440px'>
           <Box marginBottom={'68px'}>
-            <Image src={ImgBanner} width={'100%'} />
+            <Image src={ImgBannerSvg} width='100%' />
           </Box>
           <Box
             bgGradient={'linear-gradient(0deg, #071E38, #071E38)'}
             color={'#FFFFFF'}
           >
-            <TitleWithQuestionBox title='Win Boxes' />
+            <TitleWithQuestionBox title='Win Box' />
             <Box marginBottom={'72px'} marginTop={'34.5px'}>
-              <CusCard title='My Rewards'>
+              <CusCard title='My Boxdrops'>
                 <CardBody padding={10}>
                   <Flex justifyContent={'space-around'} alignItems={'center'}>
-                    <Flex
-                      alignItems={'flex-start'}
-                      justifyContent={'space-around'}
-                      flexDirection={'column'}
-                      maxW={300}
-                    >
-                      <Text fontSize={28} fontFamily={'HarmonyOS Sans SC Bold'}>
-                        Welcome Rewards
-                      </Text>
-                      <Text
-                        color='#566E8C'
-                        fontSize={16}
-                        marginBottom={19}
-                        // textAlign={'center'}
+                    {!expired && (
+                      <Flex
+                        alignItems={'flex-start'}
+                        justifyContent={'space-around'}
+                        flexDirection={'column'}
+                        maxW={300}
                       >
-                        Follow Twitter @xBankOfficial and retweet the Pin post
-                      </Text>
-                      <Button
-                        w='240px'
-                        variant={'linear'}
-                        textShadow={'0px 1px 0px #0000FF'}
-                      >
-                        Claim
-                      </Button>
-                    </Flex>
-                    <Box borderRight={'1px solid white'} h='200px' />
-                    <Flex justify={'space-around'}>
+                        <Text
+                          fontSize={28}
+                          fontFamily={'HarmonyOS Sans SC Bold'}
+                        >
+                          Welcome Rewards
+                        </Text>
+                        <Text
+                          color='#566E8C'
+                          fontSize={16}
+                          marginBottom={19}
+                          // textAlign={'center'}
+                        >
+                          Follow Twitter @xBankOfficial and retweet the Pin post
+                        </Text>
+                        <Button
+                          w='240px'
+                          h='55px'
+                          fontSize={'20px'}
+                          fontFamily={'HarmonyOS Sans SC Black'}
+                          variant={'linear'}
+                          textShadow={'0px 1px 0px #0000FF'}
+                        >
+                          Claim
+                        </Button>
+                      </Flex>
+                    )}
+                    {!expired && (
+                      <Box borderRight={'1px solid white'} h='200px' />
+                    )}
+                    <Flex justify={'space-around'} w='100%'>
                       <Flex direction={'column'} alignItems={'center'}>
                         <Image src={Box1} zIndex={1} />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
-                          fontSize={'16px'}
+                          fontSize={'20px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
-                          mt='-20px'
+                          mt='-25px'
                         >
-                          Bronze Box
+                          Bronze
                         </Text>
                         <Text
                           color='#FF0066'
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          {BigNumber(boxAmounts.box_bronze).toFormat()}
+                          {expired
+                            ? '? ?'
+                            : BigNumber(boxAmounts.box_bronze).toFormat()}
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
                         <Image src={Box2} zIndex={1} />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
-                          fontSize={'16px'}
+                          fontSize={'20px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
-                          mt='-20px'
+                          mt='-25px'
                         >
-                          Silver Box
+                          Silver
                         </Text>
                         <Text
                           color='#FF0066'
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          {BigNumber(boxAmounts.box_silver).toFormat()}
+                          {expired
+                            ? '? ?'
+                            : BigNumber(boxAmounts.box_silver).toFormat()}
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
                         <Image src={Box3} zIndex={1} />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
-                          fontSize={'16px'}
+                          fontSize={'20px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
-                          mt='-20px'
+                          mt='-25px'
                         >
-                          Gold Box
+                          Gold
                         </Text>
                         <Text
                           color='#FF0066'
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          {BigNumber(boxAmounts.box_gold).toFormat()}
+                          {expired
+                            ? '? ?'
+                            : BigNumber(boxAmounts.box_gold).toFormat()}
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
                         <Image src={Box4} zIndex={1} />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
-                          fontSize={'16px'}
+                          fontSize={'20px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
-                          mt='-20px'
+                          mt='-25px'
                         >
-                          Platinum Box
+                          Platinum
                         </Text>
                         <Text
                           color='#FF0066'
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          {BigNumber(boxAmounts.box_platinum).toFormat()}
+                          {expired
+                            ? '? ?'
+                            : BigNumber(boxAmounts.box_platinum).toFormat()}
                         </Text>
                       </Flex>
                     </Flex>
@@ -266,13 +299,15 @@ export default function MarketingCampaign() {
             <Box marginBottom={'80.5px'}>
               <SimpleGrid columns={2} spacing={10}>
                 <CusCard title='Buy NFT'>
-                  <CardBody padding={'20px 0 20px 20px'}>
+                  <CardBody padding={'20px 20px 20px 20px'}>
                     <Text
                       fontSize='18px'
                       fontFamily={'HarmonyOS Sans SC Medium'}
+                      lineHeight={'18px'}
+                      h='36px'
+                      mb='4px'
                     >
-                      Pick up your favor NFT and own it with xBank Protocol, get
-                      boxes rewards.
+                      {`Pick up your favor NFT on “Buy NFT” -> “Market” and unlock it with xBank get boxdrop rewards as you made a purchase. `}
                     </Text>
                     <Text
                       fontSize='16px'
@@ -301,6 +336,8 @@ export default function MarketingCampaign() {
                         textShadow={'0px 1px 0px #0000FF'}
                         variant='linear'
                         fontFamily={'HarmonyOS Sans SC Black'}
+                        fontSize={'24px'}
+                        h='60px'
                       >
                         Get Gold Box
                       </Button>
@@ -312,9 +349,18 @@ export default function MarketingCampaign() {
                     <Text
                       fontSize='18px'
                       fontFamily={'HarmonyOS Sans SC Medium'}
+                      lineHeight={'18px'}
+                      h='36px'
+                      mb='4px'
                     >
                       Create fund pool to offer loans to other users, get boxes
                       rewards.
+                    </Text>
+                    <Text
+                      fontSize='18px'
+                      fontFamily={'HarmonyOS Sans SC Medium'}
+                    >
+                      {`\n`}
                     </Text>
                     <Text
                       fontSize='16px'
@@ -343,6 +389,8 @@ export default function MarketingCampaign() {
                         textShadow={'0px 1px 0px #0000FF'}
                         variant='linear'
                         fontFamily={'HarmonyOS Sans SC Black'}
+                        fontSize={'24px'}
+                        h='60px'
                       >
                         Get Gold Box
                       </Button>
@@ -421,19 +469,27 @@ export default function MarketingCampaign() {
                   </Text>
                 </Flex>
               </Flex>
-              {!currentAccount ? (
+              {expired ? (
                 <Flex justifyContent={'center'} mb='205px' pt='27px'>
                   <Button
+                    color='#FFFFFF'
                     bgColor={'rgba(80, 176, 248, 1)'}
                     _hover={{
                       bgColor: 'rgba(80, 176, 248, 0.9)',
                     }}
                     w='100%'
                     maxW='600px'
-                    fontSize={20}
+                    fontSize={'20px'}
+                    h='54px'
                     fontFamily={'HarmonyOS Sans SC Bold'}
-                    onClick={() => {
-                      connectWallet()
+                    onClick={async () => {
+                      await connectWallet()
+                      const userToken = getUserToken()
+                      setExpired(
+                        !userToken?.expires
+                          ? true
+                          : moment().isAfter(moment(userToken?.expires)),
+                      )
                     }}
                   >
                     Connect Wallet
@@ -444,11 +500,13 @@ export default function MarketingCampaign() {
                   {!!hasUsedXBN ? (
                     <Flex justifyContent={'center'} mb='205px' pt='27px'>
                       <Button
+                        color='#FFFFFF'
                         bgColor={'rgba(80, 176, 248, 1)'}
                         _hover={{
                           bgColor: 'rgba(80, 176, 248, 0.9)',
                         }}
                         w='100%'
+                        h='54px'
                         maxW='600px'
                         fontSize={20}
                         fontFamily={'HarmonyOS Sans SC Bold'}
@@ -471,6 +529,7 @@ export default function MarketingCampaign() {
                         <Text
                           fontSize={'24px'}
                           fontWeight={900}
+                          fontFamily={'HarmonyOS Sans SC Black'}
                           w='189px'
                           mr='81px'
                         >
@@ -505,6 +564,8 @@ export default function MarketingCampaign() {
                               <Image src={IconCopy} w='24px' h='24px' />
                             </Flex>
                             <Button
+                              color='#FFFFFF'
+                              h='54px'
                               fontSize={'20px'}
                               fontFamily={'HarmonyOS Sans SC Bold'}
                               paddingX={'83px'}
@@ -524,6 +585,7 @@ export default function MarketingCampaign() {
                           fontWeight={900}
                           w='189px'
                           mr='81px'
+                          fontFamily={'HarmonyOS Sans SC Black'}
                         >
                           Share To:
                         </Text>
@@ -533,7 +595,12 @@ export default function MarketingCampaign() {
                           w='120px'
                         >
                           <Image src={IconTwitter} w='32px' fontSize={'16px'} />
-                          <Text>Twitter</Text>
+                          <Text
+                            fontSize={'16px'}
+                            fontFamily={'HarmonyOS Sans SC'}
+                          >
+                            Twitter
+                          </Text>
                         </Flex>
                         <Flex
                           direction={'column'}
@@ -545,7 +612,12 @@ export default function MarketingCampaign() {
                             w='32px'
                             fontSize={'16px'}
                           />
-                          <Text>Telegram</Text>
+                          <Text
+                            fontSize={'16px'}
+                            fontFamily={'HarmonyOS Sans SC'}
+                          >
+                            Telegram
+                          </Text>
                         </Flex>
                       </Flex>
                     </Box>

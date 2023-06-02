@@ -11,11 +11,13 @@ import { getUserToken } from './auth'
 
 const { MODE, VITE_BASE_URL, VITE_APP_KEY } = import.meta.env
 
-const { toast } = createStandaloneToast({
+export const standaloneToast = createStandaloneToast({
   defaultOptions: {
     ...TOAST_OPTION_CONFIG,
   },
 })
+
+const { toast } = standaloneToast
 
 const request = axios.create({
   baseURL: '',
@@ -37,6 +39,8 @@ request.interceptors.request.use(async ({ url, baseURL, ...config }) => {
       _baseURL = VITE_BASE_URL
     }
   }
+  const userToken = getUserToken();
+  config.headers.Authorization = userToken ? `Bearer ${userToken?.token}` : undefined;
   return {
     ...config,
     url,
