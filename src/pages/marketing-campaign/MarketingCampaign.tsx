@@ -675,7 +675,9 @@ export default function MarketingCampaign() {
                           Share To:
                         </Text>
                         <Link
-                          href={`https://twitter.com/intent/tweet?url=${invitationLink}&text=${SHARE_TWITTER_TEXT}`}
+                          href={encodeURI(
+                            `https://twitter.com/intent/tweet?text=${SHARE_TWITTER_TEXT}&url=${invitationLink}`,
+                          )}
                           target='_blank'
                         >
                           <Flex
@@ -697,7 +699,9 @@ export default function MarketingCampaign() {
                           </Flex>
                         </Link>
                         <Link
-                          href={`https://t.me/share/url?url=${invitationLink}&text=${SHARE_TELEGRAM_TEXT}`}
+                          href={encodeURI(
+                            `https://t.me/share/url?url=${invitationLink}&text=${SHARE_TELEGRAM_TEXT}`,
+                          )}
                           target='_blank'
                         >
                           <Flex
