@@ -16,5 +16,23 @@ export const apiPostAuthLogin: (data: {
   expires: string
   token: string
 }> = async (data) => {
-  return await request.post('/lending/api/v1/auth/login ', data)
+  const invitation_code = getQueryVariable('invitation_code')
+  return await request.post(
+    `/lending/api/v1/auth/login${
+      !!invitation_code ? `?invitation_code=${invitation_code}` : ''
+    }`,
+    data,
+  )
+}
+
+function getQueryVariable(variable: string) {
+  const query = window.location.search.substring(1)
+  const vars = query.split('&')
+  for (let i = 0; i < vars.length; i++) {
+    const pair = vars[i].split('=')
+    if (pair[0] == variable) {
+      return pair[1]
+    }
+  }
+  return false
 }

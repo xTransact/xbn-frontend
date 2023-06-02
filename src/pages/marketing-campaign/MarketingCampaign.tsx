@@ -13,15 +13,24 @@ import {
   Link,
   useClipboard,
   useBoolean,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogCloseButton,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  useDisclosure,
+  Stack,
 } from '@chakra-ui/react'
 import { useSetState } from 'ahooks'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { apiGetLoans } from '@/api'
-import { apiGetBoxes } from '@/api/marketing-campaign'
+import { apiGetBoxes, apiGetInviteCode } from '@/api/marketing-campaign'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
 import Box1 from '@/assets/marketing/box1.png'
 import Box2 from '@/assets/marketing/box2.png'
@@ -46,8 +55,10 @@ import { Header } from '@/components'
 import { useWallet } from '@/hooks'
 import { getUserToken } from '@/utils/auth'
 
+import ImgDialogBanner from '@/assets/marketing/banner-dialog.svg'
 import ImgBannerSvg from '@/assets/marketing/banner.svg'
-
+const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% downpayment, win Boxdrop`
+const SHARE_TWITTER_TEXT = `xBank is An NFT Open Money Market Powering Web3 Adopters with Onboarding Leverage with NFT BNPL and Improving Money Efficiency for Holders\nJoin @xBank_Official, buy top NFTs pay later, with 0% downpayment, and earn Boxdrop`
 const CusCard = (props: {
   title?: string
   children?: React.ReactNode
@@ -130,6 +141,8 @@ const TitleWithQuestionBox = (props: { title: string }) => {
 }
 export default function MarketingCampaign() {
   const navigate = useNavigate()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = useRef<any>()
   const [expired, setExpired] = useState(true)
   const { currentAccount, connectWallet } = useWallet()
   const [hasUsedXBN, setHasUsedXBN] = useBoolean()
@@ -140,6 +153,13 @@ export default function MarketingCampaign() {
     box_platinum: 0,
     box_silver: 0,
   })
+  const {
+    onCopy,
+    hasCopied,
+    value: invitationLink,
+    setValue: setInvitationLink,
+  } = useClipboard('')
+  const [inviteCode, setInviteCode] = useState('')
   const queryUserBoxes = useCallback(() => {
     apiGetBoxes()
       .then((data) => {
@@ -157,39 +177,41 @@ export default function MarketingCampaign() {
   }, [expired])
   useEffect(() => {
     if (!expired) {
-      console.log('执行查询')
       queryUserBoxes()
     }
   }, [expired, queryUserBoxes])
-  useEffect(() => {
-    if (!expired && !!currentAccount) {
-      apiGetLoans({
-        lender_address: currentAccount,
-        borrower_address: currentAccount,
-      }).then((list) => {
-        if (list.length > 0) {
-          setHasUsedXBN.on()
-        } else {
-          setHasUsedXBN.off()
-        }
-      })
-    }
-  }, [expired, currentAccount, setHasUsedXBN])
   useEffect(() => {
     const userToken = getUserToken()
     setExpired(
       !userToken?.expires ? true : moment().isAfter(moment(userToken?.expires)),
     )
   }, [])
-  const {
-    onCopy,
-    hasCopied,
-    value: invitationLink,
-    setValue: setCopiedValue,
-  } = useClipboard('')
   useEffect(() => {
-    setCopiedValue('你好世界')
-  }, [])
+    if (!expired && !!currentAccount) {
+      apiGetLoans({
+        lender_address: currentAccount,
+        borrower_address: currentAccount,
+      }).then((list) => {
+        apiGetInviteCode().then((resp) => {
+          setInviteCode(resp.code)
+          setInvitationLink(
+            window.location.href + `?invitation_code=${resp.code}`,
+          )
+        })
+        if (list.length > 0) {
+          setHasUsedXBN.on()
+          apiGetInviteCode().then((resp) => {
+            setInviteCode(resp.code)
+            setInvitationLink(
+              window.location.href + `?invitation_code=${resp.code}`,
+            )
+          })
+        } else {
+          setHasUsedXBN.off()
+        }
+      })
+    }
+  }, [expired, currentAccount, setHasUsedXBN])
   return (
     <div>
       <Header />
@@ -347,7 +369,12 @@ export default function MarketingCampaign() {
                       color='#FF0066'
                       fontFamily={'HarmonyOS Sans SC Medium'}
                     >
-                      <Link href=''>Learn More</Link>
+                      <Link
+                        href='https://xbankdocs.gitbook.io/product-docs/'
+                        target='_blank'
+                      >
+                        Learn More
+                      </Link>
                     </Text>
                     <Flex justifyContent={'space-around'}>
                       <Flex direction={'column'} alignItems={'center'}>
@@ -371,6 +398,9 @@ export default function MarketingCampaign() {
                         fontFamily={'HarmonyOS Sans SC Black'}
                         fontSize={'24px'}
                         h='60px'
+                        onClick={() => {
+                          navigate('/xlending/buy-nfts/market')
+                        }}
                       >
                         Get Gold Box
                       </Button>
@@ -400,7 +430,12 @@ export default function MarketingCampaign() {
                       color='#FF0066'
                       fontFamily={'HarmonyOS Sans SC Medium'}
                     >
-                      <Link href=''>Learn More</Link>
+                      <Link
+                        href='https://xbankdocs.gitbook.io/product-docs/'
+                        target='_blank'
+                      >
+                        Learn More
+                      </Link>
                     </Text>
                     <Flex justifyContent={'space-around'}>
                       <Flex direction={'column'} alignItems={'center'}>
@@ -424,6 +459,9 @@ export default function MarketingCampaign() {
                         fontFamily={'HarmonyOS Sans SC Black'}
                         fontSize={'24px'}
                         h='60px'
+                        onClick={() => {
+                          navigate('/xlending')
+                        }}
                       >
                         Get Gold Box
                       </Button>
@@ -530,7 +568,7 @@ export default function MarketingCampaign() {
                 </Flex>
               ) : (
                 <>
-                  {!hasUsedXBN ? (
+                  {!!hasUsedXBN ? (
                     <Flex justifyContent={'center'} mb='205px' pt='27px'>
                       <Button
                         color='#FFFFFF'
@@ -608,6 +646,18 @@ export default function MarketingCampaign() {
                               _hover={{
                                 bgColor: 'rgba(80, 176, 248, 0.9)',
                               }}
+                              onClick={() => {
+                                console.log(
+                                  window.location.href +
+                                    `?invitation_code=${inviteCode}`,
+                                )
+                                setInvitationLink(
+                                  window.location.href +
+                                    `?invitation_code=${inviteCode}`,
+                                )
+                                onCopy()
+                                onOpen()
+                              }}
                             >
                               Get Sliver Box
                             </Button>
@@ -624,36 +674,50 @@ export default function MarketingCampaign() {
                         >
                           Share To:
                         </Text>
-                        <Flex
-                          direction={'column'}
-                          alignItems={'center'}
-                          w='120px'
+                        <Link
+                          href={`https://twitter.com/intent/tweet?url=${invitationLink}&text=${SHARE_TWITTER_TEXT}`}
+                          target='_blank'
                         >
-                          <Image src={IconTwitter} w='32px' fontSize={'16px'} />
-                          <Text
-                            fontSize={'16px'}
-                            fontFamily={'HarmonyOS Sans SC'}
+                          <Flex
+                            direction={'column'}
+                            alignItems={'center'}
+                            w='120px'
                           >
-                            Twitter
-                          </Text>
-                        </Flex>
-                        <Flex
-                          direction={'column'}
-                          alignItems={'center'}
-                          w='120px'
+                            <Image
+                              src={IconTwitter}
+                              w='32px'
+                              fontSize={'16px'}
+                            />
+                            <Text
+                              fontSize={'16px'}
+                              fontFamily={'HarmonyOS Sans SC'}
+                            >
+                              Twitter
+                            </Text>
+                          </Flex>
+                        </Link>
+                        <Link
+                          href={`https://t.me/share/url?url=${invitationLink}&text=${SHARE_TELEGRAM_TEXT}`}
+                          target='_blank'
                         >
-                          <Image
-                            src={IconTelegram}
-                            w='32px'
-                            fontSize={'16px'}
-                          />
-                          <Text
-                            fontSize={'16px'}
-                            fontFamily={'HarmonyOS Sans SC'}
+                          <Flex
+                            direction={'column'}
+                            alignItems={'center'}
+                            w='120px'
                           >
-                            Telegram
-                          </Text>
-                        </Flex>
+                            <Image
+                              src={IconTelegram}
+                              w='32px'
+                              fontSize={'16px'}
+                            />
+                            <Text
+                              fontSize={'16px'}
+                              fontFamily={'HarmonyOS Sans SC'}
+                            >
+                              Telegram
+                            </Text>
+                          </Flex>
+                        </Link>
                       </Flex>
                     </Box>
                   )}
@@ -706,12 +770,57 @@ export default function MarketingCampaign() {
                 color='#FF0066'
                 textDecoration={'underline'}
               >
-                <Link>Learn more</Link>
+                <Link
+                  href='https://xbankdocs.gitbook.io/product-docs/'
+                  target='_blank'
+                >
+                  Learn more
+                </Link>
               </Text>
             </Box>
           </Container>
         </Box>
       </Box>
+      <AlertDialog
+        motionPreset='slideInBottom'
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        isOpen={isOpen}
+        isCentered
+        size={'auto'}
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent borderRadius={'15px'} w='576px'>
+          <AlertDialogCloseButton opacity={0} />
+          <Image src={ImgDialogBanner} w='576px' />
+          <AlertDialogFooter>
+            <Stack w='576px' gap={'20px'} mb='20px' alignItems={'center'}>
+              <Flex>
+                <Text
+                  fontSize={'24px'}
+                  lineHeight={'32px'}
+                  textAlign={'center'}
+                  fontFamily={'HarmonyOS Sans SC Medium'}
+                >
+                  Invitation link has been copied, share with friends now.
+                </Text>
+              </Flex>
+              <Button
+                ref={cancelRef}
+                onClick={onClose}
+                variant={'linear'}
+                color='#FFFFFF'
+                h='50px'
+                fontSize={'20px'}
+                fontFamily={'HarmonyOS Sans SC Bold'}
+                w='300px'
+              >
+                OK
+              </Button>
+            </Stack>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

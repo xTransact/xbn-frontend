@@ -9,4 +9,6 @@ export const apiGetBoxes: () => Promise<{
   return request.get('/api/v1/xbn/user/box')
 }
 
-// export const api
+export const apiGetInviteCode: () => Promise<{ code: string }> = () => {
+  return request.get('/api/v1/xbn/user/invite-code')
+}
