@@ -317,7 +317,7 @@ const Create = () => {
     <>
       <H5SecondaryHeader />
 
-      <Box mb={8}>
+      <Box mb={8} mt={8}>
         <Heading
           fontSize={{
             md: '40px',
@@ -395,30 +395,30 @@ const Create = () => {
         <Wrapper stepIndex={2}>
           <Box>
             <SliderWrapper
-              extraTip={
-                !isEmpty(selectCollection) ? (
-                  <Flex
-                    bg='white'
-                    fontSize={'14px'}
-                    borderRadius={2}
-                    justify={'flex-start'}
-                    alignItems={'center'}
-                    fontWeight={'700'}
-                    color='gray.3'
-                    px='12px'
-                    py='10px'
-                    w='max-content'
-                    lineHeight={'18px'}
-                  >
-                    current maximum loan amount:
-                    <SvgComponent svgId='icon-eth' fill='gray.3' />
-                    {(selectCollection.nftCollection.nftCollectionStat
-                      .floorPrice *
-                      (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
-                      10000}
-                  </Flex>
-                ) : null
-              }
+              // extraTip={
+              //   !isEmpty(selectCollection) ? (
+              //     <Flex
+              //       bg='white'
+              //       fontSize={'14px'}
+              //       borderRadius={2}
+              //       justify={'flex-start'}
+              //       alignItems={'center'}
+              //       fontWeight={'700'}
+              //       color='gray.3'
+              //       px='12px'
+              //       py='10px'
+              //       w='max-content'
+              //       lineHeight={'18px'}
+              //     >
+              //       current maximum loan amount:
+              //       <SvgComponent svgId='icon-eth' fill='gray.3' />
+              //       {(selectCollection.nftCollection.nftCollectionStat
+              //         .floorPrice *
+              //         (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
+              //         10000}
+              //     </Flex>
+              //   ) : null
+              // }
               unit='%'
               value={selectCollateralKey}
               svgId='icon-intersect'

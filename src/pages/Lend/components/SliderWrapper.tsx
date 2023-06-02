@@ -65,6 +65,7 @@ const SliderWrapper: FunctionComponent<
             fontWeight={'900'}
           >
             {label}
+            {unit}
           </SliderMark>
         </Fade>
 

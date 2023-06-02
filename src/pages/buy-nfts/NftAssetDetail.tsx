@@ -20,7 +20,6 @@ import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
 import { min } from 'lodash-es'
 import ceil from 'lodash-es/ceil'
-import debounce from 'lodash-es/debounce'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
 import minBy from 'lodash-es/minBy'
@@ -411,7 +410,6 @@ const NftAssetDetail = () => {
       manual: true,
     })
 
-  const [flag, setFlag] = useState(true)
   const handleClickPay = useCallback(async () => {
     interceptFn(async () => {
       if (!selectPool || isEmpty(selectPool)) {
@@ -448,45 +446,47 @@ const NftAssetDetail = () => {
           number_of_installments: installmentValue,
           loan_amount: loanWeiAmount.toNumber().toString(),
           loan_duration: pool_days * 24 * 60 * 60,
-          loan_interest_rate: lp_pool_apr,
+          loan_interest_rate: Number(lp_pool_apr?.toFixed()),
         }
         await generateLoanOrder({
           ...postParams,
         })
+
+        setSubscribeLoading(true)
+        setLoanStep('loading')
+        // 监听 loan 是否生成
+        xBankContract.events
+          .LoanCreated(
+            {
+              filter: {
+                lender: lp_address,
+                borrower: currentAccount,
+              },
+              fromBlock: transferBlock?.BlockNumber || 'latest',
+            },
+            (error: any, event: any) => {
+              console.log(event, error, 'aaaaa')
+            },
+          )
+          .on('data', function (event: any) {
+            console.log(event, 'on data') // same results as the optional callback above
+            setLoanStep('success')
+            setSubscribeLoading(false)
+          })
+          .on('changed', console.log)
+          .on('error', console.error)
+
+        // 如果一直监听不到
+        timer.current = setTimeout(() => {
+          toast({
+            status: 'info',
+            title: 'The loan is being generated, please wait and refresh later',
+          })
+          navigate('/xlending/buy-nfts/loans')
+        }, 2 * 60 * 1000)
       } catch {
         //
       }
-
-      setSubscribeLoading(true)
-      setLoanStep('loading')
-      // 监听 loan 是否生成
-      xBankContract.events
-        .LoanCreated({
-          filter: {
-            lender: lp_address,
-            borrower: currentAccount,
-          },
-          fromBlock: transferBlock?.BlockNumber || 'latest',
-        })
-        .on(
-          'data',
-          flag
-            ? debounce((event) => {
-                console.log(event, 'on data') // same results as the optional callback above
-                setFlag(false)
-                setLoanStep('success')
-                setSubscribeLoading(false)
-              }, 10000)
-            : () => console.log(flag, 'flag false '),
-        )
-      // 如果一直监听不到
-      timer.current = setTimeout(() => {
-        toast({
-          status: 'info',
-          title: 'The loan is being generated, please wait and refresh later',
-        })
-        navigate('/xlending/buy-nfts/loans')
-      }, 2 * 60 * 1000)
     })
   }, [
     currentAccount,
@@ -500,7 +500,6 @@ const NftAssetDetail = () => {
     navigate,
     commodityWeiPrice,
     interceptFn,
-    flag,
     toast,
   ])
 

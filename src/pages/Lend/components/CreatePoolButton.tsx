@@ -17,7 +17,6 @@ import {
 } from '@chakra-ui/react'
 import { useRequest } from 'ahooks'
 import BigNumber from 'bignumber.js'
-import debounce from 'lodash-es/debounce'
 import {
   useCallback,
   useMemo,
@@ -36,11 +35,7 @@ import {
 } from '@/components'
 import { WETH_CONTRACT_ADDRESS, XBANK_CONTRACT_ADDRESS } from '@/constants'
 import { useCatchContractError, useWallet } from '@/hooks'
-import {
-  createWeb3Provider,
-  createWethContract,
-  createXBankContract,
-} from '@/utils/createContract'
+import { createWethContract, createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
 import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
@@ -72,10 +67,8 @@ const CreatePoolButton: FunctionComponent<
     floorPrice,
     maxSingleLoanAmount,
   } = data
-  console.log('🚀 ~ file: CreatePoolButton.tsx:75 ~ data:', data)
   const { toast, toastError } = useCatchContractError()
   const timer = useRef<NodeJS.Timeout>()
-  const [flag, setFlag] = useState(true)
   const navigate = useNavigate()
   const { currentAccount, interceptFn, isOpen, onClose } = useWallet()
   const {
@@ -88,13 +81,13 @@ const CreatePoolButton: FunctionComponent<
   const [createLoading, setCreateLoading] = useState(false)
   const [subscribeLoading, setSubscribeLoading] = useState(false)
 
-  useEffect(() => {
-    const web3 = createWeb3Provider()
-    web3.eth.clearSubscriptions()
-    return () => {
-      web3.eth.clearSubscriptions()
-    }
-  }, [])
+  // useEffect(() => {
+  //   const web3 = createWeb3Provider()
+  //   web3.eth.clearSubscriptions()
+  //   return () => {
+  //     web3.eth.clearSubscriptions()
+  //   }
+  // }, [])
 
   const [amount, setAmount] = useState('')
   const defaultAmount = useMemo(() => {
@@ -209,38 +202,40 @@ const CreatePoolButton: FunctionComponent<
           .send({
             from: currentAccount,
           })
-        console.log(createBlock, 'createBlock', flag)
+        console.log(createBlock, 'createBlock')
         setCreateLoading(false)
         setSubscribeLoading(true)
-        // 监听 loan 是否生成
+        // 监听 pool 是否生成
         xBankContract.events
-          .PoolCreated({
-            filter: {
-              poolOwnerAddress: currentAccount,
+          .PoolCreated(
+            {
+              filter: {
+                poolOwnerAddress: currentAccount,
+              },
+              fromBlock: createBlock?.BlockNumber || 'latest',
             },
-            fromBlock: createBlock?.BlockNumber || 'latest',
-          })
-          .on(
-            'data',
-            flag
-              ? debounce((event) => {
-                  console.log(event, 'on data') // same results as the optional callback above
-                  if (toast.isActive('Created-Successfully-ID')) {
-                    // toast.closeAll()
-                  } else {
-                    toast({
-                      status: 'success',
-                      title: 'Created successfully! ',
-                      id: 'Created-Successfully-ID',
-                    })
-                  }
-                  setSubscribeLoading(false)
-                  setFlag(false)
-                  onCloseApprove()
-                  navigate('/xlending/lending/my-pools')
-                }, 10000)
-              : () => console.log(flag, 'flag false '),
+            (error: any, event: any) => {
+              console.log(event, error, 'aaaaa')
+            },
           )
+          .on('data', function (event: any) {
+            console.log(event, 'on data') // same results as the optional callback above
+            if (toast.isActive('Created-Successfully-ID')) {
+              // toast.closeAll()
+            } else {
+              toast({
+                status: 'success',
+                title: 'Created successfully! ',
+                id: 'Created-Successfully-ID',
+              })
+            }
+            setSubscribeLoading(false)
+            onCloseApprove()
+            navigate('/xlending/lending/my-pools')
+          })
+          .on('changed', console.log)
+          .on('error', console.error)
+
         // 如果一直监听不到
         timer.current = setTimeout(() => {
           toast({
@@ -248,7 +243,7 @@ const CreatePoolButton: FunctionComponent<
             title: 'The pool is being generated, please wait and refresh later',
           })
           navigate('/xlending/lending/my-pools')
-        }, 1 * 60 * 1000)
+        }, 0.5 * 60 * 1000)
       } catch (error: any) {
         toastError(error)
         setCreateLoading(false)
@@ -267,7 +262,6 @@ const CreatePoolButton: FunctionComponent<
     allowCollateralContract,
     currentAccount,
     interceptFn,
-    flag,
     navigate,
     onCloseApprove,
     maxSingleLoanAmount,
