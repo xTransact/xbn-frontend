@@ -112,7 +112,7 @@ const MyPoolActionRender: FunctionComponent<
                           },
                         })
                       }}
-                      hidden
+                      // hidden
                     >
                       Modify loan terms
                     </Button>

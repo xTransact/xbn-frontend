@@ -20,7 +20,7 @@ import BigNumber from 'bignumber.js'
 import { pick, range, slice } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
 import { useMemo, useState, type FunctionComponent, useEffect } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { apiGetPools } from '@/api'
 import {
@@ -110,6 +110,7 @@ const Create = () => {
       poolData: PoolsListItemType
     }
   }
+  const navigate = useNavigate()
   const { currentAccount } = useWallet()
   const { isOpen: showFlexibility, onToggle: toggleShowFlexibility } =
     useDisclosure({
@@ -343,7 +344,7 @@ const Create = () => {
         )}
       </Box>
 
-      <Flex borderRadius={24} mb='24px' flexDir={'column'} gap={'30px'}>
+      <Flex borderRadius={24} mb='32px' flexDir={'column'} gap={'30px'}>
         {/* collection */}
         <Wrapper stepIndex={1}>
           <Box>
@@ -359,6 +360,7 @@ const Create = () => {
                 w='480px'
                 disabledArr={collectionAddressWithPool}
                 defaultValue={initialCollection}
+                isDisabled={params.action === 'edit'}
               />
             </Box>
 
@@ -373,6 +375,7 @@ const Create = () => {
               <AsyncSelectCollection
                 {...collectionSelectorProps}
                 defaultValue={initialCollection}
+                isDisabled={params.action === 'edit'}
               />
             </Box>
             {!isEmpty(selectCollection) && (
@@ -434,15 +437,11 @@ const Create = () => {
                 setSelectCollateralKey(target)
               }}
             />
-          </Box>
-        </Wrapper>
-        {/* 单笔最大贷款金额 */}
-        <Wrapper stepIndex={3}>
-          <Box>
+
             <Tooltip
               label={!!selectCollection ? '' : 'Please select collection'}
             >
-              <InputGroup w='484px'>
+              <InputGroup w='484px' mt='24px'>
                 <InputLeftElement
                   pointerEvents='none'
                   color='gray.300'
@@ -485,7 +484,7 @@ const Create = () => {
           </Box>
         </Wrapper>
         {/* 贷款天数 tenor */}
-        <Wrapper stepIndex={4}>
+        <Wrapper stepIndex={3}>
           <SliderWrapper
             unit='days'
             value={selectTenorKey}
@@ -502,7 +501,7 @@ const Create = () => {
           />
         </Wrapper>
         {/* 贷款比率 */}
-        <Wrapper stepIndex={5}>
+        <Wrapper stepIndex={4}>
           <SliderWrapper
             unit='%'
             value={interestPower}
@@ -703,7 +702,19 @@ const Create = () => {
         </Box>
       </Flex>
 
-      <Flex justify={'center'} mb={'40px'}>
+      <Flex justify={'center'} mb={'40px'} gap='20px'>
+        <Button
+          variant={'outline'}
+          w='160px'
+          h='52px'
+          gap='4px'
+          onClick={() => {
+            navigate(-1)
+          }}
+        >
+          <SvgComponent svgId='icon-arrow' fill='blue.1' />
+          Back
+        </Button>
         {params.action === 'create' && (
           <CreatePoolButton
             variant={'primary'}
@@ -738,7 +749,7 @@ const Create = () => {
               maxSingleLoanAmount: maxSingleLoanAmount as string,
             }}
           >
-            Confirm
+            Approve WETH
           </CreatePoolButton>
         )}
         {params.action === 'edit' && (

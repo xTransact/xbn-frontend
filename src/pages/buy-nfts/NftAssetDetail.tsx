@@ -361,6 +361,8 @@ const NftAssetDetail = () => {
     fetchSpreadLoading,
   ])
 
+  console.log('当前选中的 pool:', selectPool)
+
   // number of installments
   const [installmentOptions, setInstallmentOptions] = useState<(1 | 2 | 3)[]>()
   const [installmentValue, setInstallmentValue] = useState<1 | 2 | 3>(1)

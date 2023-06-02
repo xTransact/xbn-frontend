@@ -1,6 +1,3 @@
-import img from '@/assets/IMAGE.png'
-import type { StepItemType } from '@/components/guide-modal/GuideModal'
-
 import type { UseToastOptions } from '@chakra-ui/react'
 
 export { XBANK_CONTRACT_ABI, WETH_CONTRACT_ABI } from './contractABI'
@@ -82,12 +79,9 @@ export const STEPS_DESCRIPTIONS = [
     text: 'Please choose a preferred collection that you will accept to lend against. All the collections listed on OpenSea, X2Y2 and LookRare are available',
   },
   {
-    title: 'Set maximum collateral factor',
+    title: 'Risk Control',
+    tip: 'Your collection pool will use the smaller of these two conditions for lending.',
     text: 'Indicate the ratio which will determine how much money borrowers can receive to borrow against expected NFT collection. The higher the ratio, the more money they can borrow from the pool. A 50% of collateral factor will be more commonly used.',
-  },
-  {
-    title: 'Set maximum single loan amount',
-    text: `This determines the maximum single loan amount that borrowers can acquire under your loan offer. When the collection floor price rises rapidly, this limit can help you avoid lending too much money for a single loan`,
   },
   {
     title: 'Set Maximum loan tenor',
@@ -123,19 +117,3 @@ export enum LISTING_TYPE {
   LISTING = 1,
   CANCEL = 2,
 }
-
-export const LP_GUIDES: StepItemType[] = [
-  {
-    index: 1,
-    title: '这是第一步',
-    description: '这是第一步这是第一步这是第一步这是第一步这是第一步这是第一步',
-    img,
-  },
-  {
-    index: 2,
-    title: '这是第二步',
-    description: '这是第二步这是第二步这是第二步这是第二步这是第二步这是第二步',
-    video:
-      'https://www.motionelements.com/zh-hant/stock-video-25485291-film-noise-like-material',
-  },
-]

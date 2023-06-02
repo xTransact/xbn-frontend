@@ -30,7 +30,6 @@ const SliderWrapper: FunctionComponent<
   return (
     <Flex
       alignItems={'center'}
-      px='12px'
       gap='4px'
       py='8px'
       justify={'space-between'}

@@ -76,6 +76,10 @@ const components = {
       outline: {
         borderColor: 'blue.1',
         color: 'blue.1',
+        _hover: {
+          bg: 'white',
+          opacity: 0.8,
+        },
       },
       // // 5. We can add responsive variants
       // sm: {

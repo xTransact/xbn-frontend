@@ -399,7 +399,7 @@ const Header = () => {
     <Box
       position={'sticky'}
       top={0}
-      zIndex={21}
+      zIndex={22}
       borderBottomColor='rgba(0, 0, 0, 0.05)'
       borderBottomWidth={1}
       bg='white'

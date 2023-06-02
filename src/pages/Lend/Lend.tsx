@@ -47,9 +47,9 @@ import {
   ImageWithFallback,
   type ColumnProps,
   SearchInput,
-  GuideModal,
+  LpGuideModal,
 } from '@/components'
-import { FORMAT_NUMBER, LP_GUIDES, UNIT } from '@/constants'
+import { FORMAT_NUMBER, UNIT } from '@/constants'
 import { useWallet, useBatchAsset, useGuide } from '@/hooks'
 import { formatAddress } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
@@ -687,11 +687,7 @@ const Lend = () => {
 
   return (
     <Box mb='100px'>
-      <GuideModal
-        steps={LP_GUIDES}
-        isOpen={guideVisible}
-        onClose={closeGuide}
-      />
+      <LpGuideModal isOpen={guideVisible} onClose={closeGuide} />
 
       <Box
         my={{

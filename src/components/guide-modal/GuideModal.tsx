@@ -21,8 +21,6 @@ export type StepItemType = {
   index: number
   title: string
   description: string
-  img?: string
-  video?: string
 }
 
 const GuideModal: FunctionComponent<{
@@ -31,7 +29,7 @@ const GuideModal: FunctionComponent<{
   isOpen: boolean
 }> = ({ steps, onClose, ...rest }) => {
   const [step, setStep] = useState<number>(1)
-  const { title, index, description, img } = useMemo(() => {
+  const { title, index, description } = useMemo(() => {
     return steps[step - 1]
   }, [step, steps])
   return (
@@ -72,9 +70,7 @@ const GuideModal: FunctionComponent<{
           <Text color='gray.4' mb='20px'>
             {description}
           </Text>
-          <Flex bg='gray.5' px='30px' h='300px'>
-            {img && <Image src={img} alt='' />}
-          </Flex>
+          <Flex bg='gray.5' px='30px' h='300px' />
 
           {/* button */}
           <Flex
