@@ -42,30 +42,30 @@ const H5Demo = lazyWithRetries(() => import('./pages/h5-demo/H5Demo'))
 const NotFound = lazyWithRetries(() => import('./pages/404'))
 
 function App() {
+  console.log('app')
   useScrollToTop()
   return (
-    <>
-      <Routes>
-        <Route
-          path='/xlending'
-          element={<Navigate replace to='/xlending/lending/collections' />}
-        />
-        <Route
-          path='/xlending/lending'
-          element={<Navigate replace to='/xlending/lending/collections' />}
-        />
-        <Route
-          path='/xlending/lending/my-pools'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <Lend />
-              </Suspense>
-            </RootLayout>
-          }
-        />
+    <Routes>
+      <Route
+        path='/xlending'
+        element={<Navigate replace to='/xlending/lending/collections' />}
+      />
+      <Route
+        path='/xlending/lending'
+        element={<Navigate replace to='/xlending/lending/collections' />}
+      />
+      <Route
+        path='/xlending/lending/my-pools'
+        element={
+          <RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <Lend />
+            </Suspense>
+          </RootLayout>
+        }
+      />
 
-        {/* <Route
+      {/* <Route
           path='lending/pools'
           element={
             <Suspense fallback={<Fallback />}>
@@ -73,96 +73,96 @@ function App() {
             </Suspense>
           }
         /> */}
-        <Route
-          path='/xlending/lending/:action'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <PoolCreateAndEdit />
-              </Suspense>
-            </RootLayout>
-          }
-        />
-        <Route
-          path='/xlending/lending/collections'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <Lend />
-              </Suspense>
-            </RootLayout>
-          }
-        />
-
-        <Route
-          path='/xlending/lending/loans'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <Lend />
-              </Suspense>
-            </RootLayout>
-          }
-        />
-
-        {/* buy nfts */}
-        <Route
-          path='/xlending/buy-nfts'
-          element={<Navigate replace to='/xlending/buy-nfts/market' />}
-        />
-        <Route
-          path='/xlending/buy-nfts/market'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <Market />
-              </Suspense>
-            </RootLayout>
-          }
-        />
-
-        {/* asset */}
-        <Route
-          path='/xlending/asset/detail'
-          // path='/asset/:asset_contract_address'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <NftAssetDetail />
-              </Suspense>
-            </RootLayout>
-          }
-        />
-        <Route
-          path='/xlending/buy-nfts/my-assets'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <MyAssets />
-              </Suspense>
-            </RootLayout>
-          }
-        />
-        <Route
-          path='/xlending/buy-nfts/complete'
-          element={
+      <Route
+        path='/xlending/lending/:action'
+        element={
+          <RootLayout>
             <Suspense fallback={<Fallback />}>
-              <CompleteList />
+              <PoolCreateAndEdit />
             </Suspense>
-          }
-        />
-        <Route
-          path='xlending/buy-nfts/loans'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <LoansForBuyer />
-              </Suspense>
-            </RootLayout>
-          }
-        />
+          </RootLayout>
+        }
+      />
+      <Route
+        path='/xlending/lending/collections'
+        element={
+          <RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <Lend />
+            </Suspense>
+          </RootLayout>
+        }
+      />
 
-        {/* <Route path='lending'>
+      <Route
+        path='/xlending/lending/loans'
+        element={
+          <RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <Lend />
+            </Suspense>
+          </RootLayout>
+        }
+      />
+
+      {/* buy nfts */}
+      <Route
+        path='/xlending/buy-nfts'
+        element={<Navigate replace to='/xlending/buy-nfts/market' />}
+      />
+      <Route
+        path='/xlending/buy-nfts/market'
+        element={
+          <RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <Market />
+            </Suspense>
+          </RootLayout>
+        }
+      />
+
+      {/* asset */}
+      <Route
+        path='/xlending/asset/detail'
+        // path='/asset/:asset_contract_address'
+        element={
+          <RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <NftAssetDetail />
+            </Suspense>
+          </RootLayout>
+        }
+      />
+      <Route
+        path='/xlending/buy-nfts/my-assets'
+        element={
+          <RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <MyAssets />
+            </Suspense>
+          </RootLayout>
+        }
+      />
+      <Route
+        path='/xlending/buy-nfts/complete'
+        element={
+          <Suspense fallback={<Fallback />}>
+            <CompleteList />
+          </Suspense>
+        }
+      />
+      <Route
+        path='xlending/buy-nfts/loans'
+        element={
+          <RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <LoansForBuyer />
+            </Suspense>
+          </RootLayout>
+        }
+      />
+
+      {/* <Route path='lending'>
           <Route
             path='pools'
             element={
@@ -188,39 +188,38 @@ function App() {
             }
           />
         </Route> */}
-        <Route
-          path='/xlending/demo'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <H5Demo />
-              </Suspense>
-            </RootLayout>
-          }
-        />
-
-        {/* 营销活动 */}
-        <Route
-          path='/xlending/marketing-campaign'
-          element={
+      <Route
+        path='/xlending/demo'
+        element={
+          <RootLayout>
             <Suspense fallback={<Fallback />}>
-              <MarketingCampaign />
+              <H5Demo />
             </Suspense>
-          }
-        />
+          </RootLayout>
+        }
+      />
 
-        <Route
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <NotFound />
-              </Suspense>
-            </RootLayout>
-          }
-          path='/xlending/*'
-        />
-      </Routes>
-    </>
+      {/* 营销活动 */}
+      <Route
+        path='/xlending/marketing-campaign'
+        element={
+          <Suspense fallback={<Fallback />}>
+            <MarketingCampaign />
+          </Suspense>
+        }
+      />
+
+      <Route
+        element={
+          <RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <NotFound />
+            </Suspense>
+          </RootLayout>
+        }
+        path='/xlending/*'
+      />
+    </Routes>
   )
 }
 

@@ -11,19 +11,23 @@ import {
   Center,
   Flex,
   Link,
+  useClipboard,
+  useBoolean,
 } from '@chakra-ui/react'
-import { useBoolean, useSetState } from 'ahooks'
+import { useSetState } from 'ahooks'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { apiGetLoans } from '@/api'
 import { apiGetBoxes } from '@/api/marketing-campaign'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
 import Box1 from '@/assets/marketing/box1.png'
 import Box2 from '@/assets/marketing/box2.png'
 import Box3 from '@/assets/marketing/box3.png'
 import Box4 from '@/assets/marketing/box4.png'
+import IconCopied from '@/assets/marketing/copied.png'
 import Icon0 from '@/assets/marketing/icon-0.png'
 import Icon1 from '@/assets/marketing/icon-1.png'
 import Icon2 from '@/assets/marketing/icon-2.png'
@@ -128,7 +132,7 @@ export default function MarketingCampaign() {
   const navigate = useNavigate()
   const [expired, setExpired] = useState(true)
   const { currentAccount, connectWallet } = useWallet()
-  const [hasUsedXBN, setHasUsedXBN] = useBoolean(false)
+  const [hasUsedXBN, setHasUsedXBN] = useBoolean()
   const [boxAmounts, setBoxAmounts] = useSetState({
     box_bronze: 0,
     box_diamond: 0,
@@ -138,8 +142,14 @@ export default function MarketingCampaign() {
   })
   const queryUserBoxes = useCallback(() => {
     apiGetBoxes()
-      .then((resp) => {
-        console.log(resp)
+      .then((data) => {
+        setBoxAmounts({
+          box_bronze: data?.box_bronze || 0,
+          box_diamond: data?.box_diamond || 0,
+          box_gold: data?.box_gold || 0,
+          box_platinum: data?.box_platinum || 0,
+          box_silver: data?.box_silver || 0,
+        })
       })
       .catch((e) => {
         console.log('e', e)
@@ -152,10 +162,33 @@ export default function MarketingCampaign() {
     }
   }, [expired, queryUserBoxes])
   useEffect(() => {
+    if (!expired && !!currentAccount) {
+      apiGetLoans({
+        lender_address: currentAccount,
+        borrower_address: currentAccount,
+      }).then((list) => {
+        if (list.length > 0) {
+          setHasUsedXBN.on()
+        } else {
+          setHasUsedXBN.off()
+        }
+      })
+    }
+  }, [expired, currentAccount, setHasUsedXBN])
+  useEffect(() => {
     const userToken = getUserToken()
     setExpired(
       !userToken?.expires ? true : moment().isAfter(moment(userToken?.expires)),
     )
+  }, [])
+  const {
+    onCopy,
+    hasCopied,
+    value: invitationLink,
+    setValue: setCopiedValue,
+  } = useClipboard('')
+  useEffect(() => {
+    setCopiedValue('你好世界')
   }, [])
   return (
     <div>
@@ -497,7 +530,7 @@ export default function MarketingCampaign() {
                 </Flex>
               ) : (
                 <>
-                  {!!hasUsedXBN ? (
+                  {!hasUsedXBN ? (
                     <Flex justifyContent={'center'} mb='205px' pt='27px'>
                       <Button
                         color='#FFFFFF'
@@ -549,19 +582,21 @@ export default function MarketingCampaign() {
                               <Text
                                 color='#B5C4D7'
                                 fontSize={'24px'}
+                                lineHeight={'24px'}
                                 fontWeight={400}
                                 padding={'0 18px'}
                                 maxW={'300px'}
                                 noOfLines={1}
                               >
-                                Lorem ipsum dolor sit amet consectetur,
-                                adipisicing elit. Non, sunt? Perferendis numquam
-                                animi tenetur laudantium, sunt libero beatae
-                                rerum voluptates, accusamus hic exercitationem
-                                blanditiis itaque vel provident atque dicta
-                                distinctio?
+                                {invitationLink}
                               </Text>
-                              <Image src={IconCopy} w='24px' h='24px' />
+                              <Button variant={'unstyled'} onClick={onCopy}>
+                                {hasCopied ? (
+                                  <Image src={IconCopied} w='24px' h='24px' />
+                                ) : (
+                                  <Image src={IconCopy} w='24px' h='24px' />
+                                )}
+                              </Button>
                             </Flex>
                             <Button
                               color='#FFFFFF'

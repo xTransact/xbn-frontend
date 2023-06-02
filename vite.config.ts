@@ -6,7 +6,8 @@ import { join } from 'path'
 // https://vitejs.dev/config/
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
-  base: './xlending',
+  base: '/xlending',
+  publicDir: 'public',
   plugins: [
     react(),
     //  viteCompression()
