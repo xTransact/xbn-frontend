@@ -568,7 +568,7 @@ export default function MarketingCampaign() {
                 </Flex>
               ) : (
                 <>
-                  {!!hasUsedXBN ? (
+                  {!hasUsedXBN ? (
                     <Flex justifyContent={'center'} mb='205px' pt='27px'>
                       <Button
                         color='#FFFFFF'
