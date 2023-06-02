@@ -266,7 +266,7 @@ const NftAssetDetail = () => {
     const filterPercentageAndLatestBalancePools = originPoolList.filter(
       (item) => {
         // 此 pool 创建者最新 weth 资产
-        const latestWeth = latestBalanceMap?.get(item.owner_address)
+        const latestWeth = BigNumber(latestBalanceMap?.get(item.owner_address))
         if (!latestWeth) {
           return false
         }
@@ -278,13 +278,13 @@ const NftAssetDetail = () => {
         const maxSingleLoanAmount = BigNumber(item.maximum_loan_amount)
         // 三者取较小值用于比较
         const forCompareWei = min([
-          poolLatestCanUseAmount,
-          latestWeth,
-          maxSingleLoanAmount,
+          poolLatestCanUseAmount.toNumber(),
+          latestWeth.toNumber(),
+          maxSingleLoanAmount.toNumber(),
         ])
         return (
           item.pool_maximum_percentage >= loanPercentage &&
-          loanWeiAmount.lte(forCompareWei)
+          loanWeiAmount.lt(forCompareWei as number)
           //  存在一些脏数据
           // item.loan_ratio_preferential_flexibility <= 200 &&
           // item.loan_ratio_preferential_flexibility <= 200
