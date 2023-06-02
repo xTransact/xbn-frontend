@@ -284,7 +284,7 @@ const NftAssetDetail = () => {
         ])
         return (
           item.pool_maximum_percentage >= loanPercentage &&
-          loanWeiAmount.lt(forCompareWei as number)
+          loanWeiAmount.lte(forCompareWei as number)
           //  存在一些脏数据
           // item.loan_ratio_preferential_flexibility <= 200 &&
           // item.loan_ratio_preferential_flexibility <= 200
