@@ -25,6 +25,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import { apiGetPools } from '@/api'
 import {
+  BuyerGuideModal,
   ConnectWalletModal,
   EmptyComponent,
   LoadingComponent,
@@ -40,6 +41,7 @@ import {
   useNftCollectionsByContractAddressesQuery,
   type NftAsset,
   type NftCollection,
+  useGuide,
 } from '@/hooks'
 
 import CollectionDescription from './components/CollectionDescription'
@@ -272,8 +274,12 @@ const Market = () => {
     [grid],
   )
 
+  const { isOpen: guideVisible, onClose: closeGuide } = useGuide({
+    key: 'has-read-buyer-guide',
+  })
   return (
     <>
+      <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
       <Box
         mb={{ md: '40px', sm: '12px', xs: '12px' }}
         mt={{

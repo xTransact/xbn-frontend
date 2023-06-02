@@ -13,34 +13,18 @@ import {
 import { range } from 'lodash-es'
 import { useState, type FunctionComponent, useMemo } from 'react'
 
+import buy11 from '@/assets/buy1-1.png'
+import buy12 from '@/assets/buy1-2.png'
+import buy13 from '@/assets/buy1-3.png'
+import buy2 from '@/assets/buy2.gif'
+import buy31 from '@/assets/buy3-1.png'
+import buy32 from '@/assets/buy3-2.png'
+import buy42 from '@/assets/buy4-2.png'
+import imgEthRound from '@/assets/eth-round.png'
 import arrowImg from '@/assets/guide-arrow.png'
-import lp1 from '@/assets/lp1.png'
-import lp21 from '@/assets/lp2-1.png'
-import lp22 from '@/assets/lp2-2.png'
-import lp23 from '@/assets/lp2-3.png'
-import lp31 from '@/assets/lp3-1.png'
-import lp32 from '@/assets/lp3-2.png'
 import { MODEL_HEADER_PROPS } from '@/pages/buy-nfts/components/MyAssetNftListCard'
 
 import icon from '@/assets/icon-guide.svg'
-
-import SvgComponent from '../svg-component/SvgComponent'
-
-import type { FlexProps } from '@chakra-ui/react'
-
-const EthComponent: FunctionComponent<
-  FlexProps & { num: number; isPrimary?: boolean }
-> = ({ num, isPrimary, ...rest }) => (
-  <Flex alignItems={'center'} gap='2px' {...rest}>
-    <SvgComponent
-      svgId={isPrimary ? 'icon-eth-color' : 'icon-eth'}
-      fontSize={'32px'}
-    />
-    <Text fontSize={'32px'} fontWeight={'900'}>
-      {num}
-    </Text>
-  </Flex>
-)
 
 export type StepItemType = {
   index: number
@@ -54,70 +38,96 @@ const StepImageComponent: FunctionComponent<{ order: number }> = ({
   switch (order) {
     case 1:
       return (
-        <Flex>
-          <Image src={lp1} w='630px' h='211px' />
+        <Flex alignItems={'center'} w='100%' justify={'center'}>
+          <Box position={'relative'} w='30%'>
+            <Image src={buy11} w='160px' />
+
+            <Text fontWeight={'500'}>Lend WETH to NFTs</Text>
+          </Box>
+
+          <Image src={arrowImg} w='64px' />
+          <Flex
+            w='40%'
+            textAlign={'center'}
+            flexDir={'column'}
+            alignItems={'center'}
+            justify={'center'}
+          >
+            <Image src={buy12} w='154px' />
+            <Box transform={'rotate(90deg)'}>
+              <Image src={arrowImg} w='40px' />
+            </Box>
+            <Image src={buy13} w='150px' h='54px' />
+
+            <Text fontWeight={'500'} color='blue.1'>
+              Get Interest on your ETH and Mystery Box
+            </Text>
+          </Flex>
         </Flex>
       )
 
     case 2:
       return (
         <Flex gap='10px' alignItems={'center'} justify={'space-between'}>
-          <Box position={'relative'} w='30%'>
-            <Image src={lp21} w='190px' />
-            <EthComponent
-              num={60}
-              isPrimary
-              position={'absolute'}
-              right={'20px'}
-              top={'20px'}
-            />
-            <Text fontWeight={'500'}>
-              You can sell at anytime including the loan is outstanding{' '}
-            </Text>
-          </Box>
-          <Box
-            w='48px'
-            h='16px'
-            borderRadius={2}
-            bg='conic-gradient(from 11.86deg at 46.81% 64.71%, #6865FF 0deg, rgba(120, 117, 255, 0) 360deg), linear-gradient(200.52deg, #F5F3FF 8.81%, #A494FF 70.86%, #FFFFFF 90.41%)'
-          />
-          <Flex
-            w='30%'
-            textAlign={'center'}
-            flexDir={'column'}
-            alignItems={'center'}
-            justify={'center'}
-          >
-            <EthComponent num={50} />
-            <Image src={lp22} w='140px' />
-            <Text fontWeight={'500'}>Automatically repaid upon sale</Text>
-          </Flex>
-          <Image src={arrowImg} w='64px' />
-          <Flex
-            w='30%'
-            textAlign={'center'}
-            flexDir={'column'}
-            alignItems={'center'}
-            justify={'center'}
-          >
-            <EthComponent num={10} isPrimary />
-            <Image src={lp23} w='140px' />
-            <Text fontWeight={'500'}>You got profits</Text>
-          </Flex>
+          <Image src={buy2} w='475px' h='100%' />
         </Flex>
       )
 
     case 3:
       return (
-        <Flex justify={'space-around'} w='100%' alignItems={'center'}>
-          <Flex flexDir={'column'} justify={'center'} alignItems={'center'}>
-            <Image src={lp31} w='160px' />
-            <Text>You can settle your loan anytime</Text>
+        <Flex justify={'center'} w='100%' alignItems={'center'}>
+          <Flex
+            flexDir={'column'}
+            justify={'center'}
+            alignItems={'center'}
+            w='25%'
+          >
+            <Image src={buy31} w='168px' />
+            <Text>Borrowers locks their NFT</Text>
+          </Flex>
+          <Flex
+            flexDir={'column'}
+            justify={'center'}
+            w='25%'
+            alignItems={'center'}
+          >
+            <Image src={imgEthRound} boxSize={'54px'} />
+            <Image src={arrowImg} w='64px' h='48px' />
+          </Flex>
+          <Flex
+            flexDir={'column'}
+            justify={'center'}
+            alignItems={'center'}
+            w='25%'
+          >
+            <Image src={buy32} w='150px' h='180px' />
+            <Text color={'blue.1'} fontWeight={'500'}>
+              Once repaid the loan you got interest
+            </Text>
+          </Flex>
+        </Flex>
+      )
+    case 4:
+      return (
+        <Flex justify={'center'} w='100%' alignItems={'center'}>
+          <Flex
+            flexDir={'column'}
+            justify={'center'}
+            alignItems={'center'}
+            w='30%'
+          >
+            <Image src={buy31} w='168px' />
+            <Text>Borrower fails to repay the loan on time</Text>
           </Flex>
           <Image src={arrowImg} w='64px' h='48px' />
-          <Flex flexDir={'column'} justify={'center'} alignItems={'center'}>
-            <Image src={lp32} w='200px' />
-            <Text>You owned</Text>
+          <Flex
+            flexDir={'column'}
+            justify={'center'}
+            alignItems={'center'}
+            w='30%'
+          >
+            <Image src={buy42} w='150px' h='180px' />
+            <Text color={'blue.1'}>You can claim NFT to your wallet</Text>
           </Flex>
         </Flex>
       )
@@ -126,34 +136,40 @@ const StepImageComponent: FunctionComponent<{ order: number }> = ({
   }
 }
 
-export const LP_GUIDES: StepItemType[] = [
+export const BUYER_GUIDES: StepItemType[] = [
   {
     index: 1,
-    title: 'Buy NFT Pay Later, No Hiking Interest',
+    title: 'Earning Yield by Lending on xBank',
     description:
-      'Buy Top NFTs with only a fraction of the cost up front. The rest is borrowed. Pay back your borrow later or sell your NFT and get mystery boxs.',
+      'Create a collection pool and set the preferred term and collateral factor ratio to provide loans to borrowers. Also adjust and set a reasonable APR so that you can lend money quickly.',
   },
   {
     index: 2,
-    title: 'Collateral Selling',
+    title: 'Create Collection Pools and Set APY',
     description:
       'Sell your NFT at any time and Enjoying price appreciation of your collection.',
   },
   {
     index: 3,
-    title: 'Repay to Take Full Ownership of NFT.',
+    title: 'Start Earning Interest',
     description:
-      'You can repay your loan in multiple instalments, or you can settle early in one go. Depending on the changing dynamics of the NFT market, you can be flexible and close the loan to own the NFT completely.',
+      'Create a collection pool and set the preferred term and collateral factor ratio to provide loans to borrowers. Also adjust and set a reasonable APR so that you can lend money quickly.',
+  },
+  {
+    index: 4,
+    title: 'Overcollateralized with Safety',
+    description:
+      'If the borrower does not repay on time, you can immediately claim the NFT into your wallet and liquidate it for funds.',
   },
 ]
 
-const LpGuideModal: FunctionComponent<{
+const BuyerGuideModal: FunctionComponent<{
   onClose: () => void
   isOpen: boolean
 }> = ({ onClose, ...rest }) => {
   const [step, setStep] = useState<number>(1)
   const { title, index, description } = useMemo(() => {
-    return LP_GUIDES[step - 1]
+    return BUYER_GUIDES[step - 1]
   }, [step])
   return (
     <Modal onClose={onClose} isCentered scrollBehavior='inside' {...rest}>
@@ -193,13 +209,7 @@ const LpGuideModal: FunctionComponent<{
           <Text color='gray.4' mb='20px'>
             {description}
           </Text>
-          <Flex
-            bg='gray.5'
-            px='30px'
-            h='300px'
-            alignItems={'center'}
-            justify={'center'}
-          >
+          <Flex bg='gray.5' h='300px' alignItems={'center'} justify={'center'}>
             <StepImageComponent order={index} />
           </Flex>
 
@@ -220,18 +230,18 @@ const LpGuideModal: FunctionComponent<{
             <Button
               w='158px'
               h='40px'
-              variant={step === LP_GUIDES.length ? 'primary' : 'outline'}
+              variant={step === BUYER_GUIDES.length ? 'primary' : 'outline'}
               px='30px'
               onClick={() => {
                 console.log('aaaaaaaa')
-                if (step === LP_GUIDES.length) {
+                if (step === BUYER_GUIDES.length) {
                   setStep(1)
                   onClose()
                 }
                 setStep((prev) => prev + 1)
               }}
             >
-              {step < LP_GUIDES.length ? 'Next' : 'Continue'}
+              {step < BUYER_GUIDES.length ? 'Next' : 'Continue'}
             </Button>
           </Flex>
           <Flex
@@ -244,7 +254,7 @@ const LpGuideModal: FunctionComponent<{
             justify={'center'}
             mt='25px'
           >
-            {range(LP_GUIDES.length).map((i) => (
+            {range(BUYER_GUIDES.length).map((i) => (
               <Box
                 key={i}
                 w={i + 1 === step ? '24px' : '16px'}
@@ -266,4 +276,4 @@ const LpGuideModal: FunctionComponent<{
   )
 }
 
-export default LpGuideModal
+export default BuyerGuideModal

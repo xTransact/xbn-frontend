@@ -25,5 +25,6 @@ export { default as MiddleStatus } from './middle-status/MiddleStatus'
 export { default as CustomLoader } from './custom-loader/CustomLoader'
 export { default as CustomNumberInput } from './custom-number-input/CustomNumberInput'
 export { default as LpGuideModal } from './guide-modal/LpGuideModal'
+export { default as BuyerGuideModal } from './guide-modal/BuyerGuideModal'
 
 export { type ColumnProps } from './my-table/index'

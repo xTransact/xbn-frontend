@@ -18,7 +18,7 @@ const useGuide = ({ key }: { key: string }) => {
   }, [onClose, setHasReadGuide])
 
   return {
-    isOpen: false,
+    isOpen,
     onClose: onCloseGuide,
     onOpen,
   }
