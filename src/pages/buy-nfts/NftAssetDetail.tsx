@@ -34,7 +34,7 @@ import {
   useRef,
   type FunctionComponent,
 } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { apiGetAssetPrice, apiGetXCurrency, apiPostLoanOrder } from '@/api'
 import {
@@ -133,13 +133,12 @@ const NftAssetDetail = () => {
     state: {
       collection: NftCollection
       poolsList: PoolsListItemType[]
-      assetVariable: {
-        assetId?: string
-        assetContractAddress?: string
-        assetTokenID?: string
-      }
     }
   } = useLocation()
+  const assetVariable = useParams() as {
+    contractAddress: string
+    tokenID: string
+  }
 
   useEffect(() => {
     const web3 = createWeb3Provider()
@@ -158,11 +157,6 @@ const NftAssetDetail = () => {
   const fetchInterestSpread = async () => {
     const xBankContract = createXBankContract()
     const res = await xBankContract.methods.getProtocolIRMultiplier().call()
-    console.log(
-      '🚀 ~ file: NftAssetDetail.tsx:159 ~ fetchInterestSpread ~ res:',
-      res,
-    )
-
     return res / 10000 || 0
   }
 
@@ -171,9 +165,12 @@ const NftAssetDetail = () => {
 
   const [commodityWeiPrice, setCommodityWeiPrice] = useState(BigNumber(0))
 
-  const { collection, poolsList: originPoolList, assetVariable } = state || {}
+  const { collection, poolsList: originPoolList } = state || {}
   const { data: detail, loading: assetFetchLoading } = useAssetQuery({
-    variables: assetVariable,
+    variables: {
+      assetContractAddress: assetVariable?.contractAddress,
+      assetTokenId: assetVariable?.tokenID,
+    },
   })
 
   const { loading: ordersPriceFetchLoading, refresh: refreshOrderPrice } =
@@ -181,8 +178,8 @@ const NftAssetDetail = () => {
       ready: !!assetVariable,
       defaultParams: [
         {
-          contract_address: assetVariable?.assetContractAddress || '',
-          token_id: assetVariable?.assetTokenID || '',
+          contract_address: assetVariable.contractAddress,
+          token_id: assetVariable.tokenID,
         },
       ],
       onSuccess({ data }) {

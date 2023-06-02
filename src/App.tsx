@@ -123,7 +123,7 @@ function App() {
 
         {/* asset */}
         <Route
-          path='/xlending/asset/detail'
+          path='/xlending/asset/:contractAddress/:tokenID'
           // path='/asset/:asset_contract_address'
           element={
             <RootLayout>

@@ -72,6 +72,7 @@ const CreatePoolButton: FunctionComponent<
     floorPrice,
     maxSingleLoanAmount,
   } = data
+  console.log('🚀 ~ file: CreatePoolButton.tsx:75 ~ data:', data)
   const { toast, toastError } = useCatchContractError()
   const timer = useRef<NodeJS.Timeout>()
   const [flag, setFlag] = useState(true)

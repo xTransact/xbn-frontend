@@ -515,7 +515,7 @@ const Market = () => {
                 assetsData?.list?.map((item) => {
                   if (!item) return null
                   const { node } = item
-                  const { tokenID, nftAssetContract, name, id } = node || {}
+                  const { tokenID, nftAssetContract, name } = node || {}
                   return (
                     <MarketNftListCard
                       data={{ ...item, highestRate }}
@@ -529,24 +529,22 @@ const Market = () => {
                       key={`${tokenID}${nftAssetContract?.address}${name}`}
                       onClick={() => {
                         interceptFn(() => {
-                          navigate(`/xlending/asset/detail`, {
-                            state: {
-                              collection: {
-                                ...selectCollection?.nftCollection,
-                              },
-                              poolsList:
-                                poolsMap && selectCollection?.contractAddress
-                                  ? poolsMap.get(
-                                      selectCollection.contractAddress,
-                                    )
-                                  : [],
-                              assetVariable: {
-                                assetId: id,
-                                assetContractAddress: nftAssetContract?.address,
-                                assetTokenID: tokenID,
+                          navigate(
+                            `/xlending/asset/${nftAssetContract?.address}/${tokenID}`,
+                            {
+                              state: {
+                                collection: {
+                                  ...selectCollection?.nftCollection,
+                                },
+                                poolsList:
+                                  poolsMap && selectCollection?.contractAddress
+                                    ? poolsMap.get(
+                                        selectCollection.contractAddress,
+                                      )
+                                    : [],
                               },
                             },
-                          })
+                          )
                         })
                       }}
                     />
@@ -596,23 +594,20 @@ const Market = () => {
                   key={`${searchedAsset.tokenID}${searchedAsset.assetContractAddress}${searchedAsset.name}`}
                   onClick={() => {
                     interceptFn(() => {
-                      navigate(`/xlending/asset/detail`, {
-                        state: {
-                          collection: {
-                            ...selectCollection?.nftCollection,
-                          },
-                          poolsList:
-                            poolsMap && selectCollection?.contractAddress
-                              ? poolsMap.get(selectCollection.contractAddress)
-                              : [],
-                          assetVariable: {
-                            assetId: searchedAsset.id,
-                            assetContractAddress:
-                              searchedAsset.assetContractAddress,
-                            assetTokenID: searchedAsset.tokenID,
+                      navigate(
+                        `/xlending/asset/${searchedAsset?.assetContractAddress}/${searchedAsset?.tokenID}`,
+                        {
+                          state: {
+                            collection: {
+                              ...selectCollection?.nftCollection,
+                            },
+                            poolsList:
+                              poolsMap && selectCollection?.contractAddress
+                                ? poolsMap.get(selectCollection.contractAddress)
+                                : [],
                           },
                         },
-                      })
+                      )
                     })
                   }}
                 />

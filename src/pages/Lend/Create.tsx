@@ -726,7 +726,9 @@ const Create = () => {
                 selectCollection?.contractAddress as string,
               floorPrice: selectCollection?.nftCollection?.nftCollectionStat
                 ?.floorPrice as number,
-              poolMaximumInterestRate: baseRatePower,
+              poolMaximumInterestRate: BigNumber(baseRatePower)
+                .integerValue()
+                .toNumber(),
               loanRatioPreferentialFlexibility: RIGHT_RATE_POWER_MAP.get(
                 sliderRightKey,
               ) as number,
