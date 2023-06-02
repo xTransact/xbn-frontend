@@ -405,12 +405,15 @@ const Create = () => {
                     alignItems={'center'}
                     fontWeight={'700'}
                     color='gray.3'
-                    minW='280px'
+                    px='12px'
+                    py='10px'
+                    w='max-content'
+                    lineHeight={'18px'}
                   >
-                    Current Maxdmum Loan Amount:
+                    current maximum loan amount:
                     <SvgComponent svgId='icon-eth' fill='gray.3' />
-                    {(selectCollection?.nftCollection?.nftCollectionStat
-                      ?.floorPrice *
+                    {(selectCollection.nftCollection.nftCollectionStat
+                      .floorPrice *
                       (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
                       10000}
                   </Flex>

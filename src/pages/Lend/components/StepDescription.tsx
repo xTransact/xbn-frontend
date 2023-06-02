@@ -15,7 +15,7 @@ const StepDescription: FunctionComponent<
 > = ({ data: { step, title, text }, ...rest }) => {
   return (
     <Box {...rest}>
-      <Flex mb={'20px'} alignItems='center' gap={'10px'}>
+      <Flex alignItems='center' gap={'10px'}>
         <Flex
           bg='blue.1'
           color='white'
@@ -31,8 +31,15 @@ const StepDescription: FunctionComponent<
         <Heading fontSize={'18px'} color='black.1'>
           {title}
         </Heading>
-        <Tooltip label={text} placement='auto-start'>
-          <Box>
+        <Tooltip
+          label={text}
+          placement='auto-start'
+          hasArrow
+          bg='gray.1'
+          borderRadius={4}
+          p='8px'
+        >
+          <Box cursor={'pointer'}>
             <SvgComponent svgId='icon-tip' fill='gray.1' />
           </Box>
         </Tooltip>

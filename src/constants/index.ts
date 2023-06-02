@@ -10,7 +10,7 @@ export const XBANK_CONTRACT_ADDRESS = import.meta.env
 export const WETH_CONTRACT_ADDRESS = import.meta.env.VITE_WETH_CONTRACT_ADDRESS
 
 export const RESPONSIVE_MAX_W = {
-  xl: 1408,
+  xl: 1208,
   lg: 968,
   md: 768,
   sm: 390,
