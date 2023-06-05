@@ -875,7 +875,7 @@ const Lend = () => {
           />
         </Box>
         <TabPanels>
-          <TabPanel p={0}>
+          <TabPanel p={0} pb='20px'>
             <MyTable
               loading={poolsLoading || collectionLoading}
               columns={activeCollectionColumns}
@@ -907,7 +907,7 @@ const Lend = () => {
               }}
             />
           </TabPanel>
-          <TabPanel p={0}>
+          <TabPanel p={0} pb='20px'>
             <MyTable
               loading={poolsLoading || collectionLoading}
               columns={myPoolsColumns}
@@ -939,7 +939,7 @@ const Lend = () => {
               }}
             />
           </TabPanel>
-          <TabPanel p={0}>
+          <TabPanel p={0} pb='20px'>
             <Flex justify={'space-between'} mt='16px' flexWrap='wrap'>
               <Box
                 border={`1px solid var(--chakra-colors-gray-2)`}
