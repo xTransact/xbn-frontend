@@ -23,7 +23,6 @@ import {
   useRef,
   useState,
   type FunctionComponent,
-  useEffect,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Web3 from 'web3/dist/web3.min.js'
@@ -94,10 +93,6 @@ const CreatePoolButton: FunctionComponent<
     if (!floorPrice || !poolMaximumPercentage) return ''
     return `${(floorPrice * poolMaximumPercentage) / 10000}`
   }, [floorPrice, poolMaximumPercentage])
-  useEffect(() => {
-    if (!defaultAmount) return
-    setAmount(defaultAmount)
-  }, [defaultAmount])
 
   const initialRef = useRef(null)
   const finalRef = useRef(null)
@@ -136,12 +131,14 @@ const CreatePoolButton: FunctionComponent<
     }
     if (NumberAmount < floorPrice * 0.1) {
       setErrorMsg(
-        `Insufficient funds, Minimum input: ${formatFloat(floorPrice * 0.1)}`,
+        `Insufficient funds, Minimum input: ${formatFloat(
+          (floorPrice * poolMaximumPercentage) / 10000,
+        )}`,
       )
       return true
     }
     return false
-  }, [amount, wethData, floorPrice])
+  }, [amount, wethData, floorPrice, poolMaximumPercentage])
 
   const onConfirm = useCallback(() => {
     interceptFn(async () => {
@@ -332,7 +329,18 @@ const CreatePoolButton: FunctionComponent<
               ))}
             </Flex> */}
             <FormControl>
-              <FormLabel fontWeight={'700'}>Amount</FormLabel>
+              <FormLabel
+                fontWeight={'700'}
+                display={'flex'}
+                justifyContent={'space-between '}
+              >
+                Amount
+                <Text fontWeight={'500'} fontSize={'14px'} color='gray.3'>
+                  Minimum input:
+                  {formatFloat((floorPrice * poolMaximumPercentage) / 10000)}
+                </Text>
+              </FormLabel>
+
               <InputGroup>
                 <InputLeftElement
                   pointerEvents='none'
@@ -369,7 +377,7 @@ const CreatePoolButton: FunctionComponent<
                   {errorMsg}
                 </Text>
               )}
-              {!isError && (
+              {!isError && !!amount && (
                 <Flex mt={'8px'} color={'gray.3'}>
                   <Text>
                     Expected to lend&nbsp;

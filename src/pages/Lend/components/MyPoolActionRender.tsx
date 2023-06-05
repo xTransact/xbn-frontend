@@ -9,11 +9,11 @@ import {
   type FlexProps,
   Button,
 } from '@chakra-ui/react'
-import omit from 'lodash-es/omit'
-import { type FunctionComponent, useMemo } from 'react'
+import { type FunctionComponent } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { SvgComponent } from '@/components'
+import type { NftCollection } from '@/hooks'
 
 import UpdatePoolAmountButton from './UpdatePoolAmountButton'
 
@@ -32,15 +32,12 @@ const BUTTON_PROPS = {
  */
 const MyPoolActionRender: FunctionComponent<
   FlexProps & {
-    data: any
+    poolData: PoolsListItemType
+    collectionData: NftCollection
     onClickDetail: () => void
     onRefresh: () => void
   }
-> = ({ data, onClickDetail, onRefresh }) => {
-  const floorPrice = useMemo(
-    () => data?.nftCollection?.nftCollectionStat?.floorPrice || 0,
-    [data],
-  )
+> = ({ poolData, collectionData, onClickDetail, onRefresh }) => {
   const navigate = useNavigate()
   return (
     <Flex alignItems='center' gap={'24px'}>
@@ -99,30 +96,19 @@ const MyPoolActionRender: FunctionComponent<
                       onClick={() => {
                         navigate('/xlending/lending/edit', {
                           state: {
-                            contractAddress: data.allow_collateral_contract,
-                            nftCollection: data?.nftCollection,
-                            poolData: {
-                              ...omit(data, ['nftCollection']),
-                              // loan_ratio_preferential_flexibility: 10000,
-                              // loan_time_concession_flexibility: 9800,
-                              // pool_maximum_days: 3,
-                              // pool_maximum_percentage: 2000,
-                              // pool_maximum_interest_rate: 2290,
-                            },
+                            contractAddress: poolData.allow_collateral_contract,
+                            nftCollection: collectionData,
+                            poolData,
                           },
                         })
                       }}
-                      hidden
+                      // hidden
                     >
                       Modify loan terms
                     </Button>
                     <UpdatePoolAmountButton
-                      data={{
-                        poolID: data.pool_id,
-                        poolUsedAmount: data.pool_used_amount || 0,
-                        floorPrice,
-                        poolAmount: data.pool_amount,
-                      }}
+                      poolData={poolData}
+                      collectionSlug={collectionData?.slug}
                       onSuccess={onRefresh}
                       {...BUTTON_PROPS}
                     >
