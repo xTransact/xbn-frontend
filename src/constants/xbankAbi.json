@@ -1144,11 +1144,102 @@
       },
       {
         "internalType": "uint256",
+        "name": "maximumLoanAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumPercentage",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumDays",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumInterestRate",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "loanTimeConcessionFlexibility",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "loanRatioPreferentialFlexibility",
+        "type": "uint32"
+      }
+    ],
+    "name": "updateLoanTerms",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "poolID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "poolAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maximumLoanAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumPercentage",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumDays",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumInterestRate",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "loanTimeConcessionFlexibility",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "loanRatioPreferentialFlexibility",
+        "type": "uint32"
+      }
+    ],
+    "name": "updatePool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "poolID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "poolAmount",
         "type": "uint256"
       }
     ],
-    "name": "updatePool",
+    "name": "updatePoolAmount",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
