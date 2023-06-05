@@ -32,9 +32,7 @@ const useAuth = () => {
         const prevToken = getUserToken()
         if (prevToken && prevToken?.expires) {
           const expiresTimes = dayjs(prevToken.expires).unix()
-          console.log('🚀 ~ file: useAuth.ts:35 ~ expiresTimes:', expiresTimes)
           const currentTime = dayjs().unix()
-          console.log('🚀 ~ file: useAuth.ts:36 ~ currentTime:', currentTime)
           if (expiresTimes > currentTime) return
         }
         toast({

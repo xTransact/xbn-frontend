@@ -17,8 +17,10 @@ import {
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
-import { isEqual, pick, range, slice } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
+import isEqual from 'lodash-es/isEqual'
+import range from 'lodash-es/range'
+import slice from 'lodash-es/slice'
 import {
   useMemo,
   useState,
@@ -169,7 +171,10 @@ const Create = () => {
 
   const initialCollection = useMemo(() => {
     if (!state) return
-    const prev = pick(state, ['contractAddress', 'nftCollection'])
+    const prev = {
+      contractAddress: state.contractAddress,
+      nftCollection: state.nftCollection,
+    }
     if (params.action === 'edit') {
       return prev
     }
@@ -491,8 +496,14 @@ const Create = () => {
                 {...collectionSelectorProps}
                 w='480px'
                 disabledArr={collectionAddressWithPool}
-                defaultValue={initialCollection}
                 isDisabled={params.action === 'edit'}
+                value={selectCollection}
+                onChange={(e: {
+                  contractAddress: string
+                  nftCollection: NftCollection
+                }) => {
+                  setSelectCollection(e)
+                }}
               />
             </Box>
 
@@ -506,8 +517,14 @@ const Create = () => {
             >
               <AsyncSelectCollection
                 {...collectionSelectorProps}
-                defaultValue={initialCollection}
                 isDisabled={params.action === 'edit'}
+                value={selectCollection}
+                onChange={(e: {
+                  contractAddress: string
+                  nftCollection: NftCollection
+                }) => {
+                  setSelectCollection(e)
+                }}
               />
             </Box>
             {!isEmpty(selectCollection) && (
@@ -777,8 +794,6 @@ const Create = () => {
               h='132px'
               step={1}
               onChange={(target) => {
-                console.log(target, 'xx')
-                // setSliderValue(target)
                 setSliderRightKey(target)
               }}
             >
@@ -881,22 +896,6 @@ const Create = () => {
             Approve WETH
           </CreatePoolButton>
         )}
-        {/* data={{
-            //   poolMaximumInterestRate: baseRatePower,
-            //   loanRatioPreferentialFlexibility:
-            //     (RIGHT_RATE_POWER_MAP.get(sliderRightKey) as number) * 10000,
-            //   loanTimeConcessionFlexibility:
-            //     (BOTTOM_RATE_POWER_MAP.get(sliderBottomKey) as number) * 10000,
-
-            //   selectCollateral: COLLATERAL_MAP.get(
-            //     selectCollateralKey,
-            //   ) as number,
-            //   selectTenor: TENOR_MAP.get(selectTenorKey) as number,
-            //   maximumLoanAmount: eth2Wei(maxSingleLoanAmount || ''),
-            //   poolId: state.poolData?.pool_id,
-            //   poolAmount: state.poolData.pool_amount,
-            //   poolMaximumPercentage
-            // }} */}
         {params.action === 'edit' && (
           <Button
             isDisabled={
