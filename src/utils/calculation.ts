@@ -34,6 +34,9 @@ const amortizationCalByDays = (
   ) {
     return BigNumber(0)
   }
+  if (interest_rate === 0) {
+    return BigNumber(principal).dividedBy(x)
+  }
   // installment = loan_period_days / x 表示：每 installment 天还款
   const installment = BigNumber(loan_period_days).dividedBy(x)
   // i = interest_rate / 365 / installment

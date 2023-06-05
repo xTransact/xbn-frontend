@@ -87,6 +87,10 @@ type PoolType = {
   lp_pool_apr: number
 }
 
+const converseToString: (arg?: number) => string = (arg) => {
+  return arg === undefined ? '--' : arg.toString()
+}
+
 const NFTDetailContainer: FunctionComponent<FlexProps> = ({
   children,
   ...rest
@@ -99,11 +103,6 @@ const NFTDetailContainer: FunctionComponent<FlexProps> = ({
     flexWrap={{ lg: 'nowrap', md: 'wrap' }}
     gap={{
       md: '40px',
-      sm: 0,
-      xs: 0,
-    }}
-    mx={{
-      md: '58px',
       sm: 0,
       xs: 0,
     }}
@@ -197,6 +196,10 @@ const NftAssetDetail = () => {
           return
         }
         const weiPrice = eth2Wei(Number(minMarketPrice.amount))
+        if (!weiPrice) {
+          setCommodityWeiPrice(BigNumber(0))
+          return
+        }
         setCommodityWeiPrice(BigNumber(weiPrice))
         setPlatform(
           minMarketPrice.marketplace === 'OPENSEA'
@@ -398,7 +401,8 @@ const NftAssetDetail = () => {
         return BigNumber(0)
       }
       const { pool_days, pool_apr_with_spread } = selectPool
-      const loanEthAmount = Number(wei2Eth(loanWeiAmount))
+      const loanEthAmount = wei2Eth(loanWeiAmount)
+      if (!loanEthAmount) return BigNumber(0)
       const apr = pool_apr_with_spread / 10000
       return amortizationCalByDays(loanEthAmount, apr, pool_days, value)
     },
@@ -593,7 +597,7 @@ const NftAssetDetail = () => {
               {detail?.asset?.name || `#${detail?.asset?.tokenID || ''}`}
             </Text>
             <Text fontSize={'12px'} fontWeight='500'>
-              {wei2Eth(commodityWeiPrice)}&nbsp;
+              {converseToString(wei2Eth(commodityWeiPrice))}&nbsp;
               {UNIT}
             </Text>
           </Flex>
@@ -605,7 +609,7 @@ const NftAssetDetail = () => {
           height={700}
           borderRadius={16}
           w={{
-            xl: '600px',
+            xl: '500px',
             lg: '450px',
             md: '80%',
           }}
@@ -629,7 +633,7 @@ const NftAssetDetail = () => {
             md: 'center',
           }}
           w={{
-            xl: '600px',
+            xl: '500px',
             lg: '450px',
             md: '100%',
           }}
@@ -648,7 +652,7 @@ const NftAssetDetail = () => {
             }}
             borderRadius={20}
             boxSize={{
-              xl: '600px',
+              xl: '500px',
               lg: '380px',
               md: '100%',
             }}
@@ -676,10 +680,10 @@ const NftAssetDetail = () => {
           data={{
             name1: collection?.name,
             name2: detail?.asset?.name || `#${detail?.asset?.tokenID}`,
-            price: wei2Eth(commodityWeiPrice),
+            price: wei2Eth(commodityWeiPrice)?.toString(),
             usdPrice: !!usdPrice
               ? formatFloat(
-                  usdPrice?.multipliedBy(Number(wei2Eth(commodityWeiPrice))),
+                  usdPrice?.multipliedBy(wei2Eth(commodityWeiPrice) || 0),
                 )
               : '',
             verified: collection?.safelistRequestStatus === 'verified',
@@ -728,7 +732,7 @@ const NftAssetDetail = () => {
                     sm: '12px',
                   }}
                 >
-                  {wei2Eth(downPaymentWei)}
+                  {converseToString(wei2Eth(downPaymentWei))}
                 </Text>
               </Flex>
             )}
@@ -745,7 +749,7 @@ const NftAssetDetail = () => {
               value={percentage}
               w={{
                 xl: '450px',
-                lg: '250px',
+                lg: '350px',
                 md: '436px',
                 sm: '230px',
                 xs: '230px',
@@ -787,7 +791,7 @@ const NftAssetDetail = () => {
             </Text>
             <SvgComponent svgId='icon-eth' svgSize='12px' />
             <Text fontSize={'14px'} fontWeight='500'>
-              {wei2Eth(loanWeiAmount)}
+              {converseToString(wei2Eth(loanWeiAmount))}
             </Text>
           </Flex>
         </LabelComponent>
@@ -989,7 +993,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>NFT price</Text>
                 <Text color='gray.3'>
-                  {wei2Eth(commodityWeiPrice)}
+                  {converseToString(wei2Eth(commodityWeiPrice))}
                   {UNIT}
                 </Text>
               </Flex>
@@ -997,7 +1001,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>Down payment</Text>
                 <Text color='gray.3'>
-                  {wei2Eth(downPaymentWei)}
+                  {converseToString(wei2Eth(downPaymentWei))}
                   {UNIT}
                 </Text>
               </Flex>
@@ -1005,7 +1009,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>Loan amount</Text>
                 <Text color='gray.3'>
-                  {wei2Eth(loanWeiAmount)}
+                  {converseToString(wei2Eth(loanWeiAmount))}
                   {UNIT}
                 </Text>
               </Flex>
@@ -1015,7 +1019,7 @@ const NftAssetDetail = () => {
                 <Text color='gray.3'>
                   {getPlanPer(installmentValue)
                     .multipliedBy(installmentValue)
-                    .minus(Number(wei2Eth(loanWeiAmount)))
+                    .minus(wei2Eth(loanWeiAmount) || 0)
                     .toFormat(FORMAT_NUMBER)}
                   {UNIT}
                 </Text>
@@ -1030,8 +1034,8 @@ const NftAssetDetail = () => {
                   {formatFloat(
                     getPlanPer(installmentValue)
                       .multipliedBy(installmentValue)
-                      .minus(Number(wei2Eth(loanWeiAmount)))
-                      .plus(Number(wei2Eth(commodityWeiPrice))),
+                      .minus(wei2Eth(loanWeiAmount) || 0)
+                      .plus(wei2Eth(commodityWeiPrice) || 0),
                   )}
                   {UNIT}
                 </Text>
@@ -1046,8 +1050,8 @@ const NftAssetDetail = () => {
                   {formatFloat(
                     getPlanPer(installmentValue)
                       .multipliedBy(installmentValue)
-                      .minus(Number(wei2Eth(loanWeiAmount)))
-                      .plus(Number(wei2Eth(commodityWeiPrice)))
+                      .minus(wei2Eth(loanWeiAmount) || 0)
+                      .plus(wei2Eth(commodityWeiPrice) || 0)
                       .multipliedBy(1.025),
                   )}
                   {UNIT}
@@ -1085,7 +1089,8 @@ const NftAssetDetail = () => {
             loadingText='The loan is being generated, please wait'
           >
             <Text fontWeight={'400'}>Pay now with</Text>&nbsp;
-            {wei2Eth(downPaymentWei)} {UNIT}
+            {converseToString(wei2Eth(downPaymentWei))}
+            {UNIT}
           </Button>
         </Flex>
       </Box>

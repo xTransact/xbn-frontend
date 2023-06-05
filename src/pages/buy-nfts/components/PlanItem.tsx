@@ -5,10 +5,10 @@ import { UNIT } from '@/constants'
 
 import type { FunctionComponent } from 'react'
 
-const PlanItem: FunctionComponent<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => {
+const PlanItem: FunctionComponent<{
+  label: string
+  value?: number | string
+}> = ({ label, value }) => {
   return (
     <Flex justify={'space-between'} w='100%'>
       <Flex>
@@ -17,7 +17,7 @@ const PlanItem: FunctionComponent<{ label: string; value: string }> = ({
         <Text fontSize='14px'>{label}</Text>
       </Flex>
       <Text fontSize='14px'>
-        {value} {UNIT}
+        {value || '--'} {UNIT}
       </Text>
     </Flex>
   )

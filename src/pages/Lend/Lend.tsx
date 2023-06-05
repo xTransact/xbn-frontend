@@ -156,9 +156,14 @@ const Lend = () => {
     apiGetPools,
     {
       onSuccess: (data) => {
-        if (isEmpty(data)) return
+        if (isEmpty(data)) {
+          return
+        }
         setAllPoolsData(data)
-        if (!currentAccount) return
+        if (!currentAccount) {
+          setMyPoolsData([])
+          return
+        }
         setMyPoolsData(
           data.filter(
             (i) =>
@@ -206,12 +211,10 @@ const Lend = () => {
           (i) => i.pool_maximum_interest_rate,
         )?.pool_maximum_interest_rate
 
-        const pool_amount = wei2Eth(
-          reduce(
-            currentCollectionPools,
-            (sum, i) => BigNumber(sum).plus(Number(i.pool_amount)),
-            BigNumber(0),
-          ),
+        const pool_amount = reduce(
+          currentCollectionPools,
+          (sum, i) => BigNumber(sum).plus(Number(i.pool_amount)),
+          BigNumber(0),
         )
 
         const isContainMyPool =
@@ -328,6 +331,14 @@ const Lend = () => {
       }),
     {
       onSuccess: async (data) => {
+        if (!currentAccount) {
+          setLoansData({
+            0: [],
+            1: [],
+            2: [],
+          })
+          return
+        }
         setLoansData(groupBy(data, 'loan_status'))
         if (selectKeyForOpenLoans === undefined) {
           setTotalLoanCount(data?.length)
@@ -436,12 +447,14 @@ const Lend = () => {
               <Text
                 color={info.isContainMyPool ? 'gray.1' : 'blue.1'}
                 onClick={() => {
-                  if (info.isContainMyPool) return
-                  navigate(`/xlending/lending/create`, {
-                    state: {
-                      contractAddress: info.contractAddress,
-                      nftCollection: value,
-                    },
+                  interceptFn(() => {
+                    if (info.isContainMyPool) return
+                    navigate(`/xlending/lending/create`, {
+                      state: {
+                        contractAddress: info.contractAddress,
+                        nftCollection: value,
+                      },
+                    })
                   })
                 }}
                 cursor={info.isContainMyPool ? 'not-allowed' : 'pointer'}
@@ -453,7 +466,7 @@ const Lend = () => {
         },
       },
     ]
-  }, [navigate])
+  }, [navigate, interceptFn])
 
   const myPoolsColumns: ColumnProps[] = useMemo(() => {
     return [
@@ -676,7 +689,7 @@ const Lend = () => {
                   BigNumber(item.installment)
                     .multipliedBy(item?.number_of_installments)
                     .minus(item.loan_amount),
-                ),
+                ) || 0,
               ).toFormat(FORMAT_NUMBER)}
               {UNIT}
             </Text>

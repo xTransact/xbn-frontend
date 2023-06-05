@@ -342,7 +342,7 @@ const MyAssetNftListCard: FunctionComponent<
 
       setLoanData({
         outstandingLoan:
-          !!unFormatLoanEth && unFormatLoanEth !== '--'
+          !!unFormatLoanEth && unFormatLoanEth !== undefined
             ? BigNumber(unFormatLoanEth)
             : BigNumber(0),
         loanEndedTime: loan_start_time + loan_duration,

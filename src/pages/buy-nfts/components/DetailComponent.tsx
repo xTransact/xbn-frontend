@@ -17,7 +17,7 @@ const DetailComponent: FunctionComponent<
     data: {
       name1: string
       name2?: string
-      price: string
+      price?: string
       verified: boolean
       usdPrice?: string
       platform?: MarketType

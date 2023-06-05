@@ -120,13 +120,11 @@ const CreatePoolButton: FunctionComponent<
   const isError = useMemo(() => {
     //  amount < balance + Has been lent
     if (!amount) return false
+    const wethNum = wei2Eth(wethData)
+    if (!wethNum) return false
     const NumberAmount = Number(amount)
-    if (NumberAmount > Number(wei2Eth(wethData))) {
-      setErrorMsg(
-        ` Insufficient wallet balance: ${formatFloat(
-          Number(wei2Eth(wethData)),
-        )} WETH`,
-      )
+    if (NumberAmount > wethNum) {
+      setErrorMsg(` Insufficient wallet balance: ${formatFloat(wethNum)} WETH`)
       return true
     }
     if (NumberAmount < floorPrice * 0.1) {
@@ -150,8 +148,9 @@ const CreatePoolButton: FunctionComponent<
       const UNIT256MAX =
         '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
       try {
-        const parsedWeiAmount = eth2Wei(amount)
-        const parsedWeiMaximumLoanAmount = eth2Wei(maxSingleLoanAmount)
+        const parsedWeiAmount = eth2Wei(amount)?.toString()
+        const parsedWeiMaximumLoanAmount =
+          eth2Wei(maxSingleLoanAmount)?.toString()
 
         const wethContract = createWethContract()
         setApproveLoading(true)
@@ -266,7 +265,6 @@ const CreatePoolButton: FunctionComponent<
     currentAccount,
     interceptFn,
     navigate,
-    onCloseApprove,
     maxSingleLoanAmount,
   ])
 

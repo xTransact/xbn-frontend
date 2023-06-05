@@ -186,7 +186,7 @@ const Create = () => {
     let ratePowerKey = 5
     let rightFlex = 2
     let bottomFlex = 2
-    let maximum_loan_amount = ''
+    let maximum_loan_amount = 0
 
     // 只有编辑进来的 才才需要填入默认值，supply 只需要填入 collection
     if (state && params?.action === 'edit') {
@@ -209,7 +209,7 @@ const Create = () => {
           BOTTOM_RATE_POWER_MAP,
           poolData?.loan_time_concession_flexibility / 10000,
         ) || 2
-      maximum_loan_amount = wei2Eth(poolData.maximum_loan_amount)
+      maximum_loan_amount = wei2Eth(poolData.maximum_loan_amount) || 0
     }
     return {
       collateralKey,
@@ -228,7 +228,9 @@ const Create = () => {
     setInterestPower(initialItems.ratePowerKey)
     setSliderRightKey(initialItems.rightFlex)
     setSliderBottomKey(initialItems.bottomFlex)
-    setMaxSingleLoanAmount(initialItems.maximum_loan_amount || undefined)
+    setMaxSingleLoanAmount(
+      initialItems.maximum_loan_amount.toString() || undefined,
+    )
   }, [initialItems])
 
   const [floorPrice, setFloorPrice] = useState<number>()
@@ -368,7 +370,7 @@ const Create = () => {
           .updatePool(
             pool_id,
             pool_amount.toString(),
-            eth2Wei(maxSingleLoanAmount),
+            eth2Wei(maxSingleLoanAmount)?.toString(),
             COLLATERAL_MAP.get(selectCollateralKey)?.toString(),
             TENOR_MAP.get(selectTenorKey)?.toString(),
             baseRatePower.toString(),

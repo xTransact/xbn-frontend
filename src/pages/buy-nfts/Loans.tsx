@@ -258,7 +258,7 @@ const Loans = () => {
                 BigNumber(item.installment)
                   .multipliedBy(item?.number_of_installments)
                   .minus(item.loan_amount),
-              ),
+              ) || 0,
             ).toFormat(FORMAT_NUMBER)}
             {UNIT}
           </Text>
@@ -508,7 +508,7 @@ const Loans = () => {
                     key: 'installment',
                     render: (value: any) => (
                       <Text>
-                        {BigNumber(wei2Eth(value)).toFormat(8)}
+                        {BigNumber(wei2Eth(value) || 0).toFormat(8)}
                         &nbsp;
                         {UNIT}
                       </Text>
@@ -710,8 +710,10 @@ const Loans = () => {
                 <Text>Outstanding Principal</Text>
                 <Text>
                   {prepayData
-                    ? formatFloat(wei2Eth(prepayData?.outstandingPrincipal))
-                    : '--'}{' '}
+                    ? formatFloat(
+                        wei2Eth(prepayData?.outstandingPrincipal) || 0,
+                      )
+                    : '--'}
                   {UNIT}
                 </Text>
               </Flex>
@@ -720,9 +722,11 @@ const Loans = () => {
                 <Text>
                   {prepayData
                     ? formatFloat(
-                        wei2Eth(prepayData?.interestOutstanding.integerValue()),
+                        wei2Eth(
+                          prepayData?.interestOutstanding.integerValue(),
+                        ) || 0,
                       )
-                    : '--'}{' '}
+                    : '--'}
                   {UNIT}
                 </Text>
               </Flex>
@@ -737,7 +741,7 @@ const Loans = () => {
                         prepayData?.outstandingPrincipal.plus(
                           prepayData?.interestOutstanding,
                         ),
-                      ),
+                      ) || 0,
                     )
                   : '--'}
                 {UNIT}

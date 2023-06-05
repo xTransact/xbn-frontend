@@ -23,7 +23,7 @@ const BelongToCollection: FunctionComponent<
       {...rest}
       mt='60px'
       w={{
-        xl: '600px',
+        xl: '500px',
         lg: '380px',
         sm: '100%',
         xs: '100%',

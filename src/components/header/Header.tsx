@@ -197,12 +197,13 @@ const CommunityPopover = () => {
 
 const ConnectedIconWallet: FunctionComponent = () => {
   const navigate = useNavigate()
-  const { currentAccount, handleOpenEtherscan } = useWallet()
+  const { currentAccount, handleOpenEtherscan, handleDisconnect } = useWallet()
   const fetchDataFromContract = useCallback(async () => {
     // const wethContract = createWethContract()
     const xBankContract = createXBankContract()
     const listPool = await xBankContract.methods.listPool().call()
     const listLoan = await xBankContract.methods.listLoan().call()
+    const spread = await xBankContract.methods.getProtocolIRMultiplier().call()
     // const _allowance = await wethContract.methods
     //   .allowance(currentAccount, XBANK_CONTRACT_ADDRESS)
     //   .call()
@@ -219,6 +220,7 @@ const ConnectedIconWallet: FunctionComponent = () => {
     // )
     console.log('listLoan:', listLoan)
     console.log('listPool:', listPool)
+    console.log('ProtocolIRMultiplier', spread)
   }, [])
   const { run, loading } = useRequest(fetchDataFromContract, {
     manual: true,
@@ -251,10 +253,13 @@ const ConnectedIconWallet: FunctionComponent = () => {
             onClick={() => {
               navigate('/xlending/buy-nfts/loans')
             }}
+            _hover={{
+              textDecoration: 'none',
+            }}
           >
             Repay Loans
           </Button>
-          {/* <Button
+          <Button
             variant={'link'}
             color='black.1'
             p={'10px'}
@@ -264,7 +269,7 @@ const ConnectedIconWallet: FunctionComponent = () => {
             onClick={handleDisconnect}
           >
             Disconnect
-          </Button> */}
+          </Button>
 
           {(import.meta.env.DEV ||
             window.location.hostname.startsWith('feat-')) && (

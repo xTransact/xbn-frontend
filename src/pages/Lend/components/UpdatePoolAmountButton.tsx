@@ -123,12 +123,12 @@ const UpdatePoolAmountButton: FunctionComponent<
         loading: false,
       },
       {
-        data: pool_used_amount ? wei2Eth(pool_used_amount) : 0,
+        data: pool_used_amount ? wei2Eth(pool_used_amount) || 0 : 0,
         label: 'Has Been Lent',
         loading: false,
       },
       {
-        data: wei2Eth(pool_amount - pool_used_amount),
+        data: wei2Eth(pool_amount - pool_used_amount) || 0,
         label: 'Can Be Lent',
         loading: false,
       },
@@ -147,6 +147,7 @@ const UpdatePoolAmountButton: FunctionComponent<
      */
     const NumberAmount = Number(amount)
     const maxAmount = wei2Eth(Number(pool_used_amount) + Number(wethData))
+    if (maxAmount === undefined) return false
     if (NumberAmount > maxAmount) {
       setErrorMsg(` Insufficient funds: ${formatFloat(maxAmount)} WETH`)
       return true
@@ -168,7 +169,7 @@ const UpdatePoolAmountButton: FunctionComponent<
        * 平均总耗时：
        * 1676961248463 - 1676961180777 =  67686 ms ≈ 1min
        */
-      if (amount === wei2Eth(pool_amount)) {
+      if (amount === wei2Eth(pool_amount)?.toString()) {
         toast({
           status: 'info',
           title: `The TVL is already ${wei2Eth(pool_amount)}`,
@@ -176,7 +177,7 @@ const UpdatePoolAmountButton: FunctionComponent<
         return
       }
       try {
-        const parsedWeiAmount = eth2Wei(amount)
+        const parsedWeiAmount = eth2Wei(amount)?.toString()
         setUpdateLoading(true)
 
         const xBankContract = createXBankContract()
