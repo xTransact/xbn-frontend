@@ -186,7 +186,7 @@ const Create = () => {
     let ratePowerKey = 5
     let rightFlex = 2
     let bottomFlex = 2
-    let maximum_loan_amount = 0
+    let maximum_loan_amount
 
     // 只有编辑进来的 才才需要填入默认值，supply 只需要填入 collection
     if (state && params?.action === 'edit') {
@@ -229,7 +229,7 @@ const Create = () => {
     setSliderRightKey(initialItems.rightFlex)
     setSliderBottomKey(initialItems.bottomFlex)
     setMaxSingleLoanAmount(
-      initialItems.maximum_loan_amount.toString() || undefined,
+      initialItems?.maximum_loan_amount?.toString() || undefined,
     )
   }, [initialItems])
 
@@ -327,8 +327,6 @@ const Create = () => {
     selectTenorKey,
     sliderRightKey,
   ])
-
-  console.log(tableData)
 
   const collectionSelectorProps = useMemo(
     () => ({
