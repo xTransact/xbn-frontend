@@ -436,12 +436,6 @@ const NftAssetDetail = () => {
             // gasPrice:''
           })
         setTransferFromLoading(false)
-      } catch (error: any) {
-        toastError(error)
-        setTransferFromLoading(false)
-        return
-      }
-      try {
         const postParams: LoanOrderDataType = {
           pool_id: pool_id.toString(),
           borrower_address: currentAccount,
@@ -490,8 +484,12 @@ const NftAssetDetail = () => {
           })
           navigate('/xlending/buy-nfts/loans')
         }, 2 * 60 * 1000)
-      } catch {
-        //
+      } catch (error: any) {
+        toastError(error)
+        setTransferFromLoading(false)
+        setSubscribeLoading(false)
+        setLoanStep(undefined)
+        return
       }
     })
   }, [
