@@ -202,45 +202,51 @@ const CreatePoolButton: FunctionComponent<
         console.log(createBlock, 'createBlock')
         setCreateLoading(false)
         setSubscribeLoading(true)
+        // 监听 pool 有 bug，排期修复
         // 监听 pool 是否生成
-        xBankContract.events
-          .PoolCreated(
-            {
-              filter: {
-                poolOwnerAddress: currentAccount,
-              },
-              fromBlock: createBlock?.BlockNumber || 'latest',
-            },
-            (error: any, event: any) => {
-              console.log(event, error, 'aaaaa')
-            },
-          )
-          .on('data', function (event: any) {
-            console.log(event, 'on data') // same results as the optional callback above
-            if (toast.isActive('Created-Successfully-ID')) {
-              // toast.closeAll()
-            } else {
-              toast({
-                status: 'success',
-                title: 'Created successfully! ',
-                id: 'Created-Successfully-ID',
-              })
-            }
-            setSubscribeLoading(false)
-            onCloseApprove()
-            navigate('/xlending/lending/my-pools')
-          })
-          .on('changed', console.log)
-          .on('error', console.error)
+        // xBankContract.events
+        //   .PoolCreated(
+        //     {
+        //       filter: {
+        //         poolOwnerAddress: currentAccount,
+        //       },
+        //       fromBlock: createBlock?.BlockNumber || 'latest',
+        //     },
+        //     (error: any, event: any) => {
+        //       console.log(event, error, 'aaaaa')
+        //     },
+        //   )
+        //   .on('data', function (event: any) {
+        //     console.log(event, 'on data') // same results as the optional callback above
+        //     if (toast.isActive('Created-Successfully-ID')) {
+        //       // toast.closeAll()
+        //     } else {
+        //       toast({
+        //         status: 'success',
+        //         title: 'Created successfully! ',
+        //         id: 'Created-Successfully-ID',
+        //       })
+        //     }
+        //     setSubscribeLoading(false)
+        //     onCloseApprove()
+        //     navigate('/xlending/lending/my-pools')
+        //   })
+        //   .on('changed', console.log)
+        //   .on('error', console.error)
 
         // 如果一直监听不到
         timer.current = setTimeout(() => {
+          // toast({
+          //   status: 'info',
+          //   title: 'The pool is being generated, please wait and refresh later',
+          // })
           toast({
-            status: 'info',
-            title: 'The pool is being generated, please wait and refresh later',
+            status: 'success',
+            title: 'Created successfully! ',
+            id: 'Created-Successfully-ID',
           })
           navigate('/xlending/lending/my-pools')
-        }, 0.5 * 60 * 1000)
+        }, 5 * 1000)
       } catch (error: any) {
         toastError(error)
         setCreateLoading(false)
