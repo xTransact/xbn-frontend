@@ -13,7 +13,7 @@ const styles = {
       color: 'blue.1',
     },
     '.banner-bg': {
-      'background-color': 'red',
+      backgroundColor: 'red',
     },
   },
 }
