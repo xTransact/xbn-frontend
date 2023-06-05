@@ -17,12 +17,18 @@ import {
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
-import { pick, range, slice } from 'lodash-es'
+import { isEqual, pick, range, slice } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
-import { useMemo, useState, type FunctionComponent, useEffect } from 'react'
+import {
+  useMemo,
+  useState,
+  type FunctionComponent,
+  useEffect,
+  useCallback,
+} from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { apiGetPools } from '@/api'
+import { apiGetFloorPrice, apiGetPools } from '@/api'
 import {
   AsyncSelectCollection,
   NotFound,
@@ -30,6 +36,7 @@ import {
   ScrollNumber,
   SvgComponent,
   CustomNumberInput,
+  LoadingComponent,
 } from '@/components'
 import { STEPS_DESCRIPTIONS } from '@/constants'
 import {
@@ -48,12 +55,15 @@ import {
   RIGHT_RATE_POWER_KEYS,
 } from '@/constants/interest'
 import type { NftCollection } from '@/hooks'
-import { useWallet } from '@/hooks'
+import { useCatchContractError, useWallet } from '@/hooks'
+import { createXBankContract } from '@/utils/createContract'
+import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
 import CreatePoolButton from './components/CreatePoolButton'
 import SliderWrapper from './components/SliderWrapper'
 import StepDescription from './components/StepDescription'
-import UpdatePoolItemsButton from './components/UpdatePoolItemsButton'
+
+const xBankContract = createXBankContract()
 
 const getKeyByValue = (map: any, searchValue: string | number) => {
   for (const [key, value] of map.entries()) {
@@ -103,6 +113,8 @@ const Create = () => {
   const params = useParams() as {
     action: 'create' | 'edit'
   }
+  const { toast, toastError } = useCatchContractError()
+
   const { state } = useLocation() as {
     state: {
       contractAddress: string
@@ -111,7 +123,7 @@ const Create = () => {
     }
   }
   const navigate = useNavigate()
-  const { currentAccount } = useWallet()
+  const { currentAccount, interceptFn } = useWallet()
   const { isOpen: showFlexibility, onToggle: toggleShowFlexibility } =
     useDisclosure({
       defaultIsOpen: false,
@@ -174,6 +186,7 @@ const Create = () => {
     let ratePowerKey = 5
     let rightFlex = 2
     let bottomFlex = 2
+    let maximum_loan_amount = ''
 
     // 只有编辑进来的 才才需要填入默认值，supply 只需要填入 collection
     if (state && params?.action === 'edit') {
@@ -196,6 +209,7 @@ const Create = () => {
           BOTTOM_RATE_POWER_MAP,
           poolData?.loan_time_concession_flexibility / 10000,
         ) || 2
+      maximum_loan_amount = wei2Eth(poolData.maximum_loan_amount)
     }
     return {
       collateralKey,
@@ -203,6 +217,7 @@ const Create = () => {
       ratePowerKey,
       rightFlex,
       bottomFlex,
+      maximum_loan_amount,
     }
   }, [state, params])
 
@@ -213,7 +228,26 @@ const Create = () => {
     setInterestPower(initialItems.ratePowerKey)
     setSliderRightKey(initialItems.rightFlex)
     setSliderBottomKey(initialItems.bottomFlex)
+    setMaxSingleLoanAmount(initialItems.maximum_loan_amount || undefined)
   }, [initialItems])
+
+  const [floorPrice, setFloorPrice] = useState<number>()
+  const { loading } = useRequest(
+    () =>
+      apiGetFloorPrice({
+        slug: selectCollection?.nftCollection.slug || '',
+      }),
+    {
+      ready: !!selectCollection,
+      refreshDeps: [selectCollection],
+      cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
+      staleTime: 1000 * 60,
+      onSuccess(data) {
+        if (isEmpty(data)) return
+        setFloorPrice(data.floor_price)
+      },
+    },
+  )
 
   // set initial collection
   useEffect(() => {
@@ -230,12 +264,8 @@ const Create = () => {
         message: 'You must enter the maximum amount for a single loan',
       }
     }
-    if (!selectCollection) return
-    const {
-      nftCollection: {
-        nftCollectionStat: { floorPrice },
-      },
-    } = selectCollection
+    if (floorPrice === undefined) return
+
     if (NumberAmount > floorPrice) {
       return {
         status: 'info',
@@ -243,7 +273,7 @@ const Create = () => {
           'Single loan amount is recommended to be less than the floor price.',
       }
     }
-  }, [maxSingleLoanAmount, selectCollection])
+  }, [maxSingleLoanAmount, floorPrice])
 
   // 基础利率
   const baseRate = useMemo((): number => {
@@ -307,6 +337,96 @@ const Create = () => {
     }),
     [],
   )
+  const [updating, setUpdating] = useState(false)
+
+  const handleUpdatePool = useCallback(() => {
+    interceptFn(async () => {
+      try {
+        if (!state?.poolData) {
+          toast({
+            status: 'error',
+            title: 'pool not exist',
+          })
+          return
+        }
+        if (!maxSingleLoanAmount) {
+          toast({
+            status: 'error',
+            title: 'maximum single loan amount id required',
+          })
+          return
+        }
+        const {
+          poolData: { pool_id, pool_amount },
+        } = state
+        setUpdating(true)
+
+        const updateBlock = await xBankContract.methods
+          .updatePool(
+            pool_id,
+            pool_amount.toString(),
+            eth2Wei(maxSingleLoanAmount),
+            COLLATERAL_MAP.get(selectCollateralKey)?.toString(),
+            TENOR_MAP.get(selectTenorKey)?.toString(),
+            baseRatePower.toString(),
+            (
+              (RIGHT_RATE_POWER_MAP.get(sliderRightKey) as number) * 10000
+            ).toString(),
+            (
+              (BOTTOM_RATE_POWER_MAP.get(sliderBottomKey) as number) * 10000
+            ).toString(),
+          )
+          .send({
+            from: currentAccount,
+          })
+        console.log(updateBlock, 'createBlock')
+        setUpdating(false)
+        if (toast.isActive('Updated-Successfully-ID')) {
+          // toast.closeAll()
+        } else {
+          toast({
+            status: 'success',
+            title: 'Updated successfully! ',
+            id: 'Updated-Successfully-ID',
+          })
+        }
+      } catch (error: any) {
+        toastError(error)
+        setUpdating(false)
+      }
+    })
+  }, [
+    state,
+    sliderBottomKey,
+    sliderRightKey,
+    baseRatePower,
+    maxSingleLoanAmount,
+    toast,
+    toastError,
+    selectTenorKey,
+    selectCollateralKey,
+    interceptFn,
+    currentAccount,
+  ])
+
+  const isChanged = useMemo(() => {
+    return !isEqual(initialItems, {
+      collateralKey: selectCollateralKey,
+      tenorKey: selectTenorKey,
+      ratePowerKey: interestPower,
+      rightFlex: sliderRightKey,
+      bottomFlex: sliderBottomKey,
+      maximum_loan_amount: maxSingleLoanAmount,
+    })
+  }, [
+    maxSingleLoanAmount,
+    initialItems,
+    selectCollateralKey,
+    selectTenorKey,
+    interestPower,
+    sliderBottomKey,
+    sliderRightKey,
+  ])
 
   if (!params || !['edit', 'create'].includes(params?.action)) {
     return <NotFound />
@@ -344,8 +464,15 @@ const Create = () => {
         )}
       </Box>
 
-      <Flex borderRadius={24} mb='32px' flexDir={'column'} gap={'30px'}>
+      <Flex
+        borderRadius={24}
+        mb='32px'
+        flexDir={'column'}
+        gap={'30px'}
+        position={'relative'}
+      >
         {/* collection */}
+        <LoadingComponent loading={loading} top={0} />
         <Wrapper stepIndex={1}>
           <Box>
             <Box
@@ -389,7 +516,7 @@ const Create = () => {
               >
                 Current Floor Price
                 <SvgComponent svgId='icon-eth' />
-                {selectCollection?.nftCollection?.nftCollectionStat?.floorPrice}
+                {floorPrice}
               </Flex>
             )}
           </Box>
@@ -735,8 +862,7 @@ const Create = () => {
               poolMaximumDays: TENOR_MAP.get(selectTenorKey) as number,
               allowCollateralContract:
                 selectCollection?.contractAddress as string,
-              floorPrice: selectCollection?.nftCollection?.nftCollectionStat
-                ?.floorPrice as number,
+              floorPrice: floorPrice as number,
               poolMaximumInterestRate: BigNumber(baseRatePower)
                 .integerValue()
                 .toNumber(),
@@ -752,20 +878,37 @@ const Create = () => {
             Approve WETH
           </CreatePoolButton>
         )}
+        {/* data={{
+            //   poolMaximumInterestRate: baseRatePower,
+            //   loanRatioPreferentialFlexibility:
+            //     (RIGHT_RATE_POWER_MAP.get(sliderRightKey) as number) * 10000,
+            //   loanTimeConcessionFlexibility:
+            //     (BOTTOM_RATE_POWER_MAP.get(sliderBottomKey) as number) * 10000,
+
+            //   selectCollateral: COLLATERAL_MAP.get(
+            //     selectCollateralKey,
+            //   ) as number,
+            //   selectTenor: TENOR_MAP.get(selectTenorKey) as number,
+            //   maximumLoanAmount: eth2Wei(maxSingleLoanAmount || ''),
+            //   poolId: state.poolData?.pool_id,
+            //   poolAmount: state.poolData.pool_amount,
+            //   poolMaximumPercentage
+            // }} */}
         {params.action === 'edit' && (
-          <UpdatePoolItemsButton
-            data={{
-              poolMaximumInterestRate: 1000,
-              loanRatioPreferentialFlexibility: 0.98,
-              loanTimeConcessionFlexibility: 0.98,
-              selectCollateral: COLLATERAL_MAP.get(
-                selectCollateralKey,
-              ) as number,
-              selectTenor: TENOR_MAP.get(selectTenorKey) as number,
-            }}
+          <Button
+            isDisabled={
+              maxSingleLoanAmountStatus?.status === 'error' ||
+              !maxSingleLoanAmount ||
+              !isChanged
+            }
+            variant={'primary'}
+            w='240px'
+            h='52px'
+            isLoading={loading || updating}
+            onClick={handleUpdatePool}
           >
             Confirm
-          </UpdatePoolItemsButton>
+          </Button>
         )}
       </Flex>
     </>

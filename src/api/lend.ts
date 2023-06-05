@@ -27,3 +27,15 @@ export const apiGetLoans: (query: {
     params,
   })
 }
+
+export const apiGetFloorPrice: (query: {
+  slug: string
+}) => Promise<{ floor_price: number }> = async (params) => {
+  return await request.get('/api/v1/xbn/marketFloorPrice', {
+    params: {
+      ...params,
+      mode:
+        import.meta.env.VITE_CURRENT_ENV !== 'PRODUCTION' ? 'dev' : undefined,
+    },
+  })
+}

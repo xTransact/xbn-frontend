@@ -25,6 +25,7 @@ import useDebounce from 'ahooks/lib/useDebounce'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
 import { unix } from 'dayjs'
+import { omit } from 'lodash-es'
 import groupBy from 'lodash-es/groupBy'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
@@ -50,6 +51,7 @@ import {
   LpGuideModal,
 } from '@/components'
 import { FORMAT_NUMBER, UNIT } from '@/constants'
+import type { NftCollection } from '@/hooks'
 import { useWallet, useBatchAsset, useGuide } from '@/hooks'
 import { formatAddress } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
@@ -557,9 +559,13 @@ const Lend = () => {
         fixedRight: true,
         thAlign: 'right',
         render: (value: any, info: any) => {
+          const poolData = omit(info, 'nftCollection') as PoolsListItemType
+          const collectionData = info?.nftCollection as NftCollection
+
           return (
             <MyPoolActionRender
-              data={info}
+              poolData={poolData}
+              collectionData={collectionData}
               onClickDetail={() => setSelectKeyForOpenLoans(value as number)}
               onRefresh={refreshMyPools}
             />
