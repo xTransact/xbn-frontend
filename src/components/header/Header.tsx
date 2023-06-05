@@ -414,7 +414,7 @@ const Header = () => {
       100%)'
         h={{ md: 1, sm: '1px', xs: '1px' }}
       />
-      <Container bg='white' maxW={RESPONSIVE_MAX_W}>
+      <Container bg='white' maxW={{ ...RESPONSIVE_MAX_W, xl: 1408 }}>
         <Flex
           justify={'space-between'}
           h={{

@@ -441,7 +441,7 @@ const Create = () => {
     <>
       <H5SecondaryHeader />
 
-      <Box mb={8} mt={8}>
+      <Box mb={8} mt={'60px'}>
         <Heading
           fontSize={{
             md: '40px',

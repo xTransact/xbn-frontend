@@ -16,6 +16,11 @@ const MortgagedTag: FunctionComponent<TextProps> = ({ ...rest }) => (
       sm: 2,
       xs: 2,
     }}
+    minW={{
+      md: '80px',
+      sm: '60px',
+      xs: '60px',
+    }}
     noOfLines={1}
     fontSize={'12px'}
     fontWeight='700'
