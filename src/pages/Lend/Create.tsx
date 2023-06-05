@@ -276,14 +276,16 @@ const Create = () => {
   }, [maxSingleLoanAmount, floorPrice])
 
   // 基础利率
-  const baseRate = useMemo((): number => {
+  const baseRate = useMemo(() => {
     const cKey = `${selectTenorKey}-${selectCollateralKey}`
-    return BASE_RATE.get(cKey) as number
+    return BigNumber(BASE_RATE.get(cKey) as number)
   }, [selectCollateralKey, selectTenorKey])
 
   // 基础利率 * power
-  const baseRatePower: number = useMemo(() => {
-    return baseRate * (RATE_POWER_MAP.get(interestPower) as number)
+  const baseRatePower = useMemo(() => {
+    return baseRate
+      .multipliedBy(RATE_POWER_MAP.get(interestPower) as number)
+      .integerValue()
   }, [baseRate, interestPower])
 
   const currentCollaterals = useMemo(
@@ -308,10 +310,9 @@ const Create = () => {
       arr[i] = forMapArr.map((item) => {
         const powerBottom = colCount - item - 1
         const powerRight = rowCount - i - 1
-        const res =
-          baseRatePower *
-          Math.pow(sliderBottomValue, powerBottom) *
-          Math.pow(sliderRightValue, powerRight)
+        const res = baseRatePower
+          .multipliedBy(BigNumber(sliderBottomValue).pow(powerBottom))
+          .multipliedBy(BigNumber(sliderRightValue).pow(powerRight))
 
         return res
       })
@@ -324,6 +325,8 @@ const Create = () => {
     selectTenorKey,
     sliderRightKey,
   ])
+
+  console.log(tableData)
 
   const collectionSelectorProps = useMemo(
     () => ({
@@ -637,7 +640,7 @@ const Create = () => {
             min={RATE_POWER_KEYS[0]}
             max={RATE_POWER_KEYS[RATE_POWER_KEYS.length - 1]}
             step={1}
-            label={`${(baseRatePower / 100)?.toFixed(2)}`}
+            label={`${baseRatePower.dividedBy(100).toFixed(2)}`}
             onChange={(target) => {
               setInterestPower(target)
             }}
@@ -700,7 +703,7 @@ const Create = () => {
                   }
                 >
                   {[currentCollaterals[index], ...row]?.map(
-                    (value: string, i: number) => (
+                    (value: BigNumber, i: number) => (
                       <Flex
                         /* eslint-disable */
                         key={i}
@@ -731,9 +734,7 @@ const Create = () => {
                           </Text>
                         ) : (
                           <ScrollNumber
-                            value={`${BigNumber(value)
-                              .dividedBy(100)
-                              .toFormat(2)}%`}
+                            value={`${value.dividedBy(100).toFixed(2)}%`}
                             color={
                               i === row?.length &&
                               index === tableData?.length - 1

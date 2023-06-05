@@ -39,7 +39,7 @@ const amortizationCalByDays = (
   // i = interest_rate / 365 / installment
   const i = BigNumber(interest_rate).dividedBy(365).multipliedBy(installment)
   // n =  loan_period_days / installment
-  const n = BigNumber(loan_period_days).dividedBy(installment)
+  const n = BigNumber(loan_period_days).dividedBy(installment).integerValue()
   /**
    * return
    * principal * ( i * (1+i)**n ) / ((1+i)**n - 1)

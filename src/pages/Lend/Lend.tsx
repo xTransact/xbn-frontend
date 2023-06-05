@@ -48,7 +48,7 @@ import {
   ImageWithFallback,
   type ColumnProps,
   SearchInput,
-  LpGuideModal,
+  LenderGuideModal,
 } from '@/components'
 import { FORMAT_NUMBER, UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
@@ -404,6 +404,7 @@ const Lend = () => {
         key: 'pool_amount',
         align: 'right',
         thAlign: 'right',
+        render: (value: any) => <EthText>{wei2Eth(value)}</EthText>,
       },
       {
         title: 'Collateral Factor',
@@ -693,7 +694,7 @@ const Lend = () => {
 
   return (
     <Box mb='100px'>
-      <LpGuideModal isOpen={guideVisible} onClose={closeGuide} />
+      <LenderGuideModal isOpen={guideVisible} onClose={closeGuide} />
 
       <Box
         my={{

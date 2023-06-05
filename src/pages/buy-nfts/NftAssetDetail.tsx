@@ -826,12 +826,16 @@ const NftAssetDetail = () => {
                   <Flex
                     key={`${pool_id}-${pool_apr_with_spread}-${pool_days}`}
                     minW={{
-                      md: '90px',
+                      xl: '90px',
+                      lg: '80px',
+                      md: '80px',
                       sm: '100%',
                       xs: '100%',
                     }}
                     maxW={{
-                      md: '112px',
+                      xl: '112px',
+                      lg: '95px',
+                      md: '80px',
                       sm: '100%',
                       xs: '100%',
                     }}
@@ -847,6 +851,13 @@ const NftAssetDetail = () => {
                           lp_pool_apr,
                         })
                       }
+                      p={{
+                        xl: '16px',
+                        lg: '10px',
+                        md: '8px',
+                        sm: '8px',
+                        xs: '8px',
+                      }}
                       isActive={selectPool?.pool_days === pool_days}
                     >
                       <Text fontWeight={700}>{pool_days} Days</Text>
