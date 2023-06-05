@@ -166,6 +166,7 @@ const Lend = () => {
           ),
         )
       },
+      refreshDeps: [currentAccount],
       debounceWait: 10,
       onError: (error) => {
         console.log('🚀 ~ file: Lend.tsx:123 ~ Lend ~ error:', error)
