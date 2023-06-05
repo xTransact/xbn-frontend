@@ -234,7 +234,7 @@ const Create = () => {
   }, [initialItems])
 
   const [floorPrice, setFloorPrice] = useState<number>()
-  const { loading } = useRequest(
+  const { loading, data: floorPriceData } = useRequest(
     () =>
       apiGetFloorPrice({
         slug: selectCollection?.nftCollection.slug || '',
@@ -244,12 +244,14 @@ const Create = () => {
       refreshDeps: [selectCollection],
       cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
       staleTime: 1000 * 60,
-      onSuccess(data) {
-        if (isEmpty(data)) return
-        setFloorPrice(data.floor_price)
-      },
     },
   )
+
+  useEffect(() => {
+    if (!floorPriceData) return
+    if (isEmpty(floorPriceData)) return
+    setFloorPrice(floorPriceData.floor_price)
+  }, [floorPriceData])
 
   // set initial collection
   useEffect(() => {
