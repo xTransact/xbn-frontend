@@ -170,7 +170,7 @@ const CollectionDescription: FunctionComponent<{
               display='flex'
               mb={'4px'}
             >
-              {floorPrice || '--'}
+              {floorPrice === undefined ? '--' : floorPrice}
             </Heading>
           </Flex>
 

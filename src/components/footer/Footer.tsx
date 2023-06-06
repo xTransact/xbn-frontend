@@ -77,7 +77,16 @@ const Footer = () => {
         }}
       >
         <Flex alignItems={'center'}>
-          <Image src={LOGO} h={{ sm: 30, xs: 5 }} alt='logo' loading='lazy' />
+          <Image
+            src={LOGO}
+            h={{
+              md: 25,
+              xs: '20px',
+              sm: '20px',
+            }}
+            alt='logo'
+            loading='lazy'
+          />
         </Flex>
         <Flex
           justify={'space-between'}
@@ -109,7 +118,13 @@ const Footer = () => {
           </Box>
 
           {/* 社媒 */}
-          <Flex gap='70px'>
+          <Flex
+            gap={{
+              md: '70px',
+              sm: '20px',
+              xs: '20px',
+            }}
+          >
             {COMMUNITY_DATA.map(({ title, url, icon }) => (
               <Flex
                 key={title}
@@ -121,8 +136,24 @@ const Footer = () => {
                 }}
                 cursor={'pointer'}
               >
-                <SvgComponent svgId={`${icon}`} fontSize={'24px'} />
-                <Text color='black.4'>{title}</Text>
+                <SvgComponent
+                  svgId={`${icon}`}
+                  fontSize={{
+                    md: '24px',
+                    sm: '16px',
+                    xs: '16px',
+                  }}
+                />
+                <Text
+                  color='black.4'
+                  fontSize={{
+                    md: '16px',
+                    sm: '12px',
+                    xs: '12px',
+                  }}
+                >
+                  {title}
+                </Text>
               </Flex>
             ))}
           </Flex>

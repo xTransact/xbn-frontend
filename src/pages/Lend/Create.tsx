@@ -123,6 +123,12 @@ const SecondaryWrapper: FunctionComponent<
     w='100%'
     alignItems={'center'}
     p='10px 0 10px 8px'
+    flexWrap={{
+      md: 'nowrap',
+      sm: 'wrap',
+      xs: 'wrap',
+    }}
+    gap='10px'
   >
     <Flex alignItems={'center'} gap='6px'>
       <Box
@@ -151,7 +157,15 @@ const SecondaryWrapper: FunctionComponent<
         </Box>
       </Tooltip>
     </Flex>
-    {children}
+    <Box
+      w={{
+        md: 'auto',
+        sm: '100%',
+        xs: '100%',
+      }}
+    >
+      {children}
+    </Box>
   </Flex>
 )
 
@@ -492,7 +506,14 @@ const Create = () => {
     <>
       <H5SecondaryHeader />
 
-      <Box mb={8} mt={'60px'}>
+      <Box
+        mb={8}
+        mt={{
+          md: '60px',
+          sm: '10px',
+          xs: '10px',
+        }}
+      >
         <Heading
           fontSize={{
             md: '40px',
@@ -657,7 +678,13 @@ const Create = () => {
               <Tooltip
                 label={!!selectCollection ? '' : 'Please select collection'}
               >
-                <InputGroup w='484px'>
+                <InputGroup
+                  w={{
+                    md: '484px',
+                    sm: '100%',
+                    xs: '100%',
+                  }}
+                >
                   <InputLeftElement
                     pointerEvents='none'
                     color='gray.300'

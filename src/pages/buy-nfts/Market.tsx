@@ -299,7 +299,7 @@ const Market = () => {
     <>
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
       <Box
-        mb={{ md: '40px', sm: '12px', xs: '12px' }}
+        mb={{ md: '40px', sm: 0, xs: 0 }}
         mt={{
           md: '60px',
           sm: '16px',
@@ -331,7 +331,7 @@ const Market = () => {
             borderColor='gray.2'
             borderWidth={{ md: 1, sm: 0, xs: 0 }}
             borderRadius={{ md: '12px', sm: 0, xs: 0 }}
-            pt={{ md: '24px', sm: '20px', xs: '20px' }}
+            pt={{ md: '24px', sm: 0, xs: 0 }}
             px={{ md: '24px', sm: 0, xs: 0 }}
             // overflowY='auto'
             overflowX={'visible'}

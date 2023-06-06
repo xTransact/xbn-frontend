@@ -399,8 +399,7 @@ const MobileDrawBtn = () => {
 const Header = () => {
   const { pathname } = useLocation()
 
-  const { isOpen, onClose, currentAccount, interceptFn, handleOpenEtherscan } =
-    useWallet()
+  const { isOpen, onClose, currentAccount, interceptFn } = useWallet()
 
   const handleClickWallet = useCallback(async () => {
     interceptFn(() => {})

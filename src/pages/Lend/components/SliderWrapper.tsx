@@ -33,7 +33,10 @@ const SliderWrapper: FunctionComponent<
       gap='4px'
       py='8px'
       justify={'space-between'}
-      w='480px'
+      w={{
+        md: '480px',
+        sm: '100%',
+      }}
     >
       <Slider
         w='320px'
@@ -123,9 +126,17 @@ const SliderWrapper: FunctionComponent<
         borderRadius={8}
         borderColor={'blue.4'}
         borderWidth={'1px'}
-        py='12px'
+        py={{
+          md: '12px',
+          sm: '4px',
+          xs: '4px',
+        }}
         fontWeight={'700'}
-        w='120px'
+        w={{
+          md: '120px',
+          sm: '80px',
+          xs: '80px',
+        }}
         alignItems={'center'}
         justify={'center'}
         lineHeight={'20px'}
