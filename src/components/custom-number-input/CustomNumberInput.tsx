@@ -25,6 +25,8 @@ const CustomNumberInput: FunctionComponent<
       isInvalid={isInvalid}
       borderColor='gray.4'
       type='number'
+      // @ts-ignore
+      onWheel={(e) => e.target.blur()}
       onInput={(e: any) => {
         const v = e.target.value as string
         if (Number(v) < minValue) {

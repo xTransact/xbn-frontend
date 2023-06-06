@@ -147,7 +147,10 @@ const UpdatePoolAmountButton: FunctionComponent<
      */
     const NumberAmount = Number(amount)
     const maxAmount = wei2Eth(Number(pool_used_amount) + Number(wethData))
-    if (maxAmount === undefined) return false
+    if (maxAmount === undefined) {
+      setErrorMsg(` Insufficient funds: 0 WETH`)
+      return true
+    }
     if (NumberAmount > maxAmount) {
       setErrorMsg(` Insufficient funds: ${formatFloat(maxAmount)} WETH`)
       return true

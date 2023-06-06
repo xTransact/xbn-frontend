@@ -121,7 +121,10 @@ const CreatePoolButton: FunctionComponent<
     //  amount < balance + Has been lent
     if (!amount) return false
     const wethNum = wei2Eth(wethData)
-    if (!wethNum) return false
+    if (!wethNum) {
+      setErrorMsg(` Insufficient wallet balance: 0 WETH`)
+      return true
+    }
     const NumberAmount = Number(amount)
     if (NumberAmount > wethNum) {
       setErrorMsg(` Insufficient wallet balance: ${formatFloat(wethNum)} WETH`)

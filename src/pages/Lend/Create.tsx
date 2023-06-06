@@ -14,6 +14,7 @@ import {
   InputLeftElement,
   InputRightElement,
   Tooltip,
+  type FlexProps,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
@@ -110,6 +111,49 @@ const Wrapper: FunctionComponent<
     </Flex>
   )
 }
+
+const SecondaryWrapper: FunctionComponent<
+  {
+    title: string
+    description: string
+  } & FlexProps
+> = ({ description, title, children }) => (
+  <Flex
+    justify={'space-between'}
+    w='100%'
+    alignItems={'center'}
+    p='10px 0 10px 8px'
+  >
+    <Flex alignItems={'center'} gap='6px'>
+      <Box
+        boxSize={'16px'}
+        borderRadius={'100%'}
+        borderWidth={4}
+        borderColor={'blue.1'}
+        mr='18px'
+      />
+      <Text> {title}</Text>
+      <Tooltip
+        label={description}
+        placement='auto-start'
+        hasArrow
+        bg='white'
+        borderRadius={8}
+        p='10px'
+        fontSize={'14px'}
+        lineHeight={'18px'}
+        fontWeight={'500'}
+        boxShadow={'0px 0px 10px #D1D6DC'}
+        color='gray.3'
+      >
+        <Box cursor={'pointer'}>
+          <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
+        </Box>
+      </Tooltip>
+    </Flex>
+    {children}
+  </Flex>
+)
 
 const Create = () => {
   const params = useParams() as {
@@ -482,7 +526,7 @@ const Create = () => {
         position={'relative'}
       >
         {/* collection */}
-        <LoadingComponent loading={loading} top={0} />
+        <LoadingComponent loading={loading || updating} top={0} />
         <Wrapper stepIndex={1}>
           <Box>
             <Box
@@ -494,7 +538,7 @@ const Create = () => {
             >
               <AsyncSelectCollection
                 {...collectionSelectorProps}
-                w='480px'
+                w='360px'
                 disabledArr={collectionAddressWithPool}
                 isDisabled={params.action === 'edit'}
                 value={selectCollection}
@@ -544,7 +588,121 @@ const Create = () => {
           </Box>
         </Wrapper>
         {/* 贷款比例 collateral */}
-        <Wrapper stepIndex={2}>
+        <Flex
+          justify={'center'}
+          flexDir={'column'}
+          borderRadius={16}
+          mb='24px'
+          bg='gray.5'
+          p='32px'
+        >
+          <StepDescription
+            data={{
+              step: 2,
+              ...STEPS_DESCRIPTIONS[1],
+            }}
+            mb='16px'
+          />
+          <SecondaryWrapper
+            title='Set maximum collateral factor'
+            description='不知道啥文案还没改'
+          >
+            <SliderWrapper
+              // extraTip={
+              //   !isEmpty(selectCollection) ? (
+              //     <Flex
+              //       bg='white'
+              //       fontSize={'14px'}
+              //       borderRadius={2}
+              //       justify={'flex-start'}
+              //       alignItems={'center'}
+              //       fontWeight={'700'}
+              //       color='gray.3'
+              //       px='12px'
+              //       py='10px'
+              //       w='max-content'
+              //       lineHeight={'18px'}
+              //     >
+              //       current maximum loan amount:
+              //       <SvgComponent svgId='icon-eth' fill='gray.3' />
+              //       {(selectCollection.nftCollection.nftCollectionStat
+              //         .floorPrice *
+              //         (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
+              //         10000}
+              //     </Flex>
+              //   ) : null
+              // }
+              unit='%'
+              value={selectCollateralKey}
+              svgId='icon-intersect'
+              defaultValue={initialItems?.collateralKey}
+              data={COLLATERAL_KEYS}
+              min={COLLATERAL_KEYS[0]}
+              max={COLLATERAL_KEYS[COLLATERAL_KEYS.length - 1]}
+              step={1}
+              label={`${
+                (COLLATERAL_MAP.get(selectCollateralKey) as number) / 100
+              }`}
+              onChange={(target) => {
+                setSelectCollateralKey(target)
+              }}
+            />
+          </SecondaryWrapper>
+
+          <SecondaryWrapper
+            title='Set maximum single loan amount'
+            description='还没给到我不知道'
+          >
+            <Box>
+              <Tooltip
+                label={!!selectCollection ? '' : 'Please select collection'}
+              >
+                <InputGroup w='484px'>
+                  <InputLeftElement
+                    pointerEvents='none'
+                    color='gray.300'
+                    fontSize='1.2em'
+                    top='12px'
+                  >
+                    <SvgComponent svgId='icon-eth' fill={'black.1'} />
+                  </InputLeftElement>
+                  <CustomNumberInput
+                    isDisabled={!selectCollection}
+                    value={maxSingleLoanAmount || ''}
+                    isInvalid={maxSingleLoanAmountStatus?.status === 'error'}
+                    // lineHeight='60px'
+                    placeholder='Please enter amount...'
+                    onSetValue={(v) => setMaxSingleLoanAmount(v)}
+                    px={'32px'}
+                  />
+
+                  {maxSingleLoanAmountStatus?.status === 'error' && (
+                    <InputRightElement top='14px' mr='8px'>
+                      <SvgComponent svgId='icon-error' svgSize='24px' />
+                    </InputRightElement>
+                  )}
+                </InputGroup>
+              </Tooltip>
+
+              {!!maxSingleLoanAmountStatus && (
+                <Text
+                  mt='12px'
+                  color={
+                    maxSingleLoanAmountStatus?.status === 'error'
+                      ? 'red.1'
+                      : 'orange.1'
+                  }
+                  fontSize={'14px'}
+                >
+                  {maxSingleLoanAmountStatus.message}
+                </Text>
+              )}
+            </Box>
+          </SecondaryWrapper>
+
+          {/* {isEmpty(params) ? <InputSearch /> : params.collectionId} */}
+        </Flex>
+        {/* <Wrapper stepIndex={2}>
           <Box>
             <SliderWrapper
               // extraTip={
@@ -631,7 +789,7 @@ const Create = () => {
               </Text>
             )}
           </Box>
-        </Wrapper>
+        </Wrapper> */}
         {/* 贷款天数 tenor */}
         <Wrapper stepIndex={3}>
           <SliderWrapper

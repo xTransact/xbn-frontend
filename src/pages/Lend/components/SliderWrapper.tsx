@@ -41,11 +41,9 @@ const SliderWrapper: FunctionComponent<
         mb={'10px'}
         value={value}
         onChangeStart={() => {
-          console.log('start')
           setIsOnSlide(true)
         }}
         onChangeEnd={() => {
-          console.log('end')
           setIsOnSlide(false)
         }}
         {...rest}
