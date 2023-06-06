@@ -266,7 +266,7 @@ const MarketNftListCard: FunctionComponent<
         <Flex alignItems={'center'} gap={'4px'}>
           <SvgComponent svgId='icon-eth' w={'4px'} svgSize='14px' />
           <Text fontSize={'14px'} color={`gray.3`}>
-            &nbsp; {orderPrice}
+            &nbsp; {Number(orderPrice)?.toFixed(4)}
             {/* &nbsp; {wei2Eth(orderPrice)} */}
           </Text>
         </Flex>

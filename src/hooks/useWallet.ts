@@ -12,17 +12,11 @@ const useWallet = () => {
     async (fn?: () => void) => {
       // 是否连接目标链
       const currentChainId = window?.ethereum?.chainId
-      console.log(
-        '🚀 ~ file: useWallet.ts:15 ~ window?.ethereum?.chainId:',
-        window?.ethereum?.chainId,
-        import.meta.env.VITE_TARGET_CHAIN_ID,
-      )
       if (!currentChainId) {
         return
       }
 
       if (currentChainId !== import.meta.env.VITE_TARGET_CHAIN_ID) {
-        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         await handleSwitchNetwork()
         return
       }

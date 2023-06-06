@@ -173,9 +173,6 @@ const Lend = () => {
       },
       refreshDeps: [currentAccount],
       debounceWait: 10,
-      onError: (error) => {
-        console.log('🚀 ~ file: Lend.tsx:123 ~ Lend ~ error:', error)
-      },
     },
   )
 
@@ -880,10 +877,6 @@ const Lend = () => {
               loading={poolsLoading || collectionLoading}
               columns={activeCollectionColumns}
               data={filteredActiveCollectionList || []}
-              // onSort={(args: any) => {
-              //   console.log(args)
-              //   handleFetchMyPools({ address: currentAccount })
-              // }}
               emptyRender={() => {
                 return (
                   <EmptyComponent
@@ -912,10 +905,6 @@ const Lend = () => {
               loading={poolsLoading || collectionLoading}
               columns={myPoolsColumns}
               data={filteredPoolList || []}
-              // onSort={(args: any) => {
-              //   console.log(args)
-              //   handleFetchMyPools({ address: currentAccount })
-              // }}
               emptyRender={() => {
                 return (
                   <EmptyComponent

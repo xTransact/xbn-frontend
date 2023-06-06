@@ -9,6 +9,7 @@ import {
 
 import type { MARKET_TYPE_ENUM } from '@/components'
 import { NftOrigin, SvgComponent } from '@/components'
+import { formatFloat } from '@/utils/format'
 
 import type { FunctionComponent } from 'react'
 
@@ -17,7 +18,7 @@ const DetailComponent: FunctionComponent<
     data: {
       name1: string
       name2?: string
-      price?: string
+      price?: number
       verified: boolean
       usdPrice?: string
       platform?: MARKET_TYPE_ENUM
@@ -62,7 +63,7 @@ const DetailComponent: FunctionComponent<
           <Flex alignItems={'end'} mt={1} gap={'4px'}>
             <SvgComponent svgId='icon-eth' svgSize='32px' />
             <Heading fontSize={'32px'} lineHeight='30px'>
-              {price}
+              {price === undefined ? '--' : formatFloat(price, 8)}
             </Heading>
             <SvgComponent
               svgId='icon-refresh'

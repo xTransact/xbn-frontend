@@ -100,7 +100,6 @@ const MyAssets = () => {
     refreshDeps: [currentAccount],
     ready: !!currentAccount && !isDenied && !!getUserToken(),
     onError: async (error: any) => {
-      console.log('🚀 ~ file: MyAssets.tsx:77 ~ MyAssets ~ error:', error)
       if (error.code === 'unauthenticated') {
         // 未能签名
         await runSignAsync()

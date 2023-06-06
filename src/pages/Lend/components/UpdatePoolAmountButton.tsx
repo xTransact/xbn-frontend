@@ -186,7 +186,7 @@ const UpdatePoolAmountButton: FunctionComponent<
         setUpdateLoading(true)
 
         const xBankContract = createXBankContract()
-        const updateBlock = await xBankContract.methods
+        await xBankContract.methods
           .updatePool(
             pool_id,
             parsedWeiAmount,
@@ -200,7 +200,6 @@ const UpdatePoolAmountButton: FunctionComponent<
           .send({
             from: currentAccount,
           })
-        console.log(updateBlock, 'createBlock')
         setUpdateLoading(false)
         onCloseUpdate()
         if (toast.isActive('Updated-Successfully-ID')) {

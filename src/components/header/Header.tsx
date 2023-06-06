@@ -204,20 +204,6 @@ const ConnectedIconWallet: FunctionComponent = () => {
     const listPool = await xBankContract.methods.listPool().call()
     const listLoan = await xBankContract.methods.listLoan().call()
     const spread = await xBankContract.methods.getProtocolIRMultiplier().call()
-    // const _allowance = await wethContract.methods
-    //   .allowance(currentAccount, XBANK_CONTRACT_ADDRESS)
-    //   .call()
-
-    // const balanceOf = await wethContract.methods
-    //   .balanceOf(currentAccount)
-    //   .call()
-    // console.log('🚀 ~ file: Header.tsx:61 ~ testClick ~ balanceOf:', balanceOf)
-
-    // const allowanceEth = wei2Eth(_allowance)
-    // console.log(
-    //   '🚀 ~ file: Header.tsx:59 ~ testClick ~ allowanceEth:',
-    //   allowanceEth,
-    // )
     console.log('listLoan:', listLoan)
     console.log('listPool:', listPool)
     console.log('ProtocolIRMultiplier', spread)

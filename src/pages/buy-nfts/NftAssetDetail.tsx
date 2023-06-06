@@ -88,7 +88,7 @@ type PoolType = {
 }
 
 const converseToString: (arg?: number) => string = (arg) => {
-  return arg === undefined ? '--' : arg.toString()
+  return arg === undefined ? '--' : formatFloat(arg)
 }
 
 const NFTDetailContainer: FunctionComponent<FlexProps> = ({
@@ -464,9 +464,9 @@ const NftAssetDetail = () => {
               },
               fromBlock: transferBlock?.BlockNumber || 'latest',
             },
-            (error: any, event: any) => {
-              console.log(event, error, 'aaaaa')
-            },
+            // (error: any, event: any) => {
+            //   console.log(event, error, 'aaaaa')
+            // },
           )
           .on('data', function (event: any) {
             console.log(event, 'on data') // same results as the optional callback above
@@ -530,6 +530,11 @@ const NftAssetDetail = () => {
     () => transferFromLoading || subscribeLoading || loanOrderGenerateLoading,
     [transferFromLoading, subscribeLoading, loanOrderGenerateLoading],
   )
+
+  // const downPaymentEth = useMemo(
+  //   () => wei2Eth(downPaymentWei),
+  //   [downPaymentWei],
+  // )
 
   if (!state || isEmpty(state) || (isEmpty(detail) && !assetFetchLoading))
     return (
@@ -678,7 +683,7 @@ const NftAssetDetail = () => {
           data={{
             name1: collection?.name,
             name2: detail?.asset?.name || `#${detail?.asset?.tokenID}`,
-            price: wei2Eth(commodityWeiPrice)?.toString(),
+            price: wei2Eth(commodityWeiPrice),
             usdPrice: !!usdPrice
               ? formatFloat(
                   usdPrice?.multipliedBy(wei2Eth(commodityWeiPrice) || 0),
@@ -721,6 +726,7 @@ const NftAssetDetail = () => {
                 justify={'center'}
                 minW='96px'
                 px={'8px'}
+                w='148px'
               >
                 <SvgComponent svgId='icon-eth' svgSize='20px' />
                 <Text

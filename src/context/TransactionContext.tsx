@@ -183,7 +183,6 @@ export const TransactionsProvider = ({
         // getAllTransactions();
       } else {
         setCurrentAccount('')
-        console.log('No accounts found')
       }
     } catch (error) {
       setCurrentAccount('')
@@ -259,12 +258,6 @@ export const TransactionsProvider = ({
         })
         return
       }
-      console.log(
-        'aaaaa',
-        ethereum.chainId,
-        import.meta.env.VITE_TARGET_CHAIN_ID,
-        ethereum.chainId !== import.meta.env.VITE_TARGET_CHAIN_ID,
-      )
       if (ethereum.chainId !== import.meta.env.VITE_TARGET_CHAIN_ID) {
         await handleSwitchNetwork()
         return
@@ -279,49 +272,11 @@ export const TransactionsProvider = ({
       await runAsync(accounts[0])
       setConnectLoading(false)
     } catch (error) {
-      console.log(error)
       setConnectLoading(false)
 
       throw new Error('No ethereum object')
     }
   }, [toast, handleSwitchNetwork, setCurrentAccount, runAsync, setIsConnected])
-
-  // const sendTransaction = async () => {
-  //   try {
-  //     if (!!ethereum) {
-  //       const transactionsContract = createXBankContract()
-  //       // const parsedAmount = ethers.utils.parseEther(amount)
-
-  //       // await ethereum.request({
-  //       //   method: 'eth_sendTransaction',
-  //       //   params: [
-  //       //     {
-  //       //       from: currentAccount,
-  //       //       to: addressTo,
-  //       //       gas: '0x5208',
-  //       //       value: parsedAmount._hex,
-  //       //     },
-  //       //   ],
-  //       // })
-
-  //       const transactionHash = await transactionsContract.balanceOf(
-  //         '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
-  //       )
-
-  //       setIsLoading(true)
-  //       console.log(`Loading - ${transactionHash.hash}`)
-  //       await transactionHash.wait()
-  //       console.log(`Success - ${transactionHash.hash}`)
-  //       setIsLoading(false)
-  //     } else {
-  //       console.log('No ethereum object')
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-
-  //     throw new Error('No ethereum object')
-  //   }
-  // }
 
   useEffect(() => {
     checkIfWalletIsConnect()

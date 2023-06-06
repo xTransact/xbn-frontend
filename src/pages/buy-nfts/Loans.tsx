@@ -138,25 +138,16 @@ const Loans = () => {
             }))
             return
           }
-          console.log(
-            currentBalance,
-            repaymentAmount,
-            BigNumber(currentBalance).lt(Number(repaymentAmount)),
-          )
-
           // 2. 调用 xbank.repayLoan
-          const repayHash = await xBankContract.methods
-            .repayLoan(loan_id)
-            .send({
-              from: currentAccount,
-              gas: 300000,
-              value: repaymentAmount,
-            })
+          await xBankContract.methods.repayLoan(loan_id).send({
+            from: currentAccount,
+            gas: 300000,
+            value: repaymentAmount,
+          })
           setRepayLoadingMap((prev) => ({
             ...prev,
             [loan_id]: false,
           }))
-          console.log(repayHash, 'qqqqqqq')
           toast({
             status: 'success',
             title: 'successful repayment',

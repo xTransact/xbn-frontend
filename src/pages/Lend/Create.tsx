@@ -192,11 +192,8 @@ const Create = () => {
   const [collectionAddressWithPool, setCollectionAddressWithPool] =
     useState<string[]>()
   useRequest(apiGetPools, {
-    ready: params?.action === 'create',
+    ready: params?.action === 'create' && !!currentAccount,
     debounceWait: 10,
-    onError: (error) => {
-      console.log('🚀 ~ file: Lend.tsx:123 ~ Lend ~ error:', error)
-    },
     onSuccess(data) {
       if (!data) return
       setCollectionAddressWithPool([
@@ -208,6 +205,7 @@ const Create = () => {
         owner_address: currentAccount,
       },
     ],
+    refreshDeps: [currentAccount],
   })
 
   // collection
@@ -429,7 +427,7 @@ const Create = () => {
         } = state
         setUpdating(true)
 
-        const updateBlock = await xBankContract.methods
+        await xBankContract.methods
           .updatePool(
             pool_id,
             pool_amount.toString(),
@@ -447,7 +445,6 @@ const Create = () => {
           .send({
             from: currentAccount,
           })
-        console.log(updateBlock, 'createBlock')
         setUpdating(false)
         if (toast.isActive('Updated-Successfully-ID')) {
           // toast.closeAll()

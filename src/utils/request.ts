@@ -56,7 +56,6 @@ request.interceptors.response.use(
 
     if (error && !isEmpty(error)) {
       const { code, message } = error
-      console.log('🚀 ~ file: request.ts:58 ~ code:', code)
 
       toast({
         title: code || 'Oops, network error...',
