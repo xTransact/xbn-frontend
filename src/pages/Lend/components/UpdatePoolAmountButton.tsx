@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
-import { isEmpty } from 'lodash-es'
+import isEmpty from 'lodash-es/isEmpty'
 import {
   useCallback,
   useMemo,
