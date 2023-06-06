@@ -111,7 +111,7 @@ function App() {
           element={<Navigate replace to='/xlending/buy-nfts/market' />}
         />
         <Route
-          path='/xlending/buy-nfts/market'
+          path='/xlending/buy-nfts/market/:collectionId?'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>

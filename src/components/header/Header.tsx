@@ -243,6 +243,10 @@ const ConnectedIconWallet: FunctionComponent = () => {
             color='black.1'
             p={'10px'}
             onClick={handleOpenEtherscan}
+            _hover={{
+              textDecoration: 'underline',
+              color: 'blue.1',
+            }}
           >
             {formatAddress(currentAccount)}
           </Button>
@@ -255,6 +259,7 @@ const ConnectedIconWallet: FunctionComponent = () => {
             }}
             _hover={{
               textDecoration: 'none',
+              color: 'blue.1',
             }}
           >
             Repay Loans
@@ -265,6 +270,7 @@ const ConnectedIconWallet: FunctionComponent = () => {
             p={'10px'}
             _hover={{
               textDecoration: 'none',
+              color: 'blue.1',
             }}
             onClick={handleDisconnect}
           >

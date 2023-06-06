@@ -139,7 +139,7 @@ const CollectionDescription: FunctionComponent<{
                 bg: 'gray.5',
               }}
               px={'16px'}
-              py={'8px'}
+              py={'4px'}
               ml={'-16px'}
               hidden={!description}
             >

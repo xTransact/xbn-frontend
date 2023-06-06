@@ -73,6 +73,7 @@ function CustomSelect<
         }),
         control: (baseStyles, { isFocused, isDisabled: _isDisabled }) => ({
           ...baseStyles,
+          cursor: 'pointer',
           width: w,
           fontWeight: 700,
           borderRadius: 8,

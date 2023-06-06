@@ -21,7 +21,7 @@ import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { apiGetFloorPrice, apiGetPools } from '@/api'
 import {
@@ -75,7 +75,7 @@ const SORT_OPTIONS = [
 
 const Market = () => {
   const navigate = useNavigate()
-  const { search } = useLocation()
+  const pathData = useParams()
   const { isOpen, onClose, interceptFn } = useWallet()
   const {
     isOpen: drawVisible,
@@ -137,9 +137,7 @@ const Market = () => {
           return
         }
 
-        const prevCollectionId = Object.fromEntries(
-          new URLSearchParams(search),
-        )?.collectionId
+        const prevCollectionId = pathData?.collectionId
         const prevItem = data.nftCollectionsByContractAddresses.find(
           (i) => i.nftCollection.id === prevCollectionId,
         )
@@ -189,7 +187,7 @@ const Market = () => {
     const {
       nftCollection: { id },
     } = selectCollection
-    navigate(`/xlending/buy-nfts/market?collectionId=${id}`)
+    navigate(`/xlending/buy-nfts/market/${id}`)
   }, [selectCollection, navigate])
 
   // 根据 collectionId 搜索 assets
@@ -320,14 +318,7 @@ const Market = () => {
         flexWrap={{ lg: 'nowrap', md: 'wrap', sm: 'wrap', xs: 'wrap' }}
       >
         <Box
-          position={{
-            md: 'sticky',
-            sm: 'static',
-            xs: 'static',
-          }}
           pt='20px'
-          top={'79px'}
-          bg='white'
           w={{
             xl: '360px',
             lg: '260px',
@@ -335,7 +326,6 @@ const Market = () => {
             sm: '100%',
             xs: '100%',
           }}
-          zIndex={21}
         >
           <Box
             borderColor='gray.2'
@@ -345,7 +335,13 @@ const Market = () => {
             px={{ md: '24px', sm: 0, xs: 0 }}
             // overflowY='auto'
             overflowX={'visible'}
-            h={'500px'}
+            position={{
+              md: 'sticky',
+              sm: 'static',
+              xs: 'static',
+            }}
+            minH={'200px'}
+            top='100px'
           >
             <Heading size={'md'} mb='16px'>
               Collections

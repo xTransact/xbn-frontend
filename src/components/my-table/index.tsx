@@ -185,7 +185,7 @@ const MyTable = ({
                             ? `-4px 0 5px -3px var(--chakra-colors-gray-2)`
                             : ''
                         }
-                        py={'16px'}
+                        py={'12px'}
                         px={i !== 0 ? '24px' : 0}
                         {...styleConfig?.thTextProps}
                       >
@@ -256,7 +256,7 @@ const MyTable = ({
                               ? `-4px 0 5px -3px var(--chakra-colors-gray-2)`
                               : ''
                           }
-                          py={'16px'}
+                          py={'12px'}
                           w={width}
                           paddingInlineStart={'24px'}
                           paddingInlineEnd={'24px'}
