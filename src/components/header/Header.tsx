@@ -27,7 +27,7 @@ import {
 import useRequest from 'ahooks/lib/useRequest'
 import kebabCase from 'lodash-es/kebabCase'
 import { useCallback, useMemo, useRef, type FunctionComponent } from 'react'
-import Jazzicon from 'react-jazzicon'
+// import Jazzicon from 'react-jazzicon'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import Icon from '@/assets/logo.png'
@@ -522,7 +522,7 @@ const Header = () => {
               lg: 'none',
             }}
           >
-            <IconButton
+            {/* <IconButton
               onClick={handleOpenEtherscan}
               justifyContent={'center'}
               aria-label=''
@@ -534,7 +534,7 @@ const Header = () => {
                 />
               }
               hidden={!currentAccount}
-            />
+            /> */}
             <ConnectedIconWallet />
             <MobileDrawBtn />
           </Flex>

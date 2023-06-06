@@ -340,7 +340,11 @@ const Market = () => {
               sm: 'static',
               xs: 'static',
             }}
-            minH={'200px'}
+            minH={{
+              md: '200px',
+              sm: '100px',
+              xs: '100px',
+            }}
             top='100px'
           >
             <Heading size={'md'} mb='16px'>
