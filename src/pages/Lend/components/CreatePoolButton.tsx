@@ -14,6 +14,8 @@ import {
   InputRightElement,
   useDisclosure,
   Flex,
+  Tooltip,
+  Box,
 } from '@chakra-ui/react'
 import { useRequest } from 'ahooks'
 import BigNumber from 'bignumber.js'
@@ -385,8 +387,8 @@ const CreatePoolButton: FunctionComponent<
                 </Text>
               )}
               {!isError && !!amount && (
-                <Flex mt={'8px'} color={'gray.3'}>
-                  <Text>
+                <Flex mt={'8px'} color={'gray.3'} alignItems={'center'}>
+                  <Text fontSize={'14px'} color='blue.1' fontWeight={'700'}>
                     Expected to lend&nbsp;
                     {BigNumber(amount)
                       .dividedBy(defaultAmount)
@@ -394,6 +396,32 @@ const CreatePoolButton: FunctionComponent<
                       .toNumber()}
                     &nbsp;loans
                   </Text>
+                  <Tooltip
+                    label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , For example: ${amount}/${defaultAmount} = ${BigNumber(
+                      amount,
+                    )
+                      .dividedBy(defaultAmount)
+                      .integerValue(BigNumber.ROUND_DOWN)
+                      .toNumber()}`}
+                    placement='bottom-start'
+                    hasArrow={false}
+                    bg='white'
+                    borderRadius={8}
+                    p='10px'
+                    fontSize={'12px'}
+                    lineHeight={'18px'}
+                    fontWeight={'400'}
+                    color='gray.4'
+                    boxShadow={'0px 0px 10px #D1D6DC'}
+                  >
+                    <Box cursor={'pointer'} ml='16px'>
+                      <SvgComponent
+                        svgId='icon-tip'
+                        fill='gray.1'
+                        fontSize={'20px'}
+                      />
+                    </Box>
+                  </Tooltip>
                 </Flex>
               )}
             </FormControl>

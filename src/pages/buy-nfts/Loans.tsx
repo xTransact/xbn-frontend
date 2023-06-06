@@ -176,43 +176,6 @@ const Loans = () => {
 
   const loansForBuyerColumns: ColumnProps[] = [
     {
-      title: 'Asset',
-      dataIndex: 'nft_asset_info',
-      key: 'nft_asset_info',
-      align: 'left',
-      width: 180,
-      render: (_: any, info: any) => {
-        const currentInfo = bactNftListInfo?.find(
-          (i) =>
-            i?.tokenID === info.nft_collateral_id &&
-            i?.assetContractAddress.toLowerCase() ===
-              info.nft_collateral_contract.toLowerCase(),
-        )
-        return (
-          <Flex alignItems={'center'} gap={'8px'}>
-            <ImageWithFallback
-              src={currentInfo?.imagePreviewUrl as string}
-              w='40px'
-              h='40px'
-              borderRadius={4}
-              fit={'contain'}
-            />
-            <Text
-              w={'60%'}
-              display='inline-block'
-              overflow='hidden'
-              whiteSpace='nowrap'
-              textOverflow='ellipsis'
-            >
-              {currentInfo
-                ? currentInfo?.name || `#${currentInfo?.tokenID}`
-                : '--'}
-            </Text>
-          </Flex>
-        )
-      },
-    },
-    {
       title: 'Lender',
       dataIndex: 'lender_address',
       key: 'lender_address',
@@ -460,7 +423,43 @@ const Loans = () => {
                   },
                 },
                 columns: [
-                  ...loansForBuyerColumns,
+                  {
+                    title: 'Asset',
+                    dataIndex: 'nft_asset_info',
+                    key: 'nft_asset_info',
+                    align: 'left',
+                    width: 130,
+                    render: (_: any, info: any) => {
+                      const currentInfo = bactNftListInfo?.find(
+                        (i) =>
+                          i?.tokenID === info.nft_collateral_id &&
+                          i?.assetContractAddress.toLowerCase() ===
+                            info.nft_collateral_contract.toLowerCase(),
+                      )
+                      return (
+                        <Flex alignItems={'center'} gap={'8px'}>
+                          <ImageWithFallback
+                            src={currentInfo?.imagePreviewUrl as string}
+                            w='40px'
+                            h='40px'
+                            borderRadius={4}
+                            fit={'contain'}
+                          />
+                          <Text
+                            w={'100px'}
+                            display='inline-block'
+                            overflow='hidden'
+                            whiteSpace='nowrap'
+                            textOverflow='ellipsis'
+                          >
+                            {currentInfo
+                              ? currentInfo?.name || `#${currentInfo?.tokenID}`
+                              : '--'}
+                          </Text>
+                        </Flex>
+                      )
+                    },
+                  },
                   {
                     title: 'Next payment date',
                     dataIndex: 'number_of_installments',
@@ -514,6 +513,8 @@ const Loans = () => {
                       </Text>
                     ),
                   },
+                  ...loansForBuyerColumns,
+
                   {
                     title: '',
                     dataIndex: 'loan_id',
@@ -602,7 +603,46 @@ const Loans = () => {
                   </Heading>
                 ),
 
-                columns: loansForBuyerColumns,
+                columns: [
+                  {
+                    title: 'Asset',
+                    dataIndex: 'nft_asset_info',
+                    key: 'nft_asset_info',
+                    align: 'left',
+                    width: 130,
+                    render: (_: any, info: any) => {
+                      const currentInfo = bactNftListInfo?.find(
+                        (i) =>
+                          i?.tokenID === info.nft_collateral_id &&
+                          i?.assetContractAddress.toLowerCase() ===
+                            info.nft_collateral_contract.toLowerCase(),
+                      )
+                      return (
+                        <Flex alignItems={'center'} gap={'8px'}>
+                          <ImageWithFallback
+                            src={currentInfo?.imagePreviewUrl as string}
+                            w='40px'
+                            h='40px'
+                            borderRadius={4}
+                            fit={'contain'}
+                          />
+                          <Text
+                            w={'100px'}
+                            display='inline-block'
+                            overflow='hidden'
+                            whiteSpace='nowrap'
+                            textOverflow='ellipsis'
+                          >
+                            {currentInfo
+                              ? currentInfo?.name || `#${currentInfo?.tokenID}`
+                              : '--'}
+                          </Text>
+                        </Flex>
+                      )
+                    },
+                  },
+                  ...loansForBuyerColumns,
+                ],
                 loading: loading,
                 data: statuedLoans[1],
                 key: '2',
@@ -632,7 +672,46 @@ const Loans = () => {
                     </Highlight>
                   </Heading>
                 ),
-                columns: loansForBuyerColumns,
+                columns: [
+                  {
+                    title: 'Asset',
+                    dataIndex: 'nft_asset_info',
+                    key: 'nft_asset_info',
+                    align: 'left',
+                    width: 130,
+                    render: (_: any, info: any) => {
+                      const currentInfo = bactNftListInfo?.find(
+                        (i) =>
+                          i?.tokenID === info.nft_collateral_id &&
+                          i?.assetContractAddress.toLowerCase() ===
+                            info.nft_collateral_contract.toLowerCase(),
+                      )
+                      return (
+                        <Flex alignItems={'center'} gap={'8px'}>
+                          <ImageWithFallback
+                            src={currentInfo?.imagePreviewUrl as string}
+                            w='40px'
+                            h='40px'
+                            borderRadius={4}
+                            fit={'contain'}
+                          />
+                          <Text
+                            w={'100px'}
+                            display='inline-block'
+                            overflow='hidden'
+                            whiteSpace='nowrap'
+                            textOverflow='ellipsis'
+                          >
+                            {currentInfo
+                              ? currentInfo?.name || `#${currentInfo?.tokenID}`
+                              : '--'}
+                          </Text>
+                        </Flex>
+                      )
+                    },
+                  },
+                  ...loansForBuyerColumns,
+                ],
                 loading: loading,
                 data: statuedLoans[2],
                 key: '3',
