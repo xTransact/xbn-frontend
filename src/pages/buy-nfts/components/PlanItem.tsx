@@ -17,7 +17,7 @@ const PlanItem: FunctionComponent<{
         <Text fontSize='14px'>{label}</Text>
       </Flex>
       <Text fontSize='14px'>
-        {value || '--'} {UNIT}
+        {value ?? '--'} {UNIT}
       </Text>
     </Flex>
   )

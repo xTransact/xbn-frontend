@@ -168,7 +168,7 @@ const NftInfoBox: FunctionComponent<
           Listing price
         </Text>
         <Text fontWeight={'700'}>
-          {Number(price) === 0 ? '---' : price}
+          {price ?? '--'}
           {UNIT}
         </Text>
       </Flex>
@@ -971,9 +971,7 @@ const MyAssetNftListCard: FunctionComponent<
                   <Flex flexDir={'column'} gap={'12px'} py='24px'>
                     <Item
                       label='Listing price'
-                      value={`${
-                        !price || Number(price) === 0 ? '---' : price
-                      } ${UNIT}`}
+                      value={`${price ?? '--'} ${UNIT}`}
                     />
                     <Item
                       label='Creator earnings'

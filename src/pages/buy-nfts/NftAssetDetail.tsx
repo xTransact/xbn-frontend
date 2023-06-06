@@ -997,7 +997,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>NFT price</Text>
                 <Text color='gray.3'>
-                  {converseToString(wei2Eth(commodityWeiPrice))}
+                  {converseToString(wei2Eth(commodityWeiPrice))}&nbsp;
                   {UNIT}
                 </Text>
               </Flex>
@@ -1005,7 +1005,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>Down payment</Text>
                 <Text color='gray.3'>
-                  {converseToString(wei2Eth(downPaymentWei))}
+                  {converseToString(wei2Eth(downPaymentWei))}&nbsp;
                   {UNIT}
                 </Text>
               </Flex>
@@ -1013,7 +1013,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>Loan amount</Text>
                 <Text color='gray.3'>
-                  {converseToString(wei2Eth(loanWeiAmount))}
+                  {converseToString(wei2Eth(loanWeiAmount))}&nbsp;
                   {UNIT}
                 </Text>
               </Flex>
@@ -1025,6 +1025,7 @@ const NftAssetDetail = () => {
                     .multipliedBy(installmentValue)
                     .minus(wei2Eth(loanWeiAmount) || 0)
                     .toFormat(FORMAT_NUMBER)}
+                  &nbsp;
                   {UNIT}
                 </Text>
               </Flex>
@@ -1041,6 +1042,7 @@ const NftAssetDetail = () => {
                       .minus(wei2Eth(loanWeiAmount) || 0)
                       .plus(wei2Eth(commodityWeiPrice) || 0),
                   )}
+                  &nbsp;
                   {UNIT}
                 </Text>
               </Flex>
@@ -1058,6 +1060,7 @@ const NftAssetDetail = () => {
                       .plus(wei2Eth(commodityWeiPrice) || 0)
                       .multipliedBy(1.025),
                   )}
+                  &nbsp;
                   {UNIT}
                 </Text>
               </Flex>

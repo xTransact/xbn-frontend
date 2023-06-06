@@ -402,7 +402,7 @@ const Lend = () => {
           return (
             <Flex alignItems={'center'}>
               <SvgComponent svgId='icon-eth' />
-              <Text>{info?.nftCollectionStat?.floorPrice || '--'}</Text>
+              <Text>{info?.nftCollectionStat?.floorPrice ?? '--'}</Text>
             </Flex>
           )
         },
@@ -511,7 +511,7 @@ const Lend = () => {
             <Flex alignItems={'center'}>
               <SvgComponent svgId='icon-eth' />
               <Text>
-                {info?.nftCollection?.nftCollectionStat?.floorPrice || '--'}
+                {info?.nftCollection?.nftCollectionStat?.floorPrice ?? '--'}
               </Text>
             </Flex>
           )
