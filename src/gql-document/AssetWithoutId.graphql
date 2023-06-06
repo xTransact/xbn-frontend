@@ -55,5 +55,6 @@ query AssetWithoutId($assetContractAddress: String, $assetTokenId: String) {
       like
       likeCount
     }
+    orderPriceMarket
   }
 }

@@ -50,6 +50,7 @@ query Assets($orderBy: NFTAssetOrderBy!, $tag: String!) {
         transferFee
         transferFeePaymentToken
         updatedAt
+        orderPriceMarket
       }
       cursor
     }

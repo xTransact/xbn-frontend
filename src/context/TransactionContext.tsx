@@ -270,10 +270,9 @@ export const TransactionsProvider = ({
       const accounts = await ethereum.request({
         method: 'eth_requestAccounts',
       })
-
-      await runAsync(accounts[0])
       setCurrentAccount(accounts[0])
       setIsConnected(true)
+      await runAsync(accounts[0])
       setConnectLoading(false)
     } catch (error) {
       console.log(error)

@@ -30,7 +30,7 @@ import {
 } from '@/components'
 import { useBatchAsset, useWallet } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
-import { clearUserToken } from '@/utils/auth'
+import { clearUserToken, getUserToken } from '@/utils/auth'
 
 import MyAssetNftListCard from './components/MyAssetNftListCard'
 
@@ -98,7 +98,7 @@ const MyAssets = () => {
       },
     ],
     refreshDeps: [currentAccount],
-    ready: !!currentAccount && !isDenied,
+    ready: !!currentAccount && !isDenied && !!getUserToken(),
     onError: async (error: any) => {
       console.log('🚀 ~ file: MyAssets.tsx:77 ~ MyAssets ~ error:', error)
       if (error.code === 'unauthenticated') {
@@ -172,7 +172,7 @@ const MyAssets = () => {
       >
         My Assets
       </Heading>
-      {isDenied ? (
+      {isDenied || !getUserToken() ? (
         <Alert
           px={'40px'}
           status='error'
@@ -240,7 +240,7 @@ const MyAssets = () => {
           </TabList>
 
           <TabPanels>
-            <TabPanel p={0}>
+            <TabPanel p={0} pb='40px'>
               {/* <Toolbar
               loading={loading}
               searchConfig={{

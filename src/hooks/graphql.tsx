@@ -127,6 +127,7 @@ export type NftAsset = Node & {
   orderChain: Scalars['String']
   orderCoin: Scalars['String']
   orderPrice: Scalars['Decimal']
+  orderPriceMarket: Scalars['String']
   owner: Scalars['String']
   rarity: Scalars['Float']
   rarityLevel: Scalars['String']
@@ -759,6 +760,7 @@ export type AssetQuery = {
     rarityRank: number
     rarityLevel: string
     chain: string
+    orderPriceMarket: string
     nftAssetContract: {
       __typename?: 'NFTAssetContract'
       id: string
@@ -855,6 +857,7 @@ export type AssetWithoutIdQuery = {
     rarityRank: number
     rarityLevel: string
     chain: string
+    orderPriceMarket: string
     nftAssetContract: {
       __typename?: 'NFTAssetContract'
       id: string
@@ -928,6 +931,7 @@ export type AssetsQuery = {
             transferFee: string
             transferFeePaymentToken: string
             updatedAt: any
+            orderPriceMarket: string
             nftAssetContract: {
               __typename?: 'NFTAssetContract'
               address: string
@@ -1008,6 +1012,7 @@ export type AssetsChannelQuery = {
             orderChain: string
             orderCoin: string
             orderPrice: any
+            orderPriceMarket: string
             nftAssetMetaData: {
               __typename?: 'NFTAssetMetaData'
               likeCount: number
@@ -1064,6 +1069,7 @@ export type NftCollectionAssetsQuery = {
             chain: string
             rarityLevel: string
             rarityRank: number
+            orderPriceMarket: string
             nftAssetContract: {
               __typename?: 'NFTAssetContract'
               id: string
@@ -1220,6 +1226,7 @@ export type NftCollectionSearchAssetQuery = {
     rarityRank: number
     rarityLevel: string
     chain: string
+    orderPriceMarket: string
     nftAssetMetaData: {
       __typename?: 'NFTAssetMetaData'
       like: boolean
@@ -1314,6 +1321,7 @@ export const AssetDocument = gql`
         like
         likeCount
       }
+      orderPriceMarket
     }
   }
 `
@@ -1497,6 +1505,7 @@ export const AssetWithoutIdDocument = gql`
         like
         likeCount
       }
+      orderPriceMarket
     }
   }
 `
@@ -1605,6 +1614,7 @@ export const AssetsDocument = gql`
           transferFee
           transferFeePaymentToken
           updatedAt
+          orderPriceMarket
         }
         cursor
       }
@@ -1708,6 +1718,7 @@ export const AssetsChannelDocument = gql`
             likeCount
             like
           }
+          orderPriceMarket
         }
       }
     }
@@ -1834,6 +1845,7 @@ export const NftCollectionAssetsDocument = gql`
           }
           rarityLevel
           rarityRank
+          orderPriceMarket
         }
         cursor
       }
@@ -2082,6 +2094,7 @@ export const NftCollectionSearchAssetDocument = gql`
         sellerFeeBasisPoints
         payoutAddress
       }
+      orderPriceMarket
     }
   }
 `
