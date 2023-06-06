@@ -506,9 +506,10 @@ const Loans = () => {
                   },
                   ...loansForBuyerColumns,
                   {
-                    title: '',
+                    title: 'operation',
                     dataIndex: 'loan_id',
                     key: 'loan_id',
+                    thAlign: 'center',
                     fixedRight: true,
                     tdStyleConfig: {
                       bg: 'white',
