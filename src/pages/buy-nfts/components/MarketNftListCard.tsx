@@ -21,6 +21,7 @@ import {
   MARKET_TYPE_ENUM,
 } from '@/components'
 import { useIsMobile } from '@/hooks'
+import { formatFloat } from '@/utils/format'
 
 const MarketNftListCard: FunctionComponent<
   {
@@ -42,7 +43,8 @@ const MarketNftListCard: FunctionComponent<
     }
 
     // const eth = wei2Eth(orderPrice)
-    return (Number(orderPrice) * (10000 - Number(highestRate))) / 10000
+    const res = (Number(orderPrice) * (10000 - Number(highestRate))) / 10000
+    return formatFloat(res, 4)
   }, [orderPrice, highestRate])
 
   const ish5 = useIsMobile()
@@ -266,7 +268,7 @@ const MarketNftListCard: FunctionComponent<
         <Flex alignItems={'center'} gap={'4px'}>
           <SvgComponent svgId='icon-eth' w={'4px'} svgSize='14px' />
           <Text fontSize={'14px'} color={`gray.3`}>
-            &nbsp; {Number(orderPrice)?.toFixed(4)}
+            &nbsp; {formatFloat(orderPrice, 4)}
             {/* &nbsp; {wei2Eth(orderPrice)} */}
           </Text>
         </Flex>
