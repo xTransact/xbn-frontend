@@ -513,9 +513,10 @@ const Loans = () => {
                     fixedRight: true,
                     tdStyleConfig: {
                       bg: 'white',
+                      px: 0,
                     },
                     render: (value: any, info: any) => (
-                      <Flex gap={'12px'} alignItems={'center'}>
+                      <Flex alignItems={'center'}>
                         <Box
                           px='12px'
                           bg='white'
@@ -529,9 +530,6 @@ const Loans = () => {
                           }}
                           w='68px'
                           textAlign={'center'}
-                          _hover={{
-                            bg: 'blue.2',
-                          }}
                         >
                           {repayLoadingMap && repayLoadingMap[value] ? (
                             <Spinner color='blue.1' size={'sm'} />
@@ -547,9 +545,9 @@ const Loans = () => {
                         </Box>
                         <Divider
                           orientation='vertical'
-                          color='blue.4'
+                          bg='blue.4'
                           h='16px'
-                          w='2px'
+                          w='1px'
                         />
 
                         <Box
@@ -559,9 +557,6 @@ const Loans = () => {
                           cursor='pointer'
                           onClick={() => handleClickPayInAdvance(info)}
                           textAlign={'center'}
-                          _hover={{
-                            bg: 'blue.2',
-                          }}
                         >
                           <Text
                             color='blue.1'
