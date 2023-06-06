@@ -7,21 +7,20 @@ import ImageWithFallback from '../image-with-fallback/ImageWithFallback'
 
 import type { ImageProps } from '@chakra-ui/react'
 
-export enum MarketType {
+export enum MARKET_TYPE_ENUM {
   OPENSEA,
   BLUR,
 }
 
-const NftOrigin: FunctionComponent<{ type?: MarketType } & ImageProps> = ({
-  type,
-  ...rest
-}) => {
+const NftOrigin: FunctionComponent<
+  { type?: MARKET_TYPE_ENUM } & ImageProps
+> = ({ type, ...rest }) => {
   const img = useMemo(() => {
     switch (type) {
-      case MarketType.BLUR:
+      case MARKET_TYPE_ENUM.BLUR:
         return imgBlur
 
-      case MarketType.OPENSEA:
+      case MARKET_TYPE_ENUM.OPENSEA:
         return imgOpensea
 
       default:

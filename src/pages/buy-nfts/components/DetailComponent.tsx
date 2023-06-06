@@ -7,8 +7,8 @@ import {
   type BoxProps,
 } from '@chakra-ui/react'
 
+import type { MARKET_TYPE_ENUM } from '@/components'
 import { NftOrigin, SvgComponent } from '@/components'
-import { type MarketType } from '@/components/nft-origin/NftOrigin'
 
 import type { FunctionComponent } from 'react'
 
@@ -20,7 +20,7 @@ const DetailComponent: FunctionComponent<
       price?: string
       verified: boolean
       usdPrice?: string
-      platform?: MarketType
+      platform?: MARKET_TYPE_ENUM
     }
     loading?: boolean
     onRefreshPrice?: () => void

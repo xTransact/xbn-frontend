@@ -6,9 +6,10 @@ import {
   Thead,
   Tr,
   Flex,
-  Box,
+  type FlexProps,
   type TableProps,
   type TextProps,
+  Box,
 } from '@chakra-ui/react'
 import isEmpty from 'lodash-es/isEmpty'
 import { useState, type ReactElement } from 'react'
@@ -32,6 +33,8 @@ export interface ColumnProps {
   render?: ColumnRenderType
   sortable?: boolean
   fixedRight?: boolean
+  fixedRightStyle?: FlexProps
+  tdStyleConfig?: FlexProps
 }
 export type MyTableProps = TableProps & {
   columns: ColumnProps[]
@@ -217,6 +220,7 @@ const MyTable = ({
                         width,
                         align = 'left',
                         fixedRight,
+                        tdStyleConfig,
                       },
                       colIndex,
                     ) => (
@@ -267,6 +271,7 @@ const MyTable = ({
                             colIndex === columns?.length - 1 ? 10 : 0
                           }
                           {...styleConfig?.tdTextProps}
+                          {...tdStyleConfig}
                         >
                           {!!render ? (
                             <Flex justifyContent={align}>

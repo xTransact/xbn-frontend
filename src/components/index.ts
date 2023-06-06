@@ -28,3 +28,4 @@ export { default as BuyerGuideModal } from './guide-modal/BuyerGuideModal'
 export { default as LenderGuideModal } from './guide-modal/LenderGuideModal'
 
 export { type ColumnProps } from './my-table/index'
+export { MARKET_TYPE_ENUM } from './nft-origin/NftOrigin'

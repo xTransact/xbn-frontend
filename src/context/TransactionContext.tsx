@@ -152,6 +152,7 @@ export const TransactionsProvider = ({
   const handleDisconnect = useCallback(() => {
     setCurrentAccount('')
     setIsConnected(false)
+    window.location.href = '/xlending'
   }, [setCurrentAccount, setIsConnected])
 
   const checkIfWalletIsConnect = useCallback(async () => {
@@ -193,10 +194,6 @@ export const TransactionsProvider = ({
     if (!ethereum) {
       return
     }
-    if (!isConnected) {
-      setCurrentAccount('')
-      return
-    }
     try {
       await ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -216,6 +213,7 @@ export const TransactionsProvider = ({
         setCurrentAccount(requestedAccounts[0])
         setConnectLoading(false)
       }
+      setIsConnected(true)
     } catch (switchError: any) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
@@ -244,7 +242,7 @@ export const TransactionsProvider = ({
         })
       }
     }
-  }, [toast, setCurrentAccount, isConnected])
+  }, [toast, setCurrentAccount, setIsConnected])
 
   const { runAsync } = useAuth()
 
@@ -261,6 +259,12 @@ export const TransactionsProvider = ({
         })
         return
       }
+      console.log(
+        'aaaaa',
+        ethereum.chainId,
+        import.meta.env.VITE_TARGET_CHAIN_ID,
+        ethereum.chainId !== import.meta.env.VITE_TARGET_CHAIN_ID,
+      )
       if (ethereum.chainId !== import.meta.env.VITE_TARGET_CHAIN_ID) {
         await handleSwitchNetwork()
         return

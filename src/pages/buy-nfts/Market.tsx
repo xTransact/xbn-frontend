@@ -23,7 +23,7 @@ import maxBy from 'lodash-es/maxBy'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { apiGetPools } from '@/api'
+import { apiGetFloorPrice, apiGetPools } from '@/api'
 import {
   BuyerGuideModal,
   ConnectWalletModal,
@@ -150,6 +150,26 @@ const Market = () => {
       },
     })
 
+  const [floorPrice, setFloorPrice] = useState<number>()
+  const { loading: floorPriceLoading, data: floorPriceData } = useRequest(
+    () =>
+      apiGetFloorPrice({
+        slug: selectCollection?.nftCollection.slug || '',
+      }),
+    {
+      ready: !!selectCollection,
+      refreshDeps: [selectCollection],
+      cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
+      staleTime: 1000 * 60,
+    },
+  )
+
+  useEffect(() => {
+    if (!floorPriceData) return
+    if (isEmpty(floorPriceData)) return
+    setFloorPrice(floorPriceData.floor_price)
+  }, [floorPriceData])
+
   const highestRate = useMemo(() => {
     if (!poolsMap || isEmpty(poolsMap) || !selectCollection) return undefined
     const currentPools = poolsMap.get(selectCollection.contractAddress)
@@ -261,7 +281,7 @@ const Market = () => {
   }, [debounceSearchValue, fetchAssetBySearch, selectCollection])
 
   // grid
-  const [grid, setGrid] = useState(4)
+  const [grid, setGrid] = useState(3)
 
   const responsiveSpan = useMemo(
     () => ({
@@ -323,9 +343,9 @@ const Market = () => {
             borderRadius={{ md: '12px', sm: 0, xs: 0 }}
             pt={{ md: '24px', sm: '20px', xs: '20px' }}
             px={{ md: '24px', sm: 0, xs: 0 }}
-            overflowY='auto'
+            // overflowY='auto'
             overflowX={'visible'}
-            minH={'300px'}
+            h={'500px'}
           >
             <Heading size={'md'} mb='16px'>
               Collections
@@ -481,8 +501,9 @@ const Market = () => {
           }}
         >
           <CollectionDescription
-            loading={collectionLoading || poolsLoading}
+            loading={collectionLoading || poolsLoading || floorPriceLoading}
             data={selectCollection?.nftCollection}
+            floorPrice={floorPrice}
             highestRate={highestRate}
           />
           <Toolbar
@@ -510,7 +531,12 @@ const Market = () => {
               position={'relative'}
             >
               <LoadingComponent
-                loading={assetLoading || poolsLoading || collectionLoading}
+                loading={
+                  assetLoading ||
+                  poolsLoading ||
+                  collectionLoading ||
+                  floorPriceLoading
+                }
                 top={0}
               />
               {isEmpty(assetsData?.list) ? (

@@ -14,7 +14,12 @@ import {
 import useHover from 'ahooks/lib/useHover'
 import { useMemo, type FunctionComponent, useRef } from 'react'
 
-import { ImageWithFallback, SvgComponent } from '@/components'
+import {
+  ImageWithFallback,
+  NftOrigin,
+  SvgComponent,
+  MARKET_TYPE_ENUM,
+} from '@/components'
 import { useIsMobile } from '@/hooks'
 
 const MarketNftListCard: FunctionComponent<
@@ -23,8 +28,14 @@ const MarketNftListCard: FunctionComponent<
     imageSize?: ImageProps['w']
   } & CardProps
 > = ({ data: { node, highestRate }, imageSize, ...rest }) => {
-  const { imageThumbnailUrl, orderPrice, name, backgroundColor, tokenID } =
-    node || {}
+  const {
+    imageThumbnailUrl,
+    orderPrice,
+    name,
+    backgroundColor,
+    tokenID,
+    orderPriceMarket,
+  } = node || {}
   const formattedDownPayment = useMemo(() => {
     if (!orderPrice || !highestRate) {
       return '--'
@@ -40,6 +51,19 @@ const MarketNftListCard: FunctionComponent<
   const isHovering = useHover(ref)
 
   const show = useMemo(() => isHovering || ish5, [ish5, isHovering])
+
+  const nftOriginType: MARKET_TYPE_ENUM | undefined = useMemo(() => {
+    if (!orderPriceMarket) return
+    switch (orderPriceMarket) {
+      case 'OPENSEA':
+        return MARKET_TYPE_ENUM.OPENSEA
+
+      case 'BLUR':
+        return MARKET_TYPE_ENUM.BLUR
+      default:
+        return
+    }
+  }, [orderPriceMarket])
   return (
     <Card
       {...rest}
@@ -231,9 +255,13 @@ const MarketNftListCard: FunctionComponent<
         }}
       >
         <Flex alignItems={'center'} gap={'4px'}>
-          <Text color={`gray.3`} fontSize='14px'>
-            Price
-          </Text>
+          {nftOriginType !== undefined ? (
+            <NftOrigin type={nftOriginType} h='18px' />
+          ) : (
+            <Text color={`gray.3`} fontSize='14px'>
+              Price
+            </Text>
+          )}
         </Flex>
         <Flex alignItems={'center'} gap={'4px'}>
           <SvgComponent svgId='icon-eth' w={'4px'} svgSize='14px' />

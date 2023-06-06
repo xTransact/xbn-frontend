@@ -43,8 +43,8 @@ import {
   NftMedia,
   H5SecondaryHeader,
   MiddleStatus,
+  MARKET_TYPE_ENUM,
 } from '@/components'
-import { MarketType } from '@/components/nft-origin/NftOrigin'
 import { FORMAT_NUMBER, UNIT } from '@/constants'
 import { TENOR_VALUES } from '@/constants/interest'
 import {
@@ -124,7 +124,7 @@ const NftAssetDetail = () => {
   const timer = useRef<NodeJS.Timeout>()
   const [loanStep, setLoanStep] = useState<'loading' | 'success' | undefined>()
   const { isOpen, onClose, currentAccount, interceptFn } = useWallet()
-  const [platform, setPlatform] = useState<MarketType | undefined>()
+  const [platform, setPlatform] = useState<MARKET_TYPE_ENUM | undefined>()
   const {
     state,
   }: {
@@ -203,9 +203,9 @@ const NftAssetDetail = () => {
         setCommodityWeiPrice(BigNumber(weiPrice))
         setPlatform(
           minMarketPrice.marketplace === 'OPENSEA'
-            ? MarketType.OPENSEA
+            ? MARKET_TYPE_ENUM.OPENSEA
             : minMarketPrice.marketplace === 'BLUR'
-            ? MarketType.BLUR
+            ? MARKET_TYPE_ENUM.BLUR
             : undefined,
         )
       },

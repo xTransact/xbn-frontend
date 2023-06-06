@@ -80,7 +80,7 @@ const Loans = () => {
     debounceWait: 100,
     defaultParams: [
       {
-        borrower_address: currentAccount,
+        // borrower_address: currentAccount,
       },
     ],
   })
@@ -514,14 +514,16 @@ const Loans = () => {
                     ),
                   },
                   ...loansForBuyerColumns,
-
                   {
                     title: '',
                     dataIndex: 'loan_id',
                     key: 'loan_id',
                     fixedRight: true,
+                    tdStyleConfig: {
+                      bg: 'white',
+                    },
                     render: (value: any, info: any) => (
-                      <Flex gap={'12px'}>
+                      <Flex gap={'12px'} alignItems={'center'}>
                         <Box
                           px='12px'
                           bg='white'
@@ -535,6 +537,9 @@ const Loans = () => {
                           }}
                           w='68px'
                           textAlign={'center'}
+                          _hover={{
+                            bg: 'blue.2',
+                          }}
                         >
                           {repayLoadingMap && repayLoadingMap[value] ? (
                             <Spinner color='blue.1' size={'sm'} />
@@ -542,12 +547,18 @@ const Loans = () => {
                             <Text
                               color='blue.1'
                               fontSize='14px'
-                              fontWeight={'700'}
+                              fontWeight={'500'}
                             >
                               Repay
                             </Text>
                           )}
                         </Box>
+                        <Divider
+                          orientation='vertical'
+                          color='blue.4'
+                          h='16px'
+                          w='2px'
+                        />
 
                         <Box
                           px='12px'
@@ -556,15 +567,15 @@ const Loans = () => {
                           cursor='pointer'
                           onClick={() => handleClickPayInAdvance(info)}
                           textAlign={'center'}
+                          _hover={{
+                            bg: 'blue.2',
+                          }}
                         >
                           <Text
                             color='blue.1'
                             fontSize='14px'
-                            fontWeight={'700'}
+                            fontWeight={'500'}
                           >
-                            {/* {nftLoading && (
-                              <Spinner color='blue.1' size={'sm'} />
-                            )} */}
                             Pay in advance
                           </Text>
                         </Box>
