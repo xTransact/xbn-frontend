@@ -728,7 +728,11 @@ const NftAssetDetail = () => {
                 justify={'center'}
                 minW='96px'
                 px={'8px'}
-                w='148px'
+                w={{
+                  md: '148px',
+                  sm: '100px',
+                  xs: '100px',
+                }}
               >
                 <SvgComponent svgId='icon-eth' svgSize='20px' />
                 <Text
@@ -953,7 +957,7 @@ const NftAssetDetail = () => {
               spacing='16px'
             >
               <PlanItem
-                value={wei2Eth(downPaymentWei)}
+                value={formatFloat(wei2Eth(downPaymentWei))}
                 label='Down payment now'
               />
 
