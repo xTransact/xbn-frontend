@@ -338,10 +338,14 @@ const NftAssetDetail = () => {
             //   // 4000 6000 => 1
             //   ((pool_maximum_percentage - loanPercentage) / 1000) *
             //     loan_ratio_preferential_flexibility
+            const pool_apr_with_spread =
+              lp_pool_apr * (1 + (interestSpread || 0))
             return {
               pool_id,
-              pool_apr_with_spread: lp_pool_apr * (1 + (interestSpread || 0)),
-              lp_pool_apr,
+              pool_apr_with_spread: BigNumber(pool_apr_with_spread)
+                .integerValue()
+                .toNumber(),
+              lp_pool_apr: BigNumber(lp_pool_apr).integerValue().toNumber(),
               pool_days: item,
               lp_address: owner_address,
             }
