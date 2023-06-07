@@ -177,16 +177,12 @@ const Loans = () => {
       render: (value: any) => <Text>{formatAddress(value.toString())}</Text>,
     },
     {
-      title: 'Borrower',
-      dataIndex: 'borrower_address',
-      key: 'borrower_address',
-      render: (value: any) => <Text>{formatAddress(value.toString())}</Text>,
-    },
-    {
       title: 'Start time',
       dataIndex: 'loan_start_time',
       key: 'loan_start_time',
-      render: (value: any) => <Text>{unix(value).format('YYYY/MM/DD')}</Text>,
+      render: (value: any) => (
+        <Text>{unix(value).format('YYYY/MM/DD HH:mm:ss')}</Text>
+      ),
     },
     {
       title: 'Loan value',
@@ -494,7 +490,7 @@ const Loans = () => {
                       return (
                         <Text>
                           {unix(nextPaymentData.toNumber()).format(
-                            'YYYY/MM/DD',
+                            'YYYY/MM/DD HH:mm:ss',
                           )}
                         </Text>
                       )

@@ -943,7 +943,7 @@ const MyAssetNftListCard: FunctionComponent<
                             <Text fontSize={'12px'} mt='10px'>
                               Loan ends &nbsp;
                               {unix(loanData?.loanEndedTime || 0).format(
-                                'YYYY/MM/DD',
+                                'YYYY/MM/DD HH:mm:ss',
                               )}
                             </Text>
                           </Box>

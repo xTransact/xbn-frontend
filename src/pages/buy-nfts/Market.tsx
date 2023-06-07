@@ -615,11 +615,9 @@ const Market = () => {
               position={'relative'}
               // overflowX='hidden'
             >
-              <LoadingComponent
-                loading={fetchAssetBySearchLoading || poolsLoading}
-                top={0}
-              />
-              {!searchedAsset ? (
+              {fetchAssetBySearchLoading || poolsLoading ? (
+                <LoadingComponent loading top={0} />
+              ) : !searchedAsset ? (
                 <GridItem colSpan={responsiveSpan}>
                   <EmptyComponent />
                 </GridItem>

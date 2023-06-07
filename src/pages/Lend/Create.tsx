@@ -588,6 +588,7 @@ const Create = () => {
                 {...collectionSelectorProps}
                 isDisabled={params.action === 'edit'}
                 value={selectCollection}
+                disabledArr={collectionAddressWithPool}
                 onChange={(e: {
                   contractAddress: string
                   nftCollection: NftCollection

@@ -396,9 +396,10 @@ const CreatePoolButton: FunctionComponent<
                     &nbsp;loans
                   </Text>
                   <Tooltip
-                    label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , For example: ${amount}/${defaultAmount} = ${BigNumber(
-                      amount,
-                    )
+                    whiteSpace={'pre-line'}
+                    label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , \nFor example: ${amount}/${formatFloat(
+                      defaultAmount,
+                    )} = ${BigNumber(amount)
                       .dividedBy(defaultAmount)
                       .integerValue(BigNumber.ROUND_DOWN)
                       .toNumber()}`}

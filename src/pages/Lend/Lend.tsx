@@ -658,7 +658,9 @@ const Lend = () => {
         thAlign: 'right',
         align: 'right',
         key: 'loan_start_time',
-        render: (value: any) => <Text>{unix(value).format('YYYY/MM/DD')}</Text>,
+        render: (value: any) => (
+          <Text>{unix(value).format('YYYY/MM/DD HH:mm:ss')}</Text>
+        ),
       },
       {
         title: 'Loan value',

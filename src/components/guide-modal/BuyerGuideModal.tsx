@@ -156,7 +156,14 @@ const BuyerGuideModal: FunctionComponent<{
     return BUYER_GUIDES[step - 1]
   }, [step])
   return (
-    <Modal onClose={onClose} isCentered scrollBehavior='inside' {...rest}>
+    <Modal
+      onClose={onClose}
+      isCentered
+      scrollBehavior='inside'
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
+      {...rest}
+    >
       <ModalOverlay bg='black.2' />
       <ModalContent
         maxW={{
