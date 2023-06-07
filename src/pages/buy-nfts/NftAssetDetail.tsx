@@ -330,6 +330,10 @@ const NftAssetDetail = () => {
               Math.pow(loanBottomPower, bottomDistance) *
               Math.pow(loanRightPower, rightDistance)
 
+            const formatApr = BigNumber(lp_pool_apr)
+              .integerValue(BigNumber.ROUND_UP)
+              .toNumber()
+
             // const lp_pool_apr =
             //   pool_maximum_interest_rate -
             //   (TENOR_VALUES.indexOf(pool_maximum_days) - index) *
@@ -338,16 +342,16 @@ const NftAssetDetail = () => {
             //   // 4000 6000 => 1
             //   ((pool_maximum_percentage - loanPercentage) / 1000) *
             //     loan_ratio_preferential_flexibility
-            const pool_apr_with_spread =
-              lp_pool_apr * (1 + (interestSpread || 0))
+            const pool_apr_with_spread = BigNumber(formatApr).multipliedBy(
+              1 + (interestSpread || 0),
+            )
+
             return {
               pool_id,
-              pool_apr_with_spread: BigNumber(pool_apr_with_spread)
+              pool_apr_with_spread: pool_apr_with_spread
                 .integerValue(BigNumber.ROUND_UP)
                 .toNumber(),
-              lp_pool_apr: BigNumber(lp_pool_apr)
-                .integerValue(BigNumber.ROUND_UP)
-                .toNumber(),
+              lp_pool_apr: formatApr,
               pool_days: item,
               lp_address: owner_address,
             }
