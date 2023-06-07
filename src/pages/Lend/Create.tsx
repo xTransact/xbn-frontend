@@ -195,7 +195,10 @@ const Create = () => {
     ready: params?.action === 'create' && !!currentAccount,
     debounceWait: 10,
     onSuccess(data) {
-      if (!data) return
+      if (!data || !data?.length) {
+        setCollectionAddressWithPool([])
+        return
+      }
       setCollectionAddressWithPool([
         ...new Set(data?.map((i) => i.allow_collateral_contract.toLowerCase())),
       ])
