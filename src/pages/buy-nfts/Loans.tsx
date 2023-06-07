@@ -45,7 +45,11 @@ const MODEL_HEADER_PROPS: ModalHeaderProps = {
     sm: '20px',
     xs: '20px',
   },
-  fontSize: '28px',
+  fontSize: {
+    md: '28px',
+    sm: '22px',
+    xs: '22px',
+  },
   fontWeight: '700',
   position: 'sticky',
   top: 0,

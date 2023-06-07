@@ -99,7 +99,7 @@ const Wrapper: FunctionComponent<
       borderRadius={16}
       mb='24px'
       bg='gray.5'
-      p='32px'
+      p={{ md: '32px', sm: '12px', xs: '12px' }}
     >
       <StepDescription
         data={{
@@ -123,7 +123,11 @@ const SecondaryWrapper: FunctionComponent<
     justify={'space-between'}
     w='100%'
     alignItems={'center'}
-    p='10px 0 10px 8px'
+    p={{
+      md: '10px 0 10px 8px',
+      sm: '10px 0 10px 8px',
+      xs: '10px 0 10px 8px',
+    }}
     flexWrap={{
       md: 'nowrap',
       sm: 'wrap',
@@ -616,7 +620,11 @@ const Create = () => {
           borderRadius={16}
           mb='24px'
           bg='gray.5'
-          p='32px'
+          p={{
+            md: '32px',
+            sm: '12px',
+            xs: '12px',
+          }}
         >
           <StepDescription
             data={{
@@ -854,16 +862,43 @@ const Create = () => {
         </Wrapper>
 
         {/* 表格 */}
-        <Box bg='gray.5' p='32px' borderRadius={16} pos={'relative'}>
+        <Box
+          bg='gray.5'
+          p={{
+            md: '32px',
+            sm: '0',
+            xs: '0',
+          }}
+          borderRadius={16}
+          pos={'relative'}
+        >
           <Flex
             justify={'center'}
-            mb='46px'
+            mb={{
+              md: '46px',
+              sm: '20px',
+              xs: '20px',
+            }}
             fontSize={'18px'}
             fontWeight={'700'}
+            p={{
+              md: '32px',
+              sm: '12px',
+              xs: '12px',
+            }}
           >
             Generate the interest rate table for outstanding loans
           </Flex>
-          <Box bg='white' w={'90%'} borderRadius={16} margin={'0 auto'}>
+          <Box
+            bg='white'
+            w={{
+              md: '90%',
+              sm: '100%',
+              xs: '10%',
+            }}
+            borderRadius={16}
+            margin={'0 auto'}
+          >
             <Flex>
               {[
                 'Collateral Factor/ Tenor',
@@ -970,7 +1005,11 @@ const Create = () => {
             gap={'4px'}
             hidden={!showFlexibility}
             pos={'absolute'}
-            right={'32px'}
+            right={{
+              md: '32px',
+              sm: '12px',
+              xs: '12px',
+            }}
             top={'50%'}
             transform={'translateY(-50%)'}
           >

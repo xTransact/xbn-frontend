@@ -39,7 +39,11 @@ const SliderWrapper: FunctionComponent<
       }}
     >
       <Slider
-        w='320px'
+        w={{
+          md: '320px',
+          sm: '220px',
+          xs: '220px',
+        }}
         mt={'10px'}
         mb={'10px'}
         value={value}
@@ -140,6 +144,11 @@ const SliderWrapper: FunctionComponent<
         alignItems={'center'}
         justify={'center'}
         lineHeight={'20px'}
+        fontSize={{
+          md: '16px',
+          sm: '12px',
+          xs: '12px',
+        }}
       >
         <SvgComponent svgId={svgId} />
         {label}

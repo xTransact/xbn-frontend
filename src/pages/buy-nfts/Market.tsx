@@ -341,7 +341,7 @@ const Market = () => {
               xs: 'static',
             }}
             minH={{
-              md: '200px',
+              md: '400px',
               sm: '100px',
               xs: '100px',
             }}
@@ -388,10 +388,11 @@ const Market = () => {
                 <LoadingComponent
                   loading={collectionLoading || poolsLoading}
                   top={0}
+                  minH={'220px'}
                 />
-                {isEmpty(filteredCollectionList) && !collectionLoading && (
-                  <EmptyComponent />
-                )}
+                {isEmpty(filteredCollectionList) &&
+                  !collectionLoading &&
+                  !poolsLoading && <EmptyComponent />}
 
                 {filteredCollectionList?.map((item) => (
                   <CollectionListItem
