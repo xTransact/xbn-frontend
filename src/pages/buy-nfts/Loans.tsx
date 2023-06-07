@@ -279,7 +279,7 @@ const Loans = () => {
         loan_start_time,
         loan_interest_rate,
         loan_duration,
-        installment,
+        lp_scheduled_received,
         repaid_interest,
       } = info
 
@@ -297,7 +297,7 @@ const Loans = () => {
         const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
 
         // 已还次数 = 已还金额 / 每期还款金额
-        const payedTimes = repaidAmount.dividedBy(installment)
+        const payedTimes = repaidAmount.dividedBy(lp_scheduled_received)
         // 每期还款期限 = 还款期限 / 还款期数
         const perLoanDuration = BigNumber(loan_duration).dividedBy(
           number_of_installments,
@@ -463,7 +463,7 @@ const Loans = () => {
                         loan_start_time,
                         loan_duration,
                         repaid_interest,
-                        installment,
+                        lp_scheduled_received,
                       } = info
                       // 每期还款期限 = 还款期限 / 还款期数
                       const perLoanDuration = BigNumber(
@@ -479,7 +479,9 @@ const Loans = () => {
                           BigNumber(repaid_principal).plus(repaid_interest)
 
                         // 已还次数 = 已还金额 / 每期还款金额
-                        const payedTimes = repaidAmount.dividedBy(installment)
+                        const payedTimes = repaidAmount.dividedBy(
+                          lp_scheduled_received,
+                        )
                         // 每期还款期限 = 还款期限 / 还款期数
                         nextPaymentData = BigNumber(loan_start_time).plus(
                           perLoanDuration.multipliedBy(payedTimes.plus(1)),
