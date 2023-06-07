@@ -1,12 +1,10 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex, Text, type FlexProps } from '@chakra-ui/react'
 import { useMemo, type FunctionComponent } from 'react'
 
 import imgBlur from '@/assets/blur-logo.png'
 import imgOpensea from '@/assets/opensea-logo.png'
 
-import ImageWithFallback from '../image-with-fallback/ImageWithFallback'
-
-import type { FlexProps } from '@chakra-ui/react'
+import { ImageWithFallback } from '..'
 
 export enum MARKET_TYPE_ENUM {
   OPENSEA,

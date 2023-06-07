@@ -97,7 +97,6 @@ const Wrapper: FunctionComponent<
         sm: 'block',
       }}
       borderRadius={16}
-      mb='24px'
       bg='gray.5'
       p={{ md: '32px', sm: '12px', xs: '12px' }}
     >
