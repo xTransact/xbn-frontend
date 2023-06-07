@@ -52,7 +52,6 @@ import {
   useAssetQuery,
   useBatchWethBalance,
   useCatchContractError,
-  type NftCollection,
 } from '@/hooks'
 import { amortizationCalByDays } from '@/utils/calculation'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
@@ -125,7 +124,12 @@ const NftAssetDetail = () => {
     state,
   }: {
     state: {
-      collection: NftCollection
+      collection: {
+        name: string
+        imagePreviewUrl: string
+        safelistRequestStatus: string
+        floorPrice: number
+      }
       poolsList: PoolsListItemType[]
     }
   } = useLocation()
@@ -662,11 +666,7 @@ const NftAssetDetail = () => {
             fit='contain'
           />
           <ImageToolBar data={detail} />
-          <BelongToCollection
-            data={{
-              ...collection,
-            }}
-          />
+          <BelongToCollection data={collection} />
         </Flex>
       )}
       <Box

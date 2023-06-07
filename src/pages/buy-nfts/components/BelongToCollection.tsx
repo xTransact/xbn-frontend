@@ -3,20 +3,19 @@ import { type FunctionComponent } from 'react'
 
 import { ImageWithFallback, SvgComponent } from '@/components'
 import { UNIT } from '@/constants'
-import type { NftCollection } from '@/hooks'
 import { formatFloat } from '@/utils/format'
 
 const BelongToCollection: FunctionComponent<
   BoxProps & {
-    data: NftCollection
+    data: {
+      name: string
+      imagePreviewUrl: string
+      safelistRequestStatus: string
+      floorPrice: number
+    }
   }
 > = ({
-  data: {
-    name = '',
-    imagePreviewUrl = '',
-    safelistRequestStatus,
-    nftCollectionStat: { floorPrice },
-  },
+  data: { name = '', imagePreviewUrl = '', safelistRequestStatus, floorPrice },
   ...rest
 }) => {
   return (

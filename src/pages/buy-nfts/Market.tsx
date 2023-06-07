@@ -573,6 +573,14 @@ const Market = () => {
                               state: {
                                 collection: {
                                   ...selectCollection?.nftCollection,
+                                  name: selectCollection?.nftCollection?.name,
+                                  imagePreviewUrl:
+                                    selectCollection?.nftCollection
+                                      ?.imagePreviewUrl,
+                                  safelistRequestStatus:
+                                    selectCollection?.nftCollection
+                                      ?.safelistRequestStatus,
+                                  floorPrice,
                                 },
                                 poolsList:
                                   poolsMap && selectCollection?.contractAddress
@@ -636,6 +644,14 @@ const Market = () => {
                           state: {
                             collection: {
                               ...selectCollection?.nftCollection,
+                              name: selectCollection?.nftCollection?.name,
+                              imagePreviewUrl:
+                                selectCollection?.nftCollection
+                                  ?.imagePreviewUrl,
+                              safelistRequestStatus:
+                                selectCollection?.nftCollection
+                                  ?.safelistRequestStatus,
+                              floorPrice,
                             },
                             poolsList:
                               poolsMap && selectCollection?.contractAddress
