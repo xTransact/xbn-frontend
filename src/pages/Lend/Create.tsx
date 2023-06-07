@@ -60,6 +60,7 @@ import {
 import type { NftCollection } from '@/hooks'
 import { useCatchContractError, useWallet } from '@/hooks'
 import { createXBankContract } from '@/utils/createContract'
+import { formatFloat } from '@/utils/format'
 import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
 import CreatePoolButton from './components/CreatePoolButton'
@@ -603,7 +604,7 @@ const Create = () => {
               >
                 Current Floor Price
                 <SvgComponent svgId='icon-eth' />
-                {floorPrice}
+                {floorPrice !== undefined ? formatFloat(floorPrice || 0) : '--'}
               </Flex>
             )}
           </Box>

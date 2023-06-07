@@ -4,6 +4,7 @@ import { type FunctionComponent } from 'react'
 import { ImageWithFallback, SvgComponent } from '@/components'
 import { UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
+import { formatFloat } from '@/utils/format'
 
 const BelongToCollection: FunctionComponent<
   BoxProps & {
@@ -56,7 +57,7 @@ const BelongToCollection: FunctionComponent<
           </Flex>
 
           <Text fontSize={'18px'} fontWeight='bold'>
-            {floorPrice}
+            {floorPrice !== undefined ? formatFloat(floorPrice || 0) : '--'}
             &nbsp;
             {UNIT}
           </Text>
