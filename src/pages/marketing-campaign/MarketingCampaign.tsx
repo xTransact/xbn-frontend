@@ -185,7 +185,7 @@ export default function MarketingCampaign() {
     )
   }, [])
   useEffect(() => {
-    if (!expired && !!currentAccount) {
+    if (!expired && !!currentAccount && hasUsedXBN) {
       apiGetLoans({
         lender_address: currentAccount,
         borrower_address: currentAccount,
@@ -209,7 +209,7 @@ export default function MarketingCampaign() {
         }
       })
     }
-  }, [expired, currentAccount, setHasUsedXBN])
+  }, [expired, currentAccount, hasUsedXBN])
   return (
     <div>
       <Header />
