@@ -102,7 +102,7 @@ const MarketNftListCard: FunctionComponent<
               }
             }
             w='100%'
-            fit='contain'
+            fit='cover'
             transform={`scale(${show ? 1.2 : 1})`}
             transition='all 0.6s'
           />
