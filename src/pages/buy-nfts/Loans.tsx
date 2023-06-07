@@ -279,6 +279,8 @@ const Loans = () => {
         loan_start_time,
         loan_interest_rate,
         loan_duration,
+        installment,
+        repaid_interest,
       } = info
 
       // 应还本金 = 贷款本金 -  已还本金
@@ -291,12 +293,11 @@ const Loans = () => {
       let lastTime = BigNumber(loan_start_time)
       if (BigNumber(repaid_principal).gt(0)) {
         // 如果已还金额大于 0
-        // 每期还款本金 = 总还款本金 / 还款期数
-        const perRepayAmount = BigNumber(loan_amount).dividedBy(
-          number_of_installments,
-        )
-        // 已还次数 = 已还本金 / 每期还款本金
-        const payedTimes = BigNumber(repaid_principal).dividedBy(perRepayAmount)
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
+
+        // 已还次数 = 已还金额 / 每期还款金额
+        const payedTimes = repaidAmount.dividedBy(installment)
         // 每期还款期限 = 还款期限 / 还款期数
         const perLoanDuration = BigNumber(loan_duration).dividedBy(
           number_of_installments,
@@ -458,10 +459,11 @@ const Loans = () => {
                     render: (_: any, info: any) => {
                       const {
                         repaid_principal,
-                        loan_amount,
                         number_of_installments,
                         loan_start_time,
                         loan_duration,
+                        repaid_interest,
+                        installment,
                       } = info
                       // 每期还款期限 = 还款期限 / 还款期数
                       const perLoanDuration = BigNumber(
@@ -471,13 +473,13 @@ const Loans = () => {
                         BigNumber(loan_start_time).plus(perLoanDuration)
                       if (BigNumber(repaid_principal).gt(0)) {
                         // 如果已还金额大于 0
-                        // 每期还款本金 = 总还款本金 / 还款期数
-                        const perRepayAmount = BigNumber(loan_amount).dividedBy(
-                          number_of_installments,
-                        )
-                        // 已还次数 = 已还本金 / 每期还款本金
-                        const payedTimes =
-                          BigNumber(repaid_principal).dividedBy(perRepayAmount)
+
+                        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+                        const repaidAmount =
+                          BigNumber(repaid_principal).plus(repaid_interest)
+
+                        // 已还次数 = 已还金额 / 每期还款金额
+                        const payedTimes = repaidAmount.dividedBy(installment)
                         // 每期还款期限 = 还款期限 / 还款期数
                         nextPaymentData = BigNumber(loan_start_time).plus(
                           perLoanDuration.multipliedBy(payedTimes.plus(1)),
