@@ -318,7 +318,6 @@ const Market = () => {
         flexWrap={{ lg: 'nowrap', md: 'wrap', sm: 'wrap', xs: 'wrap' }}
       >
         <Box
-          pt='20px'
           w={{
             xl: '360px',
             lg: '260px',
@@ -526,7 +525,13 @@ const Market = () => {
 
           {!debounceSearchValue && (
             <SimpleGrid
-              spacingX={'16px'}
+              spacingX={{
+                xl: '16px',
+                lg: '8px',
+                md: '8px',
+                sm: '10px',
+                xs: '10px',
+              }}
               spacingY={'20px'}
               columns={responsiveSpan}
               position={'relative'}
@@ -553,8 +558,8 @@ const Market = () => {
                     <MarketNftListCard
                       data={{ ...item, highestRate }}
                       imageSize={{
-                        xl: grid === 4 ? '233px' : '316px',
-                        lg: grid === 4 ? '148px' : '202px',
+                        xl: grid === 4 ? '194px' : '265px',
+                        lg: grid === 4 ? '152px' : '206px',
                         md: grid === 4 ? '172px' : '234px',
                         sm: '174px',
                         xs: '174px',

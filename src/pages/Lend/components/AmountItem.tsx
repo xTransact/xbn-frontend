@@ -58,7 +58,7 @@ const AmountItem: FunctionComponent<
             noOfLines={1}
             lineHeight={'22px'}
           >
-            {0.12345678}
+            {data}
           </Text>
         )}
       </Flex>

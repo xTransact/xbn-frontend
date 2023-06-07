@@ -79,6 +79,7 @@ const MarketNftListCard: FunctionComponent<
       boxShadow='none'
       borderColor={'gray.2'}
       borderWidth='1px'
+      overflow={'hidden'}
       ref={ref}
     >
       <CardBody p={0}>
@@ -118,7 +119,7 @@ const MarketNftListCard: FunctionComponent<
           spacing={'8px'}
           px={{
             xl: '16px',
-            lg: '14px',
+            lg: '12px',
             md: '12px',
             sm: '12px',
             xs: '12px',
@@ -157,6 +158,7 @@ const MarketNftListCard: FunctionComponent<
                 sm: '6px',
                 xs: '6px',
               }}
+              flexWrap={'wrap'}
             >
               <Text
                 fontSize={{
@@ -240,7 +242,7 @@ const MarketNftListCard: FunctionComponent<
         {show && 'Buy'}
       </Button>
       <CardFooter
-        px={{ md: '16px', sm: '12px', xs: '12px' }}
+        px={'12px'}
         justify={'space-between'}
         alignItems='center'
         h={{
@@ -258,14 +260,14 @@ const MarketNftListCard: FunctionComponent<
       >
         <Flex alignItems={'center'} gap={'4px'}>
           {nftOriginType !== undefined ? (
-            <NftOrigin type={nftOriginType} h='18px' />
+            <NftOrigin type={nftOriginType} />
           ) : (
             <Text color={`gray.3`} fontSize='14px'>
               Price
             </Text>
           )}
         </Flex>
-        <Flex alignItems={'center'} gap={'4px'}>
+        <Flex alignItems={'center'} gap={'2px'} flexWrap={'nowrap'}>
           <SvgComponent svgId='icon-eth' w={'4px'} svgSize='14px' />
           <Text fontSize={'14px'} color={`gray.3`}>
             &nbsp; {formatFloat(orderPrice, 4)}

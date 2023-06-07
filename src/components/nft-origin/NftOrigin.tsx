@@ -1,3 +1,4 @@
+import { Flex, Text } from '@chakra-ui/react'
 import { useMemo, type FunctionComponent } from 'react'
 
 import imgBlur from '@/assets/blur-logo.png'
@@ -5,7 +6,7 @@ import imgOpensea from '@/assets/opensea-logo.png'
 
 import ImageWithFallback from '../image-with-fallback/ImageWithFallback'
 
-import type { ImageProps } from '@chakra-ui/react'
+import type { FlexProps } from '@chakra-ui/react'
 
 export enum MARKET_TYPE_ENUM {
   OPENSEA,
@@ -13,21 +14,30 @@ export enum MARKET_TYPE_ENUM {
 }
 
 const NftOrigin: FunctionComponent<
-  { type?: MARKET_TYPE_ENUM } & ImageProps
-> = ({ type, ...rest }) => {
-  const img = useMemo(() => {
+  { type?: MARKET_TYPE_ENUM; isHideName?: boolean } & FlexProps
+> = ({ type, isHideName, ...rest }) => {
+  const { img, name } = useMemo(() => {
     switch (type) {
       case MARKET_TYPE_ENUM.BLUR:
-        return imgBlur
+        return { img: imgBlur, name: 'Blur' }
 
       case MARKET_TYPE_ENUM.OPENSEA:
-        return imgOpensea
+        return { img: imgOpensea, name: 'OpenSea' }
 
       default:
-        return ''
+        return {}
     }
   }, [type])
-  return <ImageWithFallback src={img} alt='market' h='20px' {...rest} />
+  return (
+    <Flex alignItems={'center'} gap='4px'>
+      <ImageWithFallback src={img} alt='market' boxSize='20px' {...rest} />
+      {!isHideName && (
+        <Text fontSize={'14px'} fontWeight={'500'} color='gray.3'>
+          {name}
+        </Text>
+      )}
+    </Flex>
+  )
 }
 
 export default NftOrigin
