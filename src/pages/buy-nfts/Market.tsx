@@ -319,7 +319,7 @@ const Market = () => {
       >
         <Box
           w={{
-            xl: '360px',
+            xl: '300px',
             lg: '260px',
             md: '100%',
             sm: '100%',
@@ -493,7 +493,7 @@ const Market = () => {
 
         <Box
           w={{
-            xl: '980px',
+            xl: '820px',
             lg: '640px',
             md: '100%',
             sm: '100%',
@@ -558,7 +558,7 @@ const Market = () => {
                     <MarketNftListCard
                       data={{ ...item, highestRate }}
                       imageSize={{
-                        xl: grid === 4 ? '194px' : '265px',
+                        xl: grid === 4 ? '190px' : '260px',
                         lg: grid === 4 ? '152px' : '206px',
                         md: grid === 4 ? '172px' : '234px',
                         sm: '174px',
