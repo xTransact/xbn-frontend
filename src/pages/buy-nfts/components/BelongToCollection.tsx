@@ -25,7 +25,7 @@ const BelongToCollection: FunctionComponent<
       mt='60px'
       w={{
         xl: '500px',
-        lg: '380px',
+        lg: '400px',
         sm: '100%',
         xs: '100%',
       }}

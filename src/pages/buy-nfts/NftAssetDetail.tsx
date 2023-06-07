@@ -637,7 +637,7 @@ const NftAssetDetail = () => {
           }}
           w={{
             xl: '500px',
-            lg: '450px',
+            lg: '400px',
             md: '100%',
           }}
           mt={'32px'}
@@ -656,7 +656,7 @@ const NftAssetDetail = () => {
             borderRadius={20}
             boxSize={{
               xl: '500px',
-              lg: '380px',
+              lg: '400px',
               md: '100%',
             }}
             fit='contain'
@@ -671,7 +671,8 @@ const NftAssetDetail = () => {
       )}
       <Box
         w={{
-          lg: '600px',
+          xl: '620px',
+          lg: '500px',
           md: '100%',
           sm: '100%',
           xs: '100%',
