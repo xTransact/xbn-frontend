@@ -201,7 +201,7 @@ function App() {
 
       {/* 营销活动 */}
       <Route
-        path='/xlending/marketing-campaign'
+        path='/marketing-campaign'
         element={
           <Suspense fallback={<Fallback />}>
             <MarketingCampaign />

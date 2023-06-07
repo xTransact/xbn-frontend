@@ -35,31 +35,31 @@ const client = new ApolloClient({
 })
 const rootElement = document.getElementById('root')
 createRoot(rootElement as HTMLElement).render(
-  <StrictMode>
-    <ApolloProvider client={client}>
-      <ChakraProvider
-        theme={theme}
-        toastOptions={{
-          defaultOptions: { ...TOAST_OPTION_CONFIG },
-        }}
-      >
-        <TransactionsProvider>
-          <BrowserRouter>
-            <PhotoProvider
-              maskOpacity={0.4}
-              bannerVisible={false}
-              maskClosable
-              photoClosable
-              loadingElement={<Spinner colorScheme={'blue'} color='blue.1' />}
-              brokenElement={
-                <Heading color={'gray.1'}>something went wrong...</Heading>
-              }
-            >
-              <App />
-            </PhotoProvider>
-          </BrowserRouter>
-        </TransactionsProvider>
-      </ChakraProvider>
-    </ApolloProvider>
-  </StrictMode>,
+  // <StrictMode>
+  <ApolloProvider client={client}>
+    <ChakraProvider
+      theme={theme}
+      toastOptions={{
+        defaultOptions: { ...TOAST_OPTION_CONFIG },
+      }}
+    >
+      <TransactionsProvider>
+        <BrowserRouter>
+          <PhotoProvider
+            maskOpacity={0.4}
+            bannerVisible={false}
+            maskClosable
+            photoClosable
+            loadingElement={<Spinner colorScheme={'blue'} color='blue.1' />}
+            brokenElement={
+              <Heading color={'gray.1'}>something went wrong...</Heading>
+            }
+          >
+            <App />
+          </PhotoProvider>
+        </BrowserRouter>
+      </TransactionsProvider>
+    </ChakraProvider>
+  </ApolloProvider>,
+  // </StrictMode>,
 )
