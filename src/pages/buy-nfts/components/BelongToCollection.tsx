@@ -57,7 +57,7 @@ const BelongToCollection: FunctionComponent<
           </Flex>
 
           <Text fontSize={'18px'} fontWeight='bold'>
-            {floorPrice !== undefined ? formatFloat(floorPrice || 0) : '--'}
+            {formatFloat(floorPrice)}
             &nbsp;
             {UNIT}
           </Text>

@@ -120,17 +120,17 @@ const UpdatePoolAmountButton: FunctionComponent<
   const AmountDataItems = useMemo(
     () => [
       {
-        data: wei2Eth(pool_amount) ?? '--',
+        data: formatFloat(wei2Eth(pool_amount)),
         label: 'Approved Amount',
         loading: false,
       },
       {
-        data: pool_used_amount ? wei2Eth(pool_used_amount) || 0 : 0,
+        data: pool_used_amount ? formatFloat(wei2Eth(pool_used_amount)) : 0,
         label: 'Has Been Lent',
         loading: false,
       },
       {
-        data: wei2Eth(pool_amount - pool_used_amount) || 0,
+        data: formatFloat(wei2Eth(pool_amount - pool_used_amount)),
         label: 'Can Be Lent',
         loading: false,
       },

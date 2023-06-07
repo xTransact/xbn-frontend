@@ -29,7 +29,9 @@ const getFullNum = (num: number) => {
 
   return num.toFixed(18).replace(/\.?0+$/, '')
 }
-const formatFloat = (x: number | string | BigNumber, y?: number) => {
+const formatFloat = (x?: number | string | BigNumber, y?: number) => {
+  if (x === undefined) return '--'
+  if (x === 0) return '0'
   const xx = BigNumber.isBigNumber(x)
     ? x.toNumber()
     : typeof x === 'string'

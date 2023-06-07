@@ -88,7 +88,7 @@ type PoolType = {
 }
 
 const converseToString: (arg?: number) => string = (arg) => {
-  return arg === undefined ? '--' : formatFloat(arg)
+  return formatFloat(arg)
 }
 
 const NFTDetailContainer: FunctionComponent<FlexProps> = ({

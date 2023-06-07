@@ -63,7 +63,7 @@ const DetailComponent: FunctionComponent<
           <Flex alignItems={'end'} mt={1} gap={'4px'}>
             <SvgComponent svgId='icon-eth' svgSize='32px' />
             <Heading fontSize={'32px'} lineHeight='30px'>
-              {price === undefined ? '--' : formatFloat(price, 8)}
+              {formatFloat(price)}
             </Heading>
             <SvgComponent
               svgId='icon-refresh'

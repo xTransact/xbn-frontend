@@ -80,7 +80,7 @@ const Loans = () => {
     debounceWait: 100,
     defaultParams: [
       {
-        // borrower_address: currentAccount,
+        borrower_address: currentAccount,
       },
     ],
   })

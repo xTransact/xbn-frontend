@@ -604,7 +604,7 @@ const Create = () => {
               >
                 Current Floor Price
                 <SvgComponent svgId='icon-eth' />
-                {floorPrice !== undefined ? formatFloat(floorPrice || 0) : '--'}
+                {formatFloat(floorPrice)}
               </Flex>
             )}
           </Box>

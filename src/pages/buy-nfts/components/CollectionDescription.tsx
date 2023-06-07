@@ -170,7 +170,7 @@ const CollectionDescription: FunctionComponent<{
               display='flex'
               mb={'4px'}
             >
-              {floorPrice !== undefined ? formatFloat(floorPrice || 0) : '--'}
+              {formatFloat(floorPrice)}
             </Heading>
           </Flex>
 
@@ -196,7 +196,7 @@ const CollectionDescription: FunctionComponent<{
                   .multipliedBy(BigNumber(10000).minus(Number(highestRate)))
                   .dividedBy(10000)
                   .toNumber(),
-              ) || '--'}
+              )}
             </Heading>
           </Flex>
 
