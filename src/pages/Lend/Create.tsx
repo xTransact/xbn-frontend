@@ -874,18 +874,9 @@ const Create = () => {
         >
           <Flex
             justify={'center'}
-            mb={{
-              md: '46px',
-              sm: '20px',
-              xs: '20px',
-            }}
+            mb={'46px'}
             fontSize={'18px'}
             fontWeight={'700'}
-            p={{
-              md: '32px',
-              sm: '12px',
-              xs: '12px',
-            }}
           >
             Generate the interest rate table for outstanding loans
           </Flex>

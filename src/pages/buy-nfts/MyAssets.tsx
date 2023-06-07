@@ -290,7 +290,7 @@ const MyAssets = () => {
                       <MyAssetNftListCard
                         key={`${item?.asset_contract_address}-${item?.token_id}`}
                         imageSize={{
-                          xl: grid === 4 ? '332px' : '445px',
+                          xl: grid === 4 ? '280px' : '445px',
                           lg: grid === 4 ? '220px' : '298px',
                           md: grid === 4 ? '170px' : '234px',
                           sm: '174px',

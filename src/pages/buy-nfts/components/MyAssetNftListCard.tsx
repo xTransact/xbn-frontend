@@ -535,7 +535,7 @@ const MyAssetNftListCard: FunctionComponent<
               borderRadius={0}
               alt={title}
               boxSize={imageSize}
-              fit='contain'
+              fit='cover'
               transition='all 0.6s'
               _hover={{
                 transform: `scale(1.2)`,
