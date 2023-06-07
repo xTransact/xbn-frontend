@@ -38,7 +38,9 @@ const formatFloat = (x?: number | string | BigNumber, y?: number) => {
     ? Number(x)
     : x
   const yy = y || FORMAT_NUMBER
-  const f = Math.round(xx * 10 ** yy) / 10 ** yy
+
+  const f = Number(BigNumber(xx).toFixed(yy, BigNumber.ROUND_UP))
+  // const f = Math.round(xx * 10 ** yy) / 10 ** yy
   const s = getFullNum(f).toString()
   return s
 }

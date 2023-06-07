@@ -87,10 +87,6 @@ type PoolType = {
   lp_pool_apr: number
 }
 
-const converseToString: (arg?: number) => string = (arg) => {
-  return formatFloat(arg)
-}
-
 const NFTDetailContainer: FunctionComponent<FlexProps> = ({
   children,
   ...rest
@@ -343,9 +339,11 @@ const NftAssetDetail = () => {
             return {
               pool_id,
               pool_apr_with_spread: BigNumber(pool_apr_with_spread)
-                .integerValue()
+                .integerValue(BigNumber.ROUND_UP)
                 .toNumber(),
-              lp_pool_apr: BigNumber(lp_pool_apr).integerValue().toNumber(),
+              lp_pool_apr: BigNumber(lp_pool_apr)
+                .integerValue(BigNumber.ROUND_UP)
+                .toNumber(),
               pool_days: item,
               lp_address: owner_address,
             }
@@ -450,7 +448,7 @@ const NftAssetDetail = () => {
           number_of_installments: installmentValue,
           loan_amount: loanWeiAmount.toNumber().toString(),
           loan_duration: pool_days * 24 * 60 * 60,
-          loan_interest_rate: Number(lp_pool_apr?.toFixed()),
+          loan_interest_rate: lp_pool_apr,
         }
         await generateLoanOrder({
           ...postParams,
@@ -604,7 +602,7 @@ const NftAssetDetail = () => {
               {detail?.asset?.name || `#${detail?.asset?.tokenID || ''}`}
             </Text>
             <Text fontSize={'12px'} fontWeight='500'>
-              {converseToString(wei2Eth(commodityWeiPrice))}&nbsp;
+              {formatFloat(wei2Eth(commodityWeiPrice))}&nbsp;
               {UNIT}
             </Text>
           </Flex>
@@ -740,7 +738,7 @@ const NftAssetDetail = () => {
                     sm: '12px',
                   }}
                 >
-                  {converseToString(wei2Eth(downPaymentWei))}
+                  {formatFloat(wei2Eth(downPaymentWei))}
                 </Text>
               </Flex>
             )}
@@ -799,7 +797,7 @@ const NftAssetDetail = () => {
             </Text>
             <SvgComponent svgId='icon-eth' svgSize='12px' />
             <Text fontSize={'14px'} fontWeight='500'>
-              {converseToString(wei2Eth(loanWeiAmount))}
+              {formatFloat(wei2Eth(loanWeiAmount))}
             </Text>
           </Flex>
         </LabelComponent>
@@ -1001,7 +999,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>NFT price</Text>
                 <Text color='gray.3'>
-                  {converseToString(wei2Eth(commodityWeiPrice))}&nbsp;
+                  {formatFloat(wei2Eth(commodityWeiPrice))}&nbsp;
                   {UNIT}
                 </Text>
               </Flex>
@@ -1009,7 +1007,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>Down payment</Text>
                 <Text color='gray.3'>
-                  {converseToString(wei2Eth(downPaymentWei))}&nbsp;
+                  {formatFloat(wei2Eth(downPaymentWei))}&nbsp;
                   {UNIT}
                 </Text>
               </Flex>
@@ -1017,7 +1015,7 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>Loan amount</Text>
                 <Text color='gray.3'>
-                  {converseToString(wei2Eth(loanWeiAmount))}&nbsp;
+                  {formatFloat(wei2Eth(loanWeiAmount))}&nbsp;
                   {UNIT}
                 </Text>
               </Flex>
@@ -1100,7 +1098,7 @@ const NftAssetDetail = () => {
             loadingText='The loan is being generated, please wait'
           >
             <Text fontWeight={'400'}>Pay now with</Text>&nbsp;
-            {converseToString(wei2Eth(downPaymentWei))}
+            {formatFloat(wei2Eth(downPaymentWei))}
             {UNIT}
           </Button>
         </Flex>

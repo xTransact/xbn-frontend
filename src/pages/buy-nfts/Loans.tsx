@@ -190,7 +190,7 @@ const Loans = () => {
       key: 'loan_amount',
       render: (value: any) => (
         <Text>
-          {wei2Eth(value)} {UNIT}
+          {formatFloat(wei2Eth(value))} {UNIT}
         </Text>
       ),
     },
@@ -213,7 +213,7 @@ const Loans = () => {
                   .multipliedBy(item?.number_of_installments)
                   .minus(item.loan_amount),
               ) || 0,
-            ).toFormat(FORMAT_NUMBER)}
+            ).toFormat(FORMAT_NUMBER, BigNumber.ROUND_UP)}
             {UNIT}
           </Text>
         )
@@ -502,7 +502,10 @@ const Loans = () => {
                     key: 'installment',
                     render: (value: any) => (
                       <Text>
-                        {BigNumber(wei2Eth(value) || 0).toFormat(8)}
+                        {BigNumber(wei2Eth(value) || 0).toFormat(
+                          8,
+                          BigNumber.ROUND_UP,
+                        )}
                         &nbsp;
                         {UNIT}
                       </Text>

@@ -354,7 +354,7 @@ const Create = () => {
   const baseRatePower = useMemo(() => {
     return baseRate
       .multipliedBy(RATE_POWER_MAP.get(interestPower) as number)
-      .integerValue()
+      .integerValue(BigNumber.ROUND_UP)
   }, [baseRate, interestPower])
 
   const currentCollaterals = useMemo(
@@ -939,7 +939,9 @@ const Create = () => {
                           </Text>
                         ) : (
                           <ScrollNumber
-                            value={`${value.dividedBy(100).toFixed(2)}%`}
+                            value={`${value
+                              .dividedBy(100)
+                              .toFormat(2, BigNumber.ROUND_UP)}%`}
                             color={
                               i === row?.length &&
                               index === tableData?.length - 1

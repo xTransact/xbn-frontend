@@ -59,6 +59,7 @@ import {
 } from '@/components'
 import { FORMAT_NUMBER, LIST_DURATION, UNIT, LISTING_TYPE } from '@/constants'
 import { useIsMobile, useWallet } from '@/hooks'
+import { formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
 export const MODEL_HEADER_PROPS: ModalHeaderProps = {
@@ -302,7 +303,7 @@ const MyAssetNftListCard: FunctionComponent<
       setCollectionData({
         name,
         safelistRequestStatus,
-        floorPrice,
+        floorPrice: Number(formatFloat(floorPrice) || 0),
         creatorEarn: sellerFee / 10000,
         marketPlaceFee: marketPlaceFee / 10000,
       })
@@ -413,7 +414,7 @@ const MyAssetNftListCard: FunctionComponent<
           Number(collectionData?.marketPlaceFee),
       )
       .minus(outstandingLoan)
-      .toFormat(8)
+      .toFormat(8, BigNumber.ROUND_UP)
   }, [price, collectionData, loanData, type])
 
   const ref = useRef(null)

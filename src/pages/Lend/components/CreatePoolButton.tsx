@@ -178,7 +178,6 @@ const CreatePoolButton: FunctionComponent<
 
         // const supportERC20Denomination = approveHash?.to
         const supportERC20Denomination = WETH_CONTRACT_ADDRESS
-
         const xBankContract = createXBankContract()
         const createBlock = await xBankContract.methods
           .createPool(
@@ -450,7 +449,7 @@ const CreatePoolButton: FunctionComponent<
               xs: '23px',
             }}
             h='52px'
-            isDisabled={isError || !Number(amount)}
+            // isDisabled={isError || !Number(amount)}
             onClick={onConfirm}
             loadingText={
               approveLoading

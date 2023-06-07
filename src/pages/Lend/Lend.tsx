@@ -53,7 +53,7 @@ import {
 import { FORMAT_NUMBER, UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
 import { useWallet, useBatchAsset, useGuide } from '@/hooks'
-import { formatAddress } from '@/utils/format'
+import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
 import CollectionListItem from '../buy-nfts/components/CollectionListItem'
@@ -402,7 +402,7 @@ const Lend = () => {
           return (
             <Flex alignItems={'center'}>
               <SvgComponent svgId='icon-eth' />
-              <Text>{info?.nftCollectionStat?.floorPrice ?? '--'}</Text>
+              <Text>{formatFloat(info?.nftCollectionStat?.floorPrice)}</Text>
             </Flex>
           )
         },
@@ -511,7 +511,9 @@ const Lend = () => {
             <Flex alignItems={'center'}>
               <SvgComponent svgId='icon-eth' />
               <Text>
-                {info?.nftCollection?.nftCollectionStat?.floorPrice ?? '--'}
+                {formatFloat(
+                  info?.nftCollection?.nftCollectionStat?.floorPrice,
+                )}
               </Text>
             </Flex>
           )
@@ -523,14 +525,18 @@ const Lend = () => {
         key: 'pool_amount',
         align: 'right',
         thAlign: 'right',
-        render: (value: any) => <EthText>{wei2Eth(value)}</EthText>,
+        render: (value: any) => (
+          <EthText>{formatFloat(wei2Eth(value))}</EthText>
+        ),
       },
       {
         title: 'Maximum Loan Amount',
         dataIndex: 'maximum_loan_amount',
         key: 'maximum_loan_amount',
         align: 'center',
-        render: (value: any) => <EthText>{wei2Eth(value)}</EthText>,
+        render: (value: any) => (
+          <EthText>{formatFloat(wei2Eth(value))}</EthText>
+        ),
       },
       {
         title: 'Collateral Factor',
@@ -662,7 +668,7 @@ const Lend = () => {
         key: 'loan_amount',
         render: (value: any) => (
           <Text>
-            {wei2Eth(value)} {UNIT}
+            {formatFloat(wei2Eth(value))} {UNIT}
           </Text>
         ),
       },
@@ -687,7 +693,7 @@ const Lend = () => {
                     .multipliedBy(item?.number_of_installments)
                     .minus(item.loan_amount),
                 ) || 0,
-              ).toFormat(FORMAT_NUMBER)}
+              ).toFormat(FORMAT_NUMBER, BigNumber.ROUND_UP)}
               {UNIT}
             </Text>
           )
