@@ -455,7 +455,7 @@ const MyAssetNftListCard: FunctionComponent<
         borrower_address: currentAccount,
       }
       await runAsync(POST_PARAMS)
-      navigate('/xlending/buy-nfts/complete', {
+      navigate('/buy-nfts/complete', {
         state: {
           imageUrl: assetData?.imagePreviewUrl,
         },

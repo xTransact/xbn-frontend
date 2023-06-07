@@ -43,13 +43,13 @@ const useActivePath = () => {
   const { pathname } = useLocation()
 
   return useMemo((): 'lending' | 'buy-nfts' | 'sell-nfts' | '' => {
-    if (pathname.startsWith('/xlending/lending')) {
+    if (pathname.startsWith('/lending')) {
       return 'lending'
     }
-    if (pathname.startsWith('/xlending/buy-nfts')) {
+    if (pathname.startsWith('/buy-nfts')) {
       return 'buy-nfts'
     }
-    if (pathname.startsWith('/xlending/sell-nfts')) {
+    if (pathname.startsWith('/sell-nfts')) {
       return 'sell-nfts'
     }
     return ''
@@ -100,10 +100,7 @@ const PopoverWrapper: FunctionComponent<{
               <PopoverBody px={0} p={'20px'}>
                 <Flex flexDir={'column'} gap='20px'>
                   {routes.map((item) => (
-                    <Link
-                      to={`/xlending/${route}/${kebabCase(item)}`}
-                      key={item}
-                    >
+                    <Link to={`/${route}/${kebabCase(item)}`} key={item}>
                       <Flex borderBottomColor='gray.5' flexDir='column'>
                         <Text
                           fontSize='16px'
@@ -241,7 +238,7 @@ const ConnectedIconWallet: FunctionComponent = () => {
             color='black.1'
             p={'10px'}
             onClick={() => {
-              navigate('/xlending/buy-nfts/loans')
+              navigate('/buy-nfts/loans')
             }}
             _hover={{
               textDecoration: 'none',
@@ -292,7 +289,7 @@ const MobileDrawBtn = () => {
         aria-label=''
         onClick={openDraw}
         bg='white'
-        isDisabled={window.location.pathname === '/xlending/demo'}
+        isDisabled={window.location.pathname === '/demo'}
       />
       <Drawer
         isOpen={drawVisible}
@@ -333,10 +330,7 @@ const MobileDrawBtn = () => {
                 <AccordionPanel px={8} py={'28px'}>
                   <Flex flexDir={'column'} gap={8} onClick={closeDraw}>
                     {['Collections', 'My Pools', 'Loans'].map((item) => (
-                      <Link
-                        to={`/xlending/lending/${kebabCase(item)}`}
-                        key={item}
-                      >
+                      <Link to={`/lending/${kebabCase(item)}`} key={item}>
                         <Flex fontSize='16px' color='gray.3'>
                           {item}
                         </Flex>
@@ -363,10 +357,7 @@ const MobileDrawBtn = () => {
                 <AccordionPanel px={8} py={'28px'}>
                   <Flex flexDir={'column'} gap={8} onClick={closeDraw}>
                     {['Market', 'My assets'].map((item) => (
-                      <Link
-                        to={`/xlending/buy-nfts/${kebabCase(item)}`}
-                        key={item}
-                      >
+                      <Link to={`/buy-nfts/${kebabCase(item)}`} key={item}>
                         <Flex fontSize='16px' color='gray.3'>
                           {item}
                         </Flex>
@@ -418,7 +409,7 @@ const Header = () => {
           <Flex
             alignItems={'center'}
             onClick={() => {
-              if (pathname === '/xlending/demo') return
+              if (pathname === '/demo') return
               window.open(import.meta.env.VITE_BASE_URL)
             }}
             cursor='pointer'
@@ -445,7 +436,7 @@ const Header = () => {
               lg: 'flex',
             }}
             gap='40px'
-            hidden={pathname === '/xlending/demo'}
+            hidden={pathname === '/demo'}
           >
             <PopoverWrapper
               route='buy-nfts'

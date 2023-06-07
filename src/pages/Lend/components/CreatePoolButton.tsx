@@ -232,7 +232,7 @@ const CreatePoolButton: FunctionComponent<
         //     }
         //     setSubscribeLoading(false)
         //     onCloseApprove()
-        //     navigate('/xlending/lending/my-pools')
+        //     navigate('/lending/my-pools')
         //   })
         //   .on('changed', console.log)
         //   .on('error', console.error)
@@ -248,7 +248,7 @@ const CreatePoolButton: FunctionComponent<
             title: 'Created successfully! ',
             id: 'Created-Successfully-ID',
           })
-          navigate('/xlending/lending/my-pools')
+          navigate('/lending/my-pools')
         }, 5 * 1000)
       } catch (error: any) {
         toastError(error)

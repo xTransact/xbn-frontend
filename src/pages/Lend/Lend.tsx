@@ -132,12 +132,12 @@ const Lend = () => {
   useEffect(() => {
     setTabKey(() => {
       switch (pathname) {
-        case '/xlending/lending/collections':
+        case '/lending/collections':
           return TAB_KEY.COLLECTION_TAB
-        case '/xlending/lending/my-pools':
+        case '/lending/my-pools':
           interceptFn()
           return TAB_KEY.MY_POOLS_TAB
-        case '/xlending/lending/loans':
+        case '/lending/loans':
           interceptFn()
           return TAB_KEY.LOANS_TAB
         default:
@@ -446,7 +446,7 @@ const Lend = () => {
                 onClick={() => {
                   interceptFn(() => {
                     if (info.isContainMyPool) return
-                    navigate(`/xlending/lending/create`, {
+                    navigate(`/lending/create`, {
                       state: {
                         contractAddress: info.contractAddress,
                         nftCollection: value,
@@ -741,13 +741,13 @@ const Lend = () => {
         onChange={(key) => {
           switch (key) {
             case 0:
-              navigate('/xlending/lending/collections')
+              navigate('/lending/collections')
               break
             case 1:
-              navigate('/xlending/lending/my-pools')
+              navigate('/lending/my-pools')
               break
             case 2:
-              navigate('/xlending/lending/loans')
+              navigate('/lending/loans')
               break
 
             default:
@@ -804,9 +804,7 @@ const Lend = () => {
               <Button
                 variant={'secondary'}
                 minW='200px'
-                onClick={() =>
-                  interceptFn(() => navigate('/xlending/lending/create'))
-                }
+                onClick={() => interceptFn(() => navigate('/lending/create'))}
                 className='my-other-step'
               >
                 + Create New Pool
@@ -894,9 +892,7 @@ const Lend = () => {
                           variant={'secondary'}
                           minW='200px'
                           onClick={() =>
-                            interceptFn(() =>
-                              navigate('/xlending/lending/create'),
-                            )
+                            interceptFn(() => navigate('/lending/create'))
                           }
                         >
                           + Create New Pool
@@ -922,9 +918,7 @@ const Lend = () => {
                           variant={'secondary'}
                           minW='200px'
                           onClick={() =>
-                            interceptFn(() =>
-                              navigate('/xlending/lending/create'),
-                            )
+                            interceptFn(() => navigate('/lending/create'))
                           }
                         >
                           + Create New Pool
@@ -1136,9 +1130,7 @@ const Lend = () => {
               variant={'primary'}
               w='100%'
               h='42px'
-              onClick={() =>
-                interceptFn(() => navigate('/xlending/lending/create'))
-              }
+              onClick={() => interceptFn(() => navigate('/lending/create'))}
             >
               + Create New Pool
             </Button>

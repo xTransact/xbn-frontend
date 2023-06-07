@@ -46,16 +46,13 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path='/' element={<Navigate replace to='/buy-nfts/market' />} />
         <Route
-          path='/xlending'
-          element={<Navigate replace to='/xlending/buy-nfts/market' />}
+          path='/lending'
+          element={<Navigate replace to='/lending/collections' />}
         />
         <Route
-          path='/xlending/lending'
-          element={<Navigate replace to='/xlending/lending/collections' />}
-        />
-        <Route
-          path='/xlending/lending/my-pools'
+          path='/lending/my-pools'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -74,7 +71,7 @@ function App() {
           }
         /> */}
         <Route
-          path='/xlending/lending/:action'
+          path='/lending/:action'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -84,7 +81,7 @@ function App() {
           }
         />
         <Route
-          path='/xlending/lending/collections'
+          path='/lending/collections'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -95,7 +92,7 @@ function App() {
         />
 
         <Route
-          path='/xlending/lending/loans'
+          path='/lending/loans'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -107,11 +104,11 @@ function App() {
 
         {/* buy nfts */}
         <Route
-          path='/xlending/buy-nfts'
-          element={<Navigate replace to='/xlending/buy-nfts/market' />}
+          path='/buy-nfts'
+          element={<Navigate replace to='/buy-nfts/market' />}
         />
         <Route
-          path='/xlending/buy-nfts/market/:collectionId?'
+          path='/buy-nfts/market/:collectionId?'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -123,7 +120,7 @@ function App() {
 
         {/* asset */}
         <Route
-          path='/xlending/asset/:contractAddress/:tokenID'
+          path='/asset/:contractAddress/:tokenID'
           // path='/asset/:asset_contract_address'
           element={
             <RootLayout>
@@ -134,7 +131,7 @@ function App() {
           }
         />
         <Route
-          path='/xlending/buy-nfts/my-assets'
+          path='/buy-nfts/my-assets'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -144,7 +141,7 @@ function App() {
           }
         />
         <Route
-          path='/xlending/buy-nfts/complete'
+          path='/buy-nfts/complete'
           element={
             <Suspense fallback={<Fallback />}>
               <CompleteList />
@@ -152,7 +149,7 @@ function App() {
           }
         />
         <Route
-          path='xlending/buy-nfts/loans'
+          path='/buy-nfts/loans'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -189,7 +186,7 @@ function App() {
           />
         </Route> */}
         <Route
-          path='/xlending/demo'
+          path='/demo'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -217,7 +214,7 @@ function App() {
               </Suspense>
             </RootLayout>
           }
-          path='/xlending/*'
+          path='*'
         />
       </Routes>
     </>

@@ -44,7 +44,7 @@ const MyPoolActionRender: FunctionComponent<
       <Text
         color='gray.3'
         onClick={() => {
-          navigate('/xlending/lending/loans')
+          navigate('/lending/loans')
           onClickDetail()
         }}
         cursor='pointer'
@@ -94,7 +94,7 @@ const MyPoolActionRender: FunctionComponent<
                     <Button
                       {...BUTTON_PROPS}
                       onClick={() => {
-                        navigate('/xlending/lending/edit', {
+                        navigate('/lending/edit', {
                           state: {
                             contractAddress: poolData.allow_collateral_contract,
                             nftCollection: collectionData,

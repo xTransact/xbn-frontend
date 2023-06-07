@@ -187,7 +187,7 @@ const Market = () => {
     const {
       nftCollection: { id },
     } = selectCollection
-    navigate(`/xlending/buy-nfts/market/${id}`)
+    navigate(`/buy-nfts/market/${id}`)
   }, [selectCollection, navigate])
 
   // 根据 collectionId 搜索 assets
@@ -568,7 +568,7 @@ const Market = () => {
                       onClick={() => {
                         interceptFn(() => {
                           navigate(
-                            `/xlending/asset/${nftAssetContract?.address}/${tokenID}`,
+                            `/asset/${nftAssetContract?.address}/${tokenID}`,
                             {
                               state: {
                                 collection: {
@@ -631,7 +631,7 @@ const Market = () => {
                   onClick={() => {
                     interceptFn(() => {
                       navigate(
-                        `/xlending/asset/${searchedAsset?.assetContractAddress}/${searchedAsset?.tokenID}`,
+                        `/asset/${searchedAsset?.assetContractAddress}/${searchedAsset?.tokenID}`,
                         {
                           state: {
                             collection: {

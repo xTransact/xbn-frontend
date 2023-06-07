@@ -152,12 +152,12 @@ export const TransactionsProvider = ({
   const handleDisconnect = useCallback(() => {
     setCurrentAccount('')
     setIsConnected(false)
-    window.location.href = '/xlending'
+    window.location.href = '/'
   }, [setCurrentAccount, setIsConnected])
 
   const checkIfWalletIsConnect = useCallback(async () => {
     try {
-      if (window.location.pathname === '/xlending/demo') return
+      if (window.location.pathname === '/demo') return
       if (!isConnected) {
         setCurrentAccount('')
         return
@@ -247,7 +247,7 @@ export const TransactionsProvider = ({
 
   const connectWallet = useCallback(async () => {
     try {
-      if (window.location.pathname === '/xlending/demo') return
+      if (window.location.pathname === '/demo') return
 
       if (!ethereum) {
         toast.closeAll()
@@ -289,7 +289,7 @@ export const TransactionsProvider = ({
         // transactionCount,
         connectWallet,
         // transactions,
-        currentAccount,
+        currentAccount: currentAccount as string,
         connectLoading,
         // isLoading,
         // sendTransaction,
@@ -297,7 +297,7 @@ export const TransactionsProvider = ({
         // formData,
         handleSwitchNetwork,
         handleDisconnect,
-        isConnected,
+        isConnected: isConnected as boolean,
         // @ts-ignore
         collectionList,
         collectionLoading: loading || collectionLoading,

@@ -484,7 +484,7 @@ const NftAssetDetail = () => {
             status: 'info',
             title: 'The loan is being generated, please wait and refresh later',
           })
-          navigate('/xlending/buy-nfts/loans')
+          navigate('/buy-nfts/loans')
         }, 2 * 60 * 1000)
       } catch (error: any) {
         toastError(error)
@@ -539,9 +539,7 @@ const NftAssetDetail = () => {
   // )
 
   if (!state || isEmpty(state) || (isEmpty(detail) && !assetFetchLoading))
-    return (
-      <NotFound title='Asset not found' backTo='/xlending/buy-nfts/market' />
-    )
+    return <NotFound title='Asset not found' backTo='/buy-nfts/market' />
   if (!!loanStep) {
     return (
       <MiddleStatus
@@ -553,7 +551,7 @@ const NftAssetDetail = () => {
         }}
         onSuccessBack={() => {
           setLoanStep(undefined)
-          navigate('/xlending/buy-nfts/loans')
+          navigate('/buy-nfts/loans')
           return
         }}
         successTitle='Purchase completed'
