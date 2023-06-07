@@ -308,7 +308,7 @@ export const TransactionsProvider = ({
         // transactionCount,
         connectWallet,
         // transactions,
-        currentAccount,
+        currentAccount: currentAccount as string,
         connectLoading,
         // isLoading,
         // sendTransaction,
