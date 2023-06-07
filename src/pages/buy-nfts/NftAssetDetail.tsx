@@ -1027,10 +1027,12 @@ const NftAssetDetail = () => {
               <Flex justify={'space-between'}>
                 <Text color='gray.3'>Interest fee</Text>
                 <Text color='gray.3'>
-                  {getPlanPer(installmentValue)
-                    .multipliedBy(installmentValue)
-                    .minus(wei2Eth(loanWeiAmount) || 0)
-                    .toFormat(FORMAT_NUMBER)}
+                  {formatFloat(
+                    getPlanPer(installmentValue)
+                      .multipliedBy(installmentValue)
+                      .minus(wei2Eth(loanWeiAmount) || 0)
+                      .toFormat(FORMAT_NUMBER),
+                  )}
                   &nbsp;
                   {UNIT}
                 </Text>
