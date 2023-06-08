@@ -685,7 +685,6 @@ const NftAssetDetail = () => {
           sm: '100%',
           xs: '100%',
         }}
-        mt={{ md: '32px' }}
       >
         {/* 价格 名称 */}
         <DetailComponent
