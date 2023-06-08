@@ -132,7 +132,7 @@ const CreatePoolButton: FunctionComponent<
       setErrorMsg(` Insufficient wallet balance: ${formatFloat(wethNum)} WETH`)
       return true
     }
-    if (NumberAmount < floorPrice * 0.1) {
+    if (NumberAmount < (floorPrice * poolMaximumPercentage) / 10000) {
       setErrorMsg(
         `Insufficient funds, Minimum input: ${formatFloat(
           (floorPrice * poolMaximumPercentage) / 10000,
