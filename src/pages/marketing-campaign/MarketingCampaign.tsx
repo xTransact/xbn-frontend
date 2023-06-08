@@ -312,9 +312,11 @@ export default function MarketingCampaign() {
                           </Button>
                         </Flex>
                       )}
-                    {!state.expired && (
-                      <Box borderRight={'1px solid white'} h='200px' />
-                    )}
+                    {!state.expired &&
+                      !state.hasCompleted &&
+                      !state.hasClaimed && (
+                        <Box borderRight={'1px solid white'} h='200px' />
+                      )}
                     <Flex justify={'space-around'} w='100%'>
                       <Flex direction={'column'} alignItems={'center'}>
                         <Image src={Box1} zIndex={1} />
