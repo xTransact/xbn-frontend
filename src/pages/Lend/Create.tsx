@@ -503,9 +503,9 @@ const Create = () => {
   if (!params || !['edit', 'create'].includes(params?.action)) {
     return <NotFound />
   }
-  // if (params.action === 'edit' && (!state || isEmpty(state))) {
-  //   return <NotFound title='pool not found' />
-  // }
+  if (params.action === 'edit' && (!state || isEmpty(state))) {
+    return <NotFound title='pool not found' />
+  }
   return (
     <>
       <H5SecondaryHeader />
