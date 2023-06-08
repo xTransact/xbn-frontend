@@ -19,6 +19,8 @@ import {
   AlertDialogOverlay,
   useDisclosure,
   Stack,
+  Toast,
+  useToast,
 } from '@chakra-ui/react'
 import { useAsyncEffect, useSetState } from 'ahooks'
 import BigNumber from 'bignumber.js'
@@ -146,6 +148,7 @@ const TitleWithQuestionBox = (props: { title: string; src?: any }) => {
 }
 export default function MarketingCampaign() {
   const navigate = useNavigate()
+  const toast = useToast()
   const { currentAccount: address, connectWallet } = useWallet()
   const [state, setState] = useSetState({
     hasClaimed: false,
@@ -232,6 +235,12 @@ export default function MarketingCampaign() {
           const resp = await apiGalxeRedeem()
           if (resp?.status) {
             console.log('奖励已激活')
+            toast({
+              title: 'Claim Success',
+              status: 'success',
+              isClosable: true,
+              position: 'top',
+            })
             setState({
               hasClaimed: true,
             })
