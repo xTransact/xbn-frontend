@@ -55,7 +55,9 @@ const useAuth = () => {
           signature,
         })
         setUserToken(tokenData)
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
     },
     [fetchMessageToSign, fetchToken, toast],
   )

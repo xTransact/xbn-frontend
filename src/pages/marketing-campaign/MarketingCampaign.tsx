@@ -12,7 +12,6 @@ import {
   Flex,
   Link,
   useClipboard,
-  useBoolean,
   AlertDialog,
   AlertDialogCloseButton,
   AlertDialogContent,
@@ -21,31 +20,24 @@ import {
   useDisclosure,
   Stack,
 } from '@chakra-ui/react'
-import { useSetState } from 'ahooks'
+import { useAsyncEffect, useSetState } from 'ahooks'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { apiGetLoans } from '@/api'
-import { apiGetBoxes, apiGetInviteCode } from '@/api/marketing-campaign'
+import {
+  apiGalxeRedeem,
+  apiGalxeStatus,
+  apiGetBoxes,
+  apiGetInviteCode,
+  apiRewardExists,
+} from '@/api/marketing-campaign'
+import BannerImg from '@/assets/marketing/banner-4x.png'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
-import Box1 from '@/assets/marketing/box1.png'
-import Box2 from '@/assets/marketing/box2.png'
-import Box3 from '@/assets/marketing/box3.png'
-import Box4 from '@/assets/marketing/box4.png'
 import IconCopied from '@/assets/marketing/copied.png'
-import Icon0 from '@/assets/marketing/icon-0.png'
-import Icon1 from '@/assets/marketing/icon-1.png'
-import Icon2 from '@/assets/marketing/icon-2.png'
-import Icon3 from '@/assets/marketing/icon-3.png'
-import Icon4 from '@/assets/marketing/icon-4.png'
-import ImgBrowser from '@/assets/marketing/icon-browser.png'
-import ImgCoinInBox from '@/assets/marketing/icon-coin-in-box.png'
 import IconCopy from '@/assets/marketing/icon-copy.png'
-import ImgPlusWallet from '@/assets/marketing/icon-plus-wallet.png'
-import ImgWalletOk from '@/assets/marketing/icon-wallet-ok.png'
-import ImgQuestionBox from '@/assets/marketing/question-box.png'
 import IconTelegram from '@/assets/marketing/telegram.png'
 import IconTwitter from '@/assets/marketing/twitter.png'
 import IconLogo from '@/assets/marketing/xbank-logo.png'
@@ -54,7 +46,22 @@ import { useWallet } from '@/hooks'
 import { getUserToken } from '@/utils/auth'
 
 import ImgDialogBanner from '@/assets/marketing/banner-dialog.svg'
-import ImgBannerSvg from '@/assets/marketing/banner.svg'
+import Box1 from '@/assets/marketing/box1.svg'
+import Box2 from '@/assets/marketing/box2.svg'
+import Box3 from '@/assets/marketing/box3.svg'
+import Box4 from '@/assets/marketing/box4.svg'
+import Icon0 from '@/assets/marketing/icon-0.svg'
+import Icon1 from '@/assets/marketing/icon-1.svg'
+import Icon2 from '@/assets/marketing/icon-2.svg'
+import Icon3 from '@/assets/marketing/icon-3.svg'
+import Icon4 from '@/assets/marketing/icon-4.svg'
+import IconInviteFriend from '@/assets/marketing/icon-box-check-line.svg'
+import ImgBrowser from '@/assets/marketing/icon-browser.svg'
+import ImgCoinInBox from '@/assets/marketing/icon-coin-in-box.svg'
+import ImgPlusWallet from '@/assets/marketing/icon-plus-wallet.svg'
+import ImgWalletOk from '@/assets/marketing/icon-wallet-ok.svg'
+import ImgQuestionBox from '@/assets/marketing/icon-win-box.svg'
+const { VITE_APP_GALXE_TAKS_LINK } = import.meta.env
 const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% downpayment, win Boxdrop`
 const SHARE_TWITTER_TEXT = `xBank is An NFT Open Money Market Powering Web3 Adopters with Onboarding Leverage with NFT BNPL and Improving Money Efficiency for Holders\nJoin @xBank_Official, buy top NFTs pay later, with 0% downpayment, and earn Boxdrop`
 const CusCard = (props: {
@@ -118,10 +125,10 @@ const CusCard = (props: {
     </Box>
   )
 }
-const TitleWithQuestionBox = (props: { title: string }) => {
+const TitleWithQuestionBox = (props: { title: string; src?: any }) => {
   return (
     <HStack>
-      <Image src={ImgQuestionBox} />
+      <Image src={props.src || ImgQuestionBox} />
       <Text
         display={'inline-block'}
         fontSize={'64px'}
@@ -139,11 +146,15 @@ const TitleWithQuestionBox = (props: { title: string }) => {
 }
 export default function MarketingCampaign() {
   const navigate = useNavigate()
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const cancelRef = useRef<any>()
-  const [expired, setExpired] = useState(true)
-  const { currentAccount, connectWallet } = useWallet()
-  const [hasUsedXBN, setHasUsedXBN] = useBoolean()
+  const { currentAccount: address, connectWallet } = useWallet()
+  const [state, setState] = useSetState({
+    hasClaimed: false,
+    hasCompleted: false,
+    expired: getUserToken()
+      ? moment(new Date()).isAfter(moment(getUserToken()?.expires))
+      : true,
+    hasUsedXBN: false,
+  })
   const [boxAmounts, setBoxAmounts] = useSetState({
     box_bronze: 0,
     box_diamond: 0,
@@ -151,73 +162,99 @@ export default function MarketingCampaign() {
     box_platinum: 0,
     box_silver: 0,
   })
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = useRef<any>()
   const {
     onCopy,
     hasCopied,
     value: invitationLink,
     setValue: setInvitationLink,
   } = useClipboard('')
+
   const [inviteCode, setInviteCode] = useState('')
-  const queryUserBoxes = useCallback(() => {
-    apiGetBoxes()
-      .then((data) => {
-        setBoxAmounts({
-          box_bronze: data?.box_bronze || 0,
-          box_diamond: data?.box_diamond || 0,
-          box_gold: data?.box_gold || 0,
-          box_platinum: data?.box_platinum || 0,
-          box_silver: data?.box_silver || 0,
-        })
+
+  useAsyncEffect(async () => {
+    if (!state.expired) {
+      // 查询用户盒子数量
+      const boxResp = await apiGetBoxes()
+      setBoxAmounts({
+        box_bronze: boxResp?.box_bronze || 0,
+        box_diamond: boxResp?.box_diamond || 0,
+        box_gold: boxResp?.box_gold || 0,
+        box_platinum: boxResp?.box_platinum || 0,
+        box_silver: boxResp?.box_silver || 0,
       })
-      .catch((e) => {
-        console.log('e', e)
-      })
-  }, [expired])
-  useEffect(() => {
-    if (!expired) {
-      queryUserBoxes()
     }
-  }, [expired, queryUserBoxes])
-  useEffect(() => {
-    const userToken = getUserToken()
-    setExpired(
-      !userToken?.expires ? true : moment().isAfter(moment(userToken?.expires)),
-    )
-  }, [])
-  useEffect(() => {
-    if (!expired && !!currentAccount && hasUsedXBN) {
-      apiGetLoans({
-        lender_address: currentAccount,
-        borrower_address: currentAccount,
-      }).then((list) => {
-        apiGetInviteCode().then((resp) => {
-          setInviteCode(resp.code)
-          setInvitationLink(
-            window.location.href + `?invitation_code=${resp.code}`,
-          )
+  }, [state.expired])
+  useAsyncEffect(async () => {
+    // 查询用户是否使用过 XBN
+    if (!state.expired) {
+      const list = await apiGetLoans({
+        lender_address: address,
+        borrower_address: address,
+      })
+      setState({
+        hasUsedXBN: list.length > 0,
+      })
+    }
+  }, [state.expired, address])
+  useAsyncEffect(async () => {
+    if (!state.expired && state.hasUsedXBN) {
+      const data = await apiGetInviteCode()
+      setInviteCode(data.code)
+      setInvitationLink(window.location.href + `?invitation_code=${data.code}`)
+    }
+  }, [state.expired, state.hasUsedXBN])
+  useAsyncEffect(async () => {
+    if (state.expired) {
+      // 过期了，需要连钱包
+      await connectWallet()
+      const tokenInfo = getUserToken()
+      if (tokenInfo === null) {
+        setState({
+          expired: true,
         })
-        if (list.length > 0) {
-          setHasUsedXBN.on()
-          apiGetInviteCode().then((resp) => {
-            setInviteCode(resp.code)
-            setInvitationLink(
-              window.location.href + `?invitation_code=${resp.code}`,
-            )
-          })
+      } else {
+        const now = moment(new Date())
+        const expired = now.isAfter(tokenInfo?.expires)
+        setState({
+          expired,
+        })
+      }
+    } else {
+      // 查询用户是否做过任务
+      const galxeStatusData = await apiGalxeStatus()
+      if (galxeStatusData.status) {
+        // 做过任务，查询是否拿到过奖励
+        const rewardExistsData = await apiRewardExists()
+        if (!rewardExistsData.status) {
+          // 没有拿到过奖励，激活奖励
+          const resp = await apiGalxeRedeem()
+          if (resp?.status) {
+            console.log('奖励已激活')
+            setState({
+              hasClaimed: true,
+            })
+          } else {
+            console.log('奖励激活失败')
+          }
         } else {
-          setHasUsedXBN.off()
+          // 拿到过奖励，设置已经领取
+          setState({
+            hasClaimed: true,
+          })
         }
-      })
+      }
     }
-  }, [expired, currentAccount, hasUsedXBN])
+  }, [state.expired])
   return (
-    <div>
+    <Box bgGradient={'linear-gradient(0deg, #071E38, #071E38), #F9F9FF;'}>
       <Header />
-      <Box bgGradient={'linear-gradient(0deg, #071E38, #071E38), #F9F9FF;'}>
+      <Box marginBottom={'68px'}>
+        <Image src={BannerImg} width='100%' />
+      </Box>
+      <Box>
         <Container width={'100%'} maxW='1440px'>
-          <Box marginBottom={'68px'}>
-            <Image src={ImgBannerSvg} width='100%' />
-          </Box>
           <Box
             bgGradient={'linear-gradient(0deg, #071E38, #071E38)'}
             color={'#FFFFFF'}
@@ -227,40 +264,46 @@ export default function MarketingCampaign() {
               <CusCard title='My Boxdrops'>
                 <CardBody padding={10}>
                   <Flex justifyContent={'space-around'} alignItems={'center'}>
-                    {!expired && (
-                      <Flex
-                        alignItems={'flex-start'}
-                        justifyContent={'space-around'}
-                        flexDirection={'column'}
-                        maxW={300}
-                      >
-                        <Text
-                          fontSize={28}
-                          fontFamily={'HarmonyOS Sans SC Bold'}
+                    {!state.expired &&
+                      !state.hasCompleted &&
+                      !state.hasClaimed && (
+                        <Flex
+                          alignItems={'flex-start'}
+                          justifyContent={'space-around'}
+                          flexDirection={'column'}
+                          maxW={300}
                         >
-                          Welcome Rewards
-                        </Text>
-                        <Text
-                          color='#566E8C'
-                          fontSize={16}
-                          marginBottom={19}
-                          // textAlign={'center'}
-                        >
-                          Follow Twitter @xBankOfficial and retweet the Pin post
-                        </Text>
-                        <Button
-                          w='240px'
-                          h='55px'
-                          fontSize={'20px'}
-                          fontFamily={'HarmonyOS Sans SC Black'}
-                          variant={'linear'}
-                          textShadow={'0px 1px 0px #0000FF'}
-                        >
-                          Claim
-                        </Button>
-                      </Flex>
-                    )}
-                    {!expired && (
+                          <Text
+                            fontSize={28}
+                            fontFamily={'HarmonyOS Sans SC Bold'}
+                          >
+                            Welcome Rewards
+                          </Text>
+                          <Text
+                            color='#566E8C'
+                            fontSize={16}
+                            marginBottom={19}
+                            // textAlign={'center'}
+                          >
+                            Follow Twitter @xBankOfficial and retweet the Pin
+                            post
+                          </Text>
+                          <Button
+                            w='240px'
+                            h='55px'
+                            fontSize={'20px'}
+                            fontFamily={'HarmonyOS Sans SC Black'}
+                            variant={'linear'}
+                            textShadow={'0px 1px 0px #0000FF'}
+                            onClick={() => {
+                              window.open(VITE_APP_GALXE_TAKS_LINK, '_blank')
+                            }}
+                          >
+                            Claim
+                          </Button>
+                        </Flex>
+                      )}
+                    {!state.expired && (
                       <Box borderRight={'1px solid white'} h='200px' />
                     )}
                     <Flex justify={'space-around'} w='100%'>
@@ -279,7 +322,7 @@ export default function MarketingCampaign() {
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          {expired
+                          {state.expired
                             ? '? ?'
                             : BigNumber(boxAmounts.box_bronze).toFormat()}
                         </Text>
@@ -299,7 +342,7 @@ export default function MarketingCampaign() {
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          {expired
+                          {state.expired
                             ? '? ?'
                             : BigNumber(boxAmounts.box_silver).toFormat()}
                         </Text>
@@ -319,7 +362,7 @@ export default function MarketingCampaign() {
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          {expired
+                          {state.expired
                             ? '? ?'
                             : BigNumber(boxAmounts.box_gold).toFormat()}
                         </Text>
@@ -339,7 +382,7 @@ export default function MarketingCampaign() {
                           fontSize={'36px'}
                           fontFamily={'HarmonyOS Sans SC Bold'}
                         >
-                          {expired
+                          {state.expired
                             ? '? ?'
                             : BigNumber(boxAmounts.box_platinum).toFormat()}
                         </Text>
@@ -469,7 +512,10 @@ export default function MarketingCampaign() {
               </SimpleGrid>
             </Box>
 
-            <TitleWithQuestionBox title='Invite Friends' />
+            <TitleWithQuestionBox
+              title='Invite Friends'
+              src={IconInviteFriend}
+            />
             <Text fontSize={'14px'} lineHeight={'18px'} color='#566E8C'>
               {`Invite friends to join xBank protocol using your unique referral
               link and you'll both receive mystery boxes rewards.`}
@@ -538,7 +584,7 @@ export default function MarketingCampaign() {
                   </Text>
                 </Flex>
               </Flex>
-              {expired ? (
+              {state.expired ? (
                 <Flex justifyContent={'center'} mb='205px' pt='27px'>
                   <Button
                     color='#FFFFFF'
@@ -553,12 +599,18 @@ export default function MarketingCampaign() {
                     fontFamily={'HarmonyOS Sans SC Bold'}
                     onClick={async () => {
                       await connectWallet()
-                      const userToken = getUserToken()
-                      setExpired(
-                        !userToken?.expires
-                          ? true
-                          : moment().isAfter(moment(userToken?.expires)),
-                      )
+                      const tokenInfo = getUserToken()
+                      if (tokenInfo === null) {
+                        setState({
+                          expired: true,
+                        })
+                      } else {
+                        const now = moment(new Date())
+                        const expired = now.isAfter(tokenInfo?.expires)
+                        setState({
+                          expired,
+                        })
+                      }
                     }}
                   >
                     Connect Wallet
@@ -566,7 +618,7 @@ export default function MarketingCampaign() {
                 </Flex>
               ) : (
                 <>
-                  {!hasUsedXBN ? (
+                  {!state.hasUsedXBN ? (
                     <Flex justifyContent={'center'} mb='205px' pt='27px'>
                       <Button
                         color='#FFFFFF'
@@ -747,39 +799,58 @@ export default function MarketingCampaign() {
                 Rules:
               </Text>
               <Text fontSize={'18px'} mb='20px'>
-                {`1. After the invitee accepts the invitation and successfully
-                registers, downloads the xBank APP and logs in to receive the
-                newcomer's benefits, the invitation reward will be distributed
-                to the inviter's account.`}
+                {`1. Boxdrop is a contributor reward program launched by the xBank protocol to reward loyal users who join and use the xBank protocol in the beta release.`}
               </Text>
               <Text fontSize={'18px'} mb='20px'>
-                {`2. The inviter will have in-APP access to the sign up and login
-                records of each user invited by himself.`}
+                {`2.The event will begin on June 7, 2023, and last for at least 3 months. The end time of the event will be announced before August 30, 2023.`}
               </Text>
               <Text fontSize={'18px'} mb='20px'>
-                {`3. The invitee needs to log in to the app within 30 days from
-                the date of registration to receive the reward. If the time
-                limit is exceeded, the inviter and the invitee's reward will be
-                invalid and no longer issued.`}
+                {`3.Users who use the xBank protocol to buy NFTs on a Buy Now Pay Later basis will receive different types of boxdrops.`}
               </Text>
               <Text fontSize={'18px'} mb='20px'>
-                {`4. Inviter can get a maximum of 10 times the invitation rewards
-                per 90 days. The reward will be issued only after the invitee
-                registers with their phone number and logs in.`}
+                {`4.Lenders who provide fund loans to borrowers through the xBank protocol will receive different types of boxdrops.`}
               </Text>
-              <Text
-                fontSize={'18px'}
-                color='#FF0066'
-                textDecoration={'underline'}
-              >
+              <Text fontSize={'18px'} mb='20px'>
+                {`5.Borrowers or lenders who invite friends to interact with the xBank protocol will both receive boxdrops.`}
+              </Text>
+              <Text fontSize={'18px'} mb='20px'>
+                {`6.Following xBank's official Twitter account and retweeting the pinned post will receive Welcome Boxdrops.`}
+              </Text>
+              <Text fontSize={'18px'} mb='20px'>
+                {`7.The boxdrops obtained by users will be revealed after the end of the campaign, and different levels of boxdrops will have different credit points.`}
+              </Text>
+              <Text fontSize={'18px'} mb='20px'>
+                {`8.Any invalid or non-friendly protocol interaction behavior during the campaign will be blacklisted for receiving boxdrops.`}
+              </Text>
+              <Text fontSize={'18px'}>
+                Learn more about the rules and rewards
                 <Link
+                  style={{ marginLeft: '10px' }}
+                  color='#FF0066'
+                  textDecoration={'underline'}
                   href='https://xbankdocs.gitbook.io/product-docs/'
                   target='_blank'
                 >
-                  Learn more
+                  check here
                 </Link>
               </Text>
             </Box>
+            {/* <Box>
+              <Button
+                onClick={() => {
+                  testFn1()
+                }}
+              >
+                Test1
+              </Button>
+              <Button
+                onClick={() => {
+                  testFn2()
+                }}
+              >
+                Test2
+              </Button>
+            </Box> */}
           </Container>
         </Box>
       </Box>
@@ -823,6 +894,6 @@ export default function MarketingCampaign() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </Box>
   )
 }

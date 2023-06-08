@@ -100,6 +100,7 @@ export const TransactionsProvider = ({
 }: {
   children: ReactElement
 }) => {
+  const { runAsync: signAuth } = useAuth()
   // collection 提取到外层
   const [collectionAddressArr, setCollectionAddressArr] = useState<string[]>([])
   const { loading } = useRequest(apiGetActiveCollection, {
@@ -171,6 +172,25 @@ export const TransactionsProvider = ({
     }
   }, [toast, setCurrentAccount])
 
+  useEffect(() => {
+    // eth_accounts always returns an array.
+    async function handleAccountsChanged(accounts: string[]) {
+      if (accounts.length === 0) {
+        // MetaMask is locked or the user has not connected any accounts.
+        console.log('Please connect to MetaMask.')
+      } else if (accounts[0] !== currentAccount) {
+        // Reload your interface with accounts[0].
+        localStorage.removeItem('auth')
+        localStorage.removeItem('metamask-connect-address')
+        setCurrentAccount(accounts[0])
+        await signAuth(accounts[0])
+        window.location.href = '/marketing-campaign'
+        // window.location = window.location
+      }
+    }
+    window.ethereum.on('accountsChanged', handleAccountsChanged)
+  }, [])
+
   const handleSwitchNetwork = useCallback(async () => {
     if (!ethereum) {
       return
@@ -224,8 +244,6 @@ export const TransactionsProvider = ({
     }
   }, [toast, setCurrentAccount])
 
-  const { runAsync } = useAuth()
-
   const connectWallet = useCallback(async () => {
     try {
       if (window.location.pathname === '/xlending/demo') return
@@ -249,7 +267,7 @@ export const TransactionsProvider = ({
         method: 'eth_requestAccounts',
       })
 
-      await runAsync(accounts[0])
+      await signAuth(accounts[0])
       setCurrentAccount(accounts[0])
       setConnectLoading(false)
     } catch (error) {
@@ -258,7 +276,7 @@ export const TransactionsProvider = ({
 
       throw new Error('No ethereum object')
     }
-  }, [toast, handleSwitchNetwork, setCurrentAccount, runAsync])
+  }, [toast, handleSwitchNetwork, setCurrentAccount, signAuth])
 
   // const sendTransaction = async () => {
   //   try {

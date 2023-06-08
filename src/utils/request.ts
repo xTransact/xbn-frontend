@@ -1,5 +1,5 @@
 import { createStandaloneToast } from '@chakra-ui/react'
-import axios from 'axios'
+import axios, { InternalAxiosRequestConfig } from 'axios'
 import { isEmpty } from 'lodash-es'
 
 import { TOAST_OPTION_CONFIG } from '@/constants'
@@ -18,8 +18,7 @@ export const standaloneToast = createStandaloneToast({
 })
 
 const { toast } = standaloneToast
-
-const request = axios.create({
+export const AXIOS_DEFAULT_CONFIG = {
   baseURL: '',
   headers: {
     appkey: VITE_APP_KEY,
@@ -28,9 +27,10 @@ const request = axios.create({
       : undefined,
   },
   timeout: 20000,
-})
+}
+const request = axios.create(AXIOS_DEFAULT_CONFIG)
 
-request.interceptors.request.use(async ({ url, baseURL, ...config }) => {
+export const requestInterceptor = async ({ url, baseURL, ...config }: InternalAxiosRequestConfig<any>) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
     if (url === '/api/ver2/exchange/xcurrency/latest') {
@@ -46,7 +46,8 @@ request.interceptors.request.use(async ({ url, baseURL, ...config }) => {
     url,
     baseURL: _baseURL,
   }
-})
+}
+request.interceptors.request.use(requestInterceptor)
 
 request.interceptors.response.use(
   (resp) => {
