@@ -41,6 +41,7 @@ const DetailComponent: FunctionComponent<
         borderRadius={16}
         startColor='rgba(27, 34, 44, 0.1)'
         endColor='rgba(27, 34, 44, 0.2)'
+        mt={8}
       />
     )
   }

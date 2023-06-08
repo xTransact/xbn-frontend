@@ -48,6 +48,10 @@ interface AssetListItemType {
   updated_at: string
 }
 
+enum MARKET_TYPE_ENUM {
+  OPENSEA = 'opensea',
+  BLUR = 'blur',
+}
 interface LoanOrderDataType {
   // pool id
   pool_id: string
@@ -69,6 +73,8 @@ interface LoanOrderDataType {
   number_of_installments: number
   // token ID
   nft_collateral_id: string
+  // platform
+  platform: MARKET_TYPE_ENUM
 }
 
 interface LoanListItemType {

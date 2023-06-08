@@ -428,7 +428,7 @@ const NftAssetDetail = () => {
 
   const handleClickPay = useCallback(async () => {
     interceptFn(async () => {
-      if (!selectPool || isEmpty(selectPool)) {
+      if (!selectPool || isEmpty(selectPool) || !platform) {
         return
       }
       const xBankContract = createXBankContract()
@@ -457,6 +457,7 @@ const NftAssetDetail = () => {
           loan_amount: loanWeiAmount.toNumber().toString(),
           loan_duration: pool_days * 24 * 60 * 60,
           loan_interest_rate: lp_pool_apr,
+          platform,
         }
         await generateLoanOrder({
           ...postParams,
@@ -515,6 +516,7 @@ const NftAssetDetail = () => {
     commodityWeiPrice,
     interceptFn,
     toast,
+    platform,
   ])
 
   const [usdPrice, setUsdPrice] = useState<BigNumber>()

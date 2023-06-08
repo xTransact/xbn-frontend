@@ -7,8 +7,8 @@ import imgOpensea from '@/assets/opensea-logo.png'
 import { ImageWithFallback } from '..'
 
 export enum MARKET_TYPE_ENUM {
-  OPENSEA,
-  BLUR,
+  OPENSEA = 'opensea',
+  BLUR = 'blur',
 }
 
 const NftOrigin: FunctionComponent<
