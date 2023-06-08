@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js'
 
 import { FORMAT_NUMBER } from '@/constants'
 
+import { eth2Wei, wei2Eth } from './unit-conversion'
+
 // Captures 0x + 4 characters, then the last 4 characters.
 const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/
 
@@ -45,4 +47,9 @@ const formatFloat = (x?: number | string | BigNumber, y?: number) => {
   return s
 }
 
-export { formatAddress, formatFloat }
+const formatWei = (x?: BigNumber, y?: number) => {
+  if (x === undefined) return 0
+  return eth2Wei(formatFloat(wei2Eth(x), y || FORMAT_NUMBER))
+}
+
+export { formatAddress, formatFloat, formatWei }

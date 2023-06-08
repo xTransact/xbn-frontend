@@ -40,7 +40,7 @@ const CustomNumberInput: FunctionComponent<
         }
         onSetValue(
           v.includes('.')
-            ? v.replace(/^(-)*(\d+)\.(\d{0,10}).*$/, '$1$2.$3')
+            ? v.replace(/^(-)*(\d+)\.(\d{0,8}).*$/, '$1$2.$3')
             : // ? v.replace(/^(-)*(\d+)\.(\d\d\d\d\d\d\d\d\d\d).*$/, '$1$2.$3')
               v,
         )
