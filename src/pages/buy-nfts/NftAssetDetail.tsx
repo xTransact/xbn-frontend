@@ -55,7 +55,7 @@ import {
 } from '@/hooks'
 import { amortizationCalByDays } from '@/utils/calculation'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
-import { formatFloat, formatWei } from '@/utils/format'
+import { formatFloat } from '@/utils/format'
 import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
 import BelongToCollection from './components/BelongToCollection'
@@ -200,12 +200,7 @@ const NftAssetDetail = () => {
           setCommodityWeiPrice(BigNumber(0))
           return
         }
-        const unFormatW = formatWei(BigNumber(weiPrice))
-        if (!unFormatW) {
-          setCommodityWeiPrice(BigNumber(0))
-          return
-        }
-        setCommodityWeiPrice(BigNumber(unFormatW))
+        setCommodityWeiPrice(BigNumber(weiPrice))
         setPlatform(
           minMarketPrice.marketplace === 'OPENSEA'
             ? MARKET_TYPE_ENUM.OPENSEA
@@ -247,11 +242,7 @@ const NftAssetDetail = () => {
   // 首付价格
   const downPaymentWei = useMemo(() => {
     if (!commodityWeiPrice) return BigNumber(0)
-    const unFormat = formatWei(
-      commodityWeiPrice.multipliedBy(percentage).dividedBy(10000),
-    )
-    if (!unFormat) return BigNumber(0)
-    return BigNumber(unFormat)
+    return commodityWeiPrice.multipliedBy(percentage).dividedBy(10000)
   }, [commodityWeiPrice, percentage])
 
   // 贷款价格
@@ -593,6 +584,8 @@ const NftAssetDetail = () => {
             xs: 'flex',
           }}
           mb='20px'
+          startColor='rgba(27, 34, 44, 0.1)'
+          endColor='rgba(27, 34, 44, 0.2)'
         />
       ) : (
         <Flex
@@ -639,6 +632,8 @@ const NftAssetDetail = () => {
             xs: 'none',
           }}
           mt='32px'
+          startColor='rgba(27, 34, 44, 0.1)'
+          endColor='rgba(27, 34, 44, 0.2)'
         />
       ) : (
         <Flex

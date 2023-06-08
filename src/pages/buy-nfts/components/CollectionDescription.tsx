@@ -22,7 +22,13 @@ const CollectionDescription: FunctionComponent<{
     return (
       <Flex flexDirection={'column'} mb={'24px'}>
         <Flex mb={'40px'} gap={'12px'}>
-          <Skeleton h='108px' w='108px' borderRadius={16} />
+          <Skeleton
+            h='108px'
+            w='108px'
+            borderRadius={16}
+            startColor='rgba(27, 34, 44, 0.1)'
+            endColor='rgba(27, 34, 44, 0.2)'
+          />
           <Skeleton
             h='108px'
             w={{
@@ -32,6 +38,8 @@ const CollectionDescription: FunctionComponent<{
               sm: '100%',
               xs: '100%',
             }}
+            startColor='rgba(27, 34, 44, 0.1)'
+            endColor='rgba(27, 34, 44, 0.2)'
             borderRadius={16}
           />
         </Flex>
@@ -50,7 +58,14 @@ const CollectionDescription: FunctionComponent<{
         >
           {[
             range(5).map((i) => (
-              <Skeleton h='60px' key={i} w='88px' borderRadius={16} />
+              <Skeleton
+                h='60px'
+                key={i}
+                w='88px'
+                borderRadius={16}
+                startColor='rgba(27, 34, 44, 0.1)'
+                endColor='rgba(27, 34, 44, 0.2)'
+              />
             )),
           ]}
         </Flex>

@@ -35,7 +35,14 @@ const DetailComponent: FunctionComponent<
   ...rest
 }) => {
   if (loading) {
-    return <Skeleton h={200} borderRadius={16} />
+    return (
+      <Skeleton
+        h={200}
+        borderRadius={16}
+        startColor='rgba(27, 34, 44, 0.1)'
+        endColor='rgba(27, 34, 44, 0.2)'
+      />
+    )
   }
   return (
     <Box mt={8} {...rest}>
