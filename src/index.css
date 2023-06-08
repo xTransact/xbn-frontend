@@ -1,59 +1,59 @@
 @font-face {
   font-family: HarmonyOS;
-  src: url(./assets/font/HarmonyOS_Sans_SC_Regular.ttf);
+  src: url(/public/font/HarmonyOS_Sans_SC_Regular.ttf);
 }
 
 @font-face {
   font-family: 'HarmonyOS Sans Black';
-  src: url(./assets/font/HarmonyOS_Sans_Black.ttf);
+  src: url(/public/font/HarmonyOS_Sans_Black.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans Bold';
-  src: url(./assets/font/HarmonyOS_Sans_Bold.ttf);
+  src: url(/public/font/HarmonyOS_Sans_Bold.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans Light';
-  src: url(./assets/font/HarmonyOS_Sans_Light.ttf);
+  src: url(/public/font/HarmonyOS_Sans_Light.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans Medium';
-  src: url(./assets/font/HarmonyOS_Sans_Medium.ttf);
+  src: url(/public/font/HarmonyOS_Sans_Medium.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans Regular';
-  src: url(./assets/font/HarmonyOS_Sans_Regular.ttf);
+  src: url(/public/font/HarmonyOS_Sans_Regular.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans SC Black';
-  src: url(./assets/font/HarmonyOS_Sans_SC_Black.ttf);
+  src: url(/public/font/HarmonyOS_Sans_SC_Black.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans SC Bold';
-  src: url(./assets/font/HarmonyOS_Sans_SC_Bold.ttf);
+  src: url(/public/font/HarmonyOS_Sans_SC_Bold.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans SC Light';
-  src: url(./assets/font/HarmonyOS_Sans_SC_Light.ttf);
+  src: url(/public/font/HarmonyOS_Sans_SC_Light.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans SC Medium';
-  src: url(./assets/font/HarmonyOS_Sans_SC_Medium.ttf);
+  src: url(/public/font/HarmonyOS_Sans_SC_Medium.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans SC Regular';
-  src: url(./assets/font/HarmonyOS_Sans_SC_Regular.ttf);
+  src: url(/public/font/HarmonyOS_Sans_SC_Regular.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans SC Thin';
-  src: url(./assets/font/HarmonyOS_Sans_SC_Thin.ttf);
+  src: url(/public/font/HarmonyOS_Sans_SC_Thin.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans Thin';
-  src: url(./assets/font/HarmonyOS_Sans_Thin.ttf);
+  src: url(/public/font/HarmonyOS_Sans_Thin.ttf);
 }
 @font-face {
   font-family: 'HarmonyOS Sans SC';
-  src: url(./assets/font/HarmonyOS_Sans_SC_Regular.ttf);
+  src: url(/public/font/HarmonyOS_Sans_SC_Regular.ttf);
 }
 
 html {
