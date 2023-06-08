@@ -260,24 +260,24 @@ const Create = () => {
     if (state && params?.action === 'edit') {
       const { poolData } = state
       collateralKey =
-        getKeyByValue(COLLATERAL_MAP, poolData?.pool_maximum_percentage) || 4
-      tenorKey = getKeyByValue(TENOR_MAP, poolData?.pool_maximum_days) || 5
+        getKeyByValue(COLLATERAL_MAP, poolData?.pool_maximum_percentage) ?? 4
+      tenorKey = getKeyByValue(TENOR_MAP, poolData?.pool_maximum_days) ?? 5
       const res =
         poolData?.pool_maximum_interest_rate /
         (BASE_RATE.get(`${tenorKey}-${collateralKey}`) as number)
 
-      ratePowerKey = getKeyByValue(RATE_POWER_MAP, res) || 5
+      ratePowerKey = getKeyByValue(RATE_POWER_MAP, res) ?? 5
       rightFlex =
         getKeyByValue(
           RIGHT_RATE_POWER_MAP,
           poolData?.loan_ratio_preferential_flexibility / 10000,
-        ) || 2
+        ) ?? 2
       bottomFlex =
         getKeyByValue(
           BOTTOM_RATE_POWER_MAP,
           poolData?.loan_time_concession_flexibility / 10000,
-        ) || 2
-      maximum_loan_amount = wei2Eth(poolData.maximum_loan_amount) || 0
+        ) ?? 2
+      maximum_loan_amount = wei2Eth(poolData.maximum_loan_amount) ?? 0
     }
     return {
       collateralKey,
