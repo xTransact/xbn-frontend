@@ -450,7 +450,7 @@ const CreatePoolButton: FunctionComponent<
               xs: '23px',
             }}
             h='52px'
-            // isDisabled={isError || !Number(amount)}
+            isDisabled={isError || !Number(amount)}
             onClick={onConfirm}
             loadingText={
               approveLoading
