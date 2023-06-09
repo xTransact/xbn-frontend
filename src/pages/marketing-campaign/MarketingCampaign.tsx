@@ -205,7 +205,9 @@ export default function MarketingCampaign() {
     if (!state.expired && state.hasUsedXBN) {
       const data = await apiGetInviteCode()
       setInviteCode(data.code)
-      setInvitationLink(window.location.href + `?invitation_code=${data.code}`)
+      setInvitationLink(
+        window.location.host + `/buy-nfts/market?invitation_code=${data.code}`,
+      )
     }
   }, [state.expired, state.hasUsedXBN])
   useAsyncEffect(async () => {
@@ -713,8 +715,8 @@ export default function MarketingCampaign() {
                                     `?invitation_code=${inviteCode}`,
                                 )
                                 setInvitationLink(
-                                  window.location.href +
-                                    `?invitation_code=${inviteCode}`,
+                                  window.location.host +
+                                    `/buy-nfts/market?invitation_code=${inviteCode}`,
                                 )
                                 onCopy()
                                 onOpen()
