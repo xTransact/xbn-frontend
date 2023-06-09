@@ -410,7 +410,7 @@ const Header = () => {
             alignItems={'center'}
             onClick={() => {
               if (pathname === '/demo') return
-              window.open(import.meta.env.VITE_BASE_URL)
+              window.open(import.meta.env.VITE_WEBSITE)
             }}
             cursor='pointer'
           >
