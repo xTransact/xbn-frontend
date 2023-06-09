@@ -1,5 +1,5 @@
 # !/bin/bash
-
+echo $CF_PAGES_BRANCH
 if [ "$CF_PAGES_BRANCH" == "master" ]; then  # Run the "production" script in `package.json` on the "production" branch  # "production" should be replaced with the name of your Production branch
   npm run build:production
 
