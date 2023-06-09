@@ -11,13 +11,16 @@ import {
   type ButtonProps,
   InputGroup,
   InputLeftElement,
-  InputRightElement,
   NumberInputField,
   NumberInput,
   useDisclosure,
   Flex,
+  Tooltip,
+  Box,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
+import BigNumber from 'bignumber.js'
+import isEmpty from 'lodash-es/isEmpty'
 import {
   useCallback,
   useMemo,
@@ -26,7 +29,12 @@ import {
   type FunctionComponent,
 } from 'react'
 
-import { ConnectWalletModal, SvgComponent } from '@/components'
+import { apiGetFloorPrice } from '@/api'
+import {
+  ConnectWalletModal,
+  LoadingComponent,
+  SvgComponent,
+} from '@/components'
 import { useCatchContractError, useWallet } from '@/hooks'
 import { createWethContract, createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
@@ -40,16 +48,23 @@ import AmountItem from './AmountItem'
  */
 const UpdatePoolAmountButton: FunctionComponent<
   ButtonProps & {
-    data: {
-      poolID: number
-      poolUsedAmount: number
-      floorPrice: number
-      poolAmount: number
-    }
+    poolData: PoolsListItemType
+    collectionSlug: string
     onSuccess: () => void
   }
-> = ({ children, data, onSuccess, ...rest }) => {
-  const { poolUsedAmount, poolID, floorPrice, poolAmount } = data
+> = ({ children, poolData, collectionSlug, onSuccess, ...rest }) => {
+  const {
+    pool_used_amount,
+    pool_id,
+    pool_amount,
+    maximum_loan_amount,
+    pool_maximum_percentage,
+    pool_maximum_days,
+    pool_maximum_interest_rate,
+    loan_ratio_preferential_flexibility,
+    loan_time_concession_flexibility,
+  } = poolData
+
   const { toast, toastError } = useCatchContractError()
   const { currentAccount, interceptFn, isOpen, onClose } = useWallet()
   const {
@@ -57,6 +72,24 @@ const UpdatePoolAmountButton: FunctionComponent<
     onOpen: onOpenUpdate,
     onClose: onCloseUpdate,
   } = useDisclosure()
+
+  const [floorPrice, setFloorPrice] = useState<number>()
+
+  const { loading } = useRequest(apiGetFloorPrice, {
+    ready: !!collectionSlug && isOpenUpdate,
+    // cacheKey: 'staleTime-floorPrice',
+    // staleTime: 1000 * 60,
+    defaultParams: [
+      {
+        slug: collectionSlug,
+      },
+    ],
+    refreshDeps: [collectionSlug, isOpenUpdate],
+    onSuccess(data) {
+      if (isEmpty(data)) return
+      setFloorPrice(data.floor_price)
+    },
+  })
 
   const [updateLoading, setUpdateLoading] = useState(false)
 
@@ -87,25 +120,26 @@ const UpdatePoolAmountButton: FunctionComponent<
   const AmountDataItems = useMemo(
     () => [
       {
-        data: wei2Eth(poolAmount) || '--',
+        data: formatFloat(wei2Eth(pool_amount)),
         label: 'Approved Amount',
         loading: false,
       },
       {
-        data: poolUsedAmount ? wei2Eth(poolUsedAmount) : 0,
+        data: pool_used_amount ? formatFloat(wei2Eth(pool_used_amount)) : 0,
         label: 'Has Been Lent',
         loading: false,
       },
       {
-        data: wei2Eth(poolAmount - poolUsedAmount),
+        data: formatFloat(wei2Eth(pool_amount - pool_used_amount)),
         label: 'Can Be Lent',
         loading: false,
       },
     ],
-    [poolUsedAmount, poolAmount],
+    [pool_used_amount, pool_amount],
   )
 
   const isError = useMemo(() => {
+    if (!floorPrice) return false
     if (!amount) return false
     /**
      * 校验逻辑：Has been lent + Available in wallet 需要大于等于 Your balance
@@ -114,19 +148,25 @@ const UpdatePoolAmountButton: FunctionComponent<
      *     = poolUsedAmount + latest weth
      */
     const NumberAmount = Number(amount)
-    const maxAmount = wei2Eth(Number(poolUsedAmount) + Number(wethData))
+    const maxAmount = wei2Eth(Number(pool_used_amount) + Number(wethData))
+    if (maxAmount === undefined) {
+      setErrorMsg(` Insufficient funds: 0 WETH`)
+      return true
+    }
     if (NumberAmount > maxAmount) {
       setErrorMsg(` Insufficient funds: ${formatFloat(maxAmount)} WETH`)
       return true
     }
-    if (NumberAmount < floorPrice * 0.1) {
+    if (NumberAmount < (floorPrice * pool_maximum_percentage) / 10000) {
       setErrorMsg(
-        `Insufficient funds, Minimum input: ${formatFloat(floorPrice * 0.1)}`,
+        `Insufficient funds, Minimum input: ${formatFloat(
+          (floorPrice * pool_maximum_percentage) / 10000,
+        )}`,
       )
       return true
     }
     return false
-  }, [amount, floorPrice, poolUsedAmount, wethData])
+  }, [amount, floorPrice, pool_used_amount, wethData, pool_maximum_percentage])
 
   const onConfirm = useCallback(() => {
     interceptFn(async () => {
@@ -134,25 +174,32 @@ const UpdatePoolAmountButton: FunctionComponent<
        * 平均总耗时：
        * 1676961248463 - 1676961180777 =  67686 ms ≈ 1min
        */
-      if (amount === wei2Eth(poolAmount)) {
+      if (amount === wei2Eth(pool_amount)?.toString()) {
         toast({
           status: 'info',
-          title: `The TVL is already ${wei2Eth(poolAmount)}`,
+          title: `The TVL is already ${wei2Eth(pool_amount)}`,
         })
         return
       }
       try {
-        const parsedWeiAmount = eth2Wei(amount)
-
+        const parsedWeiAmount = eth2Wei(amount)?.toString()
         setUpdateLoading(true)
 
         const xBankContract = createXBankContract()
-        const updateBlock = await xBankContract.methods
-          .updatePool(poolID, parsedWeiAmount)
+        await xBankContract.methods
+          .updatePool(
+            pool_id,
+            parsedWeiAmount,
+            maximum_loan_amount.toString(),
+            pool_maximum_percentage.toString(),
+            pool_maximum_days.toString(),
+            pool_maximum_interest_rate.toString(),
+            loan_ratio_preferential_flexibility.toString(),
+            loan_time_concession_flexibility.toString(),
+          )
           .send({
             from: currentAccount,
           })
-        console.log(updateBlock, 'createBlock')
         setUpdateLoading(false)
         onCloseUpdate()
         if (toast.isActive('Updated-Successfully-ID')) {
@@ -172,14 +219,20 @@ const UpdatePoolAmountButton: FunctionComponent<
     })
   }, [
     onSuccess,
-    poolAmount,
+    pool_amount,
     amount,
     toast,
     currentAccount,
     interceptFn,
     onCloseUpdate,
-    poolID,
+    pool_id,
     toastError,
+    maximum_loan_amount,
+    pool_maximum_percentage,
+    pool_maximum_days,
+    pool_maximum_interest_rate,
+    loan_ratio_preferential_flexibility,
+    loan_time_concession_flexibility,
   ])
 
   const handleClose = useCallback(() => {
@@ -187,6 +240,10 @@ const UpdatePoolAmountButton: FunctionComponent<
     onCloseUpdate()
   }, [onCloseUpdate, updateLoading])
 
+  const defaultAmount = useMemo(() => {
+    if (!floorPrice || !pool_maximum_percentage) return ''
+    return `${(floorPrice * pool_maximum_percentage) / 10000}`
+  }, [floorPrice, pool_maximum_percentage])
   return (
     <>
       <Button onClick={() => interceptFn(() => onOpenUpdate())} {...rest}>
@@ -233,7 +290,8 @@ const UpdatePoolAmountButton: FunctionComponent<
               svgSize='16px'
             />
           </ModalHeader>
-          <ModalBody pb={'24px'} px={0}>
+          <ModalBody pb={'24px'} px={0} position={'relative'}>
+            <LoadingComponent loading={loading} top={2} />
             {/* 数值们 */}
             <Flex
               py={{ md: '32px', sm: '20px', xs: '20px' }}
@@ -248,7 +306,19 @@ const UpdatePoolAmountButton: FunctionComponent<
               ))}
             </Flex>
             <FormControl>
-              <FormLabel fontWeight={'700'}>Amount</FormLabel>
+              <FormLabel
+                fontWeight={'700'}
+                display={'flex'}
+                justifyContent={'space-between '}
+              >
+                Amount
+                <Text fontWeight={'500'} fontSize={'14px'} color='gray.3'>
+                  Minimum input:
+                  {formatFloat(
+                    ((floorPrice || 0) * pool_maximum_percentage) / 10000,
+                  )}
+                </Text>
+              </FormLabel>
               <InputGroup>
                 <InputLeftElement
                   pointerEvents='none'
@@ -285,19 +355,51 @@ const UpdatePoolAmountButton: FunctionComponent<
                     placeholder='Enter amount...'
                   />
                 </NumberInput>
-
-                {isError && (
-                  <InputRightElement top='14px' mr='8px'>
-                    <SvgComponent svgId='icon-error' svgSize='24px' />
-                  </InputRightElement>
-                )}
               </InputGroup>
 
-              <Text mt={'8px'} color={isError ? 'red.1' : 'gray.3'}>
-                {isError
-                  ? errorMsg
-                  : `Minimum input: ${formatFloat(floorPrice * 0.1)} `}
-              </Text>
+              {isError && (
+                <Text mt={'8px'} color={'red.1'}>
+                  {errorMsg}
+                </Text>
+              )}
+              {!isError && !!amount && (
+                <Flex mt={'8px'} color={'gray.3'}>
+                  <Text fontSize={'14px'} color='blue.1' fontWeight={'700'}>
+                    Expected to lend&nbsp;
+                    {BigNumber(amount)
+                      .dividedBy(defaultAmount)
+                      .integerValue(BigNumber.ROUND_DOWN)
+                      .toNumber()}
+                    &nbsp;loans
+                  </Text>
+                  <Tooltip
+                    whiteSpace={'pre-line'}
+                    label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , \nFor example: ${amount}/${formatFloat(
+                      defaultAmount,
+                    )} = ${BigNumber(amount)
+                      .dividedBy(defaultAmount)
+                      .integerValue(BigNumber.ROUND_DOWN)
+                      .toNumber()}`}
+                    placement='auto'
+                    hasArrow={false}
+                    bg='white'
+                    borderRadius={8}
+                    p='10px'
+                    fontSize={'12px'}
+                    lineHeight={'18px'}
+                    fontWeight={'400'}
+                    color='gray.4'
+                  >
+                    <Box cursor={'pointer'} ml='16px'>
+                      <SvgComponent
+                        svgId='icon-tip'
+                        fill='gray.1'
+                        fontSize={'20px'}
+                      />
+                    </Box>
+                  </Tooltip>
+                </Flex>
+              )}
             </FormControl>
             <Text
               fontSize={'12px'}

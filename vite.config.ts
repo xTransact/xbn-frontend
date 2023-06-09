@@ -6,7 +6,6 @@ import { join } from 'path'
 // https://vitejs.dev/config/
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
-  base: './xlending',
   plugins: [
     react(),
     //  viteCompression()
@@ -22,7 +21,6 @@ export default defineConfig({
   },
 
   server: {
-    port: 8000,
     proxy: {
       '/lending/query': {
         // mock
@@ -38,10 +36,16 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
-      '/api/ver2/': {
-        target: 'https://xcr.tratao.com',
+      // '/api/ver2/': {
+      //   target: 'https://xcr.tratao.com',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
+      '/api/v1/': {
+        target: 'https://xbank.global/',
         changeOrigin: true,
         secure: false,
+        // rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },

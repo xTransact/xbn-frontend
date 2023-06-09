@@ -1,6 +1,7 @@
 interface PoolsListItemType {
   id: number
   pool_id: number
+  created_at: string
   owner_address: string
   allow_collateral_contract: string
   support_erc20_denomination: string
@@ -13,7 +14,7 @@ interface PoolsListItemType {
   loan_time_concession_flexibility: number
   loan_ratio_preferential_flexibility: number
   activity: boolean
-  collection_info: CollectionListItemType
+  maximum_loan_amount: number
 }
 
 interface CollectionListItemType {
@@ -47,6 +48,10 @@ interface AssetListItemType {
   updated_at: string
 }
 
+enum MARKET_TYPE_ENUM {
+  OPENSEA = 'opensea',
+  BLUR = 'blur',
+}
 interface LoanOrderDataType {
   // pool id
   pool_id: string
@@ -68,6 +73,8 @@ interface LoanOrderDataType {
   number_of_installments: number
   // token ID
   nft_collateral_id: string
+  // platform
+  platform: MARKET_TYPE_ENUM
 }
 
 interface LoanListItemType {
@@ -99,4 +106,73 @@ interface LoanListItemType {
   nft_collateral_id: string
   loan_erc20_denomination: string
   activity: boolean
+}
+
+interface MyAssetListItemType {
+  asset_contract_address: string
+  token_id: string
+  qty: string
+  mortgaged: boolean
+  listed_with_mortgage: boolean
+  list_price: string
+}
+
+enum LISTING_TYPE {
+  LISTING = 1,
+  CANCEL = 2,
+}
+interface ListingDataType {
+  type: LISTING_TYPE
+  platform: string
+  contract_address: string
+  token_id: string
+  network: string
+  currency: string
+  qty: number
+  price?: string
+  expiration_time?: number
+  borrower_address: string
+}
+
+interface AssetPriceType {
+  data: {
+    marketplace: string
+    blur_price?: {
+      amount: number
+      unit: string
+    }
+    opensea_price?: {
+      amount: number
+      unit: string
+      hash: string
+      chain: string
+      protocol_address: string
+    }
+  }[]
+}
+
+interface ListingsItemType {
+  act_gas_limit: number
+  act_gas_price: string
+  borrower_address: string
+  contract_address: string
+  created_at: string
+  currency: string
+  expiration_time: number
+  gas_limit: number
+  gas_price: string
+  gas_used: number
+  id: number
+  network: string
+  platform: string
+  platform_ord_id: string
+  price: string
+  qty: number
+  status: number
+  status_history: number
+  sub_status: number
+  token_id: string
+  tx_id: string
+  type: number
+  updated_at: string
 }

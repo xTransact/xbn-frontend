@@ -1,10 +1,68 @@
 @font-face {
   font-family: HarmonyOS;
-  src: url(./assets/font/fontello.ttf);
+  src: url(./assets/font/HarmonyOS_Sans_SC_Regular.ttf);
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans Black';
+  src: url(./assets/font/HarmonyOS_Sans_Black.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans Bold';
+  src: url(./assets/font/HarmonyOS_Sans_Bold.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans Light';
+  src: url(./assets/font/HarmonyOS_Sans_Light.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans Medium';
+  src: url(./assets/font/HarmonyOS_Sans_Medium.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans Regular';
+  src: url(./assets/font/HarmonyOS_Sans_Regular.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans SC Black';
+  src: url(./assets/font/HarmonyOS_Sans_SC_Black.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans SC Bold';
+  src: url(./assets/font/HarmonyOS_Sans_SC_Bold.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans SC Light';
+  src: url(./assets/font/HarmonyOS_Sans_SC_Light.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans SC Medium';
+  src: url(./assets/font/HarmonyOS_Sans_SC_Medium.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans SC Regular';
+  src: url(./assets/font/HarmonyOS_Sans_SC_Regular.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans SC Thin';
+  src: url(./assets/font/HarmonyOS_Sans_SC_Thin.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans Thin';
+  src: url(./assets/font/HarmonyOS_Sans_Thin.ttf);
+}
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url(./assets/font/HarmonyOS_Sans_SC_Regular.ttf);
 }
 
 html {
   -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  font-family: 'HarmonyOS Sans SC Regular';
 }
 
 .icon {
@@ -33,4 +91,76 @@ html {
 ::-webkit-scrollbar-track {
   background: var(--chakra-colors-gray-5);
   border-radius: 8px;
+}
+
+@keyframes loading {
+  /*以百分比来规定改变发生的时间 也可以通过"from"和"to",等价于0% 和 100%*/
+  0% {
+    /*rotate(2D旋转) scale(放大或者缩小) translate(移动) skew(翻转)*/
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes slide {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(2);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@-webkit-keyframes slide {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(2);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@-o-keyframes slide {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(2);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slide {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(2);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }

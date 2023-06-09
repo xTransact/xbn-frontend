@@ -33,7 +33,7 @@ const ScrollNumberItem: FunctionComponent<{
         }}
         h='2px'
         top={{
-          md: '-2px',
+          md: '-1px',
           sm: 0,
           xs: 0,
         }}

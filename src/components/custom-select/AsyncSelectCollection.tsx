@@ -115,7 +115,7 @@ function AsyncSelectCollection({
       // @ts-ignore
       isOptionSelected={(item, select) => item.contract_addr === select}
       isOptionDisabled={(item: any) => {
-        return disabledArr.includes(item?.contractAddress?.toLowerCase())
+        return disabledArr?.includes(item?.contractAddress?.toLowerCase())
       }}
       loadOptions={promiseOptions}
       theme={(theme) => ({
@@ -153,6 +153,7 @@ function AsyncSelectCollection({
             borderRadius: 8,
             top: '65%',
             boxShadow: 'none',
+            zIndex: 2,
           }
         },
         singleValue: (baseStyles) => ({
@@ -182,16 +183,9 @@ function AsyncSelectCollection({
             borderColor: 'var(--chakra-colors-blue-1)',
           },
         }),
-        option: (
-          baseStyles,
-          { isDisabled: _isDisabled, isSelected, isFocused },
-        ) => ({
+        option: (baseStyles, { isDisabled: _isDisabled, isSelected }) => ({
           ...baseStyles,
-          backgroundColor: isSelected
-            ? `var(--chakra-colors-blue-2)`
-            : isFocused
-            ? 'var(--chakra-colors-gray-5)'
-            : 'white',
+          backgroundColor: isSelected ? `var(--chakra-colors-blue-2)` : 'white',
           color: `var(--chakra-colors-black-1)`,
           fontSize: 14,
           fontWeight: 500,
@@ -202,6 +196,12 @@ function AsyncSelectCollection({
             backgroundColor: !_isDisabled
               ? 'var(--chakra-colors-blue-2)'
               : undefined,
+          },
+          ':hover': {
+            ...baseStyles[':hover'],
+            backgroundColor: _isDisabled
+              ? 'white'
+              : 'var(--chakra-colors-gray-5)',
           },
         }),
       }}

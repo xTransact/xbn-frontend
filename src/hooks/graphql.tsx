@@ -127,6 +127,7 @@ export type NftAsset = Node & {
   orderChain: Scalars['String']
   orderCoin: Scalars['String']
   orderPrice: Scalars['Decimal']
+  orderPriceMarket: Scalars['String']
   owner: Scalars['String']
   rarity: Scalars['Float']
   rarityLevel: Scalars['String']
@@ -759,6 +760,7 @@ export type AssetQuery = {
     rarityRank: number
     rarityLevel: string
     chain: string
+    orderPriceMarket: string
     nftAssetContract: {
       __typename?: 'NFTAssetContract'
       id: string
@@ -855,6 +857,7 @@ export type AssetWithoutIdQuery = {
     rarityRank: number
     rarityLevel: string
     chain: string
+    orderPriceMarket: string
     nftAssetContract: {
       __typename?: 'NFTAssetContract'
       id: string
@@ -882,6 +885,83 @@ export type AssetWithoutIdQuery = {
       __typename?: 'NFTAssetMetaData'
       like: boolean
       likeCount: number
+    }
+  }
+}
+
+export type AssetsQueryVariables = Exact<{
+  orderBy: NftAssetOrderBy
+  tag: Scalars['String']
+}>
+
+export type AssetsQuery = {
+  __typename?: 'Query'
+  assets: {
+    __typename?: 'NFTAssetConnection'
+    totalCount: number
+    edges?:
+      | ({
+          __typename?: 'NFTAssetEdge'
+          cursor: any
+          node?: {
+            __typename?: 'NFTAsset'
+            animationOriginalUrl: string
+            animationUrl: string
+            assetContractAddress: string
+            backgroundColor: string
+            chain: string
+            createdAt: any
+            creator: string
+            description: string
+            externalLink: string
+            id: string
+            imageOriginalUrl: string
+            imagePreviewUrl: string
+            imageThumbnailUrl: string
+            imageUrl: string
+            name: string
+            orderChain: string
+            orderCoin: string
+            orderPrice: any
+            owner: string
+            rarity: number
+            rarityLevel: string
+            rarityRank: number
+            tokenID: string
+            transferFee: string
+            transferFeePaymentToken: string
+            updatedAt: any
+            orderPriceMarket: string
+            nftAssetContract: {
+              __typename?: 'NFTAssetContract'
+              address: string
+              assetContractType: string
+              buyerFeeBasisPoints: number
+              createdAt: any
+              createdDate: string
+              description: string
+              externalLink: string
+              id: string
+              imageUrl: string
+              name: string
+              nftVersion: string
+              openseaBuyerFeeBasisPoints: number
+              openseaSellerFeeBasisPoints: number
+              openseaVersion: string
+              payoutAddress: string
+              schemaName: string
+              sellerFeeBasisPoints: number
+              symbol: string
+              totalSupply: string
+              updatedAt: any
+            }
+          } | null
+        } | null)[]
+      | null
+    pageInfo: {
+      __typename?: 'PageInfo'
+      endCursor?: any | null
+      hasNextPage: boolean
     }
   }
 }
@@ -932,6 +1012,7 @@ export type AssetsChannelQuery = {
             orderChain: string
             orderCoin: string
             orderPrice: any
+            orderPriceMarket: string
             nftAssetMetaData: {
               __typename?: 'NFTAssetMetaData'
               likeCount: number
@@ -988,6 +1069,7 @@ export type NftCollectionAssetsQuery = {
             chain: string
             rarityLevel: string
             rarityRank: number
+            orderPriceMarket: string
             nftAssetContract: {
               __typename?: 'NFTAssetContract'
               id: string
@@ -1144,6 +1226,7 @@ export type NftCollectionSearchAssetQuery = {
     rarityRank: number
     rarityLevel: string
     chain: string
+    orderPriceMarket: string
     nftAssetMetaData: {
       __typename?: 'NFTAssetMetaData'
       like: boolean
@@ -1238,6 +1321,7 @@ export const AssetDocument = gql`
         like
         likeCount
       }
+      orderPriceMarket
     }
   }
 `
@@ -1421,6 +1505,7 @@ export const AssetWithoutIdDocument = gql`
         like
         likeCount
       }
+      orderPriceMarket
     }
   }
 `
@@ -1476,6 +1561,113 @@ export type AssetWithoutIdQueryResult = Apollo.QueryResult<
   AssetWithoutIdQuery,
   AssetWithoutIdQueryVariables
 >
+export const AssetsDocument = gql`
+  query Assets($orderBy: NFTAssetOrderBy!, $tag: String!) {
+    assets(orderBy: $orderBy, tag: $tag) {
+      edges {
+        node {
+          animationOriginalUrl
+          animationUrl
+          assetContractAddress
+          backgroundColor
+          chain
+          createdAt
+          creator
+          description
+          externalLink
+          id
+          imageOriginalUrl
+          imagePreviewUrl
+          imageThumbnailUrl
+          imageUrl
+          name
+          nftAssetContract {
+            address
+            assetContractType
+            buyerFeeBasisPoints
+            createdAt
+            createdDate
+            description
+            externalLink
+            id
+            imageUrl
+            name
+            nftVersion
+            openseaBuyerFeeBasisPoints
+            openseaSellerFeeBasisPoints
+            openseaVersion
+            payoutAddress
+            schemaName
+            sellerFeeBasisPoints
+            symbol
+            totalSupply
+            updatedAt
+          }
+          orderChain
+          orderCoin
+          orderPrice
+          owner
+          rarity
+          rarityLevel
+          rarityRank
+          tokenID
+          transferFee
+          transferFeePaymentToken
+          updatedAt
+          orderPriceMarket
+        }
+        cursor
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      totalCount
+    }
+  }
+`
+
+/**
+ * __useAssetsQuery__
+ *
+ * To run a query within a React component, call `useAssetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAssetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAssetsQuery({
+ *   variables: {
+ *      orderBy: // value for 'orderBy'
+ *      tag: // value for 'tag'
+ *   },
+ * });
+ */
+export function useAssetsQuery(
+  baseOptions: Apollo.QueryHookOptions<AssetsQuery, AssetsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<AssetsQuery, AssetsQueryVariables>(
+    AssetsDocument,
+    options,
+  )
+}
+export function useAssetsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<AssetsQuery, AssetsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<AssetsQuery, AssetsQueryVariables>(
+    AssetsDocument,
+    options,
+  )
+}
+export type AssetsQueryHookResult = ReturnType<typeof useAssetsQuery>
+export type AssetsLazyQueryHookResult = ReturnType<typeof useAssetsLazyQuery>
+export type AssetsQueryResult = Apollo.QueryResult<
+  AssetsQuery,
+  AssetsQueryVariables
+>
 export const AssetsChannelDocument = gql`
   query AssetsChannel(
     $assetType: AssetType!
@@ -1526,6 +1718,7 @@ export const AssetsChannelDocument = gql`
             likeCount
             like
           }
+          orderPriceMarket
         }
       }
     }
@@ -1652,6 +1845,7 @@ export const NftCollectionAssetsDocument = gql`
           }
           rarityLevel
           rarityRank
+          orderPriceMarket
         }
         cursor
       }
@@ -1900,6 +2094,7 @@ export const NftCollectionSearchAssetDocument = gql`
         sellerFeeBasisPoints
         payoutAddress
       }
+      orderPriceMarket
     }
   }
 `

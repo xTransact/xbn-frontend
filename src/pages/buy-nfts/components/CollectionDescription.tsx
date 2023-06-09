@@ -1,4 +1,4 @@
-import { Flex, Box, Text, Heading, Skeleton, Highlight } from '@chakra-ui/react'
+import { Flex, Box, Text, Heading, Skeleton } from '@chakra-ui/react'
 import BigNumber from 'bignumber.js'
 import isEmpty from 'lodash-es/isEmpty'
 import range from 'lodash-es/range'
@@ -12,7 +12,8 @@ const CollectionDescription: FunctionComponent<{
   data?: NftCollection
   loading?: boolean
   highestRate?: number
-}> = ({ data, loading, highestRate }) => {
+  floorPrice?: number
+}> = ({ data, loading, highestRate, floorPrice }) => {
   const [show, setShow] = useState(false)
   const ref = useRef<HTMLParagraphElement>(null)
   const offsetHeight = ref.current?.offsetHeight
@@ -21,7 +22,13 @@ const CollectionDescription: FunctionComponent<{
     return (
       <Flex flexDirection={'column'} mb={'24px'}>
         <Flex mb={'40px'} gap={'12px'}>
-          <Skeleton h='108px' w='108px' borderRadius={16} />
+          <Skeleton
+            h='108px'
+            w='108px'
+            borderRadius={16}
+            startColor='rgba(27, 34, 44, 0.1)'
+            endColor='rgba(27, 34, 44, 0.2)'
+          />
           <Skeleton
             h='108px'
             w={{
@@ -31,6 +38,8 @@ const CollectionDescription: FunctionComponent<{
               sm: '100%',
               xs: '100%',
             }}
+            startColor='rgba(27, 34, 44, 0.1)'
+            endColor='rgba(27, 34, 44, 0.2)'
             borderRadius={16}
           />
         </Flex>
@@ -39,11 +48,24 @@ const CollectionDescription: FunctionComponent<{
           rowGap={'16px'}
           wrap='wrap'
           justify='flex-start'
-          columnGap={{ md: '80px', sm: '40px', xs: '40px' }}
+          columnGap={{
+            xl: '80px',
+            lg: '50px',
+            md: '50px',
+            sm: '40px',
+            xs: '40px',
+          }}
         >
           {[
             range(5).map((i) => (
-              <Skeleton h='60px' key={i} w='88px' borderRadius={16} />
+              <Skeleton
+                h='60px'
+                key={i}
+                w='88px'
+                borderRadius={16}
+                startColor='rgba(27, 34, 44, 0.1)'
+                endColor='rgba(27, 34, 44, 0.2)'
+              />
             )),
           ]}
         </Flex>
@@ -59,17 +81,16 @@ const CollectionDescription: FunctionComponent<{
     imagePreviewUrl = '',
     safelistRequestStatus,
     nftCollectionStat: {
-      floorPrice,
       totalSupply,
-      totalSales,
-      oneDayChange,
-      oneDayAveragePrice,
+      // totalSales,
+      // oneDayChange,
+      // oneDayAveragePrice,
     },
   } = data
 
   return (
     <Box mb={'40px'}>
-      <Flex gap={'20px'} mb={'32px'}>
+      <Flex gap={'20px'} mb={'32px'} alignItems={'center'}>
         <ImageWithFallback
           src={imagePreviewUrl}
           borderRadius={{
@@ -133,7 +154,7 @@ const CollectionDescription: FunctionComponent<{
                 bg: 'gray.5',
               }}
               px={'16px'}
-              py={'8px'}
+              py={'4px'}
               ml={'-16px'}
               hidden={!description}
             >
@@ -147,7 +168,13 @@ const CollectionDescription: FunctionComponent<{
         rowGap={'16px'}
         wrap='wrap'
         justify='flex-start'
-        columnGap={{ md: '80px', sm: '60px', xs: '60px' }}
+        columnGap={{
+          xl: '80px',
+          lg: '50px',
+          md: '50px',
+          sm: '40px',
+          xs: '40px',
+        }}
       >
         <Flex flexDir='column' alignItems='center' m={0}>
           <Flex alignItems={'center'}>
@@ -158,7 +185,7 @@ const CollectionDescription: FunctionComponent<{
               display='flex'
               mb={'4px'}
             >
-              {floorPrice || '--'}
+              {formatFloat(floorPrice)}
             </Heading>
           </Flex>
 
@@ -180,11 +207,11 @@ const CollectionDescription: FunctionComponent<{
               mb={'4px'}
             >
               {formatFloat(
-                BigNumber(floorPrice)
+                BigNumber(floorPrice || 0)
                   .multipliedBy(BigNumber(10000).minus(Number(highestRate)))
                   .dividedBy(10000)
                   .toNumber(),
-              ) || '--'}
+              )}
             </Heading>
           </Flex>
 
@@ -192,11 +219,11 @@ const CollectionDescription: FunctionComponent<{
             color='gray.4'
             fontSize={{ md: '14px', sm: '12px', xs: '12px' }}
           >
-            Min DP
+            Min Down payment
           </Text>
         </Flex>
         {/* 24h */}
-        <Flex flexDir='column' alignItems='center'>
+        {/* <Flex flexDir='column' alignItems='center'>
           <Flex alignItems={'center'}>
             <SvgComponent svgId='icon-eth' svgSize='20px' />
             <Heading
@@ -222,7 +249,7 @@ const CollectionDescription: FunctionComponent<{
               {`24h ${BigNumber(oneDayChange).multipliedBy(100).toFixed(2)}%`}
             </Highlight>
           </Text>
-        </Flex>
+        </Flex> */}
         {/* supply */}
         <Flex flexDir='column' alignItems='center'>
           <Flex alignItems={'center'}>
@@ -244,7 +271,7 @@ const CollectionDescription: FunctionComponent<{
           </Text>
         </Flex>
         {/* listing */}
-        <Flex flexDir='column' alignItems='center'>
+        {/* <Flex flexDir='column' alignItems='center'>
           <Flex alignItems={'center'}>
             <Heading
               fontSize={{ md: '24px', sm: '20px', xs: '20px' }}
@@ -262,7 +289,7 @@ const CollectionDescription: FunctionComponent<{
           >
             Listing
           </Text>
-        </Flex>
+        </Flex> */}
       </Flex>
     </Box>
   )
