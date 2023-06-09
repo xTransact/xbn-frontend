@@ -84,7 +84,7 @@ const COLLECTION_DEMO = {
 }
 
 export const TransactionContext = createContext({
-  connectWallet: () => {},
+  connectWallet: async () => {},
   currentAccount: '',
   isConnected: false,
   connectLoading: false,
@@ -101,6 +101,7 @@ export const TransactionsProvider = ({
 }: {
   children: ReactElement
 }) => {
+  const { runAsync: signAuth } = useAuth()
   // collection 提取到外层
   const [collectionAddressArr, setCollectionAddressArr] = useState<string[]>([])
   const { loading } = useRequest(apiGetActiveCollection, {
@@ -188,7 +189,24 @@ export const TransactionsProvider = ({
       setCurrentAccount('')
     }
   }, [toast, setCurrentAccount, setIsConnected, isConnected])
-
+  useEffect(() => {
+    // eth_accounts always returns an array.
+    async function handleAccountsChanged(accounts: string[]) {
+      if (accounts.length === 0) {
+        // MetaMask is locked or the user has not connected any accounts.
+        console.log('Please connect to MetaMask.')
+      } else if (accounts[0] !== currentAccount) {
+        // Reload your interface with accounts[0].
+        localStorage.removeItem('auth')
+        localStorage.removeItem('metamask-connect-address')
+        setCurrentAccount(accounts[0])
+        await signAuth(accounts[0])
+        window.location.href = '/marketing-campaign'
+        // window.location = window.location
+      }
+    }
+    window.ethereum.on('accountsChanged', handleAccountsChanged)
+  }, [])
   const handleSwitchNetwork = useCallback(async () => {
     if (!ethereum) {
       return
@@ -243,8 +261,6 @@ export const TransactionsProvider = ({
     }
   }, [toast, setCurrentAccount, setIsConnected])
 
-  const { runAsync } = useAuth()
-
   const connectWallet = useCallback(async () => {
     try {
       if (window.location.pathname === '/demo') return
@@ -267,16 +283,17 @@ export const TransactionsProvider = ({
       const accounts = await ethereum.request({
         method: 'eth_requestAccounts',
       })
+
       setCurrentAccount(accounts[0])
       setIsConnected(true)
-      await runAsync(accounts[0])
+      await signAuth(accounts[0])
       setConnectLoading(false)
     } catch (error) {
       setConnectLoading(false)
 
       throw new Error('No ethereum object')
     }
-  }, [toast, handleSwitchNetwork, setCurrentAccount, runAsync, setIsConnected])
+  }, [toast, handleSwitchNetwork, setCurrentAccount, signAuth, setIsConnected])
 
   useEffect(() => {
     checkIfWalletIsConnect()
