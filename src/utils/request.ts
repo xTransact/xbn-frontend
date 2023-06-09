@@ -30,7 +30,7 @@ const request = axios.create({
 request.interceptors.request.use(async ({ url, baseURL, ...config }) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
-    if (url?.startsWith('/api/')) {
+    if (url?.startsWith('/api/') || url?.startsWith('/lending/query')) {
       _baseURL = VITE_BASE_URL_2
     } else {
       _baseURL = VITE_BASE_URL
