@@ -12,6 +12,7 @@ interface ImportMetaEnv {
   readonly VITE_BASE_URL: string
   readonly VITE_TARGET_CHAIN_ID: string
   readonly VITE_TARGET_CHAIN_BASE_URL: string
+  readonly VITE_WEBSITE: string
 }
 
 interface ImportMeta {
