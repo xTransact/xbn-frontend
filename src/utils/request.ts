@@ -9,7 +9,7 @@ import { getUserToken } from './auth'
 // import { decrypt } from './decrypt'
 // import { PWD } from '@consts/crypt'
 
-const { MODE, VITE_BASE_URL } = import.meta.env
+const { MODE, VITE_BASE_URL, VITE_WEBSITE } = import.meta.env
 
 const { toast } = createStandaloneToast({
   defaultOptions: {
@@ -30,8 +30,8 @@ const request = axios.create({
 request.interceptors.request.use(async ({ url, baseURL, ...config }) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
-    if (url === '/api/ver2/exchange/xcurrency/latest') {
-      _baseURL = 'https://xcr.tratao.com/'
+    if (url?.startsWith('/api/')) {
+      _baseURL = VITE_WEBSITE
     } else {
       _baseURL = VITE_BASE_URL
     }
