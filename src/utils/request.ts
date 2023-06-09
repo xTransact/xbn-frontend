@@ -9,7 +9,7 @@ import { getUserToken } from './auth'
 // import { decrypt } from './decrypt'
 // import { PWD } from '@consts/crypt'
 
-const { MODE, VITE_BASE_URL, VITE_WEBSITE } = import.meta.env
+const { MODE, VITE_BASE_URL, VITE_BASE_URL_2 } = import.meta.env
 
 const { toast } = createStandaloneToast({
   defaultOptions: {
@@ -31,7 +31,7 @@ request.interceptors.request.use(async ({ url, baseURL, ...config }) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
     if (url?.startsWith('/api/')) {
-      _baseURL = VITE_WEBSITE
+      _baseURL = VITE_BASE_URL_2
     } else {
       _baseURL = VITE_BASE_URL
     }
