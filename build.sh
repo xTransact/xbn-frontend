@@ -1,7 +1,7 @@
 # !/bin/bash
 a=$CF_PAGES_BRANCH
-b="master"
-if [ $a == $b ]
+b=master
+if [ "$a" = "$b" ]
 then
    npm run build:production
 else
