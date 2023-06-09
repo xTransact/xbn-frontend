@@ -689,13 +689,15 @@ const Lend = () => {
         render: (_: any, item: Record<string, any>) => {
           return (
             <Text>
-              {BigNumber(
-                wei2Eth(
-                  BigNumber(item.installment)
-                    .multipliedBy(item?.number_of_installments)
-                    .minus(item.loan_amount),
-                ) || 0,
-              ).toFormat(FORMAT_NUMBER, BigNumber.ROUND_UP)}
+              {formatFloat(
+                BigNumber(
+                  wei2Eth(
+                    BigNumber(item.installment)
+                      .multipliedBy(item?.number_of_installments)
+                      .minus(item.loan_amount),
+                  ) || 0,
+                ),
+              )}
               {UNIT}
             </Text>
           )
