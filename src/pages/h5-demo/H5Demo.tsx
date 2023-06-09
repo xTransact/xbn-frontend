@@ -223,7 +223,8 @@ const H5Demo = () => {
         return BigNumber(0)
       }
       const { pool_days, pool_apr } = selectPool
-      const loanEthAmount = Number(wei2Eth(loanWeiAmount))
+      const loanEthAmount = wei2Eth(loanWeiAmount)
+      if (!loanEthAmount) return BigNumber(0)
       const apr = pool_apr / 10000
       return amortizationCalByDays(loanEthAmount, apr, pool_days, value)
     },
@@ -283,7 +284,7 @@ const H5Demo = () => {
               MimicShhans #4088
             </Text>
             <Text fontSize={'12px'} fontWeight='500'>
-              {wei2Eth(commodityWeiPrice)} ETH
+              {wei2Eth(commodityWeiPrice) || '--'} ETH
             </Text>
           </Flex>
         </Flex>
@@ -327,7 +328,7 @@ const H5Demo = () => {
             >
               <SvgComponent svgId='icon-eth' svgSize='14px' />
               <Text fontSize={'12px'} fontWeight='700'>
-                {wei2Eth(downPaymentWei)}
+                {wei2Eth(downPaymentWei) || '--'}
               </Text>
             </Flex>
           )}
@@ -380,7 +381,7 @@ const H5Demo = () => {
           <Flex alignItems={'base-line'}>
             <SvgComponent svgId='icon-eth' svgSize='14px' mt='3px' />
             <Text fontSize='14px' fontWeight='500'>
-              {wei2Eth(loanWeiAmount)}
+              {wei2Eth(loanWeiAmount) || '--'}
             </Text>
           </Flex>
         </Flex>
@@ -467,7 +468,7 @@ const H5Demo = () => {
                 </Text>
               </Flex>
               <Text fontSize='14px' fontWeight='medium'>
-                {wei2Eth(downPaymentWei)}
+                {wei2Eth(downPaymentWei) || '--'}
               </Text>
             </Flex>
             {range(installmentValue).map((value, index) => (
@@ -519,7 +520,7 @@ const H5Demo = () => {
             >
               <Text>NFT price</Text>
               <Text fontWeight='500'>
-                {wei2Eth(commodityWeiPrice)} {UNIT}
+                {wei2Eth(commodityWeiPrice) || '--'} {UNIT}
               </Text>
             </Flex>
             <Flex
@@ -531,7 +532,7 @@ const H5Demo = () => {
             >
               <Text>Down payment</Text>
               <Text fontWeight='500'>
-                {wei2Eth(downPaymentWei)} {UNIT}
+                {wei2Eth(downPaymentWei) || '--'} {UNIT}
               </Text>
             </Flex>
             <Flex
@@ -543,7 +544,7 @@ const H5Demo = () => {
             >
               <Text>Loan amount</Text>
               <Text fontWeight='500'>
-                {wei2Eth(loanWeiAmount)} {UNIT}
+                {wei2Eth(loanWeiAmount) || '--'} {UNIT}
               </Text>
             </Flex>
             <Flex
@@ -557,7 +558,7 @@ const H5Demo = () => {
               <Text fontWeight='500'>
                 {getPlanPer(installmentValue)
                   .multipliedBy(installmentValue)
-                  .minus(Number(wei2Eth(loanWeiAmount)))
+                  .minus(wei2Eth(loanWeiAmount) || 0)
                   .toFormat(FORMAT_NUMBER)}
                 &nbsp;
                 {UNIT}
@@ -574,8 +575,8 @@ const H5Demo = () => {
               <Text>
                 {getPlanPer(installmentValue)
                   .multipliedBy(installmentValue)
-                  .minus(Number(wei2Eth(loanWeiAmount)))
-                  .plus(Number(wei2Eth(commodityWeiPrice)))
+                  .minus(wei2Eth(loanWeiAmount) || 0)
+                  .plus(wei2Eth(commodityWeiPrice) || 0)
                   .toFormat(FORMAT_NUMBER)}
                 &nbsp;{UNIT}
               </Text>
@@ -590,8 +591,8 @@ const H5Demo = () => {
               <Text>
                 {getPlanPer(installmentValue)
                   .multipliedBy(installmentValue)
-                  .minus(Number(wei2Eth(loanWeiAmount)))
-                  .plus(Number(wei2Eth(commodityWeiPrice)))
+                  .minus(wei2Eth(loanWeiAmount) || 0)
+                  .plus(wei2Eth(commodityWeiPrice) || 0)
                   .multipliedBy(1.025)
                   .toFormat(FORMAT_NUMBER)}
                 &nbsp;{UNIT}
@@ -621,7 +622,7 @@ const H5Demo = () => {
         >
           Pay now with
           <Text fontWeight={'700'}>
-            &nbsp;{wei2Eth(downPaymentWei)}&nbsp;{UNIT}
+            &nbsp;{wei2Eth(downPaymentWei) || '--'}&nbsp;{UNIT}
           </Text>
         </Button>
       </Flex>

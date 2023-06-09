@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:production": "tsc && vite build --mode  production",
+    "build:production": "tsc && vite build --mode production",
     "build:staging": "tsc && vite build --mode staging",
     "compress": "node tinyfy.js",
     "dev": "vite --host",
@@ -16,7 +16,8 @@
     "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
     "prepare": "husky install",
     "prettier": "prettier --check --write \"src/**/*\"",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite --host"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": "npm run lint-staged:js",
@@ -46,7 +47,6 @@
     "rc-pagination": "^3.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-jazzicon": "^1.0.4",
     "react-photo-view": "^1.2.3",
     "react-router-dom": "^6.8.0",
     "react-select": "^5.7.0",

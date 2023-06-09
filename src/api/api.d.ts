@@ -1,6 +1,7 @@
 interface PoolsListItemType {
   id: number
   pool_id: number
+  created_at: string
   owner_address: string
   allow_collateral_contract: string
   support_erc20_denomination: string
@@ -13,7 +14,7 @@ interface PoolsListItemType {
   loan_time_concession_flexibility: number
   loan_ratio_preferential_flexibility: number
   activity: boolean
-  collection_info: CollectionListItemType
+  maximum_loan_amount: number
 }
 
 interface CollectionListItemType {
@@ -47,6 +48,10 @@ interface AssetListItemType {
   updated_at: string
 }
 
+enum MARKET_TYPE_ENUM {
+  OPENSEA = 'opensea',
+  BLUR = 'blur',
+}
 interface LoanOrderDataType {
   // pool id
   pool_id: string
@@ -57,17 +62,19 @@ interface LoanOrderDataType {
   // 地板价 传 commodity_price
   oracle_floor_price: string
   // 首付价格
-  load_principal_amount: string
+  down_payment: string
   // 贷款金额
-  total_repayment: string
+  loan_amount: string
   // 利率
   loan_interest_rate: number
   //
   loan_duration: number
   // n 期
-  repay_times: number
+  number_of_installments: number
   // token ID
   nft_collateral_id: string
+  // platform
+  platform: MARKET_TYPE_ENUM
 }
 
 interface LoanListItemType {
@@ -81,19 +88,91 @@ interface LoanListItemType {
   loan_ratio_preferential_flexibility: number
   lender_address: string
   borrower_address: string
-  load_principal_amount: string
-  total_repayment: string
-  repayed_amount: string
+  down_payment: string
+  loan_amount: string
+  repaid_principal: string
+  repaid_interest: string
   loan_status: 1 | 2 | 3
-  loan_interest: string
+  installment: string
+  lp_scheduled_received: string
+  protocol_ir_multiplier: string
   loan_interest_rate: number
   loan_start_time: number
   loan_duration: number
-  repay_times: number
+  number_of_installments: number
   commodity_price: string
   oracle_floor_price: string
   nft_collateral_contract: string
   nft_collateral_id: string
   loan_erc20_denomination: string
   activity: boolean
+}
+
+interface MyAssetListItemType {
+  asset_contract_address: string
+  token_id: string
+  qty: string
+  mortgaged: boolean
+  listed_with_mortgage: boolean
+  list_price: string
+}
+
+enum LISTING_TYPE {
+  LISTING = 1,
+  CANCEL = 2,
+}
+interface ListingDataType {
+  type: LISTING_TYPE
+  platform: string
+  contract_address: string
+  token_id: string
+  network: string
+  currency: string
+  qty: number
+  price?: string
+  expiration_time?: number
+  borrower_address: string
+}
+
+interface AssetPriceType {
+  data: {
+    marketplace: string
+    blur_price?: {
+      amount: number
+      unit: string
+    }
+    opensea_price?: {
+      amount: number
+      unit: string
+      hash: string
+      chain: string
+      protocol_address: string
+    }
+  }[]
+}
+
+interface ListingsItemType {
+  act_gas_limit: number
+  act_gas_price: string
+  borrower_address: string
+  contract_address: string
+  created_at: string
+  currency: string
+  expiration_time: number
+  gas_limit: number
+  gas_price: string
+  gas_used: number
+  id: number
+  network: string
+  platform: string
+  platform_ord_id: string
+  price: string
+  qty: number
+  status: number
+  status_history: number
+  sub_status: number
+  token_id: string
+  tx_id: string
+  type: number
+  updated_at: string
 }

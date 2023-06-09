@@ -1,7 +1,10 @@
 import { createStandaloneToast } from '@chakra-ui/react'
 import axios from 'axios'
+import isEmpty from 'lodash-es/isEmpty'
 
 import { TOAST_OPTION_CONFIG } from '@/constants'
+
+import { getUserToken } from './auth'
 // import { type Request } from 'aws4'
 // import { decrypt } from './decrypt'
 // import { PWD } from '@consts/crypt'
@@ -16,11 +19,12 @@ const { toast } = createStandaloneToast({
 
 const request = axios.create({
   baseURL: '',
-  // headers: {
-  //   appKey: '',
-  //   appversion: '',
-  // },
-  // timeout: 10000,
+  headers: {
+    Authorization: getUserToken()
+      ? `Bearer ${getUserToken()?.token}`
+      : undefined,
+  },
+  timeout: 20000,
 })
 
 request.interceptors.request.use(async ({ url, baseURL, ...config }) => {
@@ -43,30 +47,26 @@ request.interceptors.response.use(
   (resp) => {
     return resp?.data
   },
-  (error) => {
+  (e) => {
     const {
-      response: { status, data },
-    } = error
-    if (status >= 500) {
+      response: { data },
+    } = e
+
+    const { error } = data
+
+    if (error && !isEmpty(error)) {
+      const { code, message } = error
+
       toast({
-        title: 'Oops, network error...',
-        status: 'error',
-        isClosable: true,
-        id: 'request-error-toast',
-      })
-      throw error
-    }
-    if (status < 500 && status >= 400) {
-      const { code, message } = data
-      console.log('🚀 ~ file: request.ts:57 ~ code:', code)
-      toast({
-        title: message || 'Oops, network error...',
+        title: code || 'Oops, network error...',
+        description: message,
         status: 'error',
         isClosable: true,
         id: 'request-error-toast',
       })
     }
-    throw error
+
+    throw data
   },
 )
 

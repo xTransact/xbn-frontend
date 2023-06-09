@@ -9,7 +9,9 @@ const RootLayout: React.FC<{ children: React.ReactElement }> = ({
   return (
     <>
       <Header />
-      <Container maxW={RESPONSIVE_MAX_W}>{children}</Container>
+      <Container maxW={RESPONSIVE_MAX_W} minH={'calc(100vh - 440px)'}>
+        {children}
+      </Container>
       <Footer />
     </>
   )

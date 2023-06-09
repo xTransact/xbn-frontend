@@ -60,5 +60,6 @@ query Asset(
       like
       likeCount
     }
+    orderPriceMarket
   }
 }

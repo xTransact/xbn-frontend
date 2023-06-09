@@ -12,6 +12,7 @@ import {
 
 import { apiGetActiveCollection } from '@/api'
 import { useNftCollectionsByContractAddressesQuery } from '@/hooks'
+import useAuth from '@/hooks/useAuth'
 
 const COLLECTION_DEMO = {
   contractAddress: '',
@@ -85,6 +86,7 @@ const COLLECTION_DEMO = {
 export const TransactionContext = createContext({
   connectWallet: () => {},
   currentAccount: '',
+  isConnected: false,
   connectLoading: false,
   handleSwitchNetwork: async () => {},
   handleDisconnect: () => {},
@@ -140,6 +142,53 @@ export const TransactionsProvider = ({
     },
   )
 
+  const [isConnected, setIsConnected] = useLocalStorageState<boolean>(
+    'address-connected',
+    {
+      defaultValue: false,
+    },
+  )
+
+  const handleDisconnect = useCallback(() => {
+    setCurrentAccount('')
+    setIsConnected(false)
+    window.location.href = '/'
+  }, [setCurrentAccount, setIsConnected])
+
+  const checkIfWalletIsConnect = useCallback(async () => {
+    try {
+      if (window.location.pathname === '/demo') return
+      if (!isConnected) {
+        setCurrentAccount('')
+        return
+      }
+      if (!ethereum) {
+        toast.closeAll()
+        toast({
+          title: `please install metamask`,
+          status: 'error',
+          isClosable: true,
+        })
+        return
+      }
+      if (ethereum.chainId !== import.meta.env.VITE_TARGET_CHAIN_ID) {
+        return
+      }
+
+      const accounts = await ethereum.request({ method: 'eth_accounts' })
+      setIsConnected(true)
+      if (accounts.length) {
+        setCurrentAccount(accounts[0])
+
+        // getAllTransactions();
+      } else {
+        setCurrentAccount('')
+      }
+    } catch (error) {
+      setCurrentAccount('')
+    }
+  }, [toast, setCurrentAccount, setIsConnected, isConnected])
+
   const handleSwitchNetwork = useCallback(async () => {
     if (!ethereum) {
       return
@@ -149,6 +198,21 @@ export const TransactionsProvider = ({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: import.meta.env.VITE_TARGET_CHAIN_ID }],
       })
+      const accounts = await ethereum.request({ method: 'eth_accounts' })
+
+      if (accounts.length) {
+        setCurrentAccount(accounts[0])
+        // getAllTransactions();
+      } else {
+        setConnectLoading(true)
+        const requestedAccounts = await ethereum.request({
+          method: 'eth_requestAccounts',
+        })
+
+        setCurrentAccount(requestedAccounts[0])
+        setConnectLoading(false)
+      }
+      setIsConnected(true)
     } catch (switchError: any) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
@@ -171,105 +235,19 @@ export const TransactionsProvider = ({
         //   // handle "add" error
         // }
       } else {
-        console.log(switchError)
         toast({
           status: 'info',
           title: 'please switch Ethereum Chain first',
         })
       }
     }
-  }, [toast])
+  }, [toast, setCurrentAccount, setIsConnected])
 
-  // const getAllTransactions = async () => {
-  //   try {
-  //     if (ethereum) {
-  //       const transactionsContract = createXBankContract();
-
-  //       const availableTransactions =
-  //         await transactionsContract.getAllTransactions();
-
-  //       const structuredTransactions = availableTransactions.map(
-  //         (transaction) => ({
-  //           addressTo: transaction.receiver,
-  //           addressFrom: transaction.sender,
-  //           timestamp: new Date(
-  //             transaction.timestamp.toNumber() * 1000
-  //           ).toLocaleString(),
-  //           message: transaction.message,
-  //           keyword: transaction.keyword,
-  //           amount: parseInt(transaction.amount._hex) / 10 ** 18,
-  //         })
-  //       );
-
-  //       console.log(structuredTransactions);
-
-  //       setTransactions(structuredTransactions);
-  //     } else {
-  //       console.log('Ethereum is not present');
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  useEffect(() => {
-    if (!ethereum) return
-
-    ethereum.on('accountsChanged', function () // accounts: string[]
-    {
-      // 一旦切换账号这里就会执行
-      window.location.reload()
-      // if (isEmpty(accounts)) {
-      //   // setCurrentAccount('')
-      //   window.location.reload()
-      //   return
-      // }
-    })
-    ethereum.on('chainChanged', () => {
-      window.location.reload()
-      setCurrentAccount('')
-    })
-    ethereum.on('disconnect', () => {
-      window.location.reload()
-      setCurrentAccount('')
-    })
-  }, [setCurrentAccount])
-
-  const checkIfWalletIsConnect = useCallback(async () => {
-    try {
-      if (window.location.pathname === '/xlending/demo') return
-      if (!ethereum) {
-        toast.closeAll()
-        toast({
-          title: `please install metamask`,
-          status: 'error',
-          isClosable: true,
-        })
-        return
-      }
-      if (ethereum.chainId !== import.meta.env.VITE_TARGET_CHAIN_ID) {
-        return
-      }
-
-      const accounts = await ethereum.request({ method: 'eth_accounts' })
-
-      if (accounts.length && currentAccount) {
-        setCurrentAccount(accounts[0])
-
-        // getAllTransactions();
-      } else {
-        setCurrentAccount('')
-        console.log('No accounts found')
-      }
-    } catch (error) {
-      setCurrentAccount('')
-      console.log(error)
-    }
-  }, [toast, currentAccount, setCurrentAccount])
+  const { runAsync } = useAuth()
 
   const connectWallet = useCallback(async () => {
     try {
-      if (window.location.pathname === '/xlending/demo') return
+      if (window.location.pathname === '/demo') return
 
       if (!ethereum) {
         toast.closeAll()
@@ -289,53 +267,16 @@ export const TransactionsProvider = ({
       const accounts = await ethereum.request({
         method: 'eth_requestAccounts',
       })
-
       setCurrentAccount(accounts[0])
+      setIsConnected(true)
+      await runAsync(accounts[0])
       setConnectLoading(false)
     } catch (error) {
-      console.log(error)
       setConnectLoading(false)
 
       throw new Error('No ethereum object')
     }
-  }, [toast, handleSwitchNetwork, setCurrentAccount])
-
-  // const sendTransaction = async () => {
-  //   try {
-  //     if (!!ethereum) {
-  //       const transactionsContract = createXBankContract()
-  //       // const parsedAmount = ethers.utils.parseEther(amount)
-
-  //       // await ethereum.request({
-  //       //   method: 'eth_sendTransaction',
-  //       //   params: [
-  //       //     {
-  //       //       from: currentAccount,
-  //       //       to: addressTo,
-  //       //       gas: '0x5208',
-  //       //       value: parsedAmount._hex,
-  //       //     },
-  //       //   ],
-  //       // })
-
-  //       const transactionHash = await transactionsContract.balanceOf(
-  //         '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
-  //       )
-
-  //       setIsLoading(true)
-  //       console.log(`Loading - ${transactionHash.hash}`)
-  //       await transactionHash.wait()
-  //       console.log(`Success - ${transactionHash.hash}`)
-  //       setIsLoading(false)
-  //     } else {
-  //       console.log('No ethereum object')
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-
-  //     throw new Error('No ethereum object')
-  //   }
-  // }
+  }, [toast, handleSwitchNetwork, setCurrentAccount, runAsync, setIsConnected])
 
   useEffect(() => {
     checkIfWalletIsConnect()
@@ -348,14 +289,15 @@ export const TransactionsProvider = ({
         // transactionCount,
         connectWallet,
         // transactions,
-        currentAccount,
+        currentAccount: currentAccount as string,
         connectLoading,
         // isLoading,
         // sendTransaction,
         // handleChange,
         // formData,
         handleSwitchNetwork,
-        handleDisconnect: () => setCurrentAccount(''),
+        handleDisconnect,
+        isConnected: isConnected as boolean,
         // @ts-ignore
         collectionList,
         collectionLoading: loading || collectionLoading,

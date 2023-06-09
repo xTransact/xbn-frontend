@@ -6,9 +6,10 @@ import {
   Thead,
   Tr,
   Flex,
-  Box,
+  type FlexProps,
   type TableProps,
   type TextProps,
+  Box,
 } from '@chakra-ui/react'
 import isEmpty from 'lodash-es/isEmpty'
 import { useState, type ReactElement } from 'react'
@@ -32,6 +33,8 @@ export interface ColumnProps {
   render?: ColumnRenderType
   sortable?: boolean
   fixedRight?: boolean
+  fixedRightStyle?: FlexProps
+  tdStyleConfig?: FlexProps
 }
 export type MyTableProps = TableProps & {
   columns: ColumnProps[]
@@ -75,10 +78,10 @@ const MyTable = ({
   return (
     <Box position={'relative'}>
       {!!tableTitle && tableTitle()}
-      {<LoadingComponent loading={loading} minHeight='250px' />}
+      {<LoadingComponent loading={loading} minHeight='120px' />}
       {isEmpty(data) && (
         <Box h='250px'>
-          <Box left={0} right={0} top={'40px'} bottom={0} pos='absolute'>
+          <Box left={0} right={0} top={'30px'} bottom={0} pos='absolute'>
             {emptyRender ? emptyRender() : <EmptyComponent />}
           </Box>
         </Box>
@@ -182,7 +185,7 @@ const MyTable = ({
                             ? `-4px 0 5px -3px var(--chakra-colors-gray-2)`
                             : ''
                         }
-                        py={'16px'}
+                        py={'12px'}
                         px={i !== 0 ? '24px' : 0}
                         {...styleConfig?.thTextProps}
                       >
@@ -217,6 +220,7 @@ const MyTable = ({
                         width,
                         align = 'left',
                         fixedRight,
+                        tdStyleConfig,
                       },
                       colIndex,
                     ) => (
@@ -252,7 +256,7 @@ const MyTable = ({
                               ? `-4px 0 5px -3px var(--chakra-colors-gray-2)`
                               : ''
                           }
-                          py={'16px'}
+                          py={'12px'}
                           w={width}
                           paddingInlineStart={'24px'}
                           paddingInlineEnd={'24px'}
@@ -267,6 +271,7 @@ const MyTable = ({
                             colIndex === columns?.length - 1 ? 10 : 0
                           }
                           {...styleConfig?.tdTextProps}
+                          {...tdStyleConfig}
                         >
                           {!!render ? (
                             <Flex justifyContent={align}>

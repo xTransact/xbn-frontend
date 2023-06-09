@@ -1,0 +1,63 @@
+query Assets($orderBy: NFTAssetOrderBy!, $tag: String!) {
+  assets(orderBy: $orderBy, tag: $tag) {
+    edges {
+      node {
+        animationOriginalUrl
+        animationUrl
+        assetContractAddress
+        backgroundColor
+        chain
+        createdAt
+        creator
+        description
+        externalLink
+        id
+        imageOriginalUrl
+        imagePreviewUrl
+        imageThumbnailUrl
+        imageUrl
+        name
+        nftAssetContract {
+          address
+          assetContractType
+          buyerFeeBasisPoints
+          createdAt
+          createdDate
+          description
+          externalLink
+          id
+          imageUrl
+          name
+          nftVersion
+          openseaBuyerFeeBasisPoints
+          openseaSellerFeeBasisPoints
+          openseaVersion
+          payoutAddress
+          schemaName
+          sellerFeeBasisPoints
+          symbol
+          totalSupply
+          updatedAt
+        }
+        orderChain
+        orderCoin
+        orderPrice
+        owner
+        rarity
+        rarityLevel
+        rarityRank
+        tokenID
+        transferFee
+        transferFeePaymentToken
+        updatedAt
+        orderPriceMarket
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+    totalCount
+  }
+}

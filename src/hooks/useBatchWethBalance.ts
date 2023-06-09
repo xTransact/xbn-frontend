@@ -36,7 +36,6 @@ const useBatchWethBalance = (addressArr?: string[]) => {
     if (!input) return balanceMap
     // Only one promise is run at once
     await Promise.all(input)
-    console.log('🚀 ~ file: NftAssetDetail.tsx:207 ~ balanceMap:', balanceMap)
 
     return balanceMap
   }, [addressArr])

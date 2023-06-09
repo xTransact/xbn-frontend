@@ -12,35 +12,33 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  NumberInputField,
-  NumberInput,
-  useToast,
   useDisclosure,
+  Flex,
+  Tooltip,
+  Box,
 } from '@chakra-ui/react'
 import { useRequest } from 'ahooks'
-import debounce from 'lodash-es/debounce'
+import BigNumber from 'bignumber.js'
 import {
-  type ReactNode,
   useCallback,
   useMemo,
   useRef,
   useState,
   type FunctionComponent,
-  useEffect,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Web3 from 'web3/dist/web3.min.js'
 
-import { ConnectWalletModal, SvgComponent } from '@/components'
-import { WETH_CONTRACT_ADDRESS, XBANK_CONTRACT_ADDRESS } from '@/constants'
-import { useWallet } from '@/hooks'
 import {
-  createWeb3Provider,
-  createWethContract,
-  createXBankContract,
-} from '@/utils/createContract'
+  ConnectWalletModal,
+  CustomNumberInput,
+  SvgComponent,
+} from '@/components'
+import { WETH_CONTRACT_ADDRESS, XBANK_CONTRACT_ADDRESS } from '@/constants'
+import { useCatchContractError, useWallet } from '@/hooks'
+import { createWethContract, createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
-import { wei2Eth } from '@/utils/unit-conversion'
+import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
 /**
  * create pool
@@ -56,6 +54,7 @@ const CreatePoolButton: FunctionComponent<
       loanRatioPreferentialFlexibility: number
       allowCollateralContract: string
       floorPrice: number
+      maxSingleLoanAmount: string
     }
   }
 > = ({ children, data, ...rest }) => {
@@ -67,10 +66,10 @@ const CreatePoolButton: FunctionComponent<
     loanRatioPreferentialFlexibility,
     allowCollateralContract,
     floorPrice,
+    maxSingleLoanAmount,
   } = data
-  const toast = useToast()
+  const { toast, toastError } = useCatchContractError()
   const timer = useRef<NodeJS.Timeout>()
-  const [flag, setFlag] = useState(true)
   const navigate = useNavigate()
   const { currentAccount, interceptFn, isOpen, onClose } = useWallet()
   const {
@@ -83,15 +82,19 @@ const CreatePoolButton: FunctionComponent<
   const [createLoading, setCreateLoading] = useState(false)
   const [subscribeLoading, setSubscribeLoading] = useState(false)
 
-  useEffect(() => {
-    const web3 = createWeb3Provider()
-    web3.eth.clearSubscriptions()
-    return () => {
-      web3.eth.clearSubscriptions()
-    }
-  }, [])
+  // useEffect(() => {
+  //   const web3 = createWeb3Provider()
+  //   web3.eth.clearSubscriptions()
+  //   return () => {
+  //     web3.eth.clearSubscriptions()
+  //   }
+  // }, [])
 
   const [amount, setAmount] = useState('')
+  const defaultAmount = useMemo(() => {
+    if (!floorPrice || !poolMaximumPercentage) return ''
+    return `${(floorPrice * poolMaximumPercentage) / 10000}`
+  }, [floorPrice, poolMaximumPercentage])
 
   const initialRef = useRef(null)
   const finalRef = useRef(null)
@@ -119,23 +122,26 @@ const CreatePoolButton: FunctionComponent<
   const isError = useMemo(() => {
     //  amount < balance + Has been lent
     if (!amount) return false
-    const NumberAmount = Number(amount)
-    if (NumberAmount > Number(wei2Eth(wethData))) {
-      setErrorMsg(
-        ` Insufficient wallet balance: ${formatFloat(
-          Number(wei2Eth(wethData)),
-        )} WETH`,
-      )
+    const wethNum = wei2Eth(wethData)
+    if (!wethNum) {
+      setErrorMsg(` Insufficient wallet balance: 0 WETH`)
       return true
     }
-    if (NumberAmount < floorPrice * 0.1) {
+    const NumberAmount = Number(amount)
+    if (NumberAmount > wethNum) {
+      setErrorMsg(` Insufficient wallet balance: ${formatFloat(wethNum)} WETH`)
+      return true
+    }
+    if (NumberAmount < (floorPrice * poolMaximumPercentage) / 10000) {
       setErrorMsg(
-        `Insufficient funds, Minimum input: ${formatFloat(floorPrice * 0.1)}`,
+        `Insufficient funds, Minimum input: ${formatFloat(
+          (floorPrice * poolMaximumPercentage) / 10000,
+        )}`,
       )
       return true
     }
     return false
-  }, [amount, wethData, floorPrice])
+  }, [amount, wethData, floorPrice, poolMaximumPercentage])
 
   const onConfirm = useCallback(() => {
     interceptFn(async () => {
@@ -143,12 +149,14 @@ const CreatePoolButton: FunctionComponent<
        * 平均总耗时：
        * 1676961248463 - 1676961180777 =  67686 ms ≈ 1min
        */
-      console.log(new Date().getTime(), '----------------start')
       // 预计算
       const UNIT256MAX =
         '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
       try {
-        const parsedWeiAmount = Web3.utils.toWei(amount, 'ether')
+        const parsedWeiAmount = eth2Wei(amount)?.toString()
+        const parsedWeiMaximumLoanAmount =
+          eth2Wei(maxSingleLoanAmount)?.toString()
+
         const wethContract = createWethContract()
         setApproveLoading(true)
         const _allowance = await wethContract.methods
@@ -170,7 +178,6 @@ const CreatePoolButton: FunctionComponent<
 
         // const supportERC20Denomination = approveHash?.to
         const supportERC20Denomination = WETH_CONTRACT_ADDRESS
-
         const xBankContract = createXBankContract()
         const createBlock = await xBankContract.methods
           .createPool(
@@ -178,9 +185,9 @@ const CreatePoolButton: FunctionComponent<
             supportERC20Denomination,
             // allowCollateralContract
             allowCollateralContract,
-            // '0x8ADC4f1EFD5f71E538525191C5575387aaf41391',
             // poolAmount
             parsedWeiAmount,
+            parsedWeiMaximumLoanAmount,
             // poolMaximumPercentage,
             poolMaximumPercentage,
             // uint32 poolMaximumDays,
@@ -188,105 +195,70 @@ const CreatePoolButton: FunctionComponent<
             // uint32 poolMaximumInterestRate,
             poolMaximumInterestRate,
             // uint32 loanTimeConcessionFlexibility,
-            loanTimeConcessionFlexibility,
+            loanTimeConcessionFlexibility * 10000,
             // uint32 loanRatioPreferentialFlexibility
-            loanRatioPreferentialFlexibility,
+            loanRatioPreferentialFlexibility * 10000,
           )
           .send({
             from: currentAccount,
           })
-        console.log(createBlock, 'createBlock', flag)
+        console.log(createBlock, 'createBlock')
         setCreateLoading(false)
         setSubscribeLoading(true)
-        // 监听 loan 是否生成
-        xBankContract.events
-          .PoolCreated({
-            filter: {
-              poolOwnerAddress: currentAccount,
-            },
-            fromBlock: createBlock?.BlockNumber || 'latest',
-          })
-          .on(
-            'data',
-            flag
-              ? debounce((event) => {
-                  console.log(event, 'on data') // same results as the optional callback above
-                  if (toast.isActive('Created-Successfully-ID')) {
-                    // toast.closeAll()
-                  } else {
-                    toast({
-                      status: 'success',
-                      title: 'Created successfully! ',
-                      id: 'Created-Successfully-ID',
-                    })
-                  }
-                  setSubscribeLoading(false)
-                  setFlag(false)
-                  onCloseApprove()
-                  navigate('/xlending/lending/my-pools')
-                }, 10000)
-              : () => console.log(flag, 'flag false '),
-          )
+        // 监听 pool 有 bug，排期修复
+        // 监听 pool 是否生成
+        // xBankContract.events
+        //   .PoolCreated(
+        //     {
+        //       filter: {
+        //         poolOwnerAddress: currentAccount,
+        //       },
+        //       fromBlock: createBlock?.BlockNumber || 'latest',
+        //     },
+        //     (error: any, event: any) => {
+        //       console.log(event, error, 'aaaaa')
+        //     },
+        //   )
+        //   .on('data', function (event: any) {
+        //     console.log(event, 'on data') // same results as the optional callback above
+        //     if (toast.isActive('Created-Successfully-ID')) {
+        //       // toast.closeAll()
+        //     } else {
+        //       toast({
+        //         status: 'success',
+        //         title: 'Created successfully! ',
+        //         id: 'Created-Successfully-ID',
+        //       })
+        //     }
+        //     setSubscribeLoading(false)
+        //     onCloseApprove()
+        //     navigate('/lending/my-pools')
+        //   })
+        //   .on('changed', console.log)
+        //   .on('error', console.error)
+
         // 如果一直监听不到
         timer.current = setTimeout(() => {
-          console.log('2 分钟过去了')
+          // toast({
+          //   status: 'info',
+          //   title: 'The pool is being generated, please wait and refresh later',
+          // })
           toast({
-            status: 'info',
-            title: 'The pool is being generated, please wait and refresh later',
+            status: 'success',
+            title: 'Created successfully! ',
+            id: 'Created-Successfully-ID',
           })
-          navigate('/xlending/lending/my-pools')
-        }, 2 * 60 * 1000)
+          navigate('/lending/my-pools')
+        }, 5 * 1000)
       } catch (error: any) {
-        console.log(error?.message, error?.code, error?.data)
-        const code: string = error?.code
-        const originMessage: string = error?.message
-        let title: string | ReactNode = code
-        let description: string | ReactNode = originMessage
-        if (!code && originMessage?.includes('{')) {
-          const firstIndex = originMessage.indexOf('{')
-          description = ''
-          try {
-            const hash = JSON.parse(
-              originMessage.substring(firstIndex, originMessage.length),
-            )?.transactionHash
-
-            title = (
-              <Text>
-                {originMessage?.substring(0, firstIndex)} &nbsp;
-                <Button
-                  variant={'link'}
-                  px={0}
-                  onClick={() => {
-                    window.open(
-                      `${
-                        import.meta.env.VITE_TARGET_CHAIN_BASE_URL
-                      }/tx/${hash}`,
-                    )
-                  }}
-                  textDecoration='underline'
-                  color='white'
-                >
-                  see more
-                </Button>
-              </Text>
-            )
-          } catch {
-            console.log('here')
-            title = originMessage?.substring(0, firstIndex)
-          }
-        }
-        toast({
-          status: 'error',
-          title,
-          description,
-          duration: 5000,
-        })
+        toastError(error)
         setCreateLoading(false)
         setApproveLoading(false)
       }
     })
   }, [
     amount,
+    toastError,
     toast,
     poolMaximumPercentage,
     poolMaximumDays,
@@ -296,9 +268,8 @@ const CreatePoolButton: FunctionComponent<
     allowCollateralContract,
     currentAccount,
     interceptFn,
-    flag,
     navigate,
-    onCloseApprove,
+    maxSingleLoanAmount,
   ])
 
   const handleClose = useCallback(() => {
@@ -366,27 +337,31 @@ const CreatePoolButton: FunctionComponent<
               ))}
             </Flex> */}
             <FormControl>
-              <FormLabel fontWeight={'700'}>Amount</FormLabel>
+              <FormLabel
+                fontWeight={'700'}
+                display={'flex'}
+                justifyContent={'space-between '}
+              >
+                Amount
+                <Text fontWeight={'500'} fontSize={'14px'} color='gray.3'>
+                  Minimum input:
+                  {formatFloat((floorPrice * poolMaximumPercentage) / 10000)}
+                </Text>
+              </FormLabel>
+
               <InputGroup>
                 <InputLeftElement
                   pointerEvents='none'
                   color='gray.300'
                   fontSize='1.2em'
-                  top='14px'
+                  top='12px'
                 >
                   <SvgComponent svgId='icon-eth' fill={'black.1'} />
                 </InputLeftElement>
-                <NumberInput
-                  w='100%'
+                <CustomNumberInput
                   value={amount}
-                  onChange={(v) => {
-                    setAmount(v)
-                  }}
-                  errorBorderColor='red.1'
                   isInvalid={isError}
                   // lineHeight='60px'
-                  borderRadius={8}
-                  borderColor='gray.3'
                   placeholder='Enter the approve ETH amount...'
                   isDisabled={
                     approveLoading ||
@@ -394,22 +369,9 @@ const CreatePoolButton: FunctionComponent<
                     refreshLoading ||
                     subscribeLoading
                   }
-                  top={'2px'}
-                >
-                  <NumberInputField
-                    h='60px'
-                    px={'32px'}
-                    _focus={{
-                      borderColor: isError ? 'red.1' : 'blue.1',
-                    }}
-                    _focusVisible={{
-                      boxShadow: `0 0 0 1px var(--chakra-colors-${
-                        isError ? 'red-1' : 'blue-1'
-                      })`,
-                    }}
-                    placeholder='Enter the approve ETH amount...'
-                  />
-                </NumberInput>
+                  onSetValue={(v) => setAmount(v)}
+                  px={'32px'}
+                />
 
                 {isError && (
                   <InputRightElement top='14px' mr='8px'>
@@ -418,11 +380,50 @@ const CreatePoolButton: FunctionComponent<
                 )}
               </InputGroup>
 
-              <Text mt={'8px'} color={isError ? 'red.1' : 'gray.3'}>
-                {isError
-                  ? errorMsg
-                  : `Minimum input: ${formatFloat(floorPrice * 0.1)}`}
-              </Text>
+              {isError && (
+                <Text mt={'8px'} color={'red.1'}>
+                  {errorMsg}
+                </Text>
+              )}
+              {!isError && !!amount && (
+                <Flex mt={'8px'} color={'gray.3'} alignItems={'center'}>
+                  <Text fontSize={'14px'} color='blue.1' fontWeight={'700'}>
+                    Expected to lend&nbsp;
+                    {BigNumber(amount)
+                      .dividedBy(defaultAmount)
+                      .integerValue(BigNumber.ROUND_DOWN)
+                      .toNumber()}
+                    &nbsp;loans
+                  </Text>
+                  <Tooltip
+                    whiteSpace={'pre-line'}
+                    label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , \nFor example: ${amount}/${formatFloat(
+                      defaultAmount,
+                    )} = ${BigNumber(amount)
+                      .dividedBy(defaultAmount)
+                      .integerValue(BigNumber.ROUND_DOWN)
+                      .toNumber()}`}
+                    placement='bottom-start'
+                    hasArrow={false}
+                    bg='white'
+                    borderRadius={8}
+                    p='10px'
+                    fontSize={'12px'}
+                    lineHeight={'18px'}
+                    fontWeight={'400'}
+                    color='gray.4'
+                    boxShadow={'0px 0px 10px #D1D6DC'}
+                  >
+                    <Box cursor={'pointer'} ml='16px'>
+                      <SvgComponent
+                        svgId='icon-tip'
+                        fill='gray.1'
+                        fontSize={'20px'}
+                      />
+                    </Box>
+                  </Tooltip>
+                </Flex>
+              )}
             </FormControl>
             <Text
               fontSize={'12px'}

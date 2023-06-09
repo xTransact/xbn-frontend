@@ -1,4 +1,6 @@
 import BigNumber from 'bignumber.js'
+
+import type { LOAN_DAYS_ENUM } from '@/pages/buy-nfts/NftAssetDetail'
 /**
  *
  * @param p 贷款本金
@@ -21,7 +23,7 @@ const amortizationCal = (p: number, i: number, n: number) => {
 const amortizationCalByDays = (
   principal: number,
   interest_rate: number,
-  loan_period_days: 7 | 14 | 30 | 60 | 90,
+  loan_period_days: LOAN_DAYS_ENUM,
   x: 1 | 2 | 3,
 ) => {
   if (
@@ -32,12 +34,15 @@ const amortizationCalByDays = (
   ) {
     return BigNumber(0)
   }
+  if (interest_rate === 0) {
+    return BigNumber(principal).dividedBy(x)
+  }
   // installment = loan_period_days / x 表示：每 installment 天还款
   const installment = BigNumber(loan_period_days).dividedBy(x)
   // i = interest_rate / 365 / installment
   const i = BigNumber(interest_rate).dividedBy(365).multipliedBy(installment)
   // n =  loan_period_days / installment
-  const n = BigNumber(loan_period_days).dividedBy(installment)
+  const n = BigNumber(loan_period_days).dividedBy(installment).integerValue()
   /**
    * return
    * principal * ( i * (1+i)**n ) / ((1+i)**n - 1)

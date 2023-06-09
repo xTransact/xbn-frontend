@@ -31,16 +31,22 @@ export const Option = ({
   isSelected,
   selectedIcon = '',
   unSelectedIcon = '',
+  isDisabled,
   ...props
 }: any) => {
   return (
-    <components.Option isSelected={isSelected} {...props}>
+    <components.Option
+      isSelected={isSelected}
+      isDisabled={isDisabled}
+      {...props}
+    >
       <Flex justify={'space-between'} alignItems='center' py='8px'>
         {children}
         <SvgComponent
           svgId={isSelected ? selectedIcon : unSelectedIcon}
           svgSize='20px'
           ml='20px'
+          hidden={isDisabled}
         />
       </Flex>
     </components.Option>
@@ -49,6 +55,7 @@ export const Option = ({
 
 function AsyncSelectCollection({
   w,
+  disabledArr,
   isDisabled,
   borderColor = 'var(--chakra-colors-blue-4)',
   ...rest
@@ -107,6 +114,9 @@ function AsyncSelectCollection({
       cacheOptions
       // @ts-ignore
       isOptionSelected={(item, select) => item.contract_addr === select}
+      isOptionDisabled={(item: any) => {
+        return disabledArr?.includes(item?.contractAddress?.toLowerCase())
+      }}
       loadOptions={promiseOptions}
       theme={(theme) => ({
         ...theme,
@@ -143,6 +153,7 @@ function AsyncSelectCollection({
             borderRadius: 8,
             top: '65%',
             boxShadow: 'none',
+            zIndex: 2,
           }
         },
         singleValue: (baseStyles) => ({
@@ -172,25 +183,25 @@ function AsyncSelectCollection({
             borderColor: 'var(--chakra-colors-blue-1)',
           },
         }),
-        option: (
-          baseStyles,
-          { isDisabled: _isDisabled, isSelected, isFocused },
-        ) => ({
+        option: (baseStyles, { isDisabled: _isDisabled, isSelected }) => ({
           ...baseStyles,
-          backgroundColor: isSelected
-            ? `var(--chakra-colors-blue-2)`
-            : isFocused
-            ? 'var(--chakra-colors-gray-5)'
-            : 'white',
+          backgroundColor: isSelected ? `var(--chakra-colors-blue-2)` : 'white',
           color: `var(--chakra-colors-black-1)`,
           fontSize: 14,
           fontWeight: 500,
+          cursor: _isDisabled ? 'not-allowed' : 'pointer',
 
           ':active': {
             ...baseStyles[':active'],
             backgroundColor: !_isDisabled
               ? 'var(--chakra-colors-blue-2)'
               : undefined,
+          },
+          ':hover': {
+            ...baseStyles[':hover'],
+            backgroundColor: _isDisabled
+              ? 'white'
+              : 'var(--chakra-colors-gray-5)',
           },
         }),
       }}

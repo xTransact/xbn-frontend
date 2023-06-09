@@ -1,4 +1,6 @@
-import { Flex, Spinner } from '@chakra-ui/react'
+import { Flex } from '@chakra-ui/react'
+
+import CustomLoader from '../custom-loader/CustomLoader'
 
 const Fallback = () => {
   return (
@@ -14,13 +16,10 @@ const Fallback = () => {
         justify={'center'}
         zIndex={10}
       >
-        <Spinner
-          thickness='4px'
-          speed='0.65s'
-          emptyColor='gray.1'
-          color='blue.1'
-          size='xl'
-          mt={{ md: '80px', xs: '56px', sm: '56px' }}
+        <CustomLoader
+          wrapperProps={{
+            mt: { md: '80px', xs: '56px', sm: '56px' },
+          }}
         />
       </Flex>
     </Flex>
