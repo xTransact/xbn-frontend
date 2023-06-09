@@ -201,7 +201,8 @@ export const TransactionsProvider = ({
         localStorage.removeItem('metamask-connect-address')
         setCurrentAccount(accounts[0])
         await signAuth(accounts[0])
-        window.location.href = '/marketing-campaign'
+        location.reload()
+        // window.location.href = '/marketing-campaign'
         // window.location = window.location
       }
     }
