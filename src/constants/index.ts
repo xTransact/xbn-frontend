@@ -76,20 +76,19 @@ export const INITIAL_COLLATERAL = COLLATERALS[4]
 export const STEPS_DESCRIPTIONS = [
   {
     title: 'Select collection',
-    text: 'Please choose a preferred collection that you will accept to lend against. All the collections listed on OpenSea, X2Y2 and LookRare are available',
+    text: 'Choose the NFT collection you wish to use as collateral for a loan.',
   },
   {
     title: 'Risk Control',
-    tip: 'Your collection pool will use the smaller of these two conditions for lending.',
-    text: 'Indicate the ratio which will determine how much money borrowers can receive to borrow against expected NFT collection. The higher the ratio, the more money they can borrow from the pool. A 50% of collateral factor will be more commonly used.',
+    text: 'These two conditions can limit the amount of a loan, Your collection pool will use the smaller amount of these two conditions for lending.',
   },
   {
     title: 'Set Maximum loan tenor',
-    text: 'Please choose the max length of duration acceptable for potential borrowers. A 60-day length of duration will be more commonly used.',
+    text: 'It will determine the maximum duration of a single loan. As long as borrowers repay their loan at the end of the tenor, lenders cannot liquidate the loan positions.',
   },
   {
     title: 'Set maximum interest rate',
-    text: 'According to the limit value of the loan conditions set in steps 1 and 2, the system refers to the historical order data to generate a suggested loan interest rate for you, and the funds approved by you under this interest rate are expected to generate income soon.\nIf the current loan conditions and suggested interest rates do not meet your expectations, you can adjust the loan interest rate through the big slider below, and all interest rate values in the table will increase or decrease\nYou can also use the small sliders on the right and bottom of the table to adjust the impact of changes in the two factors of collateral ratio and loan duration on the interest rate.',
+    text: 'Please choose an interest rate you want under the conditions of the maximum loan duration and maximum loan amount, and we will automatically generate a Lending Offer Table for you. If you are not satisfied with the parameters in the table, you can fine-tune them.\nLower interest rate lending offers will lend out faster.',
   },
 ]
 

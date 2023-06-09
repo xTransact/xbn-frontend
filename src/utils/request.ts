@@ -1,6 +1,6 @@
 import { createStandaloneToast } from '@chakra-ui/react'
 import axios from 'axios'
-import { isEmpty } from 'lodash-es'
+import isEmpty from 'lodash-es/isEmpty'
 
 import { TOAST_OPTION_CONFIG } from '@/constants'
 

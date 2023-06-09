@@ -10,7 +10,7 @@ import {
   Image,
   Box,
 } from '@chakra-ui/react'
-import { range } from 'lodash-es'
+import range from 'lodash-es/range'
 import { useState, type FunctionComponent, useMemo } from 'react'
 
 import arrowImg from '@/assets/guide-arrow.png'

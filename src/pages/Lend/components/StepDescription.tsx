@@ -44,6 +44,7 @@ const StepDescription: FunctionComponent<
           fontWeight={'500'}
           boxShadow={'0px 0px 10px #D1D6DC'}
           color='gray.3'
+          whiteSpace={'pre-line'}
         >
           <Box cursor={'pointer'}>
             <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />

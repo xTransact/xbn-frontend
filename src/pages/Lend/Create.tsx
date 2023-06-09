@@ -155,6 +155,7 @@ const SecondaryWrapper: FunctionComponent<
         fontWeight={'500'}
         boxShadow={'0px 0px 10px #D1D6DC'}
         color='gray.3'
+        whiteSpace={'pre-line'}
       >
         <Box cursor={'pointer'}>
           <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
@@ -635,7 +636,7 @@ const Create = () => {
           />
           <SecondaryWrapper
             title='Set maximum collateral factor'
-            description='不知道啥文案还没改'
+            description={`It will determine the highest percentage of the single loan value against the valuation of the NFT collateral at the time of the transaction.\nIn case of borrower default, you can obtain collateral. It's equivalent to buying NFT at a discounted price based on the loan amount you provide.`}
           >
             <SliderWrapper
               // extraTip={
@@ -681,7 +682,7 @@ const Create = () => {
 
           <SecondaryWrapper
             title='Set maximum single loan amount'
-            description='还没给到我不知道'
+            description={`It will determine the maximum amount of single loan that borrowers can take against this lending offer.\nIn case of borrower default, you can obtain collateral. It's equivalent to buying NFT at a discounted price based on the loan amount you provide.`}
           >
             <Box>
               <Tooltip
@@ -1027,6 +1028,30 @@ const Create = () => {
                 }}
               />
             </Slider>
+            <Tooltip
+              label={
+                'You can use this to adjust how much the interest rate is favorable as the collateral factor goes down.'
+              }
+              placement='auto-start'
+              hasArrow
+              bg='white'
+              borderRadius={8}
+              p='10px'
+              fontSize={'14px'}
+              lineHeight={'18px'}
+              fontWeight={'500'}
+              boxShadow={'0px 0px 10px #D1D6DC'}
+              color='gray.3'
+              whiteSpace={'pre-line'}
+            >
+              <Box cursor={'pointer'}>
+                <SvgComponent
+                  svgId='icon-tip'
+                  fill='gray.1'
+                  fontSize={'20px'}
+                />
+              </Box>
+            </Tooltip>
           </Flex>
           {/* 切换展示微调滑杆 */}
           <Flex
@@ -1061,6 +1086,30 @@ const Create = () => {
                 }}
               />
             </Slider>
+            <Tooltip
+              label={
+                'You can use this to adjust how much the interest rate is favorable as the loan tenor shortens.'
+              }
+              placement='auto-start'
+              hasArrow
+              bg='white'
+              borderRadius={8}
+              p='10px'
+              fontSize={'14px'}
+              lineHeight={'18px'}
+              fontWeight={'500'}
+              boxShadow={'0px 0px 10px #D1D6DC'}
+              color='gray.3'
+              whiteSpace={'pre-line'}
+            >
+              <Box cursor={'pointer'}>
+                <SvgComponent
+                  svgId='icon-tip'
+                  fill='gray.1'
+                  fontSize={'20px'}
+                />
+              </Box>
+            </Tooltip>
           </Flex>
         </Box>
       </Flex>
