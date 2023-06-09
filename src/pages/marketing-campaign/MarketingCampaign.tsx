@@ -453,7 +453,7 @@ export default function MarketingCampaign() {
                         fontSize={'24px'}
                         h='60px'
                         onClick={() => {
-                          navigate('/xlending/buy-nfts/market')
+                          navigate('/buy-nfts/market')
                         }}
                       >
                         Get Gold Box
@@ -514,7 +514,7 @@ export default function MarketingCampaign() {
                         fontSize={'24px'}
                         h='60px'
                         onClick={() => {
-                          navigate('/xlending')
+                          navigate('')
                         }}
                       >
                         Get Gold Box
@@ -645,7 +645,7 @@ export default function MarketingCampaign() {
                         fontSize={20}
                         fontFamily={'HarmonyOS Sans SC Bold'}
                         onClick={() => {
-                          navigate('/xlending/buy-nfts/market')
+                          navigate('/buy-nfts/market')
                         }}
                       >
                         Unlock invitations by completing a lending or borrowing
