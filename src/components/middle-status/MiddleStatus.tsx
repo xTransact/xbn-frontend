@@ -57,6 +57,8 @@ const MiddleStatus: FunctionComponent<{
             sm: 'none',
             xs: 'none',
           }}
+          minW={'100px'}
+          mr='40px'
         >
           Back
         </Button>

@@ -5,7 +5,6 @@ import {
   createHttpLink,
 } from '@apollo/client'
 import { ChakraProvider, Heading, Spinner } from '@chakra-ui/react'
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { PhotoProvider } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
@@ -22,7 +21,7 @@ import './index.css'
 
 const abortController = new AbortController()
 const httpLink = createHttpLink({
-  uri: `${import.meta.env.VITE_BASE_URL}/lending/query`,
+  uri: `${import.meta.env.VITE_BASE_URL_2}/lending/query`,
   fetchOptions: {
     mode: 'cors',
     signal: abortController.signal,
@@ -35,7 +34,6 @@ const client = new ApolloClient({
 })
 const rootElement = document.getElementById('root')
 createRoot(rootElement as HTMLElement).render(
-  // <StrictMode>
   <ApolloProvider client={client}>
     <ChakraProvider
       theme={theme}
@@ -61,5 +59,4 @@ createRoot(rootElement as HTMLElement).render(
       </TransactionsProvider>
     </ChakraProvider>
   </ApolloProvider>,
-  // </StrictMode>,
 )

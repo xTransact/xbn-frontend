@@ -49,7 +49,14 @@ const Toolbar: FunctionComponent<ToolbarProps> = ({
   })
   if (loading) {
     return (
-      <Skeleton height={16} borderRadius={16} mb='24px' {...loadingProps} />
+      <Skeleton
+        height={16}
+        borderRadius={16}
+        mb='24px'
+        startColor='rgba(27, 34, 44, 0.1)'
+        endColor='rgba(27, 34, 44, 0.2)'
+        {...loadingProps}
+      />
     )
   }
   return (

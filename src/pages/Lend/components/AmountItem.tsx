@@ -12,7 +12,14 @@ const AmountItem: FunctionComponent<
   }
 > = ({ data, label, loading = false, ...rest }) => {
   return (
-    <Flex flexDir={'column'} justify='center' gap={'8px'} {...rest}>
+    <Flex
+      flexDir={'column'}
+      w='32%'
+      justify='center'
+      alignItems={'center'}
+      gap={'8px'}
+      {...rest}
+    >
       <Flex
         fontWeight={'500'}
         color='gray.3'
@@ -29,7 +36,7 @@ const AmountItem: FunctionComponent<
         }}
         transformOrigin='center'
       >
-        <Text noOfLines={1}>{label}</Text>
+        <Text>{label}</Text>
       </Flex>
       <Flex justify={'center'} alignItems='center' h='35px'>
         <SvgComponent svgId='icon-eth' svgSize={'20px'} />
@@ -43,7 +50,7 @@ const AmountItem: FunctionComponent<
         ) : (
           <Text
             fontSize={{
-              md: '24px',
+              md: '22px',
               sm: '18px',
               xs: '18px',
             }}

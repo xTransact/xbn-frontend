@@ -23,7 +23,6 @@ const RadioCard: FunctionComponent<FlexProps & RadioCardProps> = ({
       h={{ md: '136px', sm: '72px', xs: '72px' }}
       justifyContent='space-between'
       onClick={isDisabled ? () => undefined : onClick}
-      {...props}
       w='100%'
       cursor='pointer'
       borderWidth={1}
@@ -43,6 +42,7 @@ const RadioCard: FunctionComponent<FlexProps & RadioCardProps> = ({
         sm: 'center',
         xs: 'center',
       }}
+      {...props}
     >
       {children}
     </Flex>

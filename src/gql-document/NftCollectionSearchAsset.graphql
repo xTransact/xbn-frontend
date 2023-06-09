@@ -52,5 +52,6 @@ query NftCollectionSearchAsset($collectionId: ID!, $search: String!) {
       sellerFeeBasisPoints
       payoutAddress
     }
+    orderPriceMarket
   }
 }

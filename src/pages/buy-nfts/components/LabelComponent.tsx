@@ -20,7 +20,12 @@ const LabelComponent: FunctionComponent<
         <Heading mb={5} fontSize={{ md: '24px', sm: '20px', xs: '20px' }}>
           {label}
         </Heading>
-        <Skeleton h='100px' borderRadius={16} />
+        <Skeleton
+          h='100px'
+          borderRadius={16}
+          startColor='rgba(27, 34, 44, 0.1)'
+          endColor='rgba(27, 34, 44, 0.2)'
+        />
       </Box>
     )
   }

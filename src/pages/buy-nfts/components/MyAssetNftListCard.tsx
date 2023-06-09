@@ -59,9 +59,10 @@ import {
 } from '@/components'
 import { FORMAT_NUMBER, LIST_DURATION, UNIT, LISTING_TYPE } from '@/constants'
 import { useIsMobile, useWallet } from '@/hooks'
+import { formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
-const MODEL_HEADER_PROPS: ModalHeaderProps = {
+export const MODEL_HEADER_PROPS: ModalHeaderProps = {
   pt: {
     md: '40px',
     sm: '20px',
@@ -168,7 +169,7 @@ const NftInfoBox: FunctionComponent<
           Listing price
         </Text>
         <Text fontWeight={'700'}>
-          {Number(price) === 0 ? '---' : price}
+          {price ?? '--'}
           {UNIT}
         </Text>
       </Flex>
@@ -302,7 +303,7 @@ const MyAssetNftListCard: FunctionComponent<
       setCollectionData({
         name,
         safelistRequestStatus,
-        floorPrice,
+        floorPrice: Number(formatFloat(floorPrice) || 0),
         creatorEarn: sellerFee / 10000,
         marketPlaceFee: marketPlaceFee / 10000,
       })
@@ -342,7 +343,7 @@ const MyAssetNftListCard: FunctionComponent<
 
       setLoanData({
         outstandingLoan:
-          !!unFormatLoanEth && unFormatLoanEth !== '--'
+          !!unFormatLoanEth && unFormatLoanEth !== undefined
             ? BigNumber(unFormatLoanEth)
             : BigNumber(0),
         loanEndedTime: loan_start_time + loan_duration,
@@ -413,7 +414,7 @@ const MyAssetNftListCard: FunctionComponent<
           Number(collectionData?.marketPlaceFee),
       )
       .minus(outstandingLoan)
-      .toFormat(8)
+      .toFormat(8, BigNumber.ROUND_UP)
   }, [price, collectionData, loanData, type])
 
   const ref = useRef(null)
@@ -454,7 +455,7 @@ const MyAssetNftListCard: FunctionComponent<
         borrower_address: currentAccount,
       }
       await runAsync(POST_PARAMS)
-      navigate('/xlending/buy-nfts/complete', {
+      navigate('/buy-nfts/complete', {
         state: {
           imageUrl: assetData?.imagePreviewUrl,
         },
@@ -534,7 +535,7 @@ const MyAssetNftListCard: FunctionComponent<
               borderRadius={0}
               alt={title}
               boxSize={imageSize}
-              fit='contain'
+              fit='cover'
               transition='all 0.6s'
               _hover={{
                 transform: `scale(1.2)`,
@@ -869,7 +870,7 @@ const MyAssetNftListCard: FunctionComponent<
                         {isAmountError && (
                           <InputRightElement mr='110px' h='60px'>
                             <SvgComponent
-                              svgId='icon-info'
+                              svgId='icon-tip'
                               svgSize='24px'
                               fill={'red.1'}
                             />
@@ -917,7 +918,7 @@ const MyAssetNftListCard: FunctionComponent<
                             lineHeight={'24px'}
                           >
                             <SvgComponent
-                              svgId='icon-info'
+                              svgId='icon-tip'
                               fill={'orange.1'}
                               svgSize='16px'
                             />
@@ -942,7 +943,7 @@ const MyAssetNftListCard: FunctionComponent<
                             <Text fontSize={'12px'} mt='10px'>
                               Loan ends &nbsp;
                               {unix(loanData?.loanEndedTime || 0).format(
-                                'YYYY/MM/DD',
+                                'YYYY/MM/DD HH:mm:ss',
                               )}
                             </Text>
                           </Box>
@@ -971,9 +972,7 @@ const MyAssetNftListCard: FunctionComponent<
                   <Flex flexDir={'column'} gap={'12px'} py='24px'>
                     <Item
                       label='Listing price'
-                      value={`${
-                        !price || Number(price) === 0 ? '---' : price
-                      } ${UNIT}`}
+                      value={`${price ?? '--'} ${UNIT}`}
                     />
                     <Item
                       label='Creator earnings'

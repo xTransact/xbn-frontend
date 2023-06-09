@@ -1,6 +1,7 @@
 interface PoolsListItemType {
   id: number
   pool_id: number
+  created_at: string
   owner_address: string
   allow_collateral_contract: string
   support_erc20_denomination: string
@@ -13,7 +14,7 @@ interface PoolsListItemType {
   loan_time_concession_flexibility: number
   loan_ratio_preferential_flexibility: number
   activity: boolean
-  collection_info: CollectionListItemType
+  maximum_loan_amount: number
 }
 
 interface CollectionListItemType {
@@ -47,6 +48,10 @@ interface AssetListItemType {
   updated_at: string
 }
 
+enum MARKET_TYPE_ENUM {
+  OPENSEA = 'opensea',
+  BLUR = 'blur',
+}
 interface LoanOrderDataType {
   // pool id
   pool_id: string
@@ -68,6 +73,8 @@ interface LoanOrderDataType {
   number_of_installments: number
   // token ID
   nft_collateral_id: string
+  // platform
+  platform: MARKET_TYPE_ENUM
 }
 
 interface LoanListItemType {

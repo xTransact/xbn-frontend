@@ -47,6 +47,7 @@ query AssetsChannel(
           likeCount
           like
         }
+        orderPriceMarket
       }
     }
   }

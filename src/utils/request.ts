@@ -1,6 +1,6 @@
 import { createStandaloneToast } from '@chakra-ui/react'
-import axios, { InternalAxiosRequestConfig } from 'axios'
-import { isEmpty } from 'lodash-es'
+import axios, {InternalAxiosRequestConfig} from 'axios'
+import isEmpty from 'lodash-es/isEmpty'
 
 import { TOAST_OPTION_CONFIG } from '@/constants'
 
@@ -9,7 +9,7 @@ import { getUserToken } from './auth'
 // import { decrypt } from './decrypt'
 // import { PWD } from '@consts/crypt'
 
-const { MODE, VITE_BASE_URL, VITE_APP_KEY } = import.meta.env
+const { MODE, VITE_BASE_URL, VITE_APP_KEY, VITE_BASE_URL_2 } = import.meta.env
 
 export const standaloneToast = createStandaloneToast({
   defaultOptions: {
@@ -30,11 +30,11 @@ export const AXIOS_DEFAULT_CONFIG = {
 }
 const request = axios.create(AXIOS_DEFAULT_CONFIG)
 
-export const requestInterceptor = async ({ url, baseURL, ...config }: InternalAxiosRequestConfig<any>) => {
+export const requestInterceptor = async ({ url, baseURL, ...config }: InternalAxiosRequestConfig) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
-    if (url === '/api/ver2/exchange/xcurrency/latest') {
-      _baseURL = 'https://xcr.tratao.com/'
+    if (url?.startsWith('/api/') || url?.startsWith('/lending/query')) {
+      _baseURL = VITE_BASE_URL_2
     } else {
       _baseURL = VITE_BASE_URL
     }
@@ -48,7 +48,6 @@ export const requestInterceptor = async ({ url, baseURL, ...config }: InternalAx
   }
 }
 request.interceptors.request.use(requestInterceptor)
-
 request.interceptors.response.use(
   (resp) => {
     return resp?.data
@@ -62,7 +61,6 @@ request.interceptors.response.use(
 
     if (error && !isEmpty(error)) {
       const { code, message } = error
-      console.log('🚀 ~ file: request.ts:58 ~ code:', code)
 
       toast({
         title: code || 'Oops, network error...',

@@ -3,19 +3,19 @@ import { type FunctionComponent } from 'react'
 
 import { ImageWithFallback, SvgComponent } from '@/components'
 import { UNIT } from '@/constants'
-import type { NftCollection } from '@/hooks'
+import { formatFloat } from '@/utils/format'
 
 const BelongToCollection: FunctionComponent<
   BoxProps & {
-    data: NftCollection
+    data: {
+      name: string
+      imagePreviewUrl: string
+      safelistRequestStatus: string
+      floorPrice: number
+    }
   }
 > = ({
-  data: {
-    name = '',
-    imagePreviewUrl = '',
-    safelistRequestStatus,
-    nftCollectionStat: { floorPrice },
-  },
+  data: { name = '', imagePreviewUrl = '', safelistRequestStatus, floorPrice },
   ...rest
 }) => {
   return (
@@ -23,8 +23,8 @@ const BelongToCollection: FunctionComponent<
       {...rest}
       mt='60px'
       w={{
-        xl: '600px',
-        lg: '380px',
+        xl: '500px',
+        lg: '400px',
         sm: '100%',
         xs: '100%',
       }}
@@ -56,7 +56,7 @@ const BelongToCollection: FunctionComponent<
           </Flex>
 
           <Text fontSize={'18px'} fontWeight='bold'>
-            {floorPrice}
+            {formatFloat(floorPrice)}
             &nbsp;
             {UNIT}
           </Text>

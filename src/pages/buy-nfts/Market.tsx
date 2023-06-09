@@ -21,10 +21,11 @@ import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
-import { apiGetPools } from '@/api'
+import { apiGetFloorPrice, apiGetPools } from '@/api'
 import {
+  BuyerGuideModal,
   ConnectWalletModal,
   EmptyComponent,
   LoadingComponent,
@@ -40,6 +41,7 @@ import {
   useNftCollectionsByContractAddressesQuery,
   type NftAsset,
   type NftCollection,
+  useGuide,
 } from '@/hooks'
 
 import CollectionDescription from './components/CollectionDescription'
@@ -73,7 +75,7 @@ const SORT_OPTIONS = [
 
 const Market = () => {
   const navigate = useNavigate()
-  const { search } = useLocation()
+  const pathData = useParams()
   const { isOpen, onClose, interceptFn } = useWallet()
   const {
     isOpen: drawVisible,
@@ -135,9 +137,7 @@ const Market = () => {
           return
         }
 
-        const prevCollectionId = Object.fromEntries(
-          new URLSearchParams(search),
-        )?.collectionId
+        const prevCollectionId = pathData?.collectionId
         const prevItem = data.nftCollectionsByContractAddresses.find(
           (i) => i.nftCollection.id === prevCollectionId,
         )
@@ -147,6 +147,26 @@ const Market = () => {
         )
       },
     })
+
+  const [floorPrice, setFloorPrice] = useState<number>()
+  const { loading: floorPriceLoading, data: floorPriceData } = useRequest(
+    () =>
+      apiGetFloorPrice({
+        slug: selectCollection?.nftCollection.slug || '',
+      }),
+    {
+      ready: !!selectCollection,
+      refreshDeps: [selectCollection],
+      cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
+      staleTime: 1000 * 60,
+    },
+  )
+
+  useEffect(() => {
+    if (!floorPriceData) return
+    if (isEmpty(floorPriceData)) return
+    setFloorPrice(floorPriceData.floor_price)
+  }, [floorPriceData])
 
   const highestRate = useMemo(() => {
     if (!poolsMap || isEmpty(poolsMap) || !selectCollection) return undefined
@@ -167,7 +187,7 @@ const Market = () => {
     const {
       nftCollection: { id },
     } = selectCollection
-    navigate(`/xlending/buy-nfts/market?collectionId=${id}`)
+    navigate(`/buy-nfts/market/${id}`)
   }, [selectCollection, navigate])
 
   // 根据 collectionId 搜索 assets
@@ -259,7 +279,7 @@ const Market = () => {
   }, [debounceSearchValue, fetchAssetBySearch, selectCollection])
 
   // grid
-  const [grid, setGrid] = useState(4)
+  const [grid, setGrid] = useState(3)
 
   const responsiveSpan = useMemo(
     () => ({
@@ -272,10 +292,14 @@ const Market = () => {
     [grid],
   )
 
+  const { isOpen: guideVisible, onClose: closeGuide } = useGuide({
+    key: 'has-read-buyer-guide',
+  })
   return (
     <>
+      <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
       <Box
-        mb={{ md: '40px', sm: '12px', xs: '12px' }}
+        mb={{ md: '40px', sm: 0, xs: 0 }}
         mt={{
           md: '60px',
           sm: '16px',
@@ -289,39 +313,38 @@ const Market = () => {
 
       <Flex
         mt={'10px'}
+        mb='100px'
         gap={9}
         flexWrap={{ lg: 'nowrap', md: 'wrap', sm: 'wrap', xs: 'wrap' }}
       >
         <Box
-          position={{
-            md: 'sticky',
-            sm: 'static',
-            xs: 'static',
-          }}
-          pt='20px'
-          top={'79px'}
-          bg='white'
-          height={{
-            xl: '70vh',
-            lg: '70vh',
-          }}
           w={{
-            xl: '360px',
+            xl: '300px',
             lg: '260px',
             md: '100%',
             sm: '100%',
             xs: '100%',
           }}
-          zIndex={21}
         >
           <Box
             borderColor='gray.2'
             borderWidth={{ md: 1, sm: 0, xs: 0 }}
             borderRadius={{ md: '12px', sm: 0, xs: 0 }}
-            pt={{ md: '24px', sm: '20px', xs: '20px' }}
+            pt={{ md: '24px', sm: 0, xs: 0 }}
             px={{ md: '24px', sm: 0, xs: 0 }}
-            overflowY='auto'
+            // overflowY='auto'
             overflowX={'visible'}
+            position={{
+              md: 'sticky',
+              sm: 'static',
+              xs: 'static',
+            }}
+            minH={{
+              md: '400px',
+              sm: '100px',
+              xs: '100px',
+            }}
+            top='100px'
           >
             <Heading size={'md'} mb='16px'>
               Collections
@@ -335,14 +358,20 @@ const Market = () => {
               }}
               pb='40px'
             >
-              <SearchInput
-                placeholder='Collections...'
-                isDisabled={collectionLoading || poolsLoading}
-                value={collectionSearchValue}
-                onChange={(e) => {
-                  setCollectionSearchValue(e.target.value)
-                }}
-              />
+              <Box
+                hidden={
+                  !collectionSearchValue && !filteredCollectionList?.length
+                }
+              >
+                <SearchInput
+                  placeholder='Collections...'
+                  isDisabled={collectionLoading || poolsLoading}
+                  value={collectionSearchValue}
+                  onChange={(e) => {
+                    setCollectionSearchValue(e.target.value)
+                  }}
+                />
+              </Box>
 
               {/* pc 端 */}
               <List
@@ -358,10 +387,11 @@ const Market = () => {
                 <LoadingComponent
                   loading={collectionLoading || poolsLoading}
                   top={0}
+                  minH={'220px'}
                 />
-                {filteredCollectionList &&
-                  isEmpty(filteredCollectionList) &&
-                  !collectionLoading && <EmptyComponent />}
+                {isEmpty(filteredCollectionList) &&
+                  !collectionLoading &&
+                  !poolsLoading && <EmptyComponent />}
 
                 {filteredCollectionList?.map((item) => (
                   <CollectionListItem
@@ -411,20 +441,27 @@ const Market = () => {
                     <Heading fontSize={'24px'} pt='40px' pb='32px'>
                       Collections
                     </Heading>
-                    <SearchInput
-                      placeholder='Collections...'
-                      value={collectionSearchValue}
-                      onChange={(e) => {
-                        setCollectionSearchValue(e.target.value)
-                      }}
-                    />
+                    <Box
+                      hidden={
+                        !collectionSearchValue &&
+                        !filteredCollectionList?.length
+                      }
+                    >
+                      <SearchInput
+                        placeholder='Collections...'
+                        value={collectionSearchValue}
+                        onChange={(e) => {
+                          setCollectionSearchValue(e.target.value)
+                        }}
+                      />
+                    </Box>
+
                     <List spacing='16px' mt='16px' position='relative'>
                       <LoadingComponent
                         loading={collectionLoading || poolsLoading}
                         top={0}
                       />
-                      {filteredCollectionList &&
-                        isEmpty(filteredCollectionList) &&
+                      {!filteredCollectionList?.length &&
                         !collectionLoading && <EmptyComponent />}
 
                       {filteredCollectionList?.map((item) => (
@@ -456,7 +493,7 @@ const Market = () => {
 
         <Box
           w={{
-            xl: '980px',
+            xl: '820px',
             lg: '640px',
             md: '100%',
             sm: '100%',
@@ -464,8 +501,9 @@ const Market = () => {
           }}
         >
           <CollectionDescription
-            loading={collectionLoading || poolsLoading}
+            loading={collectionLoading || poolsLoading || floorPriceLoading}
             data={selectCollection?.nftCollection}
+            floorPrice={floorPrice}
             highestRate={highestRate}
           />
           <Toolbar
@@ -487,13 +525,24 @@ const Market = () => {
 
           {!debounceSearchValue && (
             <SimpleGrid
-              spacingX={'16px'}
+              spacingX={{
+                xl: '16px',
+                lg: '8px',
+                md: '8px',
+                sm: '10px',
+                xs: '10px',
+              }}
               spacingY={'20px'}
               columns={responsiveSpan}
               position={'relative'}
             >
               <LoadingComponent
-                loading={assetLoading || poolsLoading || collectionLoading}
+                loading={
+                  assetLoading ||
+                  poolsLoading ||
+                  collectionLoading ||
+                  floorPriceLoading
+                }
                 top={0}
               />
               {isEmpty(assetsData?.list) ? (
@@ -504,13 +553,13 @@ const Market = () => {
                 assetsData?.list?.map((item) => {
                   if (!item) return null
                   const { node } = item
-                  const { tokenID, nftAssetContract, name, id } = node || {}
+                  const { tokenID, nftAssetContract, name } = node || {}
                   return (
                     <MarketNftListCard
                       data={{ ...item, highestRate }}
                       imageSize={{
-                        xl: grid === 4 ? '233px' : '316px',
-                        lg: grid === 4 ? '148px' : '202px',
+                        xl: grid === 4 ? '190px' : '260px',
+                        lg: grid === 4 ? '152px' : '206px',
                         md: grid === 4 ? '172px' : '234px',
                         sm: '174px',
                         xs: '174px',
@@ -518,24 +567,30 @@ const Market = () => {
                       key={`${tokenID}${nftAssetContract?.address}${name}`}
                       onClick={() => {
                         interceptFn(() => {
-                          navigate(`/xlending/asset/detail`, {
-                            state: {
-                              collection: {
-                                ...selectCollection?.nftCollection,
-                              },
-                              poolsList:
-                                poolsMap && selectCollection?.contractAddress
-                                  ? poolsMap.get(
-                                      selectCollection.contractAddress,
-                                    )
-                                  : [],
-                              assetVariable: {
-                                assetId: id,
-                                assetContractAddress: nftAssetContract?.address,
-                                assetTokenID: tokenID,
+                          navigate(
+                            `/asset/${nftAssetContract?.address}/${tokenID}`,
+                            {
+                              state: {
+                                collection: {
+                                  ...selectCollection?.nftCollection,
+                                  name: selectCollection?.nftCollection?.name,
+                                  imagePreviewUrl:
+                                    selectCollection?.nftCollection
+                                      ?.imagePreviewUrl,
+                                  safelistRequestStatus:
+                                    selectCollection?.nftCollection
+                                      ?.safelistRequestStatus,
+                                  floorPrice,
+                                },
+                                poolsList:
+                                  poolsMap && selectCollection?.contractAddress
+                                    ? poolsMap.get(
+                                        selectCollection.contractAddress,
+                                      )
+                                    : [],
                               },
                             },
-                          })
+                          )
                         })
                       }}
                     />
@@ -568,11 +623,9 @@ const Market = () => {
               position={'relative'}
               // overflowX='hidden'
             >
-              <LoadingComponent
-                loading={fetchAssetBySearchLoading || poolsLoading}
-                top={0}
-              />
-              {!searchedAsset ? (
+              {fetchAssetBySearchLoading || poolsLoading ? (
+                <LoadingComponent loading top={0} />
+              ) : !searchedAsset ? (
                 <GridItem colSpan={responsiveSpan}>
                   <EmptyComponent />
                 </GridItem>
@@ -585,23 +638,28 @@ const Market = () => {
                   key={`${searchedAsset.tokenID}${searchedAsset.assetContractAddress}${searchedAsset.name}`}
                   onClick={() => {
                     interceptFn(() => {
-                      navigate(`/xlending/asset/detail`, {
-                        state: {
-                          collection: {
-                            ...selectCollection?.nftCollection,
-                          },
-                          poolsList:
-                            poolsMap && selectCollection?.contractAddress
-                              ? poolsMap.get(selectCollection.contractAddress)
-                              : [],
-                          assetVariable: {
-                            assetId: searchedAsset.id,
-                            assetContractAddress:
-                              searchedAsset.assetContractAddress,
-                            assetTokenID: searchedAsset.tokenID,
+                      navigate(
+                        `/asset/${searchedAsset?.assetContractAddress}/${searchedAsset?.tokenID}`,
+                        {
+                          state: {
+                            collection: {
+                              ...selectCollection?.nftCollection,
+                              name: selectCollection?.nftCollection?.name,
+                              imagePreviewUrl:
+                                selectCollection?.nftCollection
+                                  ?.imagePreviewUrl,
+                              safelistRequestStatus:
+                                selectCollection?.nftCollection
+                                  ?.safelistRequestStatus,
+                              floorPrice,
+                            },
+                            poolsList:
+                              poolsMap && selectCollection?.contractAddress
+                                ? poolsMap.get(selectCollection.contractAddress)
+                                : [],
                           },
                         },
-                      })
+                      )
                     })
                   }}
                 />

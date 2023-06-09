@@ -45,7 +45,11 @@ const MODEL_HEADER_PROPS: ModalHeaderProps = {
     sm: '20px',
     xs: '20px',
   },
-  fontSize: '28px',
+  fontSize: {
+    md: '28px',
+    sm: '22px',
+    xs: '22px',
+  },
   fontWeight: '700',
   position: 'sticky',
   top: 0,
@@ -138,25 +142,16 @@ const Loans = () => {
             }))
             return
           }
-          console.log(
-            currentBalance,
-            repaymentAmount,
-            BigNumber(currentBalance).lt(Number(repaymentAmount)),
-          )
-
           // 2. 调用 xbank.repayLoan
-          const repayHash = await xBankContract.methods
-            .repayLoan(loan_id)
-            .send({
-              from: currentAccount,
-              gas: 300000,
-              value: repaymentAmount,
-            })
+          await xBankContract.methods.repayLoan(loan_id).send({
+            from: currentAccount,
+            gas: 300000,
+            value: repaymentAmount,
+          })
           setRepayLoadingMap((prev) => ({
             ...prev,
             [loan_id]: false,
           }))
-          console.log(repayHash, 'qqqqqqq')
           toast({
             status: 'success',
             title: 'successful repayment',
@@ -176,59 +171,18 @@ const Loans = () => {
 
   const loansForBuyerColumns: ColumnProps[] = [
     {
-      title: 'Asset',
-      dataIndex: 'nft_asset_info',
-      key: 'nft_asset_info',
-      align: 'left',
-      width: 180,
-      render: (_: any, info: any) => {
-        const currentInfo = bactNftListInfo?.find(
-          (i) =>
-            i?.tokenID === info.nft_collateral_id &&
-            i?.assetContractAddress.toLowerCase() ===
-              info.nft_collateral_contract.toLowerCase(),
-        )
-        return (
-          <Flex alignItems={'center'} gap={'8px'}>
-            <ImageWithFallback
-              src={currentInfo?.imagePreviewUrl as string}
-              w='40px'
-              h='40px'
-              borderRadius={4}
-              fit={'contain'}
-            />
-            <Text
-              w={'60%'}
-              display='inline-block'
-              overflow='hidden'
-              whiteSpace='nowrap'
-              textOverflow='ellipsis'
-            >
-              {currentInfo
-                ? currentInfo?.name || `#${currentInfo?.tokenID}`
-                : '--'}
-            </Text>
-          </Flex>
-        )
-      },
-    },
-    {
       title: 'Lender',
       dataIndex: 'lender_address',
       key: 'lender_address',
       render: (value: any) => <Text>{formatAddress(value.toString())}</Text>,
     },
     {
-      title: 'Borrower',
-      dataIndex: 'borrower_address',
-      key: 'borrower_address',
-      render: (value: any) => <Text>{formatAddress(value.toString())}</Text>,
-    },
-    {
       title: 'Start time',
       dataIndex: 'loan_start_time',
       key: 'loan_start_time',
-      render: (value: any) => <Text>{unix(value).format('YYYY/MM/DD')}</Text>,
+      render: (value: any) => (
+        <Text>{unix(value).format('YYYY/MM/DD HH:mm:ss')}</Text>
+      ),
     },
     {
       title: 'Loan value',
@@ -236,7 +190,7 @@ const Loans = () => {
       key: 'loan_amount',
       render: (value: any) => (
         <Text>
-          {wei2Eth(value)} {UNIT}
+          {formatFloat(wei2Eth(value))} {UNIT}
         </Text>
       ),
     },
@@ -248,8 +202,8 @@ const Loans = () => {
     },
     {
       title: 'Interest',
-      dataIndex: 'installment',
-      key: 'installment',
+      dataIndex: 'pool_interest_rate',
+      key: 'pool_interest_rate',
       render: (_: any, item: Record<string, any>) => {
         return (
           <Text>
@@ -258,8 +212,8 @@ const Loans = () => {
                 BigNumber(item.installment)
                   .multipliedBy(item?.number_of_installments)
                   .minus(item.loan_amount),
-              ),
-            ).toFormat(FORMAT_NUMBER)}
+              ) || 0,
+            ).toFormat(FORMAT_NUMBER, BigNumber.ROUND_UP)}
             {UNIT}
           </Text>
         )
@@ -325,6 +279,8 @@ const Loans = () => {
         loan_start_time,
         loan_interest_rate,
         loan_duration,
+        lp_scheduled_received,
+        repaid_interest,
       } = info
 
       // 应还本金 = 贷款本金 -  已还本金
@@ -337,12 +293,11 @@ const Loans = () => {
       let lastTime = BigNumber(loan_start_time)
       if (BigNumber(repaid_principal).gt(0)) {
         // 如果已还金额大于 0
-        // 每期还款本金 = 总还款本金 / 还款期数
-        const perRepayAmount = BigNumber(loan_amount).dividedBy(
-          number_of_installments,
-        )
-        // 已还次数 = 已还本金 / 每期还款本金
-        const payedTimes = BigNumber(repaid_principal).dividedBy(perRepayAmount)
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
+
+        // 已还次数 = 已还金额 / 每期还款金额
+        const payedTimes = repaidAmount.dividedBy(lp_scheduled_received)
         // 每期还款期限 = 还款期限 / 还款期数
         const perLoanDuration = BigNumber(loan_duration).dividedBy(
           number_of_installments,
@@ -447,7 +402,7 @@ const Loans = () => {
             tables={[
               {
                 tableTitle: () => (
-                  <Heading fontSize={'20px'}>Current Loans as Borrower</Heading>
+                  <Heading fontSize={'20px'}>Current Loans</Heading>
                 ),
                 styleConfig: {
                   thTextProps: {
@@ -460,7 +415,43 @@ const Loans = () => {
                   },
                 },
                 columns: [
-                  ...loansForBuyerColumns,
+                  {
+                    title: 'Asset',
+                    dataIndex: 'nft_asset_info',
+                    key: 'nft_asset_info',
+                    align: 'left',
+                    width: 130,
+                    render: (_: any, info: any) => {
+                      const currentInfo = bactNftListInfo?.find(
+                        (i) =>
+                          i?.tokenID === info.nft_collateral_id &&
+                          i?.assetContractAddress.toLowerCase() ===
+                            info.nft_collateral_contract.toLowerCase(),
+                      )
+                      return (
+                        <Flex alignItems={'center'} gap={'8px'}>
+                          <ImageWithFallback
+                            src={currentInfo?.imagePreviewUrl as string}
+                            w='40px'
+                            h='40px'
+                            borderRadius={4}
+                            fit={'contain'}
+                          />
+                          <Text
+                            w={'100px'}
+                            display='inline-block'
+                            overflow='hidden'
+                            whiteSpace='nowrap'
+                            textOverflow='ellipsis'
+                          >
+                            {currentInfo
+                              ? currentInfo?.name || `#${currentInfo?.tokenID}`
+                              : '--'}
+                          </Text>
+                        </Flex>
+                      )
+                    },
+                  },
                   {
                     title: 'Next payment date',
                     dataIndex: 'number_of_installments',
@@ -468,10 +459,11 @@ const Loans = () => {
                     render: (_: any, info: any) => {
                       const {
                         repaid_principal,
-                        loan_amount,
                         number_of_installments,
                         loan_start_time,
                         loan_duration,
+                        repaid_interest,
+                        lp_scheduled_received,
                       } = info
                       // 每期还款期限 = 还款期限 / 还款期数
                       const perLoanDuration = BigNumber(
@@ -481,13 +473,15 @@ const Loans = () => {
                         BigNumber(loan_start_time).plus(perLoanDuration)
                       if (BigNumber(repaid_principal).gt(0)) {
                         // 如果已还金额大于 0
-                        // 每期还款本金 = 总还款本金 / 还款期数
-                        const perRepayAmount = BigNumber(loan_amount).dividedBy(
-                          number_of_installments,
+
+                        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+                        const repaidAmount =
+                          BigNumber(repaid_principal).plus(repaid_interest)
+
+                        // 已还次数 = 已还金额 / 每期还款金额
+                        const payedTimes = repaidAmount.dividedBy(
+                          lp_scheduled_received,
                         )
-                        // 已还次数 = 已还本金 / 每期还款本金
-                        const payedTimes =
-                          BigNumber(repaid_principal).dividedBy(perRepayAmount)
                         // 每期还款期限 = 还款期限 / 还款期数
                         nextPaymentData = BigNumber(loan_start_time).plus(
                           perLoanDuration.multipliedBy(payedTimes.plus(1)),
@@ -496,7 +490,7 @@ const Loans = () => {
                       return (
                         <Text>
                           {unix(nextPaymentData.toNumber()).format(
-                            'YYYY/MM/DD',
+                            'YYYY/MM/DD HH:mm:ss',
                           )}
                         </Text>
                       )
@@ -508,19 +502,28 @@ const Loans = () => {
                     key: 'installment',
                     render: (value: any) => (
                       <Text>
-                        {BigNumber(wei2Eth(value)).toFormat(8)}
+                        {BigNumber(wei2Eth(value) || 0).toFormat(
+                          8,
+                          BigNumber.ROUND_UP,
+                        )}
                         &nbsp;
                         {UNIT}
                       </Text>
                     ),
                   },
+                  ...loansForBuyerColumns,
                   {
-                    title: '',
+                    title: 'operation',
                     dataIndex: 'loan_id',
                     key: 'loan_id',
+                    thAlign: 'center',
                     fixedRight: true,
+                    tdStyleConfig: {
+                      bg: 'white',
+                      px: 0,
+                    },
                     render: (value: any, info: any) => (
-                      <Flex gap={'12px'}>
+                      <Flex alignItems={'center'}>
                         <Box
                           px='12px'
                           bg='white'
@@ -541,12 +544,18 @@ const Loans = () => {
                             <Text
                               color='blue.1'
                               fontSize='14px'
-                              fontWeight={'700'}
+                              fontWeight={'500'}
                             >
                               Repay
                             </Text>
                           )}
                         </Box>
+                        <Divider
+                          orientation='vertical'
+                          bg='blue.4'
+                          h='16px'
+                          w='1px'
+                        />
 
                         <Box
                           px='12px'
@@ -559,11 +568,8 @@ const Loans = () => {
                           <Text
                             color='blue.1'
                             fontSize='14px'
-                            fontWeight={'700'}
+                            fontWeight={'500'}
                           >
-                            {/* {nftLoading && (
-                              <Spinner color='blue.1' size={'sm'} />
-                            )} */}
                             Pay in advance
                           </Text>
                         </Box>
@@ -597,12 +603,51 @@ const Loans = () => {
                       }}
                       query='(Paid Off)'
                     >
-                      Previous Loans as Borrower(Paid Off)
+                      Previous Loans(Paid Off)
                     </Highlight>
                   </Heading>
                 ),
 
-                columns: loansForBuyerColumns,
+                columns: [
+                  {
+                    title: 'Asset',
+                    dataIndex: 'nft_asset_info',
+                    key: 'nft_asset_info',
+                    align: 'left',
+                    width: 130,
+                    render: (_: any, info: any) => {
+                      const currentInfo = bactNftListInfo?.find(
+                        (i) =>
+                          i?.tokenID === info.nft_collateral_id &&
+                          i?.assetContractAddress.toLowerCase() ===
+                            info.nft_collateral_contract.toLowerCase(),
+                      )
+                      return (
+                        <Flex alignItems={'center'} gap={'8px'}>
+                          <ImageWithFallback
+                            src={currentInfo?.imagePreviewUrl as string}
+                            w='40px'
+                            h='40px'
+                            borderRadius={4}
+                            fit={'contain'}
+                          />
+                          <Text
+                            w={'100px'}
+                            display='inline-block'
+                            overflow='hidden'
+                            whiteSpace='nowrap'
+                            textOverflow='ellipsis'
+                          >
+                            {currentInfo
+                              ? currentInfo?.name || `#${currentInfo?.tokenID}`
+                              : '--'}
+                          </Text>
+                        </Flex>
+                      )
+                    },
+                  },
+                  ...loansForBuyerColumns,
+                ],
                 loading: loading,
                 data: statuedLoans[1],
                 key: '2',
@@ -628,11 +673,50 @@ const Loans = () => {
                       }}
                       query='(Overdue)'
                     >
-                      Previous Loans as Borrower(Overdue)
+                      Previous Loans(Overdue)
                     </Highlight>
                   </Heading>
                 ),
-                columns: loansForBuyerColumns,
+                columns: [
+                  {
+                    title: 'Asset',
+                    dataIndex: 'nft_asset_info',
+                    key: 'nft_asset_info',
+                    align: 'left',
+                    width: 130,
+                    render: (_: any, info: any) => {
+                      const currentInfo = bactNftListInfo?.find(
+                        (i) =>
+                          i?.tokenID === info.nft_collateral_id &&
+                          i?.assetContractAddress.toLowerCase() ===
+                            info.nft_collateral_contract.toLowerCase(),
+                      )
+                      return (
+                        <Flex alignItems={'center'} gap={'8px'}>
+                          <ImageWithFallback
+                            src={currentInfo?.imagePreviewUrl as string}
+                            w='40px'
+                            h='40px'
+                            borderRadius={4}
+                            fit={'contain'}
+                          />
+                          <Text
+                            w={'100px'}
+                            display='inline-block'
+                            overflow='hidden'
+                            whiteSpace='nowrap'
+                            textOverflow='ellipsis'
+                          >
+                            {currentInfo
+                              ? currentInfo?.name || `#${currentInfo?.tokenID}`
+                              : '--'}
+                          </Text>
+                        </Flex>
+                      )
+                    },
+                  },
+                  ...loansForBuyerColumns,
+                ],
                 loading: loading,
                 data: statuedLoans[2],
                 key: '3',
@@ -710,8 +794,10 @@ const Loans = () => {
                 <Text>Outstanding Principal</Text>
                 <Text>
                   {prepayData
-                    ? formatFloat(wei2Eth(prepayData?.outstandingPrincipal))
-                    : '--'}{' '}
+                    ? formatFloat(
+                        wei2Eth(prepayData?.outstandingPrincipal) || 0,
+                      )
+                    : '--'}
                   {UNIT}
                 </Text>
               </Flex>
@@ -720,9 +806,11 @@ const Loans = () => {
                 <Text>
                   {prepayData
                     ? formatFloat(
-                        wei2Eth(prepayData?.interestOutstanding.integerValue()),
+                        wei2Eth(
+                          prepayData?.interestOutstanding.integerValue(),
+                        ) || 0,
                       )
-                    : '--'}{' '}
+                    : '--'}
                   {UNIT}
                 </Text>
               </Flex>
@@ -737,7 +825,7 @@ const Loans = () => {
                         prepayData?.outstandingPrincipal.plus(
                           prepayData?.interestOutstanding,
                         ),
-                      ),
+                      ) || 0,
                     )
                   : '--'}
                 {UNIT}

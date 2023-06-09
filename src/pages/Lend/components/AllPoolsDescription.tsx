@@ -1,59 +1,45 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Skeleton,
-  type FlexProps,
-  Text,
-} from '@chakra-ui/react'
-import useRequest from 'ahooks/lib/useRequest'
-import BigNumber from 'bignumber.js'
-import reduce from 'lodash/reduce'
-import range from 'lodash-es/range'
-import numeral from 'numeral'
-import { useCallback, type FunctionComponent } from 'react'
+import { Box, Flex, Heading, Text } from '@chakra-ui/react'
+import { type FunctionComponent } from 'react'
 
-import { ImageWithFallback, SvgComponent } from '@/components'
-import { createXBankContract } from '@/utils/createContract'
-import { wei2Eth } from '@/utils/unit-conversion'
+import { ImageWithFallback } from '@/components'
 
-const Item: FunctionComponent<
-  FlexProps & {
-    label: string
-    value?: string | number
-    isEth?: boolean
-    isDollar?: boolean
-  }
-> = ({ label, value, isDollar, isEth, ...rest }) => (
-  <Flex flexDir={'column'} alignItems='center' {...rest}>
-    <Flex alignItems={'center'} mb={'4px'}>
-      {isEth && <SvgComponent svgId='icon-eth' svgSize='20px' />}
-      <Text
-        color={'black.3'}
-        fontWeight='700'
-        fontSize={{
-          md: '28px',
-          sm: '20px',
-          xs: '20px',
-        }}
-      >
-        {isDollar && '$'}
-        {value || '--'}
-      </Text>
-    </Flex>
-    <Text
-      color='gray.4'
-      fontSize={{
-        md: '14px',
-        sm: '12px',
-        xs: '12px',
-      }}
-      fontWeight='500'
-    >
-      {label}
-    </Text>
-  </Flex>
-)
+// const Item: FunctionComponent<
+//   FlexProps & {
+//     label: string
+//     value?: string | number
+//     isEth?: boolean
+//     isDollar?: boolean
+//   }
+// > = ({ label, value, isDollar, isEth, ...rest }) => (
+//   <Flex flexDir={'column'} alignItems='center' {...rest}>
+//     <Flex alignItems={'center'} mb={'4px'}>
+//       {isEth && <SvgComponent svgId='icon-eth' svgSize='20px' />}
+//       <Text
+//         color={'black.3'}
+//         fontWeight='700'
+//         fontSize={{
+//           md: '28px',
+//           sm: '20px',
+//           xs: '20px',
+//         }}
+//       >
+//         {isDollar && '$'}
+//         {value || '--'}
+//       </Text>
+//     </Flex>
+//     <Text
+//       color='gray.4'
+//       fontSize={{
+//         md: '14px',
+//         sm: '12px',
+//         xs: '12px',
+//       }}
+//       fontWeight='500'
+//     >
+//       {label}
+//     </Text>
+//   </Flex>
+// )
 
 const AllPoolsDescription: FunctionComponent<{
   data: {
@@ -63,35 +49,35 @@ const AllPoolsDescription: FunctionComponent<{
     img?: string
   }
 }> = ({ data: { title = '', description = '', img = '' } }) => {
-  const fetchSummaryData = useCallback(async () => {
-    const xbankContract = createXBankContract()
-    const listPool = await xbankContract.methods.listPool().call()
-    const listLoan = await xbankContract.methods.listLoan().call()
-    const collectionWithPools = [
-      ...new Set(listPool.map((item: any) => item.allowCollateralContract)),
-    ]
-    const totalLoanPrincipal = reduce(
-      listLoan,
-      (sum, i) => BigNumber(sum).plus(BigNumber(i.loanPrincipal)),
-      BigNumber(0),
-    )
-    const totalPoolAmount = reduce(
-      listPool,
-      (sum, i) => BigNumber(sum).plus(BigNumber(i.poolAmount)),
-      BigNumber(0),
-    )
+  // const fetchSummaryData = useCallback(async () => {
+  //   const xbankContract = createXBankContract()
+  //   const listPool = await xbankContract.methods.listPool().call()
+  //   const listLoan = await xbankContract.methods.listLoan().call()
+  //   const collectionWithPools = [
+  //     ...new Set(listPool.map((item: any) => item.allowCollateralContract)),
+  //   ]
+  //   const totalLoanPrincipal = reduce(
+  //     listLoan,
+  //     (sum, i) => BigNumber(sum).plus(BigNumber(i.loanPrincipal)),
+  //     BigNumber(0),
+  //   )
+  //   const totalPoolAmount = reduce(
+  //     listPool,
+  //     (sum, i) => BigNumber(sum).plus(BigNumber(i.poolAmount)),
+  //     BigNumber(0),
+  //   )
 
-    return {
-      collectionCount: collectionWithPools?.length,
-      totalLoanPrincipal,
-      totalPoolAmount,
-    }
-  }, [])
+  //   return {
+  //     collectionCount: collectionWithPools?.length,
+  //     totalLoanPrincipal,
+  //     totalPoolAmount,
+  //   }
+  // }, [])
 
-  const { data, loading } = useRequest(fetchSummaryData, {
-    retryCount: 5,
-    ready: !!window?.ethereum,
-  })
+  // const { data, loading } = useRequest(fetchSummaryData, {
+  //   retryCount: 5,
+  //   ready: !!window?.ethereum,
+  // })
   return (
     <Flex
       justify={{
@@ -132,7 +118,7 @@ const AllPoolsDescription: FunctionComponent<{
         </Text>
 
         {/* 总览数据 */}
-        {loading ? (
+        {/* {loading ? (
           <Flex gap={'10px'}>
             {range(3).map((i) => (
               <Skeleton
@@ -187,7 +173,7 @@ const AllPoolsDescription: FunctionComponent<{
               isEth
             />
           </Flex>
-        )}
+        )} */}
       </Box>
       <ImageWithFallback
         src={img}

@@ -86,6 +86,7 @@ const COLLECTION_DEMO = {
 export const TransactionContext = createContext({
   connectWallet: async () => {},
   currentAccount: '',
+  isConnected: false,
   connectLoading: false,
   handleSwitchNetwork: async () => {},
   handleDisconnect: () => {},
@@ -142,9 +143,26 @@ export const TransactionsProvider = ({
     },
   )
 
+  const [isConnected, setIsConnected] = useLocalStorageState<boolean>(
+    'address-connected',
+    {
+      defaultValue: false,
+    },
+  )
+
+  const handleDisconnect = useCallback(() => {
+    setCurrentAccount('')
+    setIsConnected(false)
+    window.location.href = '/'
+  }, [setCurrentAccount, setIsConnected])
+
   const checkIfWalletIsConnect = useCallback(async () => {
     try {
-      if (window.location.pathname === '/xlending/demo') return
+      if (window.location.pathname === '/demo') return
+      if (!isConnected) {
+        setCurrentAccount('')
+        return
+      }
       if (!ethereum) {
         toast.closeAll()
         toast({
@@ -159,19 +177,18 @@ export const TransactionsProvider = ({
       }
 
       const accounts = await ethereum.request({ method: 'eth_accounts' })
-
+      setIsConnected(true)
       if (accounts.length) {
         setCurrentAccount(accounts[0])
+
         // getAllTransactions();
       } else {
         setCurrentAccount('')
-        console.log('No accounts found')
       }
     } catch (error) {
       setCurrentAccount('')
     }
-  }, [toast, setCurrentAccount])
-
+  }, [toast, setCurrentAccount, setIsConnected, isConnected])
   useEffect(() => {
     // eth_accounts always returns an array.
     async function handleAccountsChanged(accounts: string[]) {
@@ -190,7 +207,6 @@ export const TransactionsProvider = ({
     }
     window.ethereum.on('accountsChanged', handleAccountsChanged)
   }, [])
-
   const handleSwitchNetwork = useCallback(async () => {
     if (!ethereum) {
       return
@@ -214,6 +230,7 @@ export const TransactionsProvider = ({
         setCurrentAccount(requestedAccounts[0])
         setConnectLoading(false)
       }
+      setIsConnected(true)
     } catch (switchError: any) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
@@ -242,11 +259,11 @@ export const TransactionsProvider = ({
         })
       }
     }
-  }, [toast, setCurrentAccount])
+  }, [toast, setCurrentAccount, setIsConnected])
 
   const connectWallet = useCallback(async () => {
     try {
-      if (window.location.pathname === '/xlending/demo') return
+      if (window.location.pathname === '/demo') return
 
       if (!ethereum) {
         toast.closeAll()
@@ -267,53 +284,16 @@ export const TransactionsProvider = ({
         method: 'eth_requestAccounts',
       })
 
-      await signAuth(accounts[0])
       setCurrentAccount(accounts[0])
+      setIsConnected(true)
+      await signAuth(accounts[0])
       setConnectLoading(false)
     } catch (error) {
-      console.log(error)
       setConnectLoading(false)
 
       throw new Error('No ethereum object')
     }
-  }, [toast, handleSwitchNetwork, setCurrentAccount, signAuth])
-
-  // const sendTransaction = async () => {
-  //   try {
-  //     if (!!ethereum) {
-  //       const transactionsContract = createXBankContract()
-  //       // const parsedAmount = ethers.utils.parseEther(amount)
-
-  //       // await ethereum.request({
-  //       //   method: 'eth_sendTransaction',
-  //       //   params: [
-  //       //     {
-  //       //       from: currentAccount,
-  //       //       to: addressTo,
-  //       //       gas: '0x5208',
-  //       //       value: parsedAmount._hex,
-  //       //     },
-  //       //   ],
-  //       // })
-
-  //       const transactionHash = await transactionsContract.balanceOf(
-  //         '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
-  //       )
-
-  //       setIsLoading(true)
-  //       console.log(`Loading - ${transactionHash.hash}`)
-  //       await transactionHash.wait()
-  //       console.log(`Success - ${transactionHash.hash}`)
-  //       setIsLoading(false)
-  //     } else {
-  //       console.log('No ethereum object')
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-
-  //     throw new Error('No ethereum object')
-  //   }
-  // }
+  }, [toast, handleSwitchNetwork, setCurrentAccount, signAuth, setIsConnected])
 
   useEffect(() => {
     checkIfWalletIsConnect()
@@ -333,7 +313,8 @@ export const TransactionsProvider = ({
         // handleChange,
         // formData,
         handleSwitchNetwork,
-        handleDisconnect: () => setCurrentAccount(''),
+        handleDisconnect,
+        isConnected: isConnected as boolean,
         // @ts-ignore
         collectionList,
         collectionLoading: loading || collectionLoading,

@@ -64,6 +64,7 @@ function CustomSelect<
             borderRadius: 8,
             top: '65%',
             boxShadow: 'none',
+            zIndex: 2,
           }
         },
         singleValue: (baseStyles) => ({
@@ -72,6 +73,7 @@ function CustomSelect<
         }),
         control: (baseStyles, { isFocused, isDisabled: _isDisabled }) => ({
           ...baseStyles,
+          cursor: 'pointer',
           width: w,
           fontWeight: 700,
           borderRadius: 8,

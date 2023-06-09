@@ -1,9 +1,10 @@
 import { useToast } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
+import dayjs from 'dayjs'
 import { useCallback } from 'react'
 
 import { apiPostAuthChallenge, apiPostAuthLogin } from '@/api/user'
-import { setUserToken } from '@/utils/auth'
+import { getUserToken, setUserToken } from '@/utils/auth'
 import { strToHex } from '@/utils/unit-conversion'
 
 const { ethereum } = window
@@ -28,6 +29,12 @@ const useAuth = () => {
   const runAsync = useCallback(
     async (address: string) => {
       try {
+        const prevToken = getUserToken()
+        if (prevToken && prevToken?.expires) {
+          const expiresTimes = dayjs(prevToken.expires).unix()
+          const currentTime = dayjs().unix()
+          if (expiresTimes > currentTime) return
+        }
         toast({
           title:
             'Please click to sign in and accept the xBank Terms of Service',
@@ -56,7 +63,7 @@ const useAuth = () => {
         })
         setUserToken(tokenData)
       } catch (error) {
-        console.log(error)
+        throw error
       }
     },
     [fetchMessageToSign, fetchToken, toast],

@@ -15,7 +15,7 @@ type NotFoundProps = {
 }
 const NotFound: FunctionComponent<NotFoundProps> = ({
   title = 'Page not found',
-  backTo = '/xlending/',
+  backTo = '/',
 }) => {
   const navigate = useNavigate()
   return (
@@ -28,6 +28,7 @@ const NotFound: FunctionComponent<NotFoundProps> = ({
       textAlign='center'
       borderRadius={16}
       py={8}
+      mt='40px'
     >
       <AlertIcon boxSize='40px' mr={0} />
       <AlertTitle mt={'16px'} mb={'4px'} fontSize='32px'>

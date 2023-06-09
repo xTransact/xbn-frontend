@@ -182,6 +182,43 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "nftCollateralContract",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nftCollateralID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      }
+    ],
+    "name": "LoanPrepayment",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "loanID",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "supportERC20Denomination",
         "type": "address"
       },
@@ -216,7 +253,7 @@
         "type": "address"
       }
     ],
-    "name": "LoanRepayed",
+    "name": "Loanrepaid",
     "type": "event"
   },
   {
@@ -420,6 +457,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "maximumLoanAmount",
+        "type": "uint256"
+      },
+      {
         "internalType": "uint32",
         "name": "poolMaximumPercentage",
         "type": "uint32"
@@ -535,12 +577,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "repayedPrincipal",
+            "name": "repaidPrincipal",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "repayedInterest",
+            "name": "repaidLPInterest",
             "type": "uint256"
           },
           {
@@ -695,6 +737,11 @@
           {
             "internalType": "uint256",
             "name": "poolUsedAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maximumLoanAmount",
             "type": "uint256"
           },
           {
@@ -853,12 +900,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "repayedPrincipal",
+            "name": "repaidPrincipal",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "repayedInterest",
+            "name": "repaidLPInterest",
             "type": "uint256"
           },
           {
@@ -969,6 +1016,11 @@
           {
             "internalType": "uint256",
             "name": "poolUsedAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maximumLoanAmount",
             "type": "uint256"
           },
           {
@@ -1129,11 +1181,102 @@
       },
       {
         "internalType": "uint256",
+        "name": "maximumLoanAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumPercentage",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumDays",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumInterestRate",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "loanTimeConcessionFlexibility",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "loanRatioPreferentialFlexibility",
+        "type": "uint32"
+      }
+    ],
+    "name": "updateLoanTerms",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "poolID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "poolAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maximumLoanAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumPercentage",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumDays",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "poolMaximumInterestRate",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "loanTimeConcessionFlexibility",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "loanRatioPreferentialFlexibility",
+        "type": "uint32"
+      }
+    ],
+    "name": "updatePool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "poolID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "poolAmount",
         "type": "uint256"
       }
     ],
-    "name": "updatePool",
+    "name": "updatePoolAmount",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

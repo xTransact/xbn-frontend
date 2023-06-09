@@ -7,8 +7,9 @@ import {
   type BoxProps,
 } from '@chakra-ui/react'
 
+import type { MARKET_TYPE_ENUM } from '@/components'
 import { NftOrigin, SvgComponent } from '@/components'
-import { type MarketType } from '@/components/nft-origin/NftOrigin'
+import { formatFloat } from '@/utils/format'
 
 import type { FunctionComponent } from 'react'
 
@@ -17,10 +18,10 @@ const DetailComponent: FunctionComponent<
     data: {
       name1: string
       name2?: string
-      price: string
+      price?: number
       verified: boolean
       usdPrice?: string
-      platform?: MarketType
+      platform?: MARKET_TYPE_ENUM
     }
     loading?: boolean
     onRefreshPrice?: () => void
@@ -34,7 +35,15 @@ const DetailComponent: FunctionComponent<
   ...rest
 }) => {
   if (loading) {
-    return <Skeleton h={200} borderRadius={16} />
+    return (
+      <Skeleton
+        h={200}
+        borderRadius={16}
+        startColor='rgba(27, 34, 44, 0.1)'
+        endColor='rgba(27, 34, 44, 0.2)'
+        mt={8}
+      />
+    )
   }
   return (
     <Box mt={8} {...rest}>
@@ -62,7 +71,7 @@ const DetailComponent: FunctionComponent<
           <Flex alignItems={'end'} mt={1} gap={'4px'}>
             <SvgComponent svgId='icon-eth' svgSize='32px' />
             <Heading fontSize={'32px'} lineHeight='30px'>
-              {price}
+              {formatFloat(price)}
             </Heading>
             <SvgComponent
               svgId='icon-refresh'

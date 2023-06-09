@@ -1,6 +1,5 @@
-import { Input } from '@chakra-ui/react'
+import { Input, type InputProps } from '@chakra-ui/react'
 
-import type { InputProps } from '@chakra-ui/react'
 import type { FunctionComponent } from 'react'
 
 const CustomNumberInput: FunctionComponent<
@@ -26,6 +25,8 @@ const CustomNumberInput: FunctionComponent<
       isInvalid={isInvalid}
       borderColor='gray.4'
       type='number'
+      // @ts-ignore
+      onWheel={(e) => e.target.blur()}
       onInput={(e: any) => {
         const v = e.target.value as string
         if (Number(v) < minValue) {
@@ -39,7 +40,7 @@ const CustomNumberInput: FunctionComponent<
         }
         onSetValue(
           v.includes('.')
-            ? v.replace(/^(-)*(\d+)\.(\d{0,10}).*$/, '$1$2.$3')
+            ? v.replace(/^(-)*(\d+)\.(\d{0,8}).*$/, '$1$2.$3')
             : // ? v.replace(/^(-)*(\d+)\.(\d\d\d\d\d\d\d\d\d\d).*$/, '$1$2.$3')
               v,
         )

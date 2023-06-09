@@ -32,8 +32,8 @@ const ImageToolBar: FunctionComponent<ImageToolBarProps> = ({ data }) => {
       alignItems='center'
       justify={!!likeCount ? 'space-between' : 'flex-end'}
       w={{
-        xl: '600px',
-        lg: '380px',
+        xl: '500px',
+        lg: '450px',
         sm: '100%',
         xs: '100%',
       }}

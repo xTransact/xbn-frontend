@@ -18,7 +18,7 @@ const components = {
     // 3. We can add a new visual variant
     variants: {
       linear: {
-        bg: 'linear-gradient(253.75deg, #FFBADB 11.29%, #458FFF 51.72%, #1CFEF0 95.67%)'
+        bg: 'linear-gradient(253.75deg, #FFBADB 11.29%, #458FFF 51.72%, #1CFEF0 95.67%)',
       },
       secondary: {
         bg: 'blue.2',
@@ -76,6 +76,10 @@ const components = {
       outline: {
         borderColor: 'blue.1',
         color: 'blue.1',
+        _hover: {
+          bg: 'white',
+          opacity: 0.8,
+        },
       },
       // // 5. We can add responsive variants
       // sm: {

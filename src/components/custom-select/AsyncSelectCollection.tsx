@@ -115,7 +115,7 @@ function AsyncSelectCollection({
       // @ts-ignore
       isOptionSelected={(item, select) => item.contract_addr === select}
       isOptionDisabled={(item: any) => {
-        return disabledArr.includes(item?.contractAddress?.toLowerCase())
+        return disabledArr?.includes(item?.contractAddress?.toLowerCase())
       }}
       loadOptions={promiseOptions}
       theme={(theme) => ({
@@ -153,6 +153,7 @@ function AsyncSelectCollection({
             borderRadius: 8,
             top: '65%',
             boxShadow: 'none',
+            zIndex: 2,
           }
         },
         singleValue: (baseStyles) => ({

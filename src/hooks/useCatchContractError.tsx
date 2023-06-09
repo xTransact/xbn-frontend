@@ -12,7 +12,6 @@ const useCatchContractError = () => {
   const toast = useToast()
   const toastError = useCallback(
     (error: ErrorType) => {
-      console.log('🚀 ~ file: Loans.tsx:197 ~ interceptFn ~ error:', error)
       const code: string = error?.code
       const originMessage: string = error?.message
       let title: string | ReactNode = code
@@ -44,7 +43,6 @@ const useCatchContractError = () => {
             </Text>
           )
         } catch {
-          console.log('here')
           title = originMessage?.substring(0, firstIndex)
         }
       }
