@@ -23,7 +23,7 @@ const abortController = new AbortController()
 const httpLink = createHttpLink({
   uri: `${import.meta.env.VITE_BASE_URL_2}/lending/query`,
   fetchOptions: {
-    mode: 'cors',
+    mode: 'no-cors',
     signal: abortController.signal,
   },
 })
