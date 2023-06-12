@@ -361,7 +361,7 @@ const Loans = () => {
         await xBankContract.methods.prepayment(loan_id).send({
           from: currentAccount,
           gas: 300000,
-          value: `${amount.integerValue().toNumber()}`,
+          value: amount.integerValue().toString(),
         })
         setPrepayLoadingMap((prev) => ({
           ...prev,

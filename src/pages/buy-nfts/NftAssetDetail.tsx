@@ -447,10 +447,10 @@ const NftAssetDetail = () => {
       try {
         setTransferFromLoading(true)
         transferBlock = await xBankContract.methods
-          .transferFrom(pool_id, loanWeiAmount.toNumber().toString())
+          .transferFrom(pool_id, loanWeiAmount.toString())
           .send({
             from: currentAccount,
-            value: commodityWeiPrice.minus(loanWeiAmount).toNumber().toString(),
+            value: commodityWeiPrice.minus(loanWeiAmount).toString(),
             gas: 300000,
             // gasPrice:''
           })
@@ -458,12 +458,12 @@ const NftAssetDetail = () => {
         const postParams: LoanOrderDataType = {
           pool_id: pool_id.toString(),
           borrower_address: currentAccount,
-          commodity_price: `${commodityWeiPrice.toNumber()}`,
-          oracle_floor_price: `${commodityWeiPrice.toNumber()}`,
-          down_payment: downPaymentWei.toNumber().toString(),
+          commodity_price: commodityWeiPrice.toString(),
+          oracle_floor_price: commodityWeiPrice.toString(),
+          down_payment: downPaymentWei.toString(),
           nft_collateral_id: `${detail?.asset?.tokenID}`,
           number_of_installments: installmentValue,
-          loan_amount: loanWeiAmount.toNumber().toString(),
+          loan_amount: loanWeiAmount.toString(),
           loan_duration: pool_days * 24 * 60 * 60,
           loan_interest_rate: lp_pool_apr,
           platform,
