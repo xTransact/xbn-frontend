@@ -204,18 +204,20 @@ const UpdatePoolAmountButton: FunctionComponent<
           .send({
             from: currentAccount,
           })
-        setUpdateLoading(false)
-        onCloseUpdate()
-        if (toast.isActive('Updated-Successfully-ID')) {
-          // toast.closeAll()
-        } else {
-          toast({
-            status: 'success',
-            title: 'Updated successfully! ',
-            id: 'Updated-Successfully-ID',
-          })
-        }
-        onSuccess()
+        setTimeout(() => {
+          setUpdateLoading(false)
+          onCloseUpdate()
+          if (toast.isActive('Updated-Successfully-ID')) {
+            // toast.closeAll()
+          } else {
+            toast({
+              status: 'success',
+              title: 'Updated successfully! ',
+              id: 'Updated-Successfully-ID',
+            })
+          }
+          onSuccess()
+        }, 1000)
       } catch (error: any) {
         toastError(error)
         setUpdateLoading(false)
