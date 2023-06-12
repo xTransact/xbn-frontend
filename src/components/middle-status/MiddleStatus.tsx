@@ -14,6 +14,7 @@ const MiddleStatus: FunctionComponent<{
   successTitle?: string
   successDescription?: string
   isShowBack?: boolean
+  loadingText?: string
 }> = ({
   step,
   imagePreviewUrl,
@@ -23,6 +24,7 @@ const MiddleStatus: FunctionComponent<{
   successDescription,
   successTitle,
   isShowBack = true,
+  loadingText,
 }) => {
   return (
     <Container px={0}>
@@ -38,6 +40,7 @@ const MiddleStatus: FunctionComponent<{
           sm: '32px',
           xs: '32px',
         }}
+        mb='60px'
       >
         <Button
           hidden={!isShowBack}
@@ -63,16 +66,10 @@ const MiddleStatus: FunctionComponent<{
           Back
         </Button>
         <Flex
-          mr={{
-            xl: '290px',
-            lg: '200px',
-            md: '100px',
-            sm: 0,
-            xs: 0,
-          }}
           flexDir='column'
           justifyContent={'center'}
           alignItems='center'
+          w='262px'
         >
           <Flex
             position={'relative'}
@@ -117,12 +114,19 @@ const MiddleStatus: FunctionComponent<{
             )}
           </Flex>
           {step === 'loading' && (
-            <Spinner
-              color='blue.1'
-              boxSize={'52px'}
-              thickness='3px'
-              speed='0.6s'
-            />
+            <Flex flexDir={'column'} alignItems={'center'}>
+              <Spinner
+                color='blue.1'
+                boxSize={'52px'}
+                thickness='3px'
+                speed='0.6s'
+              />
+              {loadingText && (
+                <Text fontWeight={'500'} mt='8px' textAlign={'center'}>
+                  {loadingText}
+                </Text>
+              )}
+            </Flex>
           )}
           {step === 'success' && (
             <Box textAlign={'center'}>

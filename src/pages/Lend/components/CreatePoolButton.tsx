@@ -322,7 +322,7 @@ const CreatePoolButton: FunctionComponent<
               svgSize='16px'
             />
           </ModalHeader>
-          <ModalBody pb={'24px'} px={0}>
+          <ModalBody p={0} px={0}>
             {/* 数值们 */}
             {/* <Flex
               py={{ md: '32px', sm: '20px', xs: '20px' }}
@@ -439,12 +439,14 @@ const CreatePoolButton: FunctionComponent<
           </ModalBody>
 
           {/* <ModalFooter justifyContent={'center'}> */}
-          {(approveLoading || createLoading || subscribeLoading) && (
-            <Text color={'gray.5'} fontSize={'14px'} mt='8px'>
-              It is expected to take one or two minutes, ultimately depending on
-              the EtherNet transaction processing time.
-            </Text>
-          )}
+          <Box h='42px' px='20px' mt='8px'>
+            {(approveLoading || createLoading || subscribeLoading) && (
+              <Text color={'gray.1'} fontSize={'14px'} textAlign={'center'}>
+                It is expected to take one or two minutes, ultimately depending
+                on the EtherNet transaction processing time.
+              </Text>
+            )}
+          </Box>
           <Button
             variant='primary'
             mr={'12px'}

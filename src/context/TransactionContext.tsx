@@ -287,14 +287,15 @@ export const TransactionsProvider = ({
 
       setCurrentAccount(accounts[0])
       setIsConnected(true)
-      await signAuth(accounts[0])
+      // window.ethereum.on('accountsChanged', handleAccountsChanged) 会执行签名操作，与此处重复，暂时注释掉
+      // await signAuth(accounts[0])
       setConnectLoading(false)
     } catch (error) {
       setConnectLoading(false)
 
       throw new Error('No ethereum object')
     }
-  }, [toast, handleSwitchNetwork, setCurrentAccount, signAuth, setIsConnected])
+  }, [toast, handleSwitchNetwork, setCurrentAccount, setIsConnected])
 
   useEffect(() => {
     checkIfWalletIsConnect()
