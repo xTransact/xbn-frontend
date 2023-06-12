@@ -41,15 +41,17 @@ export const requestInterceptor = async ({
   if (MODE !== 'development') {
     if (url?.startsWith('/api/v')) {
       _baseURL = VITE_TEST_BASE_URL
-      config.headers.appkey = VITE_APP_KEY
     } else {
       _baseURL = VITE_LENDING_BASE_URL
     }
   }
-  const userToken = getUserToken()
-  config.headers.Authorization = userToken
-    ? `Bearer ${userToken?.token}`
-    : undefined
+  if (!url?.startsWith('/lending/query')) {
+    const userToken = getUserToken()
+    config.headers.Authorization = userToken
+      ? `Bearer ${userToken?.token}`
+      : undefined
+    config.headers.appkey = VITE_APP_KEY
+  }
   return {
     ...config,
     url,
