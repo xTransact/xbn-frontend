@@ -24,7 +24,6 @@ const { toast } = standaloneToast
 export const AXIOS_DEFAULT_CONFIG = {
   baseURL: '',
   headers: {
-    appkey: VITE_APP_KEY,
     Authorization: getUserToken()
       ? `Bearer ${getUserToken()?.token}`
       : undefined,
@@ -42,6 +41,7 @@ export const requestInterceptor = async ({
   if (MODE !== 'development') {
     if (url?.startsWith('/api/v')) {
       _baseURL = VITE_TEST_BASE_URL
+      config.headers.appkey = VITE_APP_KEY
     } else {
       _baseURL = VITE_LENDING_BASE_URL
     }
