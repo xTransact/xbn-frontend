@@ -21,7 +21,7 @@ import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { apiGetFloorPrice, apiGetPools } from '@/api'
 import {
@@ -76,6 +76,7 @@ const SORT_OPTIONS = [
 const Market = () => {
   const navigate = useNavigate()
   const pathData = useParams()
+  const { search } = useLocation()
   const { isOpen, onClose, interceptFn } = useWallet()
   const {
     isOpen: drawVisible,
@@ -187,8 +188,8 @@ const Market = () => {
     const {
       nftCollection: { id },
     } = selectCollection
-    navigate(`/buy-nfts/market/${id}`)
-  }, [selectCollection, navigate])
+    navigate(`/buy-nfts/market/${id}${search}`)
+  }, [selectCollection, navigate, search])
 
   // 根据 collectionId 搜索 assets
   const [fetchAssetByCollectionId] = useNftCollectionAssetsLazyQuery({
