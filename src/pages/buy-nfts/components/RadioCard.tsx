@@ -25,7 +25,7 @@ const RadioCard: FunctionComponent<FlexProps & RadioCardProps> = ({
       onClick={isDisabled ? () => undefined : onClick}
       w='100%'
       cursor='pointer'
-      borderWidth={1}
+      borderWidth={isActive ? 2 : 1}
       borderRadius={{
         md: 16,
         sm: 8,

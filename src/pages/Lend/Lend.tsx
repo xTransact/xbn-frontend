@@ -50,7 +50,7 @@ import {
   SearchInput,
   LenderGuideModal,
 } from '@/components'
-import { FORMAT_NUMBER, UNIT } from '@/constants'
+import { UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
 import { useWallet, useBatchAsset, useGuide } from '@/hooks'
 import { formatAddress, formatFloat } from '@/utils/format'
@@ -408,12 +408,18 @@ const Lend = () => {
         },
       },
       {
-        title: 'TVL',
+        title: 'Pool Size',
         dataIndex: 'pool_amount',
         key: 'pool_amount',
         align: 'right',
         thAlign: 'right',
-        render: (value: any) => <EthText>{wei2Eth(value)}</EthText>,
+        render: (value: any, info: any) => (
+          <EthText>
+            {formatFloat(
+              wei2Eth(Number(value) - Number(info.pool_used_amount)),
+            )}
+          </EthText>
+        ),
       },
       {
         title: 'Collateral Factor',
@@ -520,13 +526,17 @@ const Lend = () => {
         },
       },
       {
-        title: 'TVL',
+        title: 'Pool Size',
         dataIndex: 'pool_amount',
         key: 'pool_amount',
         align: 'right',
         thAlign: 'right',
-        render: (value: any) => (
-          <EthText>{formatFloat(wei2Eth(value))}</EthText>
+        render: (value: any, info: any) => (
+          <EthText>
+            {formatFloat(
+              wei2Eth(Number(value) - Number(info.pool_used_amount)),
+            )}
+          </EthText>
         ),
       },
       {
@@ -689,13 +699,15 @@ const Lend = () => {
         render: (_: any, item: Record<string, any>) => {
           return (
             <Text>
-              {BigNumber(
-                wei2Eth(
-                  BigNumber(item.installment)
-                    .multipliedBy(item?.number_of_installments)
-                    .minus(item.loan_amount),
-                ) || 0,
-              ).toFormat(FORMAT_NUMBER, BigNumber.ROUND_UP)}
+              {formatFloat(
+                BigNumber(
+                  wei2Eth(
+                    BigNumber(item.installment)
+                      .multipliedBy(item?.number_of_installments)
+                      .minus(item.loan_amount),
+                  ) || 0,
+                ),
+              )}
               {UNIT}
             </Text>
           )

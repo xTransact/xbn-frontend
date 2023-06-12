@@ -60,7 +60,8 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
   font-family: 'HarmonyOS Sans SC Regular';
 }
 

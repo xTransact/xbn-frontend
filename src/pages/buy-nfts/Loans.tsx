@@ -30,7 +30,7 @@ import {
   SvgComponent,
   LoadingComponent,
 } from '@/components'
-import { FORMAT_NUMBER, UNIT } from '@/constants'
+import { UNIT } from '@/constants'
 import { useBatchAsset, useWallet, useCatchContractError } from '@/hooks'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatAddress, formatFloat } from '@/utils/format'
@@ -207,13 +207,15 @@ const Loans = () => {
       render: (_: any, item: Record<string, any>) => {
         return (
           <Text>
-            {BigNumber(
-              wei2Eth(
-                BigNumber(item.installment)
-                  .multipliedBy(item?.number_of_installments)
-                  .minus(item.loan_amount),
-              ) || 0,
-            ).toFormat(FORMAT_NUMBER, BigNumber.ROUND_UP)}
+            {formatFloat(
+              BigNumber(
+                wei2Eth(
+                  BigNumber(item.installment)
+                    .multipliedBy(item?.number_of_installments)
+                    .minus(item.loan_amount),
+                ) || 0,
+              ),
+            )}
             {UNIT}
           </Text>
         )
@@ -359,7 +361,7 @@ const Loans = () => {
         await xBankContract.methods.prepayment(loan_id).send({
           from: currentAccount,
           gas: 300000,
-          value: `${amount.integerValue().toNumber()}`,
+          value: amount.integerValue().toString(),
         })
         setPrepayLoadingMap((prev) => ({
           ...prev,
@@ -502,10 +504,7 @@ const Loans = () => {
                     key: 'installment',
                     render: (value: any) => (
                       <Text>
-                        {BigNumber(wei2Eth(value) || 0).toFormat(
-                          8,
-                          BigNumber.ROUND_UP,
-                        )}
+                        {formatFloat(BigNumber(wei2Eth(value) || 0))}
                         &nbsp;
                         {UNIT}
                       </Text>
