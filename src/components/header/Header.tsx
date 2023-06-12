@@ -377,7 +377,7 @@ const Header = () => {
   const { pathname } = useLocation()
 
   const { isOpen, onClose, currentAccount, interceptFn } = useWallet()
-
+  const navigate = useNavigate()
   const handleClickWallet = useCallback(async () => {
     interceptFn(() => {})
   }, [interceptFn])
@@ -479,6 +479,18 @@ const Header = () => {
             }}
             cursor='pointer'
           >
+            <Image
+              onClick={() => {
+                navigate('/marketing-campaign')
+              }}
+              src='/gift.gif'
+              style={{
+                width: '64px',
+                height: '64px',
+                marginTop: '-36px',
+                marginRight: '-32px',
+              }}
+            />
             {currentAccount ? (
               <ConnectedIconWallet />
             ) : (
