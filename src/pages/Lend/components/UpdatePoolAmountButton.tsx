@@ -121,7 +121,7 @@ const UpdatePoolAmountButton: FunctionComponent<
     () => [
       {
         data: formatFloat(wei2Eth(pool_amount)),
-        label: 'Approved Amount',
+        label: 'Pool Size',
         loading: false,
       },
       {
@@ -154,7 +154,11 @@ const UpdatePoolAmountButton: FunctionComponent<
       return true
     }
     if (NumberAmount > maxAmount) {
-      setErrorMsg(` Insufficient funds: ${formatFloat(maxAmount)} WETH`)
+      setErrorMsg(
+        ` Insufficient funds: still need to deposit ${formatFloat(
+          NumberAmount - maxAmount,
+        )} WETH`,
+      )
       return true
     }
     if (NumberAmount < (floorPrice * pool_maximum_percentage) / 10000) {
@@ -177,7 +181,7 @@ const UpdatePoolAmountButton: FunctionComponent<
       if (amount === wei2Eth(pool_amount)?.toString()) {
         toast({
           status: 'info',
-          title: `The TVL is already ${wei2Eth(pool_amount)}`,
+          title: `The pool size is already ${wei2Eth(pool_amount)}`,
         })
         return
       }
@@ -200,18 +204,20 @@ const UpdatePoolAmountButton: FunctionComponent<
           .send({
             from: currentAccount,
           })
-        setUpdateLoading(false)
-        onCloseUpdate()
-        if (toast.isActive('Updated-Successfully-ID')) {
-          // toast.closeAll()
-        } else {
-          toast({
-            status: 'success',
-            title: 'Updated successfully! ',
-            id: 'Updated-Successfully-ID',
-          })
-        }
-        onSuccess()
+        setTimeout(() => {
+          setUpdateLoading(false)
+          onCloseUpdate()
+          if (toast.isActive('Updated-Successfully-ID')) {
+            // toast.closeAll()
+          } else {
+            toast({
+              status: 'success',
+              title: 'Updated successfully! ',
+              id: 'Updated-Successfully-ID',
+            })
+          }
+          onSuccess()
+        }, 1000)
       } catch (error: any) {
         toastError(error)
         setUpdateLoading(false)
@@ -281,7 +287,7 @@ const UpdatePoolAmountButton: FunctionComponent<
               fontWeight='700'
               noOfLines={1}
             >
-              Modify the ETH amount
+              Reset Pool Size
             </Text>
             <SvgComponent
               svgId='icon-close'
@@ -311,7 +317,7 @@ const UpdatePoolAmountButton: FunctionComponent<
                 display={'flex'}
                 justifyContent={'space-between '}
               >
-                Amount
+                Set pool size
                 <Text fontWeight={'500'} fontSize={'14px'} color='gray.3'>
                   Minimum input:
                   {formatFloat(

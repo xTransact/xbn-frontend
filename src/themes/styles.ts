@@ -2,7 +2,6 @@ const styles = {
   global: {
     'html, body': {
       color: 'black.1',
-      fontFamily: 'HarmonyOS',
       fontSize: {
         md: '16px',
         sm: '14px',

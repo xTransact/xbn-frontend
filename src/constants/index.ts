@@ -66,7 +66,7 @@ export const LP_BASE_RATE: Record<string, number> = {
 }
 
 export const TENORS = [7, 14, 30, 60, 90]
-export const LIST_DURATION = [1, 3, 7, 30, 60, 90]
+export const LIST_DURATION = [1, 3, 7, 14, 30, 60, 90]
 export const COLLATERALS = [
   1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
 ]

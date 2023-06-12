@@ -13,6 +13,10 @@ interface ImportMetaEnv {
   readonly VITE_TARGET_CHAIN_ID: string
   readonly VITE_TARGET_CHAIN_BASE_URL: string
   readonly VITE_WEBSITE: string
+  readonly VITE_BASE_URL_2: string
+  readonly VITE_LENDING_BASE_URL: string
+  readonly VITE_BASE_URL: string
+  readonly VITE_TEST_BASE_URL: string
 }
 
 interface ImportMeta {

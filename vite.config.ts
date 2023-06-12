@@ -6,6 +6,7 @@ import { join } from 'path'
 // https://vitejs.dev/config/
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
+  publicDir: 'public',
   plugins: [
     react(),
     //  viteCompression()
@@ -31,7 +32,7 @@ export default defineConfig({
       },
       '/lending/api': {
         // mock
-        target: 'https://xbank.global',
+        target: 'https://xbank.global/',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
@@ -42,7 +43,7 @@ export default defineConfig({
       //   secure: false,
       // },
       '/api/v1/': {
-        target: 'https://xbank.global/',
+        target: 'https://xbank.global',
         changeOrigin: true,
         secure: false,
         // rewrite: (path) => path.replace(/^\/api/, ''),
