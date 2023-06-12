@@ -1,15 +1,18 @@
 import { createStandaloneToast } from '@chakra-ui/react'
-import axios, {InternalAxiosRequestConfig} from 'axios'
+import axios from 'axios'
 import isEmpty from 'lodash-es/isEmpty'
 
 import { TOAST_OPTION_CONFIG } from '@/constants'
 
 import { getUserToken } from './auth'
+
+import type { InternalAxiosRequestConfig } from 'axios'
 // import { type Request } from 'aws4'
 // import { decrypt } from './decrypt'
 // import { PWD } from '@consts/crypt'
 
-const { MODE, VITE_BASE_URL, VITE_APP_KEY, VITE_BASE_URL_2 } = import.meta.env
+const { MODE, VITE_LENDING_BASE_URL, VITE_APP_KEY, VITE_TEST_BASE_URL } =
+  import.meta.env
 
 export const standaloneToast = createStandaloneToast({
   defaultOptions: {
@@ -30,17 +33,23 @@ export const AXIOS_DEFAULT_CONFIG = {
 }
 const request = axios.create(AXIOS_DEFAULT_CONFIG)
 
-export const requestInterceptor = async ({ url, baseURL, ...config }: InternalAxiosRequestConfig) => {
+export const requestInterceptor = async ({
+  url,
+  baseURL,
+  ...config
+}: InternalAxiosRequestConfig) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
-    if (url?.startsWith('/api/') || url?.startsWith('/lending/query')) {
-      _baseURL = VITE_BASE_URL_2
+    if (url?.startsWith('/api/v')) {
+      _baseURL = VITE_TEST_BASE_URL
     } else {
-      _baseURL = VITE_BASE_URL
+      _baseURL = VITE_LENDING_BASE_URL
     }
   }
-  const userToken = getUserToken();
-  config.headers.Authorization = userToken ? `Bearer ${userToken?.token}` : undefined;
+  const userToken = getUserToken()
+  config.headers.Authorization = userToken
+    ? `Bearer ${userToken?.token}`
+    : undefined
   return {
     ...config,
     url,

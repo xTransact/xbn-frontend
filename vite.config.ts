@@ -32,7 +32,7 @@ export default defineConfig({
       },
       '/lending/api': {
         // mock
-        target: 'https://xbank.global',
+        target: 'https://xbank.global/',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
@@ -43,7 +43,7 @@ export default defineConfig({
       //   secure: false,
       // },
       '/api/v1/': {
-        target: 'https://xbank.global/',
+        target: 'https://xbank.global',
         changeOrigin: true,
         secure: false,
         // rewrite: (path) => path.replace(/^\/api/, ''),
