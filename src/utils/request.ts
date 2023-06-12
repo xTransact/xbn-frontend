@@ -7,12 +7,12 @@ import { TOAST_OPTION_CONFIG } from '@/constants'
 import { getUserToken } from './auth'
 
 import type { InternalAxiosRequestConfig } from 'axios'
-
 // import { type Request } from 'aws4'
 // import { decrypt } from './decrypt'
 // import { PWD } from '@consts/crypt'
 
-const { MODE, VITE_BASE_URL, VITE_APP_KEY, VITE_BASE_URL_2 } = import.meta.env
+const { MODE, VITE_LENDING_BASE_URL, VITE_APP_KEY, VITE_TEST_BASE_URL } =
+  import.meta.env
 
 export const standaloneToast = createStandaloneToast({
   defaultOptions: {
@@ -40,10 +40,10 @@ export const requestInterceptor = async ({
 }: InternalAxiosRequestConfig) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
-    if (url?.startsWith('/api/') || url?.startsWith('/lending/query')) {
-      _baseURL = VITE_BASE_URL_2
+    if (url?.startsWith('/api/v')) {
+      _baseURL = VITE_TEST_BASE_URL
     } else {
-      _baseURL = VITE_BASE_URL
+      _baseURL = VITE_LENDING_BASE_URL
     }
   }
   const userToken = getUserToken()
