@@ -191,23 +191,32 @@ const NftAssetDetail = () => {
         }))
         const minMarketPrice = minBy(formatData, (item) => item?.amount)
 
+        const minOpenSeaPrice = data.find((i) => i.marketplace === 'OPENSEA')
+          ?.opensea_price?.amount
         if (!minMarketPrice) {
           setCommodityWeiPrice(BigNumber(0))
           return
         }
-        const weiPrice = eth2Wei(Number(minMarketPrice.amount))
-        if (!weiPrice) {
-          setCommodityWeiPrice(BigNumber(0))
-          return
+        if (
+          minOpenSeaPrice !== undefined &&
+          minMarketPrice?.amount === minOpenSeaPrice
+        ) {
+          const openseaWei = eth2Wei(minOpenSeaPrice)
+          if (!openseaWei) {
+            setCommodityWeiPrice(BigNumber(0))
+            return
+          }
+          setCommodityWeiPrice(BigNumber(openseaWei))
+          setPlatform(MARKET_TYPE_ENUM.OPENSEA)
+        } else {
+          const weiPrice = eth2Wei(Number(minMarketPrice.amount))
+          if (!weiPrice) {
+            setCommodityWeiPrice(BigNumber(0))
+            return
+          }
+          setCommodityWeiPrice(BigNumber(weiPrice))
+          setPlatform(MARKET_TYPE_ENUM.BLUR)
         }
-        setCommodityWeiPrice(BigNumber(weiPrice))
-        setPlatform(
-          minMarketPrice.marketplace === 'OPENSEA'
-            ? MARKET_TYPE_ENUM.OPENSEA
-            : minMarketPrice.marketplace === 'BLUR'
-            ? MARKET_TYPE_ENUM.BLUR
-            : undefined,
-        )
       },
       onError() {
         setCommodityWeiPrice(BigNumber(0))
@@ -438,10 +447,10 @@ const NftAssetDetail = () => {
       try {
         setTransferFromLoading(true)
         transferBlock = await xBankContract.methods
-          .transferFrom(pool_id, loanWeiAmount.toNumber().toString())
+          .transferFrom(pool_id, loanWeiAmount.toString())
           .send({
             from: currentAccount,
-            value: commodityWeiPrice.minus(loanWeiAmount).toNumber().toString(),
+            value: commodityWeiPrice.minus(loanWeiAmount).toString(),
             gas: 300000,
             // gasPrice:''
           })
@@ -449,12 +458,12 @@ const NftAssetDetail = () => {
         const postParams: LoanOrderDataType = {
           pool_id: pool_id.toString(),
           borrower_address: currentAccount,
-          commodity_price: `${commodityWeiPrice.toNumber()}`,
-          oracle_floor_price: `${commodityWeiPrice.toNumber()}`,
-          down_payment: downPaymentWei.toNumber().toString(),
+          commodity_price: commodityWeiPrice.toString(),
+          oracle_floor_price: commodityWeiPrice.toString(),
+          down_payment: downPaymentWei.toString(),
           nft_collateral_id: `${detail?.asset?.tokenID}`,
           number_of_installments: installmentValue,
-          loan_amount: loanWeiAmount.toNumber().toString(),
+          loan_amount: loanWeiAmount.toString(),
           loan_duration: pool_days * 24 * 60 * 60,
           loan_interest_rate: lp_pool_apr,
           platform,
@@ -567,6 +576,7 @@ const NftAssetDetail = () => {
         successTitle='Purchase completed'
         successDescription='Loan has been initialized.'
         step={loanStep}
+        loadingText='The loan is being generated, expect to wait 1 to 2 minutes.'
       />
     )
   }

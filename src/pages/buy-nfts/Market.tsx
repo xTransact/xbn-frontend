@@ -234,7 +234,7 @@ const Market = () => {
     loadMore,
   } = useInfiniteScroll(
     (item) =>
-      getLoadMoreList(item?.pageInfo?.endCursor, item?.list.length || 12),
+      getLoadMoreList(item?.pageInfo?.endCursor, item?.list.length || 20),
     {
       // target: ref,
       isNoMore: (item) => !item?.pageInfo?.hasNextPage,

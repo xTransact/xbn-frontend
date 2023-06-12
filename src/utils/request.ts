@@ -24,7 +24,6 @@ const { toast } = standaloneToast
 export const AXIOS_DEFAULT_CONFIG = {
   baseURL: '',
   headers: {
-    appkey: VITE_APP_KEY,
     Authorization: getUserToken()
       ? `Bearer ${getUserToken()?.token}`
       : undefined,
@@ -46,10 +45,13 @@ export const requestInterceptor = async ({
       _baseURL = VITE_LENDING_BASE_URL
     }
   }
-  const userToken = getUserToken()
-  config.headers.Authorization = userToken
-    ? `Bearer ${userToken?.token}`
-    : undefined
+  if (!url?.startsWith('/lending/query')) {
+    const userToken = getUserToken()
+    config.headers.Authorization = userToken
+      ? `Bearer ${userToken?.token}`
+      : undefined
+    config.headers.appkey = VITE_APP_KEY
+  }
   return {
     ...config,
     url,

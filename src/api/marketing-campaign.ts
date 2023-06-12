@@ -1,15 +1,15 @@
 import axios from 'axios'
 
 import { AXIOS_DEFAULT_CONFIG, requestInterceptor } from '@/utils/request'
-const request = axios.create(AXIOS_DEFAULT_CONFIG);
-request.interceptors.request.use(requestInterceptor);
-request.interceptors.response.use((resp) => resp?.data);
+const request = axios.create(AXIOS_DEFAULT_CONFIG)
+request.interceptors.request.use(requestInterceptor)
+request.interceptors.response.use((resp) => resp?.data)
 export const apiGetBoxes: () => Promise<{
-  box_bronze?: number,
-  box_diamond?: number,
-  box_gold?: number,
-  box_platinum?: number,
-  box_silver?: number,
+  box_bronze?: number
+  box_diamond?: number
+  box_gold?: number
+  box_platinum?: number
+  box_silver?: number
 }> = () => {
   return request.get('/api/v1/xbn/user/box')
 }

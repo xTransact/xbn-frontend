@@ -112,7 +112,7 @@ const MyPoolActionRender: FunctionComponent<
                       onSuccess={onRefresh}
                       {...BUTTON_PROPS}
                     >
-                      Modify the ETH amount
+                      Reset Pool Size
                     </UpdatePoolAmountButton>
                   </Flex>
                 </PopoverBody>
