@@ -342,7 +342,7 @@ const CreatePoolButton: FunctionComponent<
                 display={'flex'}
                 justifyContent={'space-between '}
               >
-                Amount
+                Set pool size
                 <Text fontWeight={'500'} fontSize={'14px'} color='gray.3'>
                   Minimum input:
                   {formatFloat((floorPrice * poolMaximumPercentage) / 10000)}
@@ -439,6 +439,12 @@ const CreatePoolButton: FunctionComponent<
           </ModalBody>
 
           {/* <ModalFooter justifyContent={'center'}> */}
+          {(approveLoading || createLoading || subscribeLoading) && (
+            <Text color={'gray.5'} fontSize={'14px'} mt='8px'>
+              It is expected to take one or two minutes, ultimately depending on
+              the EtherNet transaction processing time.
+            </Text>
+          )}
           <Button
             variant='primary'
             mr={'12px'}

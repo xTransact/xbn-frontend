@@ -191,23 +191,32 @@ const NftAssetDetail = () => {
         }))
         const minMarketPrice = minBy(formatData, (item) => item?.amount)
 
+        const minOpenSeaPrice = data.find((i) => i.marketplace === 'OPENSEA')
+          ?.opensea_price?.amount
         if (!minMarketPrice) {
           setCommodityWeiPrice(BigNumber(0))
           return
         }
-        const weiPrice = eth2Wei(Number(minMarketPrice.amount))
-        if (!weiPrice) {
-          setCommodityWeiPrice(BigNumber(0))
-          return
+        if (
+          minOpenSeaPrice !== undefined &&
+          minMarketPrice?.amount === minOpenSeaPrice
+        ) {
+          const openseaWei = eth2Wei(minOpenSeaPrice)
+          if (!openseaWei) {
+            setCommodityWeiPrice(BigNumber(0))
+            return
+          }
+          setCommodityWeiPrice(BigNumber(openseaWei))
+          setPlatform(MARKET_TYPE_ENUM.OPENSEA)
+        } else {
+          const weiPrice = eth2Wei(Number(minMarketPrice.amount))
+          if (!weiPrice) {
+            setCommodityWeiPrice(BigNumber(0))
+            return
+          }
+          setCommodityWeiPrice(BigNumber(weiPrice))
+          setPlatform(MARKET_TYPE_ENUM.BLUR)
         }
-        setCommodityWeiPrice(BigNumber(weiPrice))
-        setPlatform(
-          minMarketPrice.marketplace === 'OPENSEA'
-            ? MARKET_TYPE_ENUM.OPENSEA
-            : minMarketPrice.marketplace === 'BLUR'
-            ? MARKET_TYPE_ENUM.BLUR
-            : undefined,
-        )
       },
       onError() {
         setCommodityWeiPrice(BigNumber(0))

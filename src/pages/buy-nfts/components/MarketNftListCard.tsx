@@ -260,7 +260,7 @@ const MarketNftListCard: FunctionComponent<
       >
         <Flex alignItems={'center'} gap={'4px'}>
           {nftOriginType !== undefined ? (
-            <NftOrigin type={nftOriginType} />
+            <NftOrigin type={nftOriginType} isHideName />
           ) : (
             <Text color={`gray.3`} fontSize='14px'>
               Price

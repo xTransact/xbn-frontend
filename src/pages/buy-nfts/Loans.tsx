@@ -30,7 +30,7 @@ import {
   SvgComponent,
   LoadingComponent,
 } from '@/components'
-import { FORMAT_NUMBER, UNIT } from '@/constants'
+import { UNIT } from '@/constants'
 import { useBatchAsset, useWallet, useCatchContractError } from '@/hooks'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatAddress, formatFloat } from '@/utils/format'
