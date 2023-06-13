@@ -581,7 +581,7 @@ const Market = () => {
                                   safelistRequestStatus:
                                     selectCollection?.nftCollection
                                       ?.safelistRequestStatus,
-                                  floorPrice,
+                                  slug: selectCollection?.nftCollection?.slug,
                                 },
                                 poolsList:
                                   poolsMap && selectCollection?.contractAddress
@@ -652,7 +652,7 @@ const Market = () => {
                               safelistRequestStatus:
                                 selectCollection?.nftCollection
                                   ?.safelistRequestStatus,
-                              floorPrice,
+                              slug: selectCollection?.nftCollection?.slug,
                             },
                             poolsList:
                               poolsMap && selectCollection?.contractAddress

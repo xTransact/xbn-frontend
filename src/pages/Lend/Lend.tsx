@@ -214,6 +214,12 @@ const Lend = () => {
           BigNumber(0),
         )
 
+        const pool_used_amount = reduce(
+          currentCollectionPools,
+          (sum, i) => BigNumber(sum).plus(Number(i.pool_used_amount)),
+          BigNumber(0),
+        )
+
         const isContainMyPool =
           currentCollectionPools?.findIndex(
             (i) =>
@@ -224,6 +230,7 @@ const Lend = () => {
           pool_maximum_percentage,
           pool_maximum_interest_rate,
           pool_amount,
+          pool_used_amount,
           contractAddress,
           isContainMyPool,
           ...rest,
@@ -411,10 +418,14 @@ const Lend = () => {
         title: 'Pool Size',
         dataIndex: 'pool_amount',
         key: 'pool_amount',
-        align: 'right',
-        thAlign: 'right',
+        align: 'center',
+        thAlign: 'center',
         render: (value: any, info: any) => (
-          <EthText>{formatFloat(wei2Eth(Number(value)))}</EthText>
+          <EthText>
+            {formatFloat(
+              wei2Eth(Number(value) - Number(info.pool_used_amount)),
+            )}
+          </EthText>
         ),
       },
       {

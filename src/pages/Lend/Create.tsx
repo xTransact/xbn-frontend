@@ -313,6 +313,13 @@ const Create = () => {
       refreshDeps: [selectCollection],
       cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
       staleTime: 1000 * 60,
+      onError: () => {
+        toast({
+          title: 'Network problems, please refresh and try again',
+          status: 'error',
+          duration: 3000,
+        })
+      },
     },
   )
 
@@ -341,9 +348,8 @@ const Create = () => {
 
     if (NumberAmount > floorPrice) {
       return {
-        status: 'info',
-        message:
-          'Single loan amount is recommended to be less than the floor price.',
+        status: 'error',
+        message: 'Cannot be greater than the floor price.',
       }
     }
   }, [maxSingleLoanAmount, floorPrice])
@@ -704,7 +710,7 @@ const Create = () => {
                     <SvgComponent svgId='icon-eth' fill={'black.1'} />
                   </InputLeftElement>
                   <CustomNumberInput
-                    isDisabled={!selectCollection}
+                    isDisabled={!selectCollection || !floorPriceData}
                     value={maxSingleLoanAmount || ''}
                     isInvalid={maxSingleLoanAmountStatus?.status === 'error'}
                     // lineHeight='60px'
@@ -1138,7 +1144,8 @@ const Create = () => {
                 selectCollection?.contractAddress?.toLowerCase(),
               ) ||
               !maxSingleLoanAmount ||
-              maxSingleLoanAmountStatus?.status === 'error'
+              maxSingleLoanAmountStatus?.status === 'error' ||
+              !floorPriceData
             }
             data={{
               poolMaximumPercentage: COLLATERAL_MAP.get(
@@ -1168,7 +1175,8 @@ const Create = () => {
             isDisabled={
               maxSingleLoanAmountStatus?.status === 'error' ||
               !maxSingleLoanAmount ||
-              !isChanged
+              !isChanged ||
+              !floorPriceData
             }
             variant={'primary'}
             w='240px'

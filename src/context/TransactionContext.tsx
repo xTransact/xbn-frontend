@@ -298,7 +298,7 @@ export const TransactionsProvider = ({
 
       throw new Error('No ethereum object')
     }
-  }, [toast, handleSwitchNetwork, setCurrentAccount, setIsConnected])
+  }, [toast, handleSwitchNetwork, setCurrentAccount, setIsConnected, signAuth])
 
   useEffect(() => {
     checkIfWalletIsConnect()

@@ -206,12 +206,15 @@ const CollectionDescription: FunctionComponent<{
               display='flex'
               mb={'4px'}
             >
-              {formatFloat(
-                BigNumber(floorPrice || 0)
-                  .multipliedBy(BigNumber(10000).minus(Number(highestRate)))
-                  .dividedBy(10000)
-                  .toNumber(),
-              )}
+              {floorPrice
+                ? formatFloat(
+                    BigNumber(floorPrice || 0)
+                      .multipliedBy(BigNumber(10000).minus(Number(highestRate)))
+                      .dividedBy(10000)
+                      .toNumber(),
+                  )
+                : '--'}
+              {}
             </Heading>
           </Flex>
 
