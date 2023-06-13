@@ -35,7 +35,7 @@ const NotFound: FunctionComponent<NotFoundProps> = ({
         {title}
       </AlertTitle>
       <AlertDescription maxWidth='lg' my={'20px'}>
-        Please contact us if you meet an invalid operation: help@xbank.plus
+        Please refresh and try again.
       </AlertDescription>
       <Button
         onClick={() => {

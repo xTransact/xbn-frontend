@@ -710,7 +710,11 @@ const Create = () => {
                     <SvgComponent svgId='icon-eth' fill={'black.1'} />
                   </InputLeftElement>
                   <CustomNumberInput
-                    isDisabled={!selectCollection || !floorPriceData}
+                    isDisabled={
+                      !selectCollection ||
+                      !floorPriceData ||
+                      isEmpty(floorPriceData)
+                    }
                     value={maxSingleLoanAmount || ''}
                     isInvalid={maxSingleLoanAmountStatus?.status === 'error'}
                     // lineHeight='60px'
@@ -1145,7 +1149,8 @@ const Create = () => {
               ) ||
               !maxSingleLoanAmount ||
               maxSingleLoanAmountStatus?.status === 'error' ||
-              !floorPriceData
+              !floorPriceData ||
+              isEmpty(floorPriceData)
             }
             data={{
               poolMaximumPercentage: COLLATERAL_MAP.get(
@@ -1176,7 +1181,8 @@ const Create = () => {
               maxSingleLoanAmountStatus?.status === 'error' ||
               !maxSingleLoanAmount ||
               !isChanged ||
-              !floorPriceData
+              !floorPriceData ||
+              isEmpty(floorPriceData)
             }
             variant={'primary'}
             w='240px'

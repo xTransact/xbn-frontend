@@ -51,6 +51,7 @@ const useCatchContractError = () => {
         status: 'error',
         title,
         description,
+        isClosable: true,
       })
     },
     [toast],
