@@ -61,7 +61,10 @@ const useAuth = () => {
           message,
           signature,
         })
-        setUserToken(tokenData)
+        setUserToken({
+          ...tokenData,
+          address: address,
+        })
       } catch (error) {
         throw error
       }

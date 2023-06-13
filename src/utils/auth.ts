@@ -1,6 +1,7 @@
 type UserTokenType = {
   expires: string
   token: string
+  address: string
 }
 export const setUserToken = (data: UserTokenType) => {
   try {
