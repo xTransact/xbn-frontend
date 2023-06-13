@@ -346,13 +346,11 @@ const UpdatePoolAmountButton: FunctionComponent<
                   onSetValue={(v) => {
                     setAmount(v)
                   }}
-                  errorBorderColor='red.1'
                   isInvalid={isError}
-                  borderRadius={8}
-                  borderColor='gray.3'
                   isDisabled={updateLoading || floorPrice === undefined}
                   top={'2px'}
                   px='32px'
+                  placeholder='Enter amount...'
                 />
               </InputGroup>
 
