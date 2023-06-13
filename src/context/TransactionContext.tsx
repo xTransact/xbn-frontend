@@ -13,6 +13,7 @@ import {
 import { apiGetActiveCollection } from '@/api'
 import { useNftCollectionsByContractAddressesQuery } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
+import { getUserToken } from '@/utils/auth'
 
 const COLLECTION_DEMO = {
   contractAddress: '',
@@ -192,10 +193,12 @@ export const TransactionsProvider = ({
   useEffect(() => {
     // eth_accounts always returns an array.
     async function handleAccountsChanged(accounts: string[]) {
+      console.log('account change')
+      const userToken = getUserToken()
       if (accounts.length === 0) {
         // MetaMask is locked or the user has not connected any accounts.
         console.log('Please connect to MetaMask.')
-      } else if (accounts[0] !== currentAccount) {
+      } else if (accounts[0] !== userToken?.address) {
         // Reload your interface with accounts[0].
         localStorage.removeItem('auth')
         localStorage.removeItem('metamask-connect-address')
@@ -288,7 +291,7 @@ export const TransactionsProvider = ({
       setCurrentAccount(accounts[0])
       setIsConnected(true)
       // window.ethereum.on('accountsChanged', handleAccountsChanged) 会执行签名操作，与此处重复，暂时注释掉
-      // await signAuth(accounts[0])
+      await signAuth(accounts[0])
       setConnectLoading(false)
     } catch (error) {
       setConnectLoading(false)
