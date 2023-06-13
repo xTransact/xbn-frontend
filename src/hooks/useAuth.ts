@@ -63,7 +63,7 @@ const useAuth = () => {
         })
         setUserToken({
           ...tokenData,
-          address: address
+          address: address,
         })
       } catch (error) {
         throw error

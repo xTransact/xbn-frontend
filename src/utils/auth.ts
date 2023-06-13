@@ -6,7 +6,7 @@ type UserTokenType = {
 export const setUserToken = (data: UserTokenType) => {
   try {
     localStorage.setItem('auth', JSON.stringify(data))
-  } catch (error) { }
+  } catch (error) {}
 }
 
 export const getUserToken = () => {
@@ -22,5 +22,5 @@ export const getUserToken = () => {
 export const clearUserToken = () => {
   try {
     localStorage.removeItem('auth')
-  } catch (error) { }
+  } catch (error) {}
 }

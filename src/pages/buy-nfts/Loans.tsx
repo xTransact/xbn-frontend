@@ -393,7 +393,7 @@ const Loans = () => {
   }, [prepayLoadingMap, prepayData])
 
   return (
-    <Box mt='60px'>
+    <Box my='60px'>
       <Heading size={'2xl'} mb='60px'>
         Loans
       </Heading>
