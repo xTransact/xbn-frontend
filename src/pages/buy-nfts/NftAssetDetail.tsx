@@ -302,7 +302,8 @@ const NftAssetDetail = () => {
       latestBalanceMap?.size === 0 ||
       loanWeiAmount?.eq(0) ||
       fetchSpreadLoading ||
-      !floorPriceData
+      !floorPriceData ||
+      isEmpty(floorPriceData)
     ) {
       setSelectPool(undefined)
       return []

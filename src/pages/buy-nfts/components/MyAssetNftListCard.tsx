@@ -30,6 +30,7 @@ import useHover from 'ahooks/lib/useHover'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
 import dayjs, { unix } from 'dayjs'
+import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash-es/isEqual'
 import {
   useMemo,
@@ -532,6 +533,7 @@ const MyAssetNftListCard: FunctionComponent<
 
   const floorPrice = useMemo(() => {
     if (!floorPriceData) return
+    if (isEmpty(floorPriceData)) return
     return formatFloat(floorPriceData?.floor_price)
   }, [floorPriceData])
 
@@ -783,7 +785,8 @@ const MyAssetNftListCard: FunctionComponent<
               {!!loanError ||
               !!collectionError ||
               (!loanData && !fetchInfoLoading) ||
-              (!floorPriceData && !floorPriceLoading) ? (
+              ((!floorPriceData || isEmpty(floorPriceData)) &&
+                !floorPriceLoading) ? (
                 <Flex px='40px' pb='40px'>
                   <Alert
                     px={'40px'}
