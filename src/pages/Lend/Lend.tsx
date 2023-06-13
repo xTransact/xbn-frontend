@@ -414,11 +414,7 @@ const Lend = () => {
         align: 'right',
         thAlign: 'right',
         render: (value: any, info: any) => (
-          <EthText>
-            {formatFloat(
-              wei2Eth(Number(value) - Number(info.pool_used_amount)),
-            )}
-          </EthText>
+          <EthText>{formatFloat(wei2Eth(Number(value)))}</EthText>
         ),
       },
       {
