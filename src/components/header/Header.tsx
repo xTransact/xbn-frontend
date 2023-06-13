@@ -23,6 +23,7 @@ import {
   AccordionButton,
   AccordionPanel,
   chakra,
+  Center,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import kebabCase from 'lodash-es/kebabCase'
@@ -391,6 +392,18 @@ const Header = () => {
       borderBottomWidth={1}
       bg='white'
     >
+      <Box
+        bgGradient={
+          'linear-gradient(90.6deg, #1CEFFF 0.34%, #5FCCFF 50.24%, #FFC1CB 98.09%)'
+        }
+        paddingY={'14px'}
+      >
+        <Center>
+          <Text color='#FFFFFF' fontFamily={'HarmonyOS Sans SC Bold'}>
+            Boxdrop Earning is Now LIVE!
+          </Text>
+        </Center>
+      </Box>
       <Box
         bg='linear-gradient(270deg, #E404E6 0%, #5843F4 53.65%, #1EF6F0
       100%)'
