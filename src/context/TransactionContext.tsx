@@ -11,87 +11,30 @@ import {
 } from 'react'
 
 import { apiGetActiveCollection } from '@/api'
-import { useNftCollectionsByContractAddressesQuery } from '@/hooks'
+import {
+  type NftCollection,
+  useNftCollectionsByContractAddressesQuery,
+} from '@/hooks'
 import useAuth from '@/hooks/useAuth'
 import { getUserToken } from '@/utils/auth'
 
-const COLLECTION_DEMO = {
-  contractAddress: '',
-  nftCollection: {
-    assetsCount: 0,
-    bannerImageUrl: '',
-    chatUrl: '',
-    createdAt: '2023-02-23T08:35:14Z',
-    createdDate: '2022-12-12T08:18:30Z',
-    description: '',
-    discordUrl: '',
-    externalUrl: '',
-    featuredImageUrl: '',
-    fees: [],
-    id: 0,
-    imagePreviewUrl: '',
-    imageThumbnailUrl: '',
-    imageUrl: '',
-    instagramUsername: '',
-    largeImageUrl: '',
-    mediumUsername: '',
-    name: '',
-    nftCollectionStat: {
-      averagePrice: 0,
-      count: 0,
-      createdAt: '',
-      floorPrice: 0,
-      floorPriceRate: 0,
-      id: 0,
-      marketCap: 0,
-      numOwners: 0,
-      numReports: 0,
-      oneDayAveragePrice: 0,
-      oneDayChange: 0,
-      oneDaySales: 0,
-      oneDayVolume: 0,
-      sevenDayAveragePrice: 0,
-      sevenDayChange: 0,
-      sevenDaySales: 0,
-      sevenDayVolume: 0,
-      thirtyDayAveragePrice: 0,
-      thirtyDayChange: 0,
-      thirtyDaySales: 0,
-      thirtyDayVolume: 0,
-      totalSales: 0,
-      totalSupply: 0,
-      totalVolume: 0,
-      updatedAt: '',
-      __typename: 'NFTCollectionStat',
-    },
-    onlyProxiedTransfers: false,
-    openseaBuyerFeeBasisPoints: '0',
-    openseaSellerFeeBasisPoints: '50',
-    payoutAddress: '',
-    safelistRequestStatus: '',
-    shortDescription: '',
-    slug: '',
-    subscriberCount: 0,
-    telegramUrl: '',
-    twitterUsername: '',
-    updatedAt: '',
-    wikiUrl: '',
-    nftCollectionMetaData: {
-      subscribe: false,
-      subscribeCount: 0,
-      __typename: 'NFTCollectionMetaData',
-    },
-  },
-}
-
-export const TransactionContext = createContext({
+export const TransactionContext = createContext<{
+  connectWallet: () => void
+  currentAccount: string
+  isConnected: boolean
+  connectLoading: boolean
+  handleSwitchNetwork: () => void
+  handleDisconnect: () => void
+  collectionList: { contractAddress: string; nftCollection: NftCollection }[]
+  collectionLoading: boolean
+}>({
   connectWallet: async () => {},
   currentAccount: '',
   isConnected: false,
   connectLoading: false,
   handleSwitchNetwork: async () => {},
   handleDisconnect: () => {},
-  collectionList: [{ ...COLLECTION_DEMO, __typename: 'NFTCollection' }],
+  collectionList: [],
   collectionLoading: false,
 })
 
@@ -321,7 +264,10 @@ export const TransactionsProvider = ({
         handleDisconnect,
         isConnected: isConnected as boolean,
         // @ts-ignore
-        collectionList,
+        collectionList: collectionList as {
+          contractAddress: string
+          nftCollection: NftCollection
+        }[],
         collectionLoading: loading || collectionLoading,
       }}
     >

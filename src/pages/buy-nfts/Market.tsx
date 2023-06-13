@@ -20,7 +20,7 @@ import useRequest from 'ahooks/lib/useRequest'
 import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { apiGetFloorPrice, apiGetPools } from '@/api'
@@ -31,6 +31,7 @@ import {
   LoadingComponent,
   SearchInput,
 } from '@/components'
+import { TransactionContext } from '@/context/TransactionContext'
 import {
   NftAssetStatus,
   useNftCollectionSearchAssetLazyQuery,
@@ -38,7 +39,6 @@ import {
   OrderDirection,
   useNftCollectionAssetsLazyQuery,
   useWallet,
-  useNftCollectionsByContractAddressesQuery,
   type NftAsset,
   type NftCollection,
   useGuide,
@@ -123,31 +123,28 @@ const Market = () => {
     [poolsMap],
   )
 
-  const { data: collectionData, loading: collectionLoading } =
-    useNftCollectionsByContractAddressesQuery({
-      variables: {
-        assetContractAddresses: collectionWithPoolsIds,
-      },
-      skip: isEmpty(collectionWithPoolsIds),
-      onCompleted(data) {
-        if (
-          !data ||
-          !data?.nftCollectionsByContractAddresses ||
-          isEmpty(data?.nftCollectionsByContractAddresses)
-        ) {
-          return
-        }
+  const { collectionList, collectionLoading } = useContext(TransactionContext)
 
-        const prevCollectionId = pathData?.collectionId
-        const prevItem = data.nftCollectionsByContractAddresses.find(
-          (i) => i.nftCollection.id === prevCollectionId,
-        )
+  const collectionData = useMemo(() => {
+    if (!collectionList) return
+    if (isEmpty(collectionList)) return []
+    return collectionList.filter((i) =>
+      collectionWithPoolsIds.includes(i.contractAddress),
+    )
+  }, [collectionList, collectionWithPoolsIds])
 
-        setSelectCollection(
-          prevItem || data.nftCollectionsByContractAddresses[0],
-        )
-      },
-    })
+  useEffect(() => {
+    if (!collectionData || isEmpty(collectionData)) {
+      return
+    }
+
+    const prevCollectionId = pathData?.collectionId
+    const prevItem = collectionData.find(
+      (i) => i.nftCollection.id === prevCollectionId,
+    )
+
+    setSelectCollection(prevItem || collectionData[0])
+  }, [collectionData, pathData])
 
   const [floorPrice, setFloorPrice] = useState<number>()
   const { loading: floorPriceLoading, data: floorPriceData } = useRequest(
@@ -247,10 +244,8 @@ const Market = () => {
 
   const filteredCollectionList = useMemo(() => {
     if (!collectionData) return
-    const { nftCollectionsByContractAddresses } = collectionData
-    if (!debounceCollectionSearchValue)
-      return nftCollectionsByContractAddresses || []
-    return filter(nftCollectionsByContractAddresses, (item) =>
+    if (!debounceCollectionSearchValue) return collectionData || []
+    return filter(collectionData, (item) =>
       item.nftCollection.name
         .toLocaleLowerCase()
         .includes(debounceCollectionSearchValue.toLocaleLowerCase()),
