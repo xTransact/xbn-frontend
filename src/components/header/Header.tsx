@@ -479,18 +479,34 @@ const Header = () => {
             }}
             cursor='pointer'
           >
-            <Image
+            <Flex
               onClick={() => {
                 navigate('/marketing-campaign')
               }}
-              src='/gift.gif'
-              style={{
-                width: '64px',
-                height: '64px',
-                marginTop: '-36px',
-                marginRight: '-32px',
-              }}
-            />
+              marginRight={'-15px'}
+              alignItems={'center'}
+            >
+              <Image
+                src='/gift.gif'
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  marginTop: '-36px',
+                  marginRight: '-14px',
+                }}
+              />
+              <Text
+                bgGradient={
+                  'linear-gradient(45deg, #1CFEF0 23%, #458FFF 46%, #FFBADB 90%)'
+                }
+                bgClip='text'
+                fontSize={'16px'}
+                fontFamily={'HarmonyOS Sans SC Bold'}
+              >
+                Boxdrop
+              </Text>
+            </Flex>
+
             {currentAccount ? (
               <ConnectedIconWallet />
             ) : (
