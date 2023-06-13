@@ -443,7 +443,7 @@ const CreatePoolButton: FunctionComponent<
             {(approveLoading || createLoading || subscribeLoading) && (
               <Text color={'gray.1'} fontSize={'14px'} textAlign={'center'}>
                 It is expected to take one or two minutes, ultimately depending
-                on the EtherNet transaction processing time.
+                on the Ethereum transaction processing time.
               </Text>
             )}
           </Box>

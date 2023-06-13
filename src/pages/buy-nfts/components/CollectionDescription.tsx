@@ -90,7 +90,7 @@ const CollectionDescription: FunctionComponent<{
 
   return (
     <Box mb={'40px'}>
-      <Flex gap={'20px'} mb={'32px'} alignItems={'center'}>
+      <Flex gap={'20px'} mb={'32px'}>
         <ImageWithFallback
           src={imagePreviewUrl}
           borderRadius={{

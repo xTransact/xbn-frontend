@@ -198,7 +198,7 @@ export const TransactionsProvider = ({
       if (accounts.length === 0) {
         // MetaMask is locked or the user has not connected any accounts.
         console.log('Please connect to MetaMask.')
-      } else if (accounts[0] !== userToken?.address) {
+      } else if (!!userToken && accounts[0] !== userToken?.address) {
         // Reload your interface with accounts[0].
         localStorage.removeItem('auth')
         localStorage.removeItem('metamask-connect-address')

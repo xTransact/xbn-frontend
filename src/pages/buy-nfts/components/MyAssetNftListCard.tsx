@@ -44,6 +44,7 @@ import { useNavigate } from 'react-router-dom'
 
 import {
   apiGetCollectionDetail,
+  apiGetFloorPrice,
   apiGetListings,
   apiGetLoans,
   apiPostListing,
@@ -103,9 +104,9 @@ export type ListDataType = {
 type CollectionDataType = {
   name: string
   safelistRequestStatus: string
-  floorPrice: number
   creatorEarn: number
   marketPlaceFee: number
+  slug: string
 }
 
 type LoanDataType = {
@@ -214,6 +215,7 @@ const MyAssetNftListCard: FunctionComponent<
   const { assetData, contractData } = data
   const { currentAccount } = useWallet()
   const navigate = useNavigate()
+  const toast = useToast()
 
   const ish5 = useIsMobile()
 
@@ -290,12 +292,7 @@ const MyAssetNftListCard: FunctionComponent<
       if (!nftCollectionsByContractAddresses?.length) return
       const currentCollection = nftCollectionsByContractAddresses[0]
       const {
-        nftCollection: {
-          name,
-          safelistRequestStatus,
-          nftCollectionStat: { floorPrice },
-          fees,
-        },
+        nftCollection: { name, safelistRequestStatus, fees, slug },
       } = currentCollection
       const sellerFee = fees?.find((i) => i.name === 'seller_fees')?.value || 0
       const marketPlaceFee =
@@ -303,12 +300,36 @@ const MyAssetNftListCard: FunctionComponent<
       setCollectionData({
         name,
         safelistRequestStatus,
-        floorPrice: Number(formatFloat(floorPrice) || 0),
         creatorEarn: sellerFee / 10000,
         marketPlaceFee: marketPlaceFee / 10000,
+        slug,
       })
     },
   })
+
+  const {
+    data: floorPriceData,
+    loading: floorPriceLoading,
+    refresh: refreshFloorPrice,
+  } = useRequest(
+    () =>
+      apiGetFloorPrice({
+        slug: collectionData?.slug || '',
+      }),
+    {
+      ready: !!collectionData && type === 'create',
+      refreshDeps: [collectionData],
+      cacheKey: `staleTime-floorPrice-${collectionData?.slug}`,
+      staleTime: 1000 * 60,
+      onError: () => {
+        toast({
+          title: 'Network problems, please refresh and try again',
+          status: 'error',
+          duration: 3000,
+        })
+      },
+    },
+  )
 
   const {
     loading: loanLoading,
@@ -351,8 +372,12 @@ const MyAssetNftListCard: FunctionComponent<
     },
   })
   const fetchInfoLoading = useMemo(
-    () => collectionLoading || loanLoading || getListingLoading,
-    [collectionLoading, loanLoading, getListingLoading],
+    () =>
+      collectionLoading ||
+      loanLoading ||
+      getListingLoading ||
+      floorPriceLoading,
+    [collectionLoading, loanLoading, getListingLoading, floorPriceLoading],
   )
 
   const durationOptions = useMemo(() => {
@@ -476,7 +501,6 @@ const MyAssetNftListCard: FunctionComponent<
     navigate,
   ])
 
-  const toast = useToast()
   const handleCancelList = useCallback(async () => {
     try {
       if (!contractData || !currentAccount) return
@@ -505,6 +529,11 @@ const MyAssetNftListCard: FunctionComponent<
       )
     }
   }, [runAsync, onRefreshList, contractData, currentAccount, toast, closeModal])
+
+  const floorPrice = useMemo(() => {
+    if (!floorPriceData) return
+    return formatFloat(floorPriceData?.floor_price)
+  }, [floorPriceData])
 
   return (
     <>
@@ -753,7 +782,8 @@ const MyAssetNftListCard: FunctionComponent<
             >
               {!!loanError ||
               !!collectionError ||
-              (!loanData && !fetchInfoLoading) ? (
+              (!loanData && !fetchInfoLoading) ||
+              (!floorPriceData && !floorPriceLoading) ? (
                 <Flex px='40px' pb='40px'>
                   <Alert
                     px={'40px'}
@@ -779,6 +809,7 @@ const MyAssetNftListCard: FunctionComponent<
                           if (fetchInfoLoading) return
                           refreshCollection()
                           refreshLoan()
+                          refreshFloorPrice()
                         }}
                         animation={
                           fetchInfoLoading ? 'loading 1s linear infinite' : ''
@@ -810,7 +841,7 @@ const MyAssetNftListCard: FunctionComponent<
                         Set a price
                       </Text>
                       {/* 快速填充 */}
-                      {!!collectionData && (
+                      {floorPrice !== undefined && (
                         <Flex
                           gap={'8px'}
                           mb='16px'
@@ -821,9 +852,9 @@ const MyAssetNftListCard: FunctionComponent<
                           }}
                         >
                           {[
-                            collectionData?.floorPrice,
+                            floorPrice,
                             // collectionData?.maxFloorPrice,
-                          ].map((item, index) => (
+                          ].map((item) => (
                             <Flex
                               justify={'center'}
                               key={item}
@@ -850,9 +881,7 @@ const MyAssetNftListCard: FunctionComponent<
                                   marginRight: '8px',
                                 }}
                               >
-                                {`${
-                                  index === 0 ? 'Floor' : 'Top attribute'
-                                } ${item} ${UNIT}`}
+                                {`Floor ${item} ${UNIT}`}
                               </Highlight>
                             </Flex>
                           ))}
@@ -906,8 +935,8 @@ const MyAssetNftListCard: FunctionComponent<
                           Price cannot be less than the outstanding loan amount
                         </Text>
                       )}
-                      {!!collectionData &&
-                        Number(price) < collectionData?.floorPrice &&
+                      {floorPrice !== undefined &&
+                        Number(price) < Number(floorPrice) &&
                         !isAmountError && (
                           <Flex
                             mt='16px'
@@ -923,7 +952,7 @@ const MyAssetNftListCard: FunctionComponent<
                               svgSize='16px'
                             />
                             Price is below collection floor price of&nbsp;
-                            {collectionData?.floorPrice}
+                            {floorPrice}
                             {UNIT}
                           </Flex>
                         )}
