@@ -23,6 +23,7 @@ import {
   AccordionButton,
   AccordionPanel,
   chakra,
+  Center,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import kebabCase from 'lodash-es/kebabCase'
@@ -392,6 +393,18 @@ const Header = () => {
       bg='white'
     >
       <Box
+        bgGradient={
+          'linear-gradient(90.6deg, #1CEFFF 0.34%, #5FCCFF 50.24%, #FFC1CB 98.09%)'
+        }
+        paddingY={'14px'}
+      >
+        <Center>
+          <Text color='#FFFFFF' fontFamily={'HarmonyOS Sans SC Bold'}>
+            Boxdrop Earning is Now LIVE!
+          </Text>
+        </Center>
+      </Box>
+      <Box
         bg='linear-gradient(270deg, #E404E6 0%, #5843F4 53.65%, #1EF6F0
       100%)'
         h={{ md: 1, sm: '1px', xs: '1px' }}
@@ -479,18 +492,34 @@ const Header = () => {
             }}
             cursor='pointer'
           >
-            <Image
+            <Flex
               onClick={() => {
                 navigate('/marketing-campaign')
               }}
-              src='/gift.gif'
-              style={{
-                width: '64px',
-                height: '64px',
-                marginTop: '-36px',
-                marginRight: '-32px',
-              }}
-            />
+              marginRight={'-15px'}
+              alignItems={'center'}
+            >
+              <Image
+                src='/gift.gif'
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  marginTop: '-36px',
+                  marginRight: '-14px',
+                }}
+              />
+              <Text
+                bgGradient={
+                  'linear-gradient(45deg, #1CFEF0 23%, #458FFF 46%, #FFBADB 90%)'
+                }
+                bgClip='text'
+                fontSize={'16px'}
+                fontFamily={'HarmonyOS Sans SC Bold'}
+              >
+                Boxdrop
+              </Text>
+            </Flex>
+
             {currentAccount ? (
               <ConnectedIconWallet />
             ) : (
