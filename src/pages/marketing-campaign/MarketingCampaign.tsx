@@ -19,7 +19,6 @@ import {
   AlertDialogOverlay,
   useDisclosure,
   Stack,
-  Toast,
   useToast,
 } from '@chakra-ui/react'
 import { useAsyncEffect, useSetState } from 'ahooks'
@@ -514,7 +513,7 @@ export default function MarketingCampaign() {
                         fontSize={'24px'}
                         h='60px'
                         onClick={() => {
-                          navigate('')
+                          navigate('/lending/collections')
                         }}
                       >
                         Get Gold Box
