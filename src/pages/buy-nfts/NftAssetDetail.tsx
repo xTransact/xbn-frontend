@@ -546,14 +546,13 @@ const NftAssetDetail = () => {
 
         // 如果一直监听不到
         setTimeout(() => {
-          if (loanStep === 'loading') {
-            toast({
-              status: 'info',
-              title:
-                'The loan is being generated, please wait and refresh later',
-            })
-            navigate('/buy-nfts/loans')
-          }
+          // if (loanStep === 'loading') {
+          toast({
+            status: 'info',
+            title: 'The loan is being generated, please wait and refresh later',
+          })
+          navigate('/buy-nfts/loans')
+          // }
         }, 10 * 60 * 1000)
       } catch (error: any) {
         toastError(error)
@@ -576,7 +575,7 @@ const NftAssetDetail = () => {
     commodityWeiPrice,
     interceptFn,
     toast,
-    loanStep,
+    // loanStep,
     platform,
   ])
 
