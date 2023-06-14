@@ -11,8 +11,13 @@ import type { InternalAxiosRequestConfig } from 'axios'
 // import { decrypt } from './decrypt'
 // import { PWD } from '@consts/crypt'
 
-const { MODE, VITE_LENDING_BASE_URL, VITE_APP_KEY, VITE_TEST_BASE_URL } =
-  import.meta.env
+const {
+  MODE,
+  VITE_LENDING_BASE_URL,
+  VITE_APP_KEY,
+  VITE_TEST_BASE_URL,
+  VITE_BASE_URL,
+} = import.meta.env
 
 export const standaloneToast = createStandaloneToast({
   defaultOptions: {
@@ -41,6 +46,8 @@ export const requestInterceptor = async ({
   if (MODE !== 'development') {
     if (url?.startsWith('/api/v')) {
       _baseURL = VITE_TEST_BASE_URL
+    } else if (url?.startsWith('/lending/query')) {
+      _baseURL = VITE_BASE_URL
     } else {
       _baseURL = VITE_LENDING_BASE_URL
     }

@@ -523,7 +523,11 @@ const Header = () => {
             {currentAccount ? (
               <ConnectedIconWallet />
             ) : (
-              <Button variant={'primary'} onClick={handleClickWallet}>
+              <Button
+                variant={'outline'}
+                onClick={handleClickWallet}
+                borderRadius={'26px'}
+              >
                 Connect Wallet
               </Button>
             )}
