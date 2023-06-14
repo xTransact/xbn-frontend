@@ -811,31 +811,31 @@ export default function MarketingCampaign() {
               >
                 Rules:
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
+              <Text fontSize={'18px'} mb='20px' lineHeight={'18px'}>
                 {`1. Boxdrop is a contributor reward program launched by the xBank protocol to reward loyal users who join and use the xBank protocol in the beta release.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`2.The event will begin on June 7, 2023, and last for at least 3 months. The end time of the event will be announced before August 30, 2023.`}
+              <Text fontSize={'18px'} mb='20px' lineHeight={'18px'}>
+                {`2. The event will begin on June 7, 2023, and last for at least 3 months. The end time of the event will be announced before August 30, 2023.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`3.Users who use the xBank protocol to buy NFTs on a Buy Now Pay Later basis will receive different types of boxdrops.`}
+              <Text fontSize={'18px'} mb='20px' lineHeight={'18px'}>
+                {`3. Users who use the xBank protocol to buy NFTs on a Buy Now Pay Later basis will receive different types of boxdrops.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`4.Lenders who provide fund loans to borrowers through the xBank protocol will receive different types of boxdrops.`}
+              <Text fontSize={'18px'} mb='20px' lineHeight={'18px'}>
+                {`4. Lenders who provide fund loans to borrowers through the xBank protocol will receive different types of boxdrops.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`5.Borrowers or lenders who invite friends to interact with the xBank protocol will both receive boxdrops.`}
+              <Text fontSize={'18px'} mb='20px' lineHeight={'18px'}>
+                {`5. Borrowers or lenders who invite friends to interact with the xBank protocol will both receive boxdrops.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`6.Following xBank's official Twitter account and retweeting the pinned post will receive Welcome Boxdrops.`}
+              <Text fontSize={'18px'} mb='20px' lineHeight={'18px'}>
+                {`6. Following xBank's official Twitter account and retweeting the pinned post will receive Welcome Boxdrops.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`7.The boxdrops obtained by users will be revealed after the end of the campaign, and different levels of boxdrops will have different credit points.`}
+              <Text fontSize={'18px'} mb='20px' lineHeight={'18px'}>
+                {`7. The boxdrops obtained by users will be revealed after the end of the campaign, and different levels of boxdrops will have different credit points.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`8.Any invalid or non-friendly protocol interaction behavior during the campaign will be blacklisted for receiving boxdrops.`}
+              <Text fontSize={'18px'} mb='20px' lineHeight={'18px'}>
+                {`8. Any invalid or non-friendly protocol interaction behavior during the campaign will be blacklisted for receiving boxdrops.`}
               </Text>
-              <Text fontSize={'18px'}>
+              <Text fontSize={'18px'} lineHeight={'18px'}>
                 Learn more about the rules and rewards
                 <Link
                   style={{ marginLeft: '10px' }}
