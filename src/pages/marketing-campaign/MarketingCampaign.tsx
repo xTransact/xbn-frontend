@@ -23,6 +23,7 @@ import {
 } from '@chakra-ui/react'
 import { useAsyncEffect, useSetState } from 'ahooks'
 import BigNumber from 'bignumber.js'
+import { truncate } from 'lodash'
 import moment from 'moment'
 import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -62,7 +63,6 @@ import ImgCoinInBox from '@/assets/marketing/icon-coin-in-box.svg'
 import ImgPlusWallet from '@/assets/marketing/icon-plus-wallet.svg'
 import ImgWalletOk from '@/assets/marketing/icon-wallet-ok.svg'
 import ImgQuestionBox from '@/assets/marketing/icon-win-box.svg'
-import { truncate } from 'lodash'
 const { VITE_APP_GALXE_TAKS_LINK } = import.meta.env
 const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% downpayment, win Boxdrop`
 const SHARE_TWITTER_TEXT = `xBank is An NFT Open Money Market Powering Web3 Adopters with Onboarding Leverage with NFT BNPL and Improving Money Efficiency for Holders\nJoin @xBank_Official, buy top NFTs pay later, with 0% downpayment, and earn Boxdrop`
@@ -282,7 +282,8 @@ export default function MarketingCampaign() {
                           alignItems={'flex-start'}
                           justifyContent={'space-around'}
                           flexDirection={'column'}
-                          maxW={300}
+                          w={'335px'}
+                          mr={'35px'}
                         >
                           <Text
                             fontSize={28}
@@ -294,10 +295,9 @@ export default function MarketingCampaign() {
                             color='#566E8C'
                             fontSize={16}
                             marginBottom={19}
-                            // textAlign={'center'}
+                            whiteSpace={'break-spaces'}
                           >
-                            Follow Twitter @xBankOfficial and retweet the Pin
-                            post
+                            {`Follow Twitter @xBankOfficial\nand retweet the Pin post`}
                           </Text>
                           <Button
                             w='240px'
@@ -424,7 +424,7 @@ export default function MarketingCampaign() {
                       fontFamily={'HarmonyOS Sans SC Medium'}
                     >
                       <Link
-                        href='https://xbankdocs.gitbook.io/product-docs/'
+                        href='https://xbankdocs.gitbook.io/product-docs/overview/buyer-guide'
                         target='_blank'
                       >
                         Learn More
@@ -485,7 +485,7 @@ export default function MarketingCampaign() {
                       fontFamily={'HarmonyOS Sans SC Medium'}
                     >
                       <Link
-                        href='https://xbankdocs.gitbook.io/product-docs/'
+                        href='https://xbankdocs.gitbook.io/product-docs/overview/lender-guide'
                         target='_blank'
                       >
                         Learn More
