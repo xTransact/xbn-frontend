@@ -459,16 +459,16 @@ const Create = () => {
           .send({
             from: currentAccount,
           })
-        setUpdating(false)
-        if (toast.isActive('Updated-Successfully-ID')) {
-          // toast.closeAll()
-        } else {
+
+        setTimeout(() => {
+          setUpdating(false)
           toast({
             status: 'success',
             title: 'Updated successfully! ',
             id: 'Updated-Successfully-ID',
           })
-        }
+          navigate('lending/my-pools')
+        }, 2000)
       } catch (error: any) {
         toastError(error)
         setUpdating(false)
@@ -486,6 +486,7 @@ const Create = () => {
     selectCollateralKey,
     interceptFn,
     currentAccount,
+    navigate,
   ])
 
   const isChanged = useMemo(() => {
