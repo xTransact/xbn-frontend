@@ -143,8 +143,11 @@ const Market = () => {
       (i) => i.nftCollection.id === prevCollectionId,
     )
 
-    setSelectCollection(prevItem || collectionData[0])
-  }, [collectionData, pathData])
+    const currentItem = prevItem || collectionData[0]
+
+    setSelectCollection(currentItem)
+    navigate(`/buy-nfts/market/${currentItem.nftCollection.id}${search}`)
+  }, [collectionData, pathData, search, navigate])
 
   const [floorPrice, setFloorPrice] = useState<number>()
   const { loading: floorPriceLoading, data: floorPriceData } = useRequest(
@@ -180,13 +183,13 @@ const Market = () => {
     return maxRate
   }, [poolsMap, selectCollection])
 
-  useEffect(() => {
-    if (!selectCollection) return
-    const {
-      nftCollection: { id },
-    } = selectCollection
-    navigate(`/buy-nfts/market/${id}${search}`)
-  }, [selectCollection, navigate, search])
+  // useEffect(() => {
+  //   if (!selectCollection) return
+  //   const {
+  //     nftCollection: { id },
+  //   } = selectCollection
+  //   navigate(`/buy-nfts/market/${id}${search}`)
+  // }, [selectCollection, navigate, search])
 
   // 根据 collectionId 搜索 assets
   const [fetchAssetByCollectionId] = useNftCollectionAssetsLazyQuery({
@@ -398,6 +401,9 @@ const Market = () => {
                       setOrderOption(SORT_OPTIONS[0])
                       setAssetSearchValue('')
                       setCollectionSearchValue('')
+                      navigate(
+                        `/buy-nfts/market/${item.nftCollection.id}${search}`,
+                      )
                     }}
                     count={item.nftCollection.assetsCount}
                     isActive={
@@ -470,6 +476,9 @@ const Market = () => {
                             setAssetSearchValue('')
                             setCollectionSearchValue('')
                             closeDraw()
+                            navigate(
+                              `/buy-nfts/market/${item.nftCollection.id}${search}`,
+                            )
                           }}
                           count={item.nftCollection.assetsCount}
                           isActive={
