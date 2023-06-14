@@ -18,7 +18,9 @@ import {
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
 import dayjs, { unix } from 'dayjs'
+import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash-es/groupBy'
+import isEmpty from 'lodash-es/isEmpty'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { apiGetCollectionDetail, apiGetLoans } from '@/api'
@@ -148,15 +150,17 @@ const Loans = () => {
             gas: 300000,
             value: repaymentAmount,
           })
-          setRepayLoadingMap((prev) => ({
-            ...prev,
-            [loan_id]: false,
-          }))
-          toast({
-            status: 'success',
-            title: 'successful repayment',
-          })
-          refresh()
+          setTimeout(() => {
+            setRepayLoadingMap((prev) => ({
+              ...prev,
+              [loan_id]: false,
+            }))
+            toast({
+              status: 'success',
+              title: 'successful repayment',
+            })
+            refresh()
+          }, 3000)
         } catch (error: any) {
           toastError(error)
           setRepayLoadingMap((prev) => ({
@@ -363,18 +367,19 @@ const Loans = () => {
           gas: 300000,
           value: amount.integerValue().toString(),
         })
-        setPrepayLoadingMap((prev) => ({
-          ...prev,
-          [loan_id]: false,
-        }))
-        toast({
-          status: 'success',
-          title: 'successful prepayment',
-        })
+
         setTimeout(() => {
+          setPrepayLoadingMap((prev) => ({
+            ...prev,
+            [loan_id]: false,
+          }))
+          toast({
+            status: 'success',
+            title: 'successful prepayment',
+          })
           refresh()
           setPrepayData(undefined)
-        }, 1000)
+        }, 3000)
       } catch (error: any) {
         toastError(error)
 
@@ -391,6 +396,44 @@ const Loans = () => {
     if (prepayLoadingMap && prepayLoadingMap[prepayData?.loan_id]) return
     setPrepayData(undefined)
   }, [prepayLoadingMap, prepayData])
+
+  const currentLoans = useMemo(() => {
+    if (!statuedLoans) return []
+    if (isEmpty(statuedLoans[0])) return []
+    const unSortLoans = statuedLoans[0].map((info) => {
+      const {
+        repaid_principal,
+        number_of_installments,
+        loan_start_time,
+        loan_duration,
+        repaid_interest,
+        lp_scheduled_received,
+      } = info
+      // 每期还款期限 = 还款期限 / 还款期数
+      const perLoanDuration = BigNumber(loan_duration).dividedBy(
+        number_of_installments,
+      )
+      let nextPaymentData = BigNumber(loan_start_time).plus(perLoanDuration)
+      if (BigNumber(repaid_principal).gt(0)) {
+        // 如果已还金额大于 0
+
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
+
+        // 已还次数 = 已还金额 / 每期还款金额
+        const payedTimes = repaidAmount.dividedBy(lp_scheduled_received)
+        // 每期还款期限 = 还款期限 / 还款期数
+        nextPaymentData = BigNumber(loan_start_time).plus(
+          perLoanDuration.multipliedBy(payedTimes.plus(1)),
+        )
+      }
+      return {
+        ...info,
+        nextPaymentData: nextPaymentData.toString(),
+      }
+    })
+    return sortBy(unSortLoans, (i) => -i.nextPaymentData)
+  }, [statuedLoans])
 
   return (
     <Box my='60px'>
@@ -456,45 +499,11 @@ const Loans = () => {
                   },
                   {
                     title: 'Next payment date',
-                    dataIndex: 'number_of_installments',
-                    key: 'number_of_installments',
-                    render: (_: any, info: any) => {
-                      const {
-                        repaid_principal,
-                        number_of_installments,
-                        loan_start_time,
-                        loan_duration,
-                        repaid_interest,
-                        lp_scheduled_received,
-                      } = info
-                      // 每期还款期限 = 还款期限 / 还款期数
-                      const perLoanDuration = BigNumber(
-                        loan_duration,
-                      ).dividedBy(number_of_installments)
-                      let nextPaymentData =
-                        BigNumber(loan_start_time).plus(perLoanDuration)
-                      if (BigNumber(repaid_principal).gt(0)) {
-                        // 如果已还金额大于 0
-
-                        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
-                        const repaidAmount =
-                          BigNumber(repaid_principal).plus(repaid_interest)
-
-                        // 已还次数 = 已还金额 / 每期还款金额
-                        const payedTimes = repaidAmount.dividedBy(
-                          lp_scheduled_received,
-                        )
-                        // 每期还款期限 = 还款期限 / 还款期数
-                        nextPaymentData = BigNumber(loan_start_time).plus(
-                          perLoanDuration.multipliedBy(payedTimes.plus(1)),
-                        )
-                      }
+                    dataIndex: 'nextPaymentData',
+                    key: 'nextPaymentData',
+                    render: (value: any) => {
                       return (
-                        <Text>
-                          {unix(nextPaymentData.toNumber()).format(
-                            'YYYY/MM/DD HH:mm:ss',
-                          )}
-                        </Text>
+                        <Text>{unix(value).format('YYYY/MM/DD HH:mm:ss')}</Text>
                       )
                     },
                   },
@@ -569,7 +578,7 @@ const Loans = () => {
                             fontSize='14px'
                             fontWeight={'500'}
                           >
-                            Pay in advance
+                            Pay Off Now
                           </Text>
                         </Box>
                       </Flex>
@@ -578,7 +587,7 @@ const Loans = () => {
                 ],
 
                 loading: loading,
-                data: statuedLoans[0],
+                data: currentLoans,
                 key: '1',
               },
               {
@@ -648,7 +657,7 @@ const Loans = () => {
                   ...loansForBuyerColumns,
                 ],
                 loading: loading,
-                data: statuedLoans[1],
+                data: sortBy(statuedLoans[1], (i) => -i.loan_start_time),
                 key: '2',
               },
               {
@@ -717,7 +726,7 @@ const Loans = () => {
                   ...loansForBuyerColumns,
                 ],
                 loading: loading,
-                data: statuedLoans[2],
+                data: sortBy(statuedLoans[2], (i) => -i.loan_start_time),
                 key: '3',
               },
             ]}
@@ -744,7 +753,7 @@ const Loans = () => {
         >
           <LoadingComponent loading={collectionLoading} top={0} />
           <ModalHeader {...MODEL_HEADER_PROPS}>
-            Confirm Prepayment
+            Confirm
             <SvgComponent
               svgId='icon-close'
               onClick={handleClose}
@@ -801,7 +810,7 @@ const Loans = () => {
                 </Text>
               </Flex>
               <Flex color='gray.3' fontSize={'14px'} justify={'space-between'}>
-                <Text>Interest Outstanding</Text>
+                <Text>Outstanding Interest</Text>
                 <Text>
                   {prepayData
                     ? formatFloat(
@@ -816,7 +825,7 @@ const Loans = () => {
             </Flex>
 
             <Flex justify={'space-between'} mb='20px'>
-              <Text>Prepayment Amount</Text>
+              <Text>Payment Amount</Text>
               <Text fontWeight={'700'}>
                 {prepayData
                   ? formatFloat(

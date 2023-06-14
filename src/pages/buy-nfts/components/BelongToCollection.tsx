@@ -11,7 +11,7 @@ const BelongToCollection: FunctionComponent<
       name: string
       imagePreviewUrl: string
       safelistRequestStatus: string
-      floorPrice: number
+      floorPrice?: number
     }
   }
 > = ({

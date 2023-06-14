@@ -11,8 +11,6 @@ import {
   type ButtonProps,
   InputGroup,
   InputLeftElement,
-  NumberInputField,
-  NumberInput,
   useDisclosure,
   Flex,
   Tooltip,
@@ -32,6 +30,7 @@ import {
 import { apiGetFloorPrice } from '@/api'
 import {
   ConnectWalletModal,
+  CustomNumberInput,
   LoadingComponent,
   SvgComponent,
 } from '@/components'
@@ -88,6 +87,13 @@ const UpdatePoolAmountButton: FunctionComponent<
     onSuccess(data) {
       if (isEmpty(data)) return
       setFloorPrice(data.floor_price)
+    },
+    onError: () => {
+      toast({
+        title: 'Network problems, please refresh and try again',
+        status: 'error',
+        duration: 3000,
+      })
     },
   })
 
@@ -150,12 +156,12 @@ const UpdatePoolAmountButton: FunctionComponent<
     const NumberAmount = Number(amount)
     const maxAmount = wei2Eth(Number(pool_used_amount) + Number(wethData))
     if (maxAmount === undefined) {
-      setErrorMsg(` Insufficient funds: 0 WETH`)
+      setErrorMsg(`Insufficient funds: 0 WETH`)
       return true
     }
     if (NumberAmount > maxAmount) {
       setErrorMsg(
-        ` Insufficient funds: still need to deposit ${formatFloat(
+        `Insufficient funds: still need to deposit ${formatFloat(
           NumberAmount - maxAmount,
         )} WETH`,
       )
@@ -334,33 +340,18 @@ const UpdatePoolAmountButton: FunctionComponent<
                 >
                   <SvgComponent svgId='icon-eth' fill={'black.1'} />
                 </InputLeftElement>
-                <NumberInput
+                <CustomNumberInput
                   w='100%'
                   value={amount}
-                  onChange={(v) => {
+                  onSetValue={(v) => {
                     setAmount(v)
                   }}
-                  errorBorderColor='red.1'
                   isInvalid={isError}
-                  borderRadius={8}
-                  borderColor='gray.3'
-                  isDisabled={updateLoading}
+                  isDisabled={updateLoading || floorPrice === undefined}
                   top={'2px'}
-                >
-                  <NumberInputField
-                    h='60px'
-                    px={'32px'}
-                    _focus={{
-                      borderColor: isError ? 'red.1' : 'blue.1',
-                    }}
-                    _focusVisible={{
-                      boxShadow: `0 0 0 1px var(--chakra-colors-${
-                        isError ? 'red-1' : 'blue-1'
-                      })`,
-                    }}
-                    placeholder='Enter amount...'
-                  />
-                </NumberInput>
+                  px='32px'
+                  placeholder='Enter amount...'
+                />
               </InputGroup>
 
               {isError && (
