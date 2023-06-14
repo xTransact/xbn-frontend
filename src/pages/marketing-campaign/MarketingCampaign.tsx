@@ -62,6 +62,7 @@ import ImgCoinInBox from '@/assets/marketing/icon-coin-in-box.svg'
 import ImgPlusWallet from '@/assets/marketing/icon-plus-wallet.svg'
 import ImgWalletOk from '@/assets/marketing/icon-wallet-ok.svg'
 import ImgQuestionBox from '@/assets/marketing/icon-win-box.svg'
+import { truncate } from 'lodash'
 const { VITE_APP_GALXE_TAKS_LINK } = import.meta.env
 const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% downpayment, win Boxdrop`
 const SHARE_TWITTER_TEXT = `xBank is An NFT Open Money Market Powering Web3 Adopters with Onboarding Leverage with NFT BNPL and Improving Money Efficiency for Holders\nJoin @xBank_Official, buy top NFTs pay later, with 0% downpayment, and earn Boxdrop`
@@ -663,15 +664,17 @@ export default function MarketingCampaign() {
                           fontSize={'24px'}
                           fontWeight={900}
                           fontFamily={'HarmonyOS Sans SC Black'}
-                          w='189px'
-                          mr='81px'
+                          w='200px'
+                          flexBasis={'200px'}
+                          display={'inline-block'}
+                          flexShrink={0}
                         >
                           Invitation Link:
                         </Text>
                         <Box
                           border='1px solid #B3B3FF'
                           borderRadius={'28px'}
-                          w='733px'
+                          // w='733px'
                         >
                           <Flex
                             padding={'3px 2px'}
@@ -684,9 +687,9 @@ export default function MarketingCampaign() {
                                 fontSize={'24px'}
                                 lineHeight={'24px'}
                                 fontWeight={400}
+                                fontFamily={'HarmonyOS Sans SC Regular'}
                                 padding={'0 18px'}
-                                maxW={'300px'}
-                                noOfLines={1}
+                                noOfLines={2}
                               >
                                 {invitationLink}
                               </Text>
@@ -730,9 +733,11 @@ export default function MarketingCampaign() {
                         <Text
                           fontSize={'24px'}
                           fontWeight={900}
-                          w='189px'
-                          mr='81px'
                           fontFamily={'HarmonyOS Sans SC Black'}
+                          w='200px'
+                          flexBasis={'200px'}
+                          display={'inline-block'}
+                          flexShrink={0}
                         >
                           Share To:
                         </Text>
@@ -742,11 +747,7 @@ export default function MarketingCampaign() {
                           )}
                           target='_blank'
                         >
-                          <Flex
-                            direction={'column'}
-                            alignItems={'center'}
-                            w='120px'
-                          >
+                          <Flex direction={'column'} alignItems={'center'}>
                             <Image
                               src={IconTwitter}
                               w='32px'
