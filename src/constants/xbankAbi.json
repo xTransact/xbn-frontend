@@ -42,6 +42,12 @@
         "internalType": "uint256",
         "name": "downPaymentAmount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "orderID",
+        "type": "uint256"
       }
     ],
     "name": "FundsArrived",
@@ -81,13 +87,13 @@
         "type": "uint256"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "lender",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "borrower",
         "type": "address"
@@ -285,7 +291,7 @@
         "type": "uint256"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "poolOwnerAddress",
         "type": "address"
@@ -1151,6 +1157,11 @@
       {
         "internalType": "uint256",
         "name": "loanPrincipal",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "orderID",
         "type": "uint256"
       }
     ],
