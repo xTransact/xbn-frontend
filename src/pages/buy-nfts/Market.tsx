@@ -155,8 +155,8 @@ const Market = () => {
     {
       ready: !!selectCollection,
       refreshDeps: [selectCollection],
-      cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
-      staleTime: 1000 * 60,
+      // cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
+      // staleTime: 1000 * 60,
     },
   )
 

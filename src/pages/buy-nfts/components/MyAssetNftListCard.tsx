@@ -320,8 +320,8 @@ const MyAssetNftListCard: FunctionComponent<
     {
       ready: !!collectionData && type === 'create',
       refreshDeps: [collectionData],
-      cacheKey: `staleTime-floorPrice-${collectionData?.slug}`,
-      staleTime: 1000 * 60,
+      // cacheKey: `staleTime-floorPrice-${collectionData?.slug}`,
+      // staleTime: 1000 * 60,
       onError: () => {
         toast({
           title: 'Network problems, please refresh and try again',

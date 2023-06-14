@@ -311,8 +311,8 @@ const Create = () => {
     {
       ready: !!selectCollection,
       refreshDeps: [selectCollection],
-      cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
-      staleTime: 1000 * 60,
+      // cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
+      // staleTime: 1000 * 60,
       onError: () => {
         toast({
           title: 'Network problems, please refresh and try again',
