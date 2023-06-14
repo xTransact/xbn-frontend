@@ -1065,7 +1065,7 @@ const Lend = () => {
                       ),
                       columns: loansForLendColumns,
                       loading: loansLoading,
-                      data: loansData[0],
+                      data: sortBy(loansData[0], (i) => -i.loan_start_time),
                       key: '1',
                     },
                     {
@@ -1091,7 +1091,7 @@ const Lend = () => {
                         </Heading>
                       ),
                       columns: loansForLendColumns,
-                      data: loansData[1],
+                      data: sortBy(loansData[1], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '2',
                     },
@@ -1118,7 +1118,7 @@ const Lend = () => {
                         </Heading>
                       ),
                       columns: loansForLendColumns,
-                      data: loansData[2],
+                      data: sortBy(loansData[2], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '3',
                     },

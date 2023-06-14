@@ -633,7 +633,7 @@ const NftAssetDetail = () => {
         successTitle='Purchase completed'
         successDescription='Loan has been initialized.'
         step={loanStep}
-        loadingText='The loan is being generated, expect to wait 1 to 2 minutes.'
+        loadingText='Buying this NFT from market. If unsuccessful, the down payment will be returned.'
       />
     )
   }
