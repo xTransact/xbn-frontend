@@ -73,7 +73,6 @@ request.interceptors.response.use(
   (e) => {
     // 超时提示 axios 超时后, error.code = "ECONNABORTED" (https://github.com/axios/axios/blob/26b06391f831ef98606ec0ed406d2be1742e9850/lib/adapters/xhr.js#L95-L101)
     if (e?.code == 'ECONNABORTED' && e?.message.indexOf('timeout') != -1) {
-      toast.closeAll()
       toast({
         title: 'Network problems, please refresh and try again.',
         status: 'error',
@@ -90,7 +89,6 @@ request.interceptors.response.use(
       const {
         error: { code: errorCode, message: errorMessage },
       } = data
-      toast.closeAll()
       toast({
         title: errorCode || 'Oops, network error...',
         description: errorMessage,
