@@ -508,11 +508,6 @@ const NftAssetDetail = () => {
           ...postParams,
         })
         const orderId = res.data
-        console.log(
-          '🚀 ~ file: NftAssetDetail.tsx:511 ~ interceptFn ~ orderId:',
-          orderId,
-        )
-
         setTransferFromLoading(true)
         const transferBlock = await xBankContract.methods
           .transferFrom(pool_id, loanWeiAmount.toString(), `${orderId}`)
@@ -546,14 +541,15 @@ const NftAssetDetail = () => {
 
         // 如果一直监听不到
         setTimeout(() => {
-          // if (loanStep === 'loading') {
-          toast({
-            status: 'info',
-            title: 'The loan is being generated, please wait and refresh later',
-          })
-          navigate('/buy-nfts/loans')
-          // }
-        }, 10 * 60 * 1000)
+          if (loanStep === 'loading') {
+            toast({
+              status: 'info',
+              title:
+                'The loan is being generated, please wait and refresh later',
+            })
+            navigate('/buy-nfts/loans')
+          }
+        }, 2 * 60 * 1000)
       } catch (error: any) {
         toastError(error)
         setTransferFromLoading(false)
@@ -575,7 +571,7 @@ const NftAssetDetail = () => {
     commodityWeiPrice,
     interceptFn,
     toast,
-    // loanStep,
+    loanStep,
     platform,
   ])
 
