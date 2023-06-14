@@ -23,7 +23,6 @@ import {
 } from '@chakra-ui/react'
 import { useAsyncEffect, useSetState } from 'ahooks'
 import BigNumber from 'bignumber.js'
-import { truncate } from 'lodash'
 import moment from 'moment'
 import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
