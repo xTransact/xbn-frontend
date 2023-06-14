@@ -467,7 +467,7 @@ const Create = () => {
             title: 'Updated successfully! ',
             id: 'Updated-Successfully-ID',
           })
-          navigate('lending/my-pools')
+          navigate('/lending/my-pools')
         }, 2000)
       } catch (error: any) {
         toastError(error)
