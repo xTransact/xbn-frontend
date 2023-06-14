@@ -489,19 +489,8 @@ const NftAssetDetail = () => {
       }
       const xBankContract = createXBankContract()
       const { pool_days, pool_id, lp_address, lp_pool_apr } = selectPool
-      let transferBlock
 
       try {
-        setTransferFromLoading(true)
-        transferBlock = await xBankContract.methods
-          .transferFrom(pool_id, loanWeiAmount.toString())
-          .send({
-            from: currentAccount,
-            value: commodityWeiPrice.minus(loanWeiAmount).toString(),
-            gas: 300000,
-            // gasPrice:''
-          })
-        setTransferFromLoading(false)
         const postParams: LoanOrderDataType = {
           pool_id: pool_id.toString(),
           borrower_address: currentAccount,
@@ -515,9 +504,25 @@ const NftAssetDetail = () => {
           loan_interest_rate: lp_pool_apr,
           platform,
         }
-        await generateLoanOrder({
+        const res = await generateLoanOrder({
           ...postParams,
         })
+        const orderId = res.data
+        console.log(
+          '🚀 ~ file: NftAssetDetail.tsx:511 ~ interceptFn ~ orderId:',
+          orderId,
+        )
+
+        setTransferFromLoading(true)
+        const transferBlock = await xBankContract.methods
+          .transferFrom(pool_id, loanWeiAmount.toString(), `${orderId}`)
+          .send({
+            from: currentAccount,
+            value: commodityWeiPrice.minus(loanWeiAmount).toString(),
+            gas: 300000,
+            // gasPrice:''
+          })
+        setTransferFromLoading(false)
 
         setSubscribeLoading(true)
         setLoanStep('loading')
@@ -545,11 +550,14 @@ const NftAssetDetail = () => {
 
         // 如果一直监听不到
         timer.current = setTimeout(() => {
-          toast({
-            status: 'info',
-            title: 'The loan is being generated, please wait and refresh later',
-          })
-          navigate('/buy-nfts/loans')
+          if (loanStep === 'loading') {
+            toast({
+              status: 'info',
+              title:
+                'The loan is being generated, please wait and refresh later',
+            })
+            navigate('/buy-nfts/loans')
+          }
         }, 2 * 60 * 1000)
       } catch (error: any) {
         toastError(error)
@@ -572,6 +580,7 @@ const NftAssetDetail = () => {
     commodityWeiPrice,
     interceptFn,
     toast,
+    loanStep,
     platform,
   ])
 
@@ -626,7 +635,6 @@ const NftAssetDetail = () => {
           return
         }}
         onSuccessBack={() => {
-          setLoanStep(undefined)
           navigate('/buy-nfts/loans')
           return
         }}

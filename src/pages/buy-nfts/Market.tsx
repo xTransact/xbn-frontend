@@ -133,7 +133,7 @@ const Market = () => {
     )
   }, [collectionList, collectionWithPoolsIds])
 
-  useEffect(() => {
+  const initialCollection = useMemo(() => {
     if (!collectionData || isEmpty(collectionData)) {
       return
     }
@@ -144,10 +144,16 @@ const Market = () => {
     )
 
     const currentItem = prevItem || collectionData[0]
+    return currentItem
+  }, [collectionData, pathData])
 
-    setSelectCollection(currentItem)
-    navigate(`/buy-nfts/market/${currentItem.nftCollection.id}${search}`)
-  }, [collectionData, pathData, search, navigate])
+  useEffect(() => {
+    if (!initialCollection) return
+    setSelectCollection(initialCollection)
+    navigate(
+      `/buy-nfts/market/${initialCollection.nftCollection.id}${search || ''}`,
+    )
+  }, [initialCollection, navigate, search])
 
   const [floorPrice, setFloorPrice] = useState<number>()
   const { loading: floorPriceLoading, data: floorPriceData } = useRequest(
@@ -558,7 +564,11 @@ const Market = () => {
                 assetsData?.list?.map((item) => {
                   if (!item) return null
                   const { node } = item
-                  const { tokenID, nftAssetContract, name } = node || {}
+                  const {
+                    tokenID,
+                    nftAssetContract: { address },
+                    name,
+                  } = node || {}
                   return (
                     <MarketNftListCard
                       data={{ ...item, highestRate }}
@@ -569,33 +579,28 @@ const Market = () => {
                         sm: '174px',
                         xs: '174px',
                       }}
-                      key={`${tokenID}${nftAssetContract?.address}${name}`}
+                      key={`${tokenID}${address}${name}`}
                       onClick={() => {
+                        if (!selectCollection) return
+                        const { nftCollection, contractAddress } =
+                          selectCollection
                         interceptFn(() => {
-                          navigate(
-                            `/asset/${nftAssetContract?.address}/${tokenID}`,
-                            {
-                              state: {
-                                collection: {
-                                  ...selectCollection?.nftCollection,
-                                  name: selectCollection?.nftCollection?.name,
-                                  imagePreviewUrl:
-                                    selectCollection?.nftCollection
-                                      ?.imagePreviewUrl,
-                                  safelistRequestStatus:
-                                    selectCollection?.nftCollection
-                                      ?.safelistRequestStatus,
-                                  slug: selectCollection?.nftCollection?.slug,
-                                },
-                                poolsList:
-                                  poolsMap && selectCollection?.contractAddress
-                                    ? poolsMap.get(
-                                        selectCollection.contractAddress,
-                                      )
-                                    : [],
+                          navigate(`/asset/${address}/${tokenID}`, {
+                            state: {
+                              collection: {
+                                name: nftCollection.name,
+                                imagePreviewUrl: nftCollection.imagePreviewUrl,
+                                safelistRequestStatus:
+                                  nftCollection?.safelistRequestStatus,
+                                slug: nftCollection?.slug,
                               },
+                              poolsList:
+                                poolsMap && contractAddress
+                                  ? poolsMap.get(contractAddress)
+                                  : [],
                             },
-                          )
+                            // replace: true,
+                          })
                         })
                       }}
                     />

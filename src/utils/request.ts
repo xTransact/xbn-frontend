@@ -33,7 +33,7 @@ export const AXIOS_DEFAULT_CONFIG = {
       ? `Bearer ${getUserToken()?.token}`
       : undefined,
   },
-  timeout: 20000,
+  timeout: 10000,
 }
 const request = axios.create(AXIOS_DEFAULT_CONFIG)
 
@@ -71,18 +71,31 @@ request.interceptors.response.use(
     return resp?.data
   },
   (e) => {
+    // 超时提示 axios 超时后, error.code = "ECONNABORTED" (https://github.com/axios/axios/blob/26b06391f831ef98606ec0ed406d2be1742e9850/lib/adapters/xhr.js#L95-L101)
+    if (
+      (e?.code == 'ECONNABORTED' && e?.message.indexOf('timeout') != -1) ||
+      e?.code === 'ERR_BAD_RESPONSE'
+    ) {
+      if (toast.isActive('network-error')) return
+      toast({
+        title: 'Network problems, please refresh and try again.',
+        status: 'error',
+        duration: 5000,
+        id: 'network-error',
+      })
+      return
+    }
     const {
       response: { data },
     } = e
 
-    const { error } = data
-
-    if (error && !isEmpty(error)) {
-      const { code, message } = error
-
+    if (data?.error && !isEmpty(data?.error)) {
+      const {
+        error: { code: errorCode, message: errorMessage },
+      } = data
       toast({
-        title: code || 'Oops, network error...',
-        description: message,
+        title: errorCode || 'Oops, network error...',
+        description: errorMessage,
         status: 'error',
         isClosable: true,
         id: 'request-error-toast',
