@@ -528,18 +528,13 @@ const NftAssetDetail = () => {
         setLoanStep('loading')
         // 监听 loan 是否生成
         xBankContract.events
-          .LoanCreated(
-            {
-              filter: {
-                lender: lp_address,
-                borrower: currentAccount,
-              },
-              fromBlock: transferBlock?.BlockNumber || 'latest',
+          .LoanCreated({
+            filter: {
+              lender: [lp_address],
+              borrower: [currentAccount],
             },
-            // (error: any, event: any) => {
-            //   console.log(event, error, 'aaaaa')
-            // },
-          )
+            fromBlock: transferBlock?.BlockNumber || 'latest',
+          })
           .on('data', function (event: any) {
             console.log(event, 'on data') // same results as the optional callback above
             setLoanStep('success')
@@ -549,7 +544,7 @@ const NftAssetDetail = () => {
           .on('error', console.error)
 
         // 如果一直监听不到
-        timer.current = setTimeout(() => {
+        setTimeout(() => {
           if (loanStep === 'loading') {
             toast({
               status: 'info',
@@ -558,7 +553,7 @@ const NftAssetDetail = () => {
             })
             navigate('/buy-nfts/loans')
           }
-        }, 2 * 60 * 1000)
+        }, 10 * 60 * 1000)
       } catch (error: any) {
         toastError(error)
         setTransferFromLoading(false)
