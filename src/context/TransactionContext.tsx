@@ -19,11 +19,11 @@ import useAuth from '@/hooks/useAuth'
 import { getUserToken } from '@/utils/auth'
 
 export const TransactionContext = createContext<{
-  connectWallet: () => void
+  connectWallet: () => Promise<any>
   currentAccount: string
   isConnected: boolean
   connectLoading: boolean
-  handleSwitchNetwork: () => void
+  handleSwitchNetwork: () => Promise<any>
   handleDisconnect: () => void
   collectionList: { contractAddress: string; nftCollection: NftCollection }[]
   collectionLoading: boolean
