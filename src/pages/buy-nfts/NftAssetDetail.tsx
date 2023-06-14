@@ -531,8 +531,8 @@ const NftAssetDetail = () => {
         xBankContract.events
           .LoanCreated({
             filter: {
-              lender: [lp_address],
-              borrower: [currentAccount],
+              lender: lp_address,
+              borrower: currentAccount,
             },
             fromBlock: transferBlock?.BlockNumber || 'latest',
           })
