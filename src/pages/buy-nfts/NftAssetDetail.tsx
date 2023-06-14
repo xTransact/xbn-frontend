@@ -526,6 +526,7 @@ const NftAssetDetail = () => {
 
         setSubscribeLoading(true)
         setLoanStep('loading')
+        console.log('transferBlock', transferBlock)
         // 监听 loan 是否生成
         xBankContract.events
           .LoanCreated({
