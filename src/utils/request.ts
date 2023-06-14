@@ -71,33 +71,33 @@ request.interceptors.response.use(
     return resp?.data
   },
   (e) => {
-    const {
-      response: { data },
-      code,
-      message,
-    } = e
-
     // 超时提示 axios 超时后, error.code = "ECONNABORTED" (https://github.com/axios/axios/blob/26b06391f831ef98606ec0ed406d2be1742e9850/lib/adapters/xhr.js#L95-L101)
-    if (code == 'ECONNABORTED' && message.indexOf('timeout') != -1) {
+    if (e?.code == 'ECONNABORTED' && e?.message.indexOf('timeout') != -1) {
+      toast.closeAll()
       toast({
         title: 'Network problems, please refresh and try again.',
         status: 'error',
         duration: 5000,
+        id: 'ECONNABORTED',
       })
-    } else {
-      if (data?.error && !isEmpty(data?.error)) {
-        const {
-          error: { code: errorCode, message: errorMessage },
-        } = data
+      return
+    }
+    const {
+      response: { data },
+    } = e
 
-        toast({
-          title: errorCode || 'Oops, network error...',
-          description: errorMessage,
-          status: 'error',
-          isClosable: true,
-          id: 'request-error-toast',
-        })
-      }
+    if (data?.error && !isEmpty(data?.error)) {
+      const {
+        error: { code: errorCode, message: errorMessage },
+      } = data
+      toast.closeAll()
+      toast({
+        title: errorCode || 'Oops, network error...',
+        description: errorMessage,
+        status: 'error',
+        isClosable: true,
+        id: 'request-error-toast',
+      })
     }
 
     throw data
