@@ -508,6 +508,10 @@ const NftAssetDetail = () => {
           ...postParams,
         })
         const orderId = res.data
+        console.log(
+          '🚀 ~ file: NftAssetDetail.tsx:511 ~ interceptFn ~ orderId:',
+          orderId,
+        )
 
         setTransferFromLoading(true)
         const transferBlock = await xBankContract.methods
