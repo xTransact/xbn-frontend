@@ -635,7 +635,6 @@ const NftAssetDetail = () => {
           return
         }}
         onSuccessBack={() => {
-          setLoanStep(undefined)
           navigate('/buy-nfts/loans')
           return
         }}
