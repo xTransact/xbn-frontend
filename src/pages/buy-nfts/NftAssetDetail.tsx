@@ -558,7 +558,7 @@ const NftAssetDetail = () => {
             })
             navigate('/buy-nfts/loans')
           }
-        }, 10 * 60 * 1000)
+        }, 2 * 60 * 1000)
       } catch (error: any) {
         toastError(error)
         setTransferFromLoading(false)
