@@ -214,6 +214,12 @@ const Lend = () => {
           BigNumber(0),
         )
 
+        const pool_used_amount = reduce(
+          currentCollectionPools,
+          (sum, i) => BigNumber(sum).plus(Number(i.pool_used_amount)),
+          BigNumber(0),
+        )
+
         const isContainMyPool =
           currentCollectionPools?.findIndex(
             (i) =>
@@ -224,6 +230,7 @@ const Lend = () => {
           pool_maximum_percentage,
           pool_maximum_interest_rate,
           pool_amount,
+          pool_used_amount,
           contractAddress,
           isContainMyPool,
           ...rest,
@@ -411,10 +418,14 @@ const Lend = () => {
         title: 'Pool Size',
         dataIndex: 'pool_amount',
         key: 'pool_amount',
-        align: 'right',
-        thAlign: 'right',
+        align: 'center',
+        thAlign: 'center',
         render: (value: any, info: any) => (
-          <EthText>{formatFloat(wei2Eth(Number(value)))}</EthText>
+          <EthText>
+            {formatFloat(
+              wei2Eth(Number(value) - Number(info.pool_used_amount)),
+            )}
+          </EthText>
         ),
       },
       {
@@ -827,7 +838,7 @@ const Lend = () => {
             fontWeight: 'bold',
           }}
           position='sticky'
-          top={{ md: '74px', sm: '56px', xs: '56px' }}
+          top={{ md: '131px', sm: '131px', xs: '107px' }}
           bg='white'
           zIndex={2}
         >
@@ -1054,7 +1065,7 @@ const Lend = () => {
                       ),
                       columns: loansForLendColumns,
                       loading: loansLoading,
-                      data: loansData[0],
+                      data: sortBy(loansData[0], (i) => -i.loan_start_time),
                       key: '1',
                     },
                     {
@@ -1080,7 +1091,7 @@ const Lend = () => {
                         </Heading>
                       ),
                       columns: loansForLendColumns,
-                      data: loansData[1],
+                      data: sortBy(loansData[1], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '2',
                     },
@@ -1107,7 +1118,7 @@ const Lend = () => {
                         </Heading>
                       ),
                       columns: loansForLendColumns,
-                      data: loansData[2],
+                      data: sortBy(loansData[2], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '3',
                     },

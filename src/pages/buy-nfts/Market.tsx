@@ -20,7 +20,7 @@ import useRequest from 'ahooks/lib/useRequest'
 import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { apiGetFloorPrice, apiGetPools } from '@/api'
@@ -31,6 +31,7 @@ import {
   LoadingComponent,
   SearchInput,
 } from '@/components'
+import { TransactionContext } from '@/context/TransactionContext'
 import {
   NftAssetStatus,
   useNftCollectionSearchAssetLazyQuery,
@@ -38,7 +39,6 @@ import {
   OrderDirection,
   useNftCollectionAssetsLazyQuery,
   useWallet,
-  useNftCollectionsByContractAddressesQuery,
   type NftAsset,
   type NftCollection,
   useGuide,
@@ -123,31 +123,37 @@ const Market = () => {
     [poolsMap],
   )
 
-  const { data: collectionData, loading: collectionLoading } =
-    useNftCollectionsByContractAddressesQuery({
-      variables: {
-        assetContractAddresses: collectionWithPoolsIds,
-      },
-      skip: isEmpty(collectionWithPoolsIds),
-      onCompleted(data) {
-        if (
-          !data ||
-          !data?.nftCollectionsByContractAddresses ||
-          isEmpty(data?.nftCollectionsByContractAddresses)
-        ) {
-          return
-        }
+  const { collectionList, collectionLoading } = useContext(TransactionContext)
 
-        const prevCollectionId = pathData?.collectionId
-        const prevItem = data.nftCollectionsByContractAddresses.find(
-          (i) => i.nftCollection.id === prevCollectionId,
-        )
+  const collectionData = useMemo(() => {
+    if (!collectionList) return
+    if (isEmpty(collectionList)) return []
+    return collectionList.filter((i) =>
+      collectionWithPoolsIds.includes(i.contractAddress),
+    )
+  }, [collectionList, collectionWithPoolsIds])
 
-        setSelectCollection(
-          prevItem || data.nftCollectionsByContractAddresses[0],
-        )
-      },
-    })
+  const initialCollection = useMemo(() => {
+    if (!collectionData || isEmpty(collectionData)) {
+      return
+    }
+
+    const prevCollectionId = pathData?.collectionId
+    const prevItem = collectionData.find(
+      (i) => i.nftCollection.id === prevCollectionId,
+    )
+
+    const currentItem = prevItem || collectionData[0]
+    return currentItem
+  }, [collectionData, pathData])
+
+  useEffect(() => {
+    if (!initialCollection) return
+    setSelectCollection(initialCollection)
+    navigate(
+      `/buy-nfts/market/${initialCollection.nftCollection.id}${search || ''}`,
+    )
+  }, [initialCollection, navigate, search])
 
   const [floorPrice, setFloorPrice] = useState<number>()
   const { loading: floorPriceLoading, data: floorPriceData } = useRequest(
@@ -158,8 +164,8 @@ const Market = () => {
     {
       ready: !!selectCollection,
       refreshDeps: [selectCollection],
-      cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
-      staleTime: 1000 * 60,
+      // cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
+      // staleTime: 1000 * 60,
     },
   )
 
@@ -183,13 +189,13 @@ const Market = () => {
     return maxRate
   }, [poolsMap, selectCollection])
 
-  useEffect(() => {
-    if (!selectCollection) return
-    const {
-      nftCollection: { id },
-    } = selectCollection
-    navigate(`/buy-nfts/market/${id}${search}`)
-  }, [selectCollection, navigate, search])
+  // useEffect(() => {
+  //   if (!selectCollection) return
+  //   const {
+  //     nftCollection: { id },
+  //   } = selectCollection
+  //   navigate(`/buy-nfts/market/${id}${search}`)
+  // }, [selectCollection, navigate, search])
 
   // 根据 collectionId 搜索 assets
   const [fetchAssetByCollectionId] = useNftCollectionAssetsLazyQuery({
@@ -247,10 +253,8 @@ const Market = () => {
 
   const filteredCollectionList = useMemo(() => {
     if (!collectionData) return
-    const { nftCollectionsByContractAddresses } = collectionData
-    if (!debounceCollectionSearchValue)
-      return nftCollectionsByContractAddresses || []
-    return filter(nftCollectionsByContractAddresses, (item) =>
+    if (!debounceCollectionSearchValue) return collectionData || []
+    return filter(collectionData, (item) =>
       item.nftCollection.name
         .toLocaleLowerCase()
         .includes(debounceCollectionSearchValue.toLocaleLowerCase()),
@@ -345,7 +349,7 @@ const Market = () => {
               sm: '100px',
               xs: '100px',
             }}
-            top='100px'
+            top='151px'
           >
             <Heading size={'md'} mb='16px'>
               Collections
@@ -403,6 +407,9 @@ const Market = () => {
                       setOrderOption(SORT_OPTIONS[0])
                       setAssetSearchValue('')
                       setCollectionSearchValue('')
+                      navigate(
+                        `/buy-nfts/market/${item.nftCollection.id}${search}`,
+                      )
                     }}
                     count={item.nftCollection.assetsCount}
                     isActive={
@@ -475,6 +482,9 @@ const Market = () => {
                             setAssetSearchValue('')
                             setCollectionSearchValue('')
                             closeDraw()
+                            navigate(
+                              `/buy-nfts/market/${item.nftCollection.id}${search}`,
+                            )
                           }}
                           count={item.nftCollection.assetsCount}
                           isActive={
@@ -554,7 +564,11 @@ const Market = () => {
                 assetsData?.list?.map((item) => {
                   if (!item) return null
                   const { node } = item
-                  const { tokenID, nftAssetContract, name } = node || {}
+                  const {
+                    tokenID,
+                    nftAssetContract: { address },
+                    name,
+                  } = node || {}
                   return (
                     <MarketNftListCard
                       data={{ ...item, highestRate }}
@@ -565,33 +579,28 @@ const Market = () => {
                         sm: '174px',
                         xs: '174px',
                       }}
-                      key={`${tokenID}${nftAssetContract?.address}${name}`}
+                      key={`${tokenID}${address}${name}`}
                       onClick={() => {
+                        if (!selectCollection) return
+                        const { nftCollection, contractAddress } =
+                          selectCollection
                         interceptFn(() => {
-                          navigate(
-                            `/asset/${nftAssetContract?.address}/${tokenID}`,
-                            {
-                              state: {
-                                collection: {
-                                  ...selectCollection?.nftCollection,
-                                  name: selectCollection?.nftCollection?.name,
-                                  imagePreviewUrl:
-                                    selectCollection?.nftCollection
-                                      ?.imagePreviewUrl,
-                                  safelistRequestStatus:
-                                    selectCollection?.nftCollection
-                                      ?.safelistRequestStatus,
-                                  floorPrice,
-                                },
-                                poolsList:
-                                  poolsMap && selectCollection?.contractAddress
-                                    ? poolsMap.get(
-                                        selectCollection.contractAddress,
-                                      )
-                                    : [],
+                          navigate(`/asset/${address}/${tokenID}`, {
+                            state: {
+                              collection: {
+                                name: nftCollection.name,
+                                imagePreviewUrl: nftCollection.imagePreviewUrl,
+                                safelistRequestStatus:
+                                  nftCollection?.safelistRequestStatus,
+                                slug: nftCollection?.slug,
                               },
+                              poolsList:
+                                poolsMap && contractAddress
+                                  ? poolsMap.get(contractAddress)
+                                  : [],
                             },
-                          )
+                            // replace: true,
+                          })
                         })
                       }}
                     />
@@ -652,7 +661,7 @@ const Market = () => {
                               safelistRequestStatus:
                                 selectCollection?.nftCollection
                                   ?.safelistRequestStatus,
-                              floorPrice,
+                              slug: selectCollection?.nftCollection?.slug,
                             },
                             poolsList:
                               poolsMap && selectCollection?.contractAddress

@@ -78,10 +78,10 @@ const MyTable = ({
   return (
     <Box position={'relative'}>
       {!!tableTitle && tableTitle()}
-      {<LoadingComponent loading={loading} minHeight='120px' />}
+      {<LoadingComponent loading={loading} minHeight='120px' top={'16px'} />}
       {isEmpty(data) && (
-        <Box h='250px'>
-          <Box left={0} right={0} top={'30px'} bottom={0} pos='absolute'>
+        <Box h='260px'>
+          <Box left={0} right={0} top={'24px'} bottom={0} pos='absolute'>
             {emptyRender ? emptyRender() : <EmptyComponent />}
           </Box>
         </Box>

@@ -311,8 +311,15 @@ const Create = () => {
     {
       ready: !!selectCollection,
       refreshDeps: [selectCollection],
-      cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
-      staleTime: 1000 * 60,
+      // cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
+      // staleTime: 1000 * 60,
+      onError: () => {
+        toast({
+          title: 'Network problems, please refresh and try again',
+          status: 'error',
+          duration: 3000,
+        })
+      },
     },
   )
 
@@ -341,9 +348,8 @@ const Create = () => {
 
     if (NumberAmount > floorPrice) {
       return {
-        status: 'info',
-        message:
-          'Single loan amount is recommended to be less than the floor price.',
+        status: 'error',
+        message: 'Cannot be greater than the floor price.',
       }
     }
   }, [maxSingleLoanAmount, floorPrice])
@@ -453,16 +459,16 @@ const Create = () => {
           .send({
             from: currentAccount,
           })
-        setUpdating(false)
-        if (toast.isActive('Updated-Successfully-ID')) {
-          // toast.closeAll()
-        } else {
+
+        setTimeout(() => {
+          setUpdating(false)
           toast({
             status: 'success',
             title: 'Updated successfully! ',
             id: 'Updated-Successfully-ID',
           })
-        }
+          navigate('/lending/my-pools')
+        }, 2000)
       } catch (error: any) {
         toastError(error)
         setUpdating(false)
@@ -480,6 +486,7 @@ const Create = () => {
     selectCollateralKey,
     interceptFn,
     currentAccount,
+    navigate,
   ])
 
   const isChanged = useMemo(() => {
@@ -704,7 +711,11 @@ const Create = () => {
                     <SvgComponent svgId='icon-eth' fill={'black.1'} />
                   </InputLeftElement>
                   <CustomNumberInput
-                    isDisabled={!selectCollection}
+                    isDisabled={
+                      !selectCollection ||
+                      !floorPriceData ||
+                      isEmpty(floorPriceData)
+                    }
                     value={maxSingleLoanAmount || ''}
                     isInvalid={maxSingleLoanAmountStatus?.status === 'error'}
                     // lineHeight='60px'
@@ -1124,7 +1135,7 @@ const Create = () => {
             navigate(-1)
           }}
         >
-          <SvgComponent svgId='icon-arrow' fill='blue.1' />
+          {/* <SvgComponent svgId='icon-arrow' fill='blue.1' /> */}
           Back
         </Button>
         {params.action === 'create' && (
@@ -1138,7 +1149,9 @@ const Create = () => {
                 selectCollection?.contractAddress?.toLowerCase(),
               ) ||
               !maxSingleLoanAmount ||
-              maxSingleLoanAmountStatus?.status === 'error'
+              maxSingleLoanAmountStatus?.status === 'error' ||
+              !floorPriceData ||
+              isEmpty(floorPriceData)
             }
             data={{
               poolMaximumPercentage: COLLATERAL_MAP.get(
@@ -1168,7 +1181,9 @@ const Create = () => {
             isDisabled={
               maxSingleLoanAmountStatus?.status === 'error' ||
               !maxSingleLoanAmount ||
-              !isChanged
+              !isChanged ||
+              !floorPriceData ||
+              isEmpty(floorPriceData)
             }
             variant={'primary'}
             w='240px'
