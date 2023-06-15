@@ -33,7 +33,7 @@ export const AXIOS_DEFAULT_CONFIG = {
       ? `Bearer ${getUserToken()?.token}`
       : undefined,
   },
-  timeout: 10000,
+  timeout: 20000,
 }
 const request = axios.create(AXIOS_DEFAULT_CONFIG)
 
