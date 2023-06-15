@@ -30,7 +30,6 @@ import {
   useEffect,
   useMemo,
   useState,
-  useRef,
   type FunctionComponent,
 } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -121,7 +120,7 @@ const NFTDetailContainer: FunctionComponent<FlexProps> = ({
 const NftAssetDetail = () => {
   const navigate = useNavigate()
   const { toastError, toast } = useCatchContractError()
-  const timer = useRef<NodeJS.Timeout>()
+  const [isAutoLeave, setIsAutoLeave] = useState(false)
   const [loanStep, setLoanStep] = useState<'loading' | 'success' | undefined>()
   const { isOpen, onClose, currentAccount, interceptFn } = useWallet()
   const [platform, setPlatform] = useState<MARKET_TYPE_ENUM | undefined>()
@@ -147,14 +146,6 @@ const NftAssetDetail = () => {
     const web3 = createWeb3Provider()
     web3.eth.clearSubscriptions()
   }, [])
-
-  useEffect(() => {
-    return () => {
-      if (timer?.current) {
-        clearTimeout(timer.current)
-      }
-    }
-  }, [timer])
 
   // 读取利差 X 0.1
   const fetchInterestSpread = async () => {
@@ -523,6 +514,10 @@ const NftAssetDetail = () => {
         setLoanStep('loading')
         console.log('transferBlock', transferBlock)
         // 监听 loan 是否生成
+        // 如果 2 min 一直监听不到
+        setTimeout(() => {
+          setIsAutoLeave(true)
+        }, 2 * 60 * 1000)
         xBankContract.events
           .LoanCreated({
             filter: {
@@ -538,18 +533,6 @@ const NftAssetDetail = () => {
           })
           .on('changed', console.log)
           .on('error', console.error)
-
-        // 如果一直监听不到
-        setTimeout(() => {
-          if (loanStep === 'loading') {
-            toast({
-              status: 'info',
-              title:
-                'The loan is being generated, please wait and refresh later',
-            })
-            navigate('/buy-nfts/loans')
-          }
-        }, 2 * 60 * 1000)
       } catch (error: any) {
         toastError(error)
         setTransferFromLoading(false)
@@ -567,13 +550,20 @@ const NftAssetDetail = () => {
     installmentValue,
     loanWeiAmount,
     toastError,
-    navigate,
     commodityWeiPrice,
     interceptFn,
-    toast,
-    loanStep,
     platform,
   ])
+
+  useEffect(() => {
+    if (loanStep === 'loading' && isAutoLeave) {
+      toast({
+        status: 'info',
+        title: 'The loan is being generated, please wait and refresh later',
+      })
+      navigate('/buy-nfts/loans')
+    }
+  }, [loanStep, isAutoLeave, toast, navigate])
 
   const [usdPrice, setUsdPrice] = useState<BigNumber>()
 
