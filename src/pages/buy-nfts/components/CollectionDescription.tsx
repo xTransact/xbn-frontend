@@ -206,7 +206,7 @@ const CollectionDescription: FunctionComponent<{
               display='flex'
               mb={'4px'}
             >
-              {floorPrice
+              {floorPrice !== undefined
                 ? formatFloat(
                     BigNumber(floorPrice || 0)
                       .multipliedBy(BigNumber(10000).minus(Number(highestRate)))

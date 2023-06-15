@@ -349,7 +349,7 @@ const Market = () => {
               sm: '100px',
               xs: '100px',
             }}
-            top='100px'
+            top='151px'
           >
             <Heading size={'md'} mb='16px'>
               Collections

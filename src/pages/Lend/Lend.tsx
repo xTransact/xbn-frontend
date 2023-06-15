@@ -838,7 +838,7 @@ const Lend = () => {
             fontWeight: 'bold',
           }}
           position='sticky'
-          top={{ md: '74px', sm: '56px', xs: '56px' }}
+          top={{ md: '131px', sm: '131px', xs: '107px' }}
           bg='white'
           zIndex={2}
         >
