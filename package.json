@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:manual": "tsc && vite build --mode manual",
     "build:production": "tsc && vite build --mode production",
     "build:staging": "tsc && vite build --mode staging",
     "compress": "node tinyfy.js",
