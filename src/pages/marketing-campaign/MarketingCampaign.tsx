@@ -63,7 +63,7 @@ import ImgPlusWallet from '@/assets/marketing/icon-plus-wallet.svg'
 import ImgWalletOk from '@/assets/marketing/icon-wallet-ok.svg'
 import ImgQuestionBox from '@/assets/marketing/icon-win-box.svg'
 const { VITE_APP_GALXE_TAKS_LINK } = import.meta.env
-const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% downpayment, win Boxdrop`
+const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% down payment, win Boxdrop`
 const SHARE_TWITTER_TEXT = `xBank is An NFT Open Money Market Powering Web3 Adopters with Onboarding Leverage with NFT BNPL and Improving Money Efficiency for Holders\nJoin @xBank_Official, buy top NFTs pay later, with 0% downpayment, and earn Boxdrop`
 const CusCard = (props: {
   title?: string
