@@ -71,6 +71,7 @@ request.interceptors.response.use(
     return resp?.data
   },
   (e) => {
+    console.log(e)
     // 超时提示 axios 超时后, error.code = "ECONNABORTED" (https://github.com/axios/axios/blob/26b06391f831ef98606ec0ed406d2be1742e9850/lib/adapters/xhr.js#L95-L101)
     if (
       (e?.code == 'ECONNABORTED' && e?.message.indexOf('timeout') != -1) ||
@@ -83,7 +84,6 @@ request.interceptors.response.use(
         duration: 5000,
         id: 'network-error',
       })
-      return
     }
     const {
       response: { data },
