@@ -37,6 +37,7 @@ import {
   apiRewardExists,
 } from '@/api/marketing-campaign'
 // import BannerImg from '@/assets/marketing/banner-4x.png'
+import ImgDialogBanner from '@/assets/marketing/banner-dialog.png'
 import BannerImg from '@/assets/marketing/banner.png'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
 import Box1 from '@/assets/marketing/box1.png'
@@ -54,7 +55,6 @@ import { Header } from '@/components'
 import { useWallet } from '@/hooks'
 import { getUserToken } from '@/utils/auth'
 
-import ImgDialogBanner from '@/assets/marketing/banner-dialog.svg'
 import Icon0 from '@/assets/marketing/icon-0.svg'
 import Icon1 from '@/assets/marketing/icon-1.svg'
 import Icon2 from '@/assets/marketing/icon-2.svg'
