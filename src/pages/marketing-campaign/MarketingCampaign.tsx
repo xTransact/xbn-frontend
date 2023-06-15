@@ -26,7 +26,6 @@ import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ReactSVG } from 'react-svg'
 
 import { apiGetLoans } from '@/api'
 import {
