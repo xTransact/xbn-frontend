@@ -26,6 +26,7 @@ import BigNumber from 'bignumber.js'
 import moment from 'moment'
 import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ReactSVG } from 'react-svg'
 
 import { apiGetLoans } from '@/api'
 import {
@@ -35,8 +36,13 @@ import {
   apiGetInviteCode,
   apiRewardExists,
 } from '@/api/marketing-campaign'
-import BannerImg from '@/assets/marketing/banner-4x.png'
+// import BannerImg from '@/assets/marketing/banner-4x.png'
+import BannerImg from '@/assets/marketing/banner.png'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
+import Box1 from '@/assets/marketing/box1.png'
+import Box2 from '@/assets/marketing/box2.png'
+import Box3 from '@/assets/marketing/box3.png'
+import Box4 from '@/assets/marketing/box4.png'
 import IconCopied from '@/assets/marketing/copied.png'
 import IconCopy from '@/assets/marketing/icon-copy.png'
 import IconTelegram from '@/assets/marketing/telegram.png'
@@ -47,10 +53,6 @@ import { useWallet } from '@/hooks'
 import { getUserToken } from '@/utils/auth'
 
 import ImgDialogBanner from '@/assets/marketing/banner-dialog.svg'
-import Box1 from '@/assets/marketing/box1.svg'
-import Box2 from '@/assets/marketing/box2.svg'
-import Box3 from '@/assets/marketing/box3.svg'
-import Box4 from '@/assets/marketing/box4.svg'
 import Icon0 from '@/assets/marketing/icon-0.svg'
 import Icon1 from '@/assets/marketing/icon-1.svg'
 import Icon2 from '@/assets/marketing/icon-2.svg'
@@ -261,6 +263,8 @@ export default function MarketingCampaign() {
     <Box bgGradient={'linear-gradient(0deg, #071E38, #071E38), #F9F9FF;'}>
       <Header />
       <Box marginBottom={'68px'}>
+        {/* <BannerImg /> */}
+        {/* <ReactSVG src={BannerImg} wrapper='div' width={'100%'} /> */}
         <Image src={BannerImg} width='100%' />
       </Box>
       <Box>
@@ -320,7 +324,11 @@ export default function MarketingCampaign() {
                       )}
                     <Flex justify={'space-around'} w='100%'>
                       <Flex direction={'column'} alignItems={'center'}>
-                        <Image src={Box1} zIndex={1} />
+                        <Image
+                          src={Box1}
+                          style={{ width: '214px' }}
+                          zIndex={1}
+                        />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
                           fontSize={'20px'}
@@ -340,7 +348,11 @@ export default function MarketingCampaign() {
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
-                        <Image src={Box2} zIndex={1} />
+                        <Image
+                          src={Box2}
+                          style={{ width: '214px' }}
+                          zIndex={1}
+                        />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
                           fontSize={'20px'}
@@ -360,7 +372,11 @@ export default function MarketingCampaign() {
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
-                        <Image src={Box3} zIndex={1} />
+                        <Image
+                          src={Box3}
+                          style={{ width: '214px' }}
+                          zIndex={1}
+                        />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
                           fontSize={'20px'}
@@ -380,7 +396,11 @@ export default function MarketingCampaign() {
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
-                        <Image src={Box4} zIndex={1} />
+                        <Image
+                          src={Box4}
+                          style={{ width: '214px' }}
+                          zIndex={1}
+                        />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
                           fontSize={'20px'}
