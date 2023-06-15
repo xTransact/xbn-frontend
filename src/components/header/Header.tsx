@@ -396,7 +396,11 @@ const Header = () => {
         bgGradient={
           'linear-gradient(90.6deg, #1CEFFF 0.34%, #5FCCFF 50.24%, #FFC1CB 98.09%)'
         }
+        cursor={'pointer'}
         paddingY={'14px'}
+        onClick={() => {
+          navigate('/marketing-campaign')
+        }}
       >
         <Center>
           <Text color='#FFFFFF' fontFamily={'HarmonyOS Sans SC Bold'}>
