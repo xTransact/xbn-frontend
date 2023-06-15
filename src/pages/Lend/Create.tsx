@@ -1135,7 +1135,7 @@ const Create = () => {
             navigate(-1)
           }}
         >
-          <SvgComponent svgId='icon-arrow' fill='blue.1' />
+          {/* <SvgComponent svgId='icon-arrow' fill='blue.1' /> */}
           Back
         </Button>
         {params.action === 'create' && (
