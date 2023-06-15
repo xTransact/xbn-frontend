@@ -1102,7 +1102,7 @@ const NftAssetDetail = () => {
               {/* Total repayment */}
               <Flex justify={'space-between'}>
                 <Text fontSize='16px' fontWeight='bold'>
-                  Total repayment
+                  Total payment
                 </Text>
                 <Text fontSize='16px' fontWeight='bold'>
                   {formatFloat(
