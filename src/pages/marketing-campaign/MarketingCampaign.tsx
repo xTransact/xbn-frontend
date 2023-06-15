@@ -840,7 +840,7 @@ export default function MarketingCampaign() {
                   style={{ marginLeft: '10px' }}
                   color='#FF0066'
                   textDecoration={'underline'}
-                  href='https://xbankdocs.gitbook.io/product-docs/'
+                  href='https://xbankdocs.gitbook.io/product-docs/overview/xbank-boxdrop-earning-s1-live-now'
                   target='_blank'
                 >
                   check here
