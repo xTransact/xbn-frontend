@@ -691,7 +691,7 @@ const NftAssetDetail = () => {
           borderRadius={16}
           w={{
             xl: '500px',
-            lg: '450px',
+            lg: '400px',
             md: '80%',
           }}
           display={{
@@ -727,6 +727,8 @@ const NftAssetDetail = () => {
             sm: 'none',
             xs: 'none',
           }}
+          // position={'sticky'}
+          // top='166px'
         >
           <NftMedia
             data={{
