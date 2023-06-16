@@ -1,7 +1,5 @@
 import { useToast, Button, Text } from '@chakra-ui/react'
-import { useCallback } from 'react'
-
-import type { ReactNode } from 'react'
+import { useCallback, type ReactNode } from 'react'
 
 export type ErrorType = {
   code: string
@@ -47,6 +45,7 @@ const useCatchContractError = () => {
         }
       }
 
+      if (!title) return
       toast({
         status: 'error',
         title,
