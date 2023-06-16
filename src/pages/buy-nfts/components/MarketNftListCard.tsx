@@ -28,7 +28,7 @@ const MarketNftListCard: FunctionComponent<
     data: Record<string, any>
     imageSize?: ImageProps['w']
   } & CardProps
-> = ({ data: { node, highestRate }, imageSize, ...rest }) => {
+> = ({ data: { node, bestPoolAmount }, imageSize, ...rest }) => {
   const {
     imageThumbnailUrl,
     orderPrice,
@@ -38,14 +38,15 @@ const MarketNftListCard: FunctionComponent<
     orderPriceMarket,
   } = node || {}
   const formattedDownPayment = useMemo(() => {
-    if (!orderPrice || !highestRate) {
+    if (!orderPrice || !bestPoolAmount) {
       return '--'
     }
 
     // const eth = wei2Eth(orderPrice)
-    const res = (Number(orderPrice) * (10000 - Number(highestRate))) / 10000
+    const res = orderPrice - bestPoolAmount
+    if (res < 0) return 0
     return formatFloat(res, 4)
-  }, [orderPrice, highestRate])
+  }, [orderPrice, bestPoolAmount])
 
   const ish5 = useIsMobile()
 

@@ -11,9 +11,9 @@ import { formatFloat } from '@/utils/format'
 const CollectionDescription: FunctionComponent<{
   data?: NftCollection
   loading?: boolean
-  highestRate?: number
+  bestPoolAmount?: number
   floorPrice?: number
-}> = ({ data, loading, highestRate, floorPrice }) => {
+}> = ({ data, loading, bestPoolAmount, floorPrice }) => {
   const [show, setShow] = useState(false)
   const ref = useRef<HTMLParagraphElement>(null)
   const offsetHeight = ref.current?.offsetHeight
@@ -209,8 +209,7 @@ const CollectionDescription: FunctionComponent<{
               {floorPrice !== undefined
                 ? formatFloat(
                     BigNumber(floorPrice || 0)
-                      .multipliedBy(BigNumber(10000).minus(Number(highestRate)))
-                      .dividedBy(10000)
+                      .minus(Number(bestPoolAmount))
                       .toNumber(),
                   )
                 : '--'}
