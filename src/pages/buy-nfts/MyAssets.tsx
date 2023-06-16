@@ -98,7 +98,10 @@ const MyAssets = () => {
       },
     ],
     refreshDeps: [currentAccount],
-    ready: !!currentAccount && !isDenied && !!getUserToken(),
+    ready:
+      !!currentAccount &&
+      !isDenied &&
+      getUserToken()?.address === currentAccount,
     onError: async (error: any) => {
       if (error.code === 'unauthenticated') {
         // 未能签名

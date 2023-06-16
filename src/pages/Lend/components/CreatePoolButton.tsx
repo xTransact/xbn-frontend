@@ -425,17 +425,6 @@ const CreatePoolButton: FunctionComponent<
                 </Flex>
               )}
             </FormControl>
-            <Text
-              fontSize={'12px'}
-              color='gray.4'
-              textAlign={'center'}
-              px={'32px'}
-              mt={'20px'}
-            >
-              This is a Georli based demo, you may need to swap your GeorliETH
-              into GoerliWETH with the “Deposit” function of this DEX contract:
-              {import.meta.env.VITE_WETH_CONTRACT_ADDRESS}
-            </Text>
           </ModalBody>
 
           {/* <ModalFooter justifyContent={'center'}> */}
@@ -443,7 +432,7 @@ const CreatePoolButton: FunctionComponent<
             {(approveLoading || createLoading || subscribeLoading) && (
               <Text color={'gray.1'} fontSize={'14px'} textAlign={'center'}>
                 It is expected to take one or two minutes, ultimately depending
-                on the EtherNet transaction processing time.
+                on the Ethereum transaction processing time.
               </Text>
             )}
           </Box>

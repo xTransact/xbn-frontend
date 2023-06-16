@@ -19,7 +19,6 @@ import {
   AlertDialogOverlay,
   useDisclosure,
   Stack,
-  Toast,
   useToast,
 } from '@chakra-ui/react'
 import { useAsyncEffect, useSetState } from 'ahooks'
@@ -36,10 +35,18 @@ import {
   apiGetInviteCode,
   apiRewardExists,
 } from '@/api/marketing-campaign'
-import BannerImg from '@/assets/marketing/banner-4x.png'
+// import BannerImg from '@/assets/marketing/banner-4x.png'
+import ImgDialogBanner from '@/assets/marketing/banner-dialog.png'
+import BannerImg from '@/assets/marketing/banner.png'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
+import Box1 from '@/assets/marketing/box1.png'
+import Box2 from '@/assets/marketing/box2.png'
+import Box3 from '@/assets/marketing/box3.png'
+import Box4 from '@/assets/marketing/box4.png'
 import IconCopied from '@/assets/marketing/copied.png'
+import IconInviteFriend from '@/assets/marketing/icon-box-check-line.png'
 import IconCopy from '@/assets/marketing/icon-copy.png'
+import ImgQuestionBox from '@/assets/marketing/icon-win-box.png'
 import IconTelegram from '@/assets/marketing/telegram.png'
 import IconTwitter from '@/assets/marketing/twitter.png'
 import IconLogo from '@/assets/marketing/xbank-logo.png'
@@ -47,24 +54,17 @@ import { Header } from '@/components'
 import { useWallet } from '@/hooks'
 import { getUserToken } from '@/utils/auth'
 
-import ImgDialogBanner from '@/assets/marketing/banner-dialog.svg'
-import Box1 from '@/assets/marketing/box1.svg'
-import Box2 from '@/assets/marketing/box2.svg'
-import Box3 from '@/assets/marketing/box3.svg'
-import Box4 from '@/assets/marketing/box4.svg'
 import Icon0 from '@/assets/marketing/icon-0.svg'
 import Icon1 from '@/assets/marketing/icon-1.svg'
 import Icon2 from '@/assets/marketing/icon-2.svg'
 import Icon3 from '@/assets/marketing/icon-3.svg'
 import Icon4 from '@/assets/marketing/icon-4.svg'
-import IconInviteFriend from '@/assets/marketing/icon-box-check-line.svg'
 import ImgBrowser from '@/assets/marketing/icon-browser.svg'
 import ImgCoinInBox from '@/assets/marketing/icon-coin-in-box.svg'
 import ImgPlusWallet from '@/assets/marketing/icon-plus-wallet.svg'
 import ImgWalletOk from '@/assets/marketing/icon-wallet-ok.svg'
-import ImgQuestionBox from '@/assets/marketing/icon-win-box.svg'
 const { VITE_APP_GALXE_TAKS_LINK } = import.meta.env
-const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% downpayment, win Boxdrop`
+const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% down payment, win Boxdrop`
 const SHARE_TWITTER_TEXT = `xBank is An NFT Open Money Market Powering Web3 Adopters with Onboarding Leverage with NFT BNPL and Improving Money Efficiency for Holders\nJoin @xBank_Official, buy top NFTs pay later, with 0% downpayment, and earn Boxdrop`
 const CusCard = (props: {
   title?: string
@@ -262,6 +262,8 @@ export default function MarketingCampaign() {
     <Box bgGradient={'linear-gradient(0deg, #071E38, #071E38), #F9F9FF;'}>
       <Header />
       <Box marginBottom={'68px'}>
+        {/* <BannerImg /> */}
+        {/* <ReactSVG src={BannerImg} wrapper='div' width={'100%'} /> */}
         <Image src={BannerImg} width='100%' />
       </Box>
       <Box>
@@ -282,7 +284,8 @@ export default function MarketingCampaign() {
                           alignItems={'flex-start'}
                           justifyContent={'space-around'}
                           flexDirection={'column'}
-                          maxW={300}
+                          w={'335px'}
+                          mr={'35px'}
                         >
                           <Text
                             fontSize={28}
@@ -294,10 +297,9 @@ export default function MarketingCampaign() {
                             color='#566E8C'
                             fontSize={16}
                             marginBottom={19}
-                            // textAlign={'center'}
+                            whiteSpace={'break-spaces'}
                           >
-                            Follow Twitter @xBankOfficial and retweet the Pin
-                            post
+                            {`Follow Twitter @xBankOfficial\nand retweet the Pin post`}
                           </Text>
                           <Button
                             w='240px'
@@ -321,7 +323,11 @@ export default function MarketingCampaign() {
                       )}
                     <Flex justify={'space-around'} w='100%'>
                       <Flex direction={'column'} alignItems={'center'}>
-                        <Image src={Box1} zIndex={1} />
+                        <Image
+                          src={Box1}
+                          style={{ width: '214px' }}
+                          zIndex={1}
+                        />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
                           fontSize={'20px'}
@@ -341,7 +347,11 @@ export default function MarketingCampaign() {
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
-                        <Image src={Box2} zIndex={1} />
+                        <Image
+                          src={Box2}
+                          style={{ width: '214px' }}
+                          zIndex={1}
+                        />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
                           fontSize={'20px'}
@@ -361,7 +371,11 @@ export default function MarketingCampaign() {
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
-                        <Image src={Box3} zIndex={1} />
+                        <Image
+                          src={Box3}
+                          style={{ width: '214px' }}
+                          zIndex={1}
+                        />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
                           fontSize={'20px'}
@@ -381,7 +395,11 @@ export default function MarketingCampaign() {
                         </Text>
                       </Flex>
                       <Flex direction={'column'} alignItems={'center'}>
-                        <Image src={Box4} zIndex={1} />
+                        <Image
+                          src={Box4}
+                          style={{ width: '214px' }}
+                          zIndex={1}
+                        />
                         <Image src={BoxShadow} w='165px' mt='-55px' />
                         <Text
                           fontSize={'20px'}
@@ -424,7 +442,7 @@ export default function MarketingCampaign() {
                       fontFamily={'HarmonyOS Sans SC Medium'}
                     >
                       <Link
-                        href='https://xbankdocs.gitbook.io/product-docs/'
+                        href='https://xbankdocs.gitbook.io/product-docs/overview/buyer-guide'
                         target='_blank'
                       >
                         Learn More
@@ -485,7 +503,7 @@ export default function MarketingCampaign() {
                       fontFamily={'HarmonyOS Sans SC Medium'}
                     >
                       <Link
-                        href='https://xbankdocs.gitbook.io/product-docs/'
+                        href='https://xbankdocs.gitbook.io/product-docs/overview/lender-guide'
                         target='_blank'
                       >
                         Learn More
@@ -514,7 +532,7 @@ export default function MarketingCampaign() {
                         fontSize={'24px'}
                         h='60px'
                         onClick={() => {
-                          navigate('')
+                          navigate('/lending/collections')
                         }}
                       >
                         Get Gold Box
@@ -664,15 +682,17 @@ export default function MarketingCampaign() {
                           fontSize={'24px'}
                           fontWeight={900}
                           fontFamily={'HarmonyOS Sans SC Black'}
-                          w='189px'
-                          mr='81px'
+                          w='200px'
+                          flexBasis={'200px'}
+                          display={'inline-block'}
+                          flexShrink={0}
                         >
                           Invitation Link:
                         </Text>
                         <Box
                           border='1px solid #B3B3FF'
                           borderRadius={'28px'}
-                          w='733px'
+                          // w='733px'
                         >
                           <Flex
                             padding={'3px 2px'}
@@ -685,9 +705,9 @@ export default function MarketingCampaign() {
                                 fontSize={'24px'}
                                 lineHeight={'24px'}
                                 fontWeight={400}
+                                fontFamily={'HarmonyOS Sans SC Regular'}
                                 padding={'0 18px'}
-                                maxW={'300px'}
-                                noOfLines={1}
+                                noOfLines={2}
                               >
                                 {invitationLink}
                               </Text>
@@ -731,9 +751,11 @@ export default function MarketingCampaign() {
                         <Text
                           fontSize={'24px'}
                           fontWeight={900}
-                          w='189px'
-                          mr='81px'
                           fontFamily={'HarmonyOS Sans SC Black'}
+                          w='200px'
+                          flexBasis={'200px'}
+                          display={'inline-block'}
+                          flexShrink={0}
                         >
                           Share To:
                         </Text>
@@ -743,11 +765,7 @@ export default function MarketingCampaign() {
                           )}
                           target='_blank'
                         >
-                          <Flex
-                            direction={'column'}
-                            alignItems={'center'}
-                            w='120px'
-                          >
+                          <Flex direction={'column'} alignItems={'center'}>
                             <Image
                               src={IconTwitter}
                               w='32px'
@@ -811,37 +829,37 @@ export default function MarketingCampaign() {
               >
                 Rules:
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
+              <Text fontSize={'18px'} mb='18px' lineHeight={'18px'}>
                 {`1. Boxdrop is a contributor reward program launched by the xBank protocol to reward loyal users who join and use the xBank protocol in the beta release.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`2.The event will begin on June 7, 2023, and last for at least 3 months. The end time of the event will be announced before August 30, 2023.`}
+              <Text fontSize={'18px'} mb='18px' lineHeight={'18px'}>
+                {`2. The event will begin on June 7, 2023, and last for at least 3 months. The end time of the event will be announced before August 30, 2023.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`3.Users who use the xBank protocol to buy NFTs on a Buy Now Pay Later basis will receive different types of boxdrops.`}
+              <Text fontSize={'18px'} mb='18px' lineHeight={'18px'}>
+                {`3. Users who use the xBank protocol to buy NFTs on a Buy Now Pay Later basis will receive different types of boxdrops.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`4.Lenders who provide fund loans to borrowers through the xBank protocol will receive different types of boxdrops.`}
+              <Text fontSize={'18px'} mb='18px' lineHeight={'18px'}>
+                {`4. Lenders who provide fund loans to borrowers through the xBank protocol will receive different types of boxdrops.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`5.Borrowers or lenders who invite friends to interact with the xBank protocol will both receive boxdrops.`}
+              <Text fontSize={'18px'} mb='18px' lineHeight={'18px'}>
+                {`5. Borrowers or lenders who invite friends to interact with the xBank protocol will both receive boxdrops.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`6.Following xBank's official Twitter account and retweeting the pinned post will receive Welcome Boxdrops.`}
+              <Text fontSize={'18px'} mb='18px' lineHeight={'18px'}>
+                {`6. Following xBank's official Twitter account and retweeting the pinned post will receive Welcome Boxdrops.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`7.The boxdrops obtained by users will be revealed after the end of the campaign, and different levels of boxdrops will have different credit points.`}
+              <Text fontSize={'18px'} mb='18px' lineHeight={'18px'}>
+                {`7. The boxdrops obtained by users will be revealed after the end of the campaign, and different levels of boxdrops will have different credit points.`}
               </Text>
-              <Text fontSize={'18px'} mb='20px'>
-                {`8.Any invalid or non-friendly protocol interaction behavior during the campaign will be blacklisted for receiving boxdrops.`}
+              <Text fontSize={'18px'} mb='18px' lineHeight={'18px'}>
+                {`8. Any invalid or non-friendly protocol interaction behavior during the campaign will be blacklisted for receiving boxdrops.`}
               </Text>
-              <Text fontSize={'18px'}>
+              <Text fontSize={'18px'} lineHeight={'18px'}>
                 Learn more about the rules and rewards
                 <Link
                   style={{ marginLeft: '10px' }}
                   color='#FF0066'
                   textDecoration={'underline'}
-                  href='https://xbankdocs.gitbook.io/product-docs/'
+                  href='https://xbankdocs.gitbook.io/product-docs/overview/xbank-boxdrop-earning-s1-live-now'
                   target='_blank'
                 >
                   check here

@@ -33,7 +33,7 @@ const ImageToolBar: FunctionComponent<ImageToolBarProps> = ({ data }) => {
       justify={!!likeCount ? 'space-between' : 'flex-end'}
       w={{
         xl: '500px',
-        lg: '450px',
+        lg: '400px',
         sm: '100%',
         xs: '100%',
       }}
