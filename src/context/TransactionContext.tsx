@@ -152,6 +152,7 @@ export const TransactionsProvider = ({
         // window.location = window.location
       }
     }
+    if (!window.ethereum) return
     window.ethereum.on('accountsChanged', handleAccountsChanged)
   }, [])
   const handleSwitchNetwork = useCallback(async () => {
