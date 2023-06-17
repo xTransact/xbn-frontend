@@ -200,7 +200,7 @@ const Market = () => {
       pools1,
       (i) => i.maximum_loan_amount,
     )?.maximum_loan_amount
-    if (!maxLoanAmount) return
+    if (maxLoanAmount === undefined) return
     const maxLoanAmountEth = wei2Eth(maxLoanAmount)
     return min([maxLoanAmountEth, floorPrice])
   }, [selectCollection, floorPrice, currentCollectionPools])

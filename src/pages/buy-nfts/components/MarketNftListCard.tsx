@@ -38,7 +38,7 @@ const MarketNftListCard: FunctionComponent<
     orderPriceMarket,
   } = node || {}
   const formattedDownPayment = useMemo(() => {
-    if (!orderPrice || !bestPoolAmount) {
+    if (orderPrice === undefined || bestPoolAmount === undefined) {
       return '--'
     }
 

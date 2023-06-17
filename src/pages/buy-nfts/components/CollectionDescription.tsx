@@ -206,14 +206,13 @@ const CollectionDescription: FunctionComponent<{
               display='flex'
               mb={'4px'}
             >
-              {floorPrice !== undefined
+              {floorPrice !== undefined && bestPoolAmount !== undefined
                 ? formatFloat(
                     BigNumber(floorPrice || 0)
                       .minus(Number(bestPoolAmount))
                       .toNumber(),
                   )
                 : '--'}
-              {}
             </Heading>
           </Flex>
 
