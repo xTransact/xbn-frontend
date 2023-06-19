@@ -68,8 +68,8 @@ const StepImageComponent: FunctionComponent<{ order: number }> = ({
               num={60}
               isPrimary
               position={'absolute'}
-              right={'20px'}
-              top={'20px'}
+              right={'-10px'}
+              top={'0px'}
             />
             <Text fontWeight={'500'}>
               You can sell at anytime including the loan is outstanding{' '}
