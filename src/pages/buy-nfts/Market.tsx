@@ -20,6 +20,7 @@ import useRequest from 'ahooks/lib/useRequest'
 import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
 import maxBy from 'lodash-es/maxBy'
+import min from 'lodash-es/min'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
@@ -43,6 +44,7 @@ import {
   type NftCollection,
   useGuide,
 } from '@/hooks'
+import { wei2Eth } from '@/utils/unit-conversion'
 
 import CollectionDescription from './components/CollectionDescription'
 import CollectionListItem from './components/CollectionListItem'
@@ -96,6 +98,7 @@ const Market = () => {
   const [orderOption, setOrderOption] = useState(SORT_OPTIONS[0])
 
   const [poolsMap, setPoolsMap] = useState<Map<string, PoolsListItemType[]>>()
+  console.log(poolsMap)
 
   const { loading: poolsLoading } = useRequest(() => apiGetPools({}), {
     onSuccess: (data) => {
@@ -175,20 +178,34 @@ const Market = () => {
     setFloorPrice(floorPriceData.floor_price)
   }, [floorPriceData])
 
-  const highestRate = useMemo(() => {
-    if (!poolsMap || isEmpty(poolsMap) || !selectCollection) return undefined
-    const currentPools = poolsMap.get(selectCollection.contractAddress)
-
-    const maxRate = maxBy(
-      currentPools,
-      ({ pool_maximum_percentage }) => pool_maximum_percentage,
-    )?.pool_maximum_percentage
-    if (!maxRate) {
-      return undefined
-    }
-    return maxRate
+  const currentCollectionPools = useMemo(() => {
+    if (!selectCollection || !poolsMap) return []
+    return poolsMap.get(selectCollection.contractAddress)
   }, [poolsMap, selectCollection])
 
+  const bestPoolAmount: number | undefined = useMemo(() => {
+    if (!selectCollection) return
+    if (!currentCollectionPools) return
+    if (floorPrice === undefined) return
+    // 1. 取最大的贷款比例
+    const maxPercentage = maxBy(
+      currentCollectionPools,
+      (i) => i.pool_maximum_percentage,
+    )?.pool_maximum_percentage
+    const pools1 = currentCollectionPools.filter(
+      (i) => i.pool_maximum_percentage === maxPercentage,
+    )
+    // 2. 取最大带宽单笔金额
+    const maxLoanAmount = maxBy(
+      pools1,
+      (i) => i.maximum_loan_amount,
+    )?.maximum_loan_amount
+    if (maxLoanAmount === undefined) return
+    const maxLoanAmountEth = wei2Eth(maxLoanAmount)
+    return min([maxLoanAmountEth, floorPrice])
+  }, [selectCollection, floorPrice, currentCollectionPools])
+
+  console.log(bestPoolAmount, 'bestPoolAmount')
   // useEffect(() => {
   //   if (!selectCollection) return
   //   const {
@@ -241,7 +258,7 @@ const Market = () => {
     loadMore,
   } = useInfiniteScroll(
     (item) =>
-      getLoadMoreList(item?.pageInfo?.endCursor, item?.list.length || 20),
+      getLoadMoreList(item?.pageInfo?.endCursor, item?.list.length || 24),
     {
       // target: ref,
       isNoMore: (item) => !item?.pageInfo?.hasNextPage,
@@ -515,7 +532,7 @@ const Market = () => {
             loading={collectionLoading || poolsLoading || floorPriceLoading}
             data={selectCollection?.nftCollection}
             floorPrice={floorPrice}
-            highestRate={highestRate}
+            bestPoolAmount={bestPoolAmount}
           />
           <Toolbar
             loading={collectionLoading || poolsLoading}
@@ -571,7 +588,7 @@ const Market = () => {
                   } = node || {}
                   return (
                     <MarketNftListCard
-                      data={{ ...item, highestRate }}
+                      data={{ ...item, bestPoolAmount }}
                       imageSize={{
                         xl: grid === 4 ? '190px' : '260px',
                         lg: grid === 4 ? '152px' : '206px',
@@ -643,7 +660,7 @@ const Market = () => {
                 <MarketNftListCard
                   data={{
                     node: searchedAsset,
-                    highestRate,
+                    bestPoolAmount,
                   }}
                   key={`${searchedAsset.tokenID}${searchedAsset.assetContractAddress}${searchedAsset.name}`}
                   onClick={() => {

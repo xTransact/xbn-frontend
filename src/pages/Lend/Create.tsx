@@ -348,8 +348,9 @@ const Create = () => {
 
     if (NumberAmount > floorPrice) {
       return {
-        status: 'error',
-        message: 'Cannot be greater than the floor price.',
+        status: 'info',
+        message:
+          'Single loan amount is recommended to be no greater than the floor price',
       }
     }
   }, [maxSingleLoanAmount, floorPrice])

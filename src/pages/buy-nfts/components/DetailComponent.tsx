@@ -75,7 +75,10 @@ const DetailComponent: FunctionComponent<
             </Heading>
             <SvgComponent
               svgId='icon-refresh'
-              onClick={onRefreshPrice}
+              onClick={() => {
+                if (refreshLoading || !onRefreshPrice) return
+                onRefreshPrice()
+              }}
               animation={refreshLoading ? 'loading 1s linear infinite' : ''}
               cursor={'pointer'}
               svgSize='20px'
