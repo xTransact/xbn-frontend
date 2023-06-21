@@ -74,7 +74,7 @@ export default defineConfig({
       '@': join(__dirname, 'src'),
     },
   },
-  esbuild: {
-    drop: ['console', 'debugger'],
-  },
+  // esbuild: {
+  //   drop: ['console', 'debugger'],
+  // },
 })

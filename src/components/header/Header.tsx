@@ -239,7 +239,7 @@ const ConnectedIconWallet: FunctionComponent = () => {
             color='black.1'
             p={'10px'}
             onClick={() => {
-              navigate('/buy-nfts/loans')
+              navigate('/loans')
             }}
             _hover={{
               textDecoration: 'none',
@@ -247,6 +247,20 @@ const ConnectedIconWallet: FunctionComponent = () => {
             }}
           >
             Repay Loans
+          </Button>
+          <Button
+            variant={'link'}
+            color='black.1'
+            p={'10px'}
+            onClick={() => {
+              navigate('/history')
+            }}
+            _hover={{
+              textDecoration: 'none',
+              color: 'blue.1',
+            }}
+          >
+            My Loan History
           </Button>
           <Button
             variant={'link'}

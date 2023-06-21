@@ -561,7 +561,7 @@ const NftAssetDetail = () => {
         status: 'info',
         title: 'The loan is being generated, please wait and refresh later',
       })
-      navigate('/buy-nfts/loans')
+      navigate('/loans')
     }
   }, [loanStep, isAutoLeave, toast, navigate])
 
@@ -616,7 +616,7 @@ const NftAssetDetail = () => {
           return
         }}
         onSuccessBack={() => {
-          navigate('/buy-nfts/loans')
+          navigate('/loans')
           return
         }}
         successTitle='Purchase completed'

@@ -41,6 +41,9 @@ const MarketingCampaign = lazyWithRetries(
 const H5Demo = lazyWithRetries(() => import('./pages/h5-demo/H5Demo'))
 const NotFound = lazyWithRetries(() => import('./pages/404'))
 
+// 历史记录
+const History = lazyWithRetries(() => import('./pages/history/History'))
+
 function App() {
   useScrollToTop()
   return (
@@ -149,7 +152,7 @@ function App() {
           }
         />
         <Route
-          path='/buy-nfts/loans'
+          path='/loans'
           element={
             <RootLayout>
               <Suspense fallback={<Fallback />}>
@@ -158,7 +161,16 @@ function App() {
             </RootLayout>
           }
         />
-
+        <Route
+          path='/history'
+          element={
+            <RootLayout>
+              <Suspense fallback={<Fallback />}>
+                <History />
+              </Suspense>
+            </RootLayout>
+          }
+        />
         {/* <Route path='lending'>
           <Route
             path='pools'
