@@ -12,6 +12,7 @@ import {
   type ImageProps,
 } from '@chakra-ui/react'
 import useHover from 'ahooks/lib/useHover'
+import BigNumber from 'bignumber.js'
 import { useMemo, type FunctionComponent, useRef } from 'react'
 
 import {
@@ -44,7 +45,7 @@ const MarketNftListCard: FunctionComponent<
     }
 
     // const eth = wei2Eth(orderPrice)
-    const res = orderPrice - bestPoolAmount
+    const res = BigNumber(orderPrice).minus(bestPoolAmount).toNumber()
     if (res < 0) return 0
     return formatFloat(res, 4)
   }, [orderPrice, bestPoolAmount])
