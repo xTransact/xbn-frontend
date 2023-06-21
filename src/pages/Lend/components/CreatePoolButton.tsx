@@ -281,6 +281,14 @@ const CreatePoolButton: FunctionComponent<
     onCloseApprove()
   }, [onCloseApprove, approveLoading, createLoading])
 
+  const expectedLoanCount = useMemo(() => {
+    const res = BigNumber(amount)
+      .dividedBy(defaultAmount)
+      .integerValue(BigNumber.ROUND_DOWN)
+    if (res.isNaN()) return 0
+    return res.toString()
+  }, [defaultAmount, amount])
+
   return (
     <>
       <Button onClick={() => interceptFn(() => onOpenApprove())} {...rest}>
@@ -393,20 +401,14 @@ const CreatePoolButton: FunctionComponent<
                 <Flex mt={'8px'} color={'gray.3'} alignItems={'center'}>
                   <Text fontSize={'14px'} color='blue.1' fontWeight={'700'}>
                     Expected to lend&nbsp;
-                    {BigNumber(amount)
-                      .dividedBy(defaultAmount)
-                      .integerValue(BigNumber.ROUND_DOWN)
-                      .toNumber()}
+                    {expectedLoanCount}
                     &nbsp;loans
                   </Text>
                   <Tooltip
                     whiteSpace={'pre-line'}
                     label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , \nFor example: ${amount}/${formatFloat(
                       defaultAmount,
-                    )} = ${BigNumber(amount)
-                      .dividedBy(defaultAmount)
-                      .integerValue(BigNumber.ROUND_DOWN)
-                      .toNumber()}`}
+                    )} = ${expectedLoanCount}`}
                     placement='bottom-start'
                     hasArrow={false}
                     bg='white'

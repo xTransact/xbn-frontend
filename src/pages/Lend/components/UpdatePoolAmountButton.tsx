@@ -258,6 +258,14 @@ const UpdatePoolAmountButton: FunctionComponent<
     if (!floorPrice || !pool_maximum_percentage) return ''
     return `${(floorPrice * pool_maximum_percentage) / 10000}`
   }, [floorPrice, pool_maximum_percentage])
+
+  const expectedLoanCount = useMemo(() => {
+    const res = BigNumber(amount)
+      .dividedBy(defaultAmount)
+      .integerValue(BigNumber.ROUND_DOWN)
+    if (res.isNaN()) return 0
+    return res.toString()
+  }, [defaultAmount, amount])
   return (
     <>
       <Button onClick={() => interceptFn(() => onOpenUpdate())} {...rest}>
@@ -365,20 +373,14 @@ const UpdatePoolAmountButton: FunctionComponent<
                 <Flex mt={'8px'} color={'gray.3'}>
                   <Text fontSize={'14px'} color='blue.1' fontWeight={'700'}>
                     Expected to lend&nbsp;
-                    {BigNumber(amount)
-                      .dividedBy(defaultAmount)
-                      .integerValue(BigNumber.ROUND_DOWN)
-                      .toNumber()}
+                    {expectedLoanCount}
                     &nbsp;loans
                   </Text>
                   <Tooltip
                     whiteSpace={'pre-line'}
                     label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , \nFor example: ${amount}/${formatFloat(
                       defaultAmount,
-                    )} = ${BigNumber(amount)
-                      .dividedBy(defaultAmount)
-                      .integerValue(BigNumber.ROUND_DOWN)
-                      .toNumber()}`}
+                    )} = ${expectedLoanCount}`}
                     placement='auto'
                     hasArrow={false}
                     bg='white'
