@@ -56,6 +56,12 @@ import {
   BOTTOM_RATE_POWER_MAP,
   RIGHT_RATE_POWER_MAP,
   RIGHT_RATE_POWER_KEYS,
+  getMaxSingleLoanScore,
+  COLLATERAL_SCORE_MAP,
+  TENOR_SCORE_MAP,
+  RATE_POWER_SCORE_MAP,
+  RIGHT_RATE_POWER_SCORE_MAP,
+  BOTTOM_RATE_POWER_SCORE_MAP,
 } from '@/constants/interest'
 import type { NftCollection } from '@/hooks'
 import { useCatchContractError, useWallet } from '@/hooks'
@@ -64,6 +70,7 @@ import { formatFloat } from '@/utils/format'
 import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
 import CreatePoolButton from './components/CreatePoolButton'
+import ScoreChart from './components/ScoreChart'
 import SliderWrapper from './components/SliderWrapper'
 import StepDescription from './components/StepDescription'
 
@@ -173,6 +180,15 @@ const SecondaryWrapper: FunctionComponent<
     </Box>
   </Flex>
 )
+
+const FACTOR_DATA = {
+  x: 10,
+  y: 9,
+  z: 8,
+  w: 7,
+  u: 6,
+  v: 5,
+}
 
 const Create = () => {
   const params = useParams() as {
@@ -322,6 +338,70 @@ const Create = () => {
       },
     },
   )
+
+  const calculateScore: number | undefined = useMemo(() => {
+    if (!selectCollection || maxSingleLoanAmount === undefined || !floorPrice)
+      return
+    // 贷款比例分数
+    const collateralScore = COLLATERAL_SCORE_MAP.get(selectCollateralKey) || 0
+    console.log(
+      '🚀 ~ file: Create.tsx:350 ~ constcalculateScore:number|undefined=useMemo ~ collateralScore:',
+      collateralScore,
+    )
+    // 单笔最大贷款金额分数
+    const maxLoanAmountScore =
+      getMaxSingleLoanScore(
+        BigNumber(maxSingleLoanAmount).dividedBy(floorPrice).toNumber(),
+      ) || 0
+    console.log(
+      '🚀 ~ file: Create.tsx:353 ~ constcalculateScore:number|undefined=useMemo ~ maxLoanAmountScore:',
+      maxLoanAmountScore,
+    )
+
+    // 贷款期限分数
+    const tenorScore = TENOR_SCORE_MAP.get(selectTenorKey) || 0
+    console.log(
+      '🚀 ~ file: Create.tsx:366 ~ constcalculateScore:number|undefined=useMemo ~ tenorScore:',
+      tenorScore,
+    )
+    // 最大贷款利率分数
+    const maxInterestScore = RATE_POWER_SCORE_MAP.get(interestPower) || 0
+    console.log(
+      '🚀 ~ file: Create.tsx:369 ~ constcalculateScore:number|undefined=useMemo ~ maxInterestScore:',
+      maxInterestScore,
+    )
+    // 按贷款比例微调分数
+    const rightSliderScore = RIGHT_RATE_POWER_SCORE_MAP.get(sliderRightKey) || 0
+    console.log(
+      '🚀 ~ file: Create.tsx:372 ~ constcalculateScore:number|undefined=useMemo ~ rightSliderScore:',
+      rightSliderScore,
+    )
+    // 按贷款期限微调分数
+    const bottomSliderScore =
+      BOTTOM_RATE_POWER_SCORE_MAP.get(sliderBottomKey) || 0
+    console.log(
+      '🚀 ~ file: Create.tsx:375 ~ constcalculateScore:number|undefined=useMemo ~ bottomSliderScore:',
+      bottomSliderScore,
+    )
+
+    return (
+      collateralScore * FACTOR_DATA.x +
+      maxLoanAmountScore * FACTOR_DATA.y +
+      tenorScore * FACTOR_DATA.z +
+      maxInterestScore * FACTOR_DATA.w +
+      rightSliderScore * FACTOR_DATA.u +
+      bottomSliderScore * FACTOR_DATA.v
+    )
+  }, [
+    selectCollection,
+    selectCollateralKey,
+    selectTenorKey,
+    maxSingleLoanAmount,
+    floorPrice,
+    interestPower,
+    sliderBottomKey,
+    sliderRightKey,
+  ])
 
   useEffect(() => {
     if (!floorPriceData) return
@@ -528,7 +608,21 @@ const Create = () => {
           sm: '10px',
           xs: '10px',
         }}
+        position={'relative'}
       >
+        <Box
+          position={'fixed'}
+          top={250}
+          zIndex={22}
+          right={0}
+          bg='white'
+          borderRadius={8}
+          boxShadow={'0px 4px 12px #F3F6F9'}
+          py='8px'
+          px='10px'
+        >
+          <ScoreChart data={70} />
+        </Box>
         <Heading
           fontSize={{
             md: '40px',
@@ -537,6 +631,7 @@ const Create = () => {
           }}
           mb={'8px'}
         >
+          {calculateScore}
           {params.action === 'create' ? 'Create New Pool' : 'Manage Pool'}
         </Heading>
         {params.action === 'create' && (

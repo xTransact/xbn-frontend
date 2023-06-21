@@ -32,6 +32,7 @@ import {
   LoadingComponent,
   SearchInput,
 } from '@/components'
+import { getMaxSingleLoanScore } from '@/constants/interest'
 import { TransactionContext } from '@/context/TransactionContext'
 import {
   NftAssetStatus,
@@ -205,7 +206,7 @@ const Market = () => {
     return min([maxLoanAmountEth, floorPrice])
   }, [selectCollection, floorPrice, currentCollectionPools])
 
-  console.log(bestPoolAmount, 'bestPoolAmount')
+  console.log(getMaxSingleLoanScore(0), 'bestPoolAmount')
   // useEffect(() => {
   //   if (!selectCollection) return
   //   const {
