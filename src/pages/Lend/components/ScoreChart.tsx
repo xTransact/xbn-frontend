@@ -1,16 +1,36 @@
-import { Text, Box } from '@chakra-ui/react'
+import { Text, Box, Image, Flex } from '@chakra-ui/react'
 import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
-import { useMemo } from 'react'
+import { useMemo, type FunctionComponent } from 'react'
 
-import type { FunctionComponent } from 'react'
+import borderImg from '@/assets/border.png'
+
+/* eslint-disable */
+const gradientColor = new echarts.graphic.LinearGradient(0, 1, 1, 0, [
+  {
+    offset: 0.1,
+    color: '#065DFF',
+  },
+  {
+    offset: 0.4,
+    color: '#8DFDFD',
+  },
+  {
+    offset: 0.8,
+    color: '#FFCF5F',
+  },
+  {
+    offset: 1,
+    color: '#FF4218',
+  },
+])
 
 const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
   const option = useMemo(
     () => ({
-      tooltip: {
-        formatter: '{a} <br/>{b} : {c}%',
-      },
+      // tooltip: {
+      //   formatter: !!data ? `beating ${data}% LP` : '',
+      // },
       min: 0,
       max: 100,
       series: [
@@ -42,24 +62,7 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
               borderCap: 'square',
               borderJoin: 'miter',
               /* eslint-disable */
-              color: new echarts.graphic.LinearGradient(0, 1, 1, 0, [
-                {
-                  offset: 0.1,
-                  color: '#065DFF',
-                },
-                {
-                  offset: 0.4,
-                  color: '#8DFDFD',
-                },
-                {
-                  offset: 0.8,
-                  color: '#FFCF5F',
-                },
-                {
-                  offset: 1,
-                  color: '#FF4218',
-                },
-              ]),
+              color: gradientColor,
             },
           },
           // anchor: {
@@ -92,7 +95,6 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
           data: [
             {
               value: data,
-              name: 'SCORE',
             },
           ],
         },
@@ -101,45 +103,54 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
     [data],
   )
   return (
-    <Box position={'relative'} pb='16px'>
-      <ReactECharts
-        option={option}
-        style={{
-          width: 125,
-          height: 125,
-        }}
-      />
-      <Box
-        position={'absolute'}
-        boxSize={'62px'}
-        top={'30px'}
-        left={'31px'}
-        fontSize={'18px'}
-        fontWeight={'700'}
-        borderRadius={'100%'}
-        background={
-          'linear-gradient(212.74deg, rgba(0, 0, 255, 0.1) 15.22%, rgba(255, 255, 255, 0.1) 50.63%, rgba(0, 163, 255, 0.1) 83.2%)'
-        }
-        boxShadow={'-2px -2px 4px #FFFFFF, 2px 2px 4px #DAE3EF'}
-        textAlign={'center'}
-        lineHeight={'62px'}
-      >
-        {!!data ? `${data}%` : '--'}
+    <Flex pb='16px' w='150px' flexDir='column' alignItems={'center'}>
+      <Box position={'relative'}>
+        <ReactECharts
+          option={option}
+          style={{
+            width: 125,
+            height: 125,
+          }}
+        />
+        <Image
+          src={borderImg}
+          alt=''
+          position={'absolute'}
+          top={'30px'}
+          left={'31px'}
+        />
+        <Box
+          position={'absolute'}
+          top={'30px'}
+          left={'31px'}
+          fontSize={'18px'}
+          boxSize={'62px'}
+          fontWeight={'700'}
+          borderRadius={'100%'}
+          background={
+            'linear-gradient(212.74deg, rgba(0, 0, 255, 0.1) 15.22%, rgba(255, 255, 255, 0.1) 50.63%, rgba(0, 163, 255, 0.1) 83.2%)'
+          }
+          boxShadow={'-2px -2px 4px #FFFFFF, 2px 2px 4px #DAE3EF'}
+          textAlign={'center'}
+          lineHeight={'62px'}
+        >
+          {!!data ? `${data}%` : '--'}
+        </Box>
       </Box>
 
       <Text
         whiteSpace={'pre-line'}
-        fontSize={'14px'}
-        fontWeight={'500'}
+        fontSize={!!data ? '14px' : '12px'}
+        fontWeight={!!data ? '500' : '400'}
         textAlign={'center'}
         mt='-20px'
+        lineHeight={'20px'}
       >
         {!!data
           ? `beating ${data}% LP`
-          : `Higher the score \n
-          nFaster the lending success`}
+          : `Higher The Score \nFaster The Lending Success`}
       </Text>
-    </Box>
+    </Flex>
   )
 }
 

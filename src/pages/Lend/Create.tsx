@@ -403,6 +403,8 @@ const Create = () => {
     sliderRightKey,
   ])
 
+  console.log(calculateScore)
+
   useEffect(() => {
     if (!floorPriceData) return
     if (isEmpty(floorPriceData)) return
@@ -621,7 +623,7 @@ const Create = () => {
           py='8px'
           px='10px'
         >
-          <ScoreChart data={70} />
+          <ScoreChart data={20} />
         </Box>
         <Heading
           fontSize={{
