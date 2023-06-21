@@ -169,7 +169,7 @@ const UpdatePoolAmountButton: FunctionComponent<
     }
     if (NumberAmount < (floorPrice * pool_maximum_percentage) / 10000) {
       setErrorMsg(
-        `Insufficient funds, Minimum input: ${formatFloat(
+        `Insufficient funds, Min input: ${formatFloat(
           (floorPrice * pool_maximum_percentage) / 10000,
         )}`,
       )
@@ -335,7 +335,7 @@ const UpdatePoolAmountButton: FunctionComponent<
               >
                 Set pool size
                 <Text fontWeight={'500'} fontSize={'14px'} color='gray.3'>
-                  Minimum input:
+                  Min input:
                   {formatFloat(
                     ((floorPrice || 0) * pool_maximum_percentage) / 10000,
                   )}

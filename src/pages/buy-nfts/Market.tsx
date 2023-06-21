@@ -207,6 +207,7 @@ const Market = () => {
         maxLoanAmountEth,
       ])
     })
+    console.log('所有 pool 的最大的 实际可借出金额', prevArr)
     // 取所有 pool 的最大的 实际可借出金额
     const prevMax = max(prevArr)
     // 实际可借出金额 与 地板价 二者取其小
