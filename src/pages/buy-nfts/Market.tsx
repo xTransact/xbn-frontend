@@ -201,6 +201,17 @@ const Market = () => {
       // 单笔最大贷款金额
       const maxLoanAmountEth = wei2Eth(i.maximum_loan_amount)
       // 三者取最小，极为该 pool 的实际可借出金额
+      console.log(
+        `pool id 为 ${i.pool_id}:`,
+        'availablePoolSize---',
+        availablePoolSize,
+        ';',
+        'floorPriceMultiPercentage',
+        floorPriceMultiPercentage,
+        ';',
+        'maxSingleLoanAmount',
+        maxLoanAmountEth,
+      )
       return min([
         availablePoolSize,
         floorPriceMultiPercentage,
