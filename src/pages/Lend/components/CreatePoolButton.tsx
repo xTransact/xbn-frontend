@@ -134,7 +134,7 @@ const CreatePoolButton: FunctionComponent<
     }
     if (NumberAmount < (floorPrice * poolMaximumPercentage) / 10000) {
       setErrorMsg(
-        `Insufficient funds, Minimum input: ${formatFloat(
+        `Insufficient funds, Min input: ${formatFloat(
           (floorPrice * poolMaximumPercentage) / 10000,
         )}`,
       )
@@ -171,6 +171,8 @@ const CreatePoolButton: FunctionComponent<
             .approve(XBANK_CONTRACT_ADDRESS, UNIT256MAX)
             .send({
               from: currentAccount,
+              maxPriorityFeePerGas: null,
+              maxFeePerGas: null,
             })
         }
         setApproveLoading(false)
@@ -201,6 +203,8 @@ const CreatePoolButton: FunctionComponent<
           )
           .send({
             from: currentAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null,
           })
         console.log(createBlock, 'createBlock')
         setCreateLoading(false)
@@ -277,6 +281,14 @@ const CreatePoolButton: FunctionComponent<
     onCloseApprove()
   }, [onCloseApprove, approveLoading, createLoading])
 
+  const expectedLoanCount = useMemo(() => {
+    const res = BigNumber(amount)
+      .dividedBy(defaultAmount)
+      .integerValue(BigNumber.ROUND_DOWN)
+    if (res.isNaN()) return 0
+    return res.toString()
+  }, [defaultAmount, amount])
+
   return (
     <>
       <Button onClick={() => interceptFn(() => onOpenApprove())} {...rest}>
@@ -344,7 +356,7 @@ const CreatePoolButton: FunctionComponent<
               >
                 Set pool size
                 <Text fontWeight={'500'} fontSize={'14px'} color='gray.3'>
-                  Minimum input:
+                  Min input:
                   {formatFloat((floorPrice * poolMaximumPercentage) / 10000)}
                 </Text>
               </FormLabel>
@@ -389,20 +401,14 @@ const CreatePoolButton: FunctionComponent<
                 <Flex mt={'8px'} color={'gray.3'} alignItems={'center'}>
                   <Text fontSize={'14px'} color='blue.1' fontWeight={'700'}>
                     Expected to lend&nbsp;
-                    {BigNumber(amount)
-                      .dividedBy(defaultAmount)
-                      .integerValue(BigNumber.ROUND_DOWN)
-                      .toNumber()}
+                    {expectedLoanCount}
                     &nbsp;loans
                   </Text>
                   <Tooltip
                     whiteSpace={'pre-line'}
                     label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , \nFor example: ${amount}/${formatFloat(
                       defaultAmount,
-                    )} = ${BigNumber(amount)
-                      .dividedBy(defaultAmount)
-                      .integerValue(BigNumber.ROUND_DOWN)
-                      .toNumber()}`}
+                    )} = ${expectedLoanCount}`}
                     placement='bottom-start'
                     hasArrow={false}
                     bg='white'

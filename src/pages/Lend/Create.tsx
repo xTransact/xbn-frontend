@@ -459,6 +459,8 @@ const Create = () => {
           )
           .send({
             from: currentAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null,
           })
 
         setTimeout(() => {

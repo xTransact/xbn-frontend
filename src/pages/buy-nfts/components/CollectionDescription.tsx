@@ -98,7 +98,7 @@ const CollectionDescription: FunctionComponent<{
             sm: 8,
             xs: 8,
           }}
-          fit='contain'
+          fit='cover'
           bg='gray.100'
           boxSize={{
             md: '108px',

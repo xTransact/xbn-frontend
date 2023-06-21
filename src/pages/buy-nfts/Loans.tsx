@@ -147,7 +147,8 @@ const Loans = () => {
           // 2. 调用 xbank.repayLoan
           await xBankContract.methods.repayLoan(loan_id).send({
             from: currentAccount,
-            gas: 300000,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null,
             value: repaymentAmount,
           })
           setTimeout(() => {
@@ -364,7 +365,8 @@ const Loans = () => {
         // 2. 调用 xbank.prepayment
         await xBankContract.methods.prepayment(loan_id).send({
           from: currentAccount,
-          gas: 300000,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null,
           value: amount.integerValue().toString(),
         })
 

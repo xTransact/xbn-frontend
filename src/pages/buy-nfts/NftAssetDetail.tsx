@@ -505,7 +505,8 @@ const NftAssetDetail = () => {
           .send({
             from: currentAccount,
             value: commodityWeiPrice.minus(loanWeiAmount).toString(),
-            gas: 300000,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null,
             // gasPrice:''
           })
         setTransferFromLoading(false)
