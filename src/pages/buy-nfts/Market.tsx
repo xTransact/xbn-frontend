@@ -17,9 +17,10 @@ import {
 import useDebounce from 'ahooks/lib/useDebounce'
 import useInfiniteScroll from 'ahooks/lib/useInfiniteScroll'
 import useRequest from 'ahooks/lib/useRequest'
+import bigNumber from 'bignumber.js'
 import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
-import maxBy from 'lodash-es/maxBy'
+import max from 'lodash-es/max'
 import min from 'lodash-es/min'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -98,7 +99,6 @@ const Market = () => {
   const [orderOption, setOrderOption] = useState(SORT_OPTIONS[0])
 
   const [poolsMap, setPoolsMap] = useState<Map<string, PoolsListItemType[]>>()
-  console.log(poolsMap)
 
   const { loading: poolsLoading } = useRequest(() => apiGetPools({}), {
     onSuccess: (data) => {
@@ -187,22 +187,23 @@ const Market = () => {
     if (!selectCollection) return
     if (!currentCollectionPools) return
     if (floorPrice === undefined) return
-    // 1. 取最大的贷款比例
-    const maxPercentage = maxBy(
-      currentCollectionPools,
-      (i) => i.pool_maximum_percentage,
-    )?.pool_maximum_percentage
-    const pools1 = currentCollectionPools.filter(
-      (i) => i.pool_maximum_percentage === maxPercentage,
-    )
-    // 2. 取最大带宽单笔金额
-    const maxLoanAmount = maxBy(
-      pools1,
-      (i) => i.maximum_loan_amount,
-    )?.maximum_loan_amount
-    if (maxLoanAmount === undefined) return
-    const maxLoanAmountEth = wei2Eth(maxLoanAmount)
-    return min([maxLoanAmountEth, floorPrice])
+    const prevArr = currentCollectionPools.map((i) => {
+      const availablePoolSize = wei2Eth(
+        bigNumber(i.pool_amount).minus(i.pool_used_amount),
+      )
+      const floorPriceMultiPercentage = bigNumber(floorPrice)
+        .multipliedBy(i.pool_maximum_percentage)
+        .dividedBy(10000)
+        .toNumber()
+      const maxLoanAmountEth = wei2Eth(i.maximum_loan_amount)
+      return min([
+        availablePoolSize,
+        floorPriceMultiPercentage,
+        maxLoanAmountEth,
+      ])
+    })
+    const prevMax = max(prevArr)
+    return min([prevMax, floorPrice])
   }, [selectCollection, floorPrice, currentCollectionPools])
 
   console.log(bestPoolAmount, 'bestPoolAmount')
@@ -313,6 +314,8 @@ const Market = () => {
     }),
     [grid],
   )
+
+  console.log(bestPoolAmount)
 
   const { isOpen: guideVisible, onClose: closeGuide } = useGuide({
     key: 'has-read-buyer-guide',
@@ -596,9 +599,23 @@ const Market = () => {
                         sm: '174px',
                         xs: '174px',
                       }}
+                      isDisabled={
+                        (bestPoolAmount === undefined ||
+                          bestPoolAmount / item.node.orderPrice < 0.1) &&
+                        floorPrice !== undefined
+                      }
                       key={`${tokenID}${address}${name}`}
                       onClick={() => {
                         if (!selectCollection) return
+                        // floorPrice === 0 disabled
+                        // floorPrice === undefined enable
+                        if (
+                          (bestPoolAmount === undefined ||
+                            bestPoolAmount / item.node.orderPrice < 0.1) &&
+                          floorPrice !== undefined
+                        ) {
+                          return
+                        }
                         const { nftCollection, contractAddress } =
                           selectCollection
                         interceptFn(() => {
@@ -662,9 +679,22 @@ const Market = () => {
                     node: searchedAsset,
                     bestPoolAmount,
                   }}
+                  isDisabled={
+                    (bestPoolAmount === undefined ||
+                      bestPoolAmount / searchedAsset.orderPrice < 0.1) &&
+                    floorPrice !== undefined
+                  }
                   key={`${searchedAsset.tokenID}${searchedAsset.assetContractAddress}${searchedAsset.name}`}
                   onClick={() => {
                     interceptFn(() => {
+                      if (!selectCollection) return
+                      if (
+                        (bestPoolAmount === undefined ||
+                          bestPoolAmount / searchedAsset.orderPrice < 0.1) &&
+                        floorPrice !== undefined
+                      ) {
+                        return
+                      }
                       navigate(
                         `/asset/${searchedAsset?.assetContractAddress}/${searchedAsset?.tokenID}`,
                         {
