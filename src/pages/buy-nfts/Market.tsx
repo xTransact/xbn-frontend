@@ -187,26 +187,33 @@ const Market = () => {
     if (!selectCollection) return
     if (!currentCollectionPools) return
     if (floorPrice === undefined) return
+    // 取当前 collection 的所有 pool，算出每个 pool 的实际可借出金额
     const prevArr = currentCollectionPools.map((i) => {
+      // 该 pool 剩余可借 amount
       const availablePoolSize = wei2Eth(
         bigNumber(i.pool_amount).minus(i.pool_used_amount),
       )
+      // 地板价 * 该 pool 最大贷款比例
       const floorPriceMultiPercentage = bigNumber(floorPrice)
         .multipliedBy(i.pool_maximum_percentage)
         .dividedBy(10000)
         .toNumber()
+      // 单笔最大贷款金额
       const maxLoanAmountEth = wei2Eth(i.maximum_loan_amount)
+      // 三者取最小，极为该 pool 的实际可借出金额
       return min([
         availablePoolSize,
         floorPriceMultiPercentage,
         maxLoanAmountEth,
       ])
     })
+    // 取所有 pool 的最大的 实际可借出金额
     const prevMax = max(prevArr)
+    // 实际可借出金额 与 地板价 二者取其小
     return min([prevMax, floorPrice])
   }, [selectCollection, floorPrice, currentCollectionPools])
 
-  console.log(bestPoolAmount, 'bestPoolAmount')
+  console.log('collection的可贷款金额', bestPoolAmount)
   // useEffect(() => {
   //   if (!selectCollection) return
   //   const {
@@ -314,8 +321,6 @@ const Market = () => {
     }),
     [grid],
   )
-
-  console.log(bestPoolAmount)
 
   const { isOpen: guideVisible, onClose: closeGuide } = useGuide({
     key: 'has-read-buyer-guide',
