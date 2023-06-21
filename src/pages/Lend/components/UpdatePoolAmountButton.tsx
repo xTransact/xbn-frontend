@@ -209,6 +209,8 @@ const UpdatePoolAmountButton: FunctionComponent<
           )
           .send({
             from: currentAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null,
           })
         setTimeout(() => {
           setUpdateLoading(false)

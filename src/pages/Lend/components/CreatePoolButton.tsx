@@ -171,6 +171,8 @@ const CreatePoolButton: FunctionComponent<
             .approve(XBANK_CONTRACT_ADDRESS, UNIT256MAX)
             .send({
               from: currentAccount,
+              maxPriorityFeePerGas: null,
+              maxFeePerGas: null,
             })
         }
         setApproveLoading(false)
@@ -201,6 +203,8 @@ const CreatePoolButton: FunctionComponent<
           )
           .send({
             from: currentAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null,
           })
         console.log(createBlock, 'createBlock')
         setCreateLoading(false)
