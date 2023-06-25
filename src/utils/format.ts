@@ -39,6 +39,7 @@ const formatFloat = (x?: number | string | BigNumber, y?: number) => {
     : typeof x === 'string'
     ? Number(x)
     : x
+  if (xx < 0) return '0'
   const yy = y || FORMAT_NUMBER
 
   const f = Number(BigNumber(xx).toFixed(yy, BigNumber.ROUND_UP))
