@@ -293,9 +293,22 @@ const MyAssetNftListCard: FunctionComponent<
       if (!nftCollectionsByContractAddresses?.length) return
       const currentCollection = nftCollectionsByContractAddresses[0]
       const {
-        nftCollection: { name, safelistRequestStatus, fees, slug },
+        nftCollection: {
+          name,
+          safelistRequestStatus,
+          fees,
+          slug,
+          isCreatorFeesEnforced,
+        },
       } = currentCollection
-      const sellerFee = fees?.find((i) => i.name === 'seller_fees')?.value || 0
+      /**
+       * isCreatorFeesEnforced
+       * true => 不允许修改 => 则展示接口传过来的值；
+       * false => 允许修改=> 则不管接口读取有没有具体值，都将Creator earnings改为0；
+       */
+      const sellerFee = isCreatorFeesEnforced
+        ? fees?.find((i) => i.name === 'seller_fees')?.value || 0
+        : 0
       const marketPlaceFee =
         fees?.find((i) => i.name === 'opensea_fees')?.value || 0
       setCollectionData({
@@ -932,7 +945,7 @@ const MyAssetNftListCard: FunctionComponent<
                           fontSize={'14px'}
                           fontWeight={'500'}
                         >
-                          Min input:&nbsp;
+                          Minimum input:&nbsp;
                           {minInput.toFormat(FORMAT_NUMBER)}
                           <br />
                           Price cannot be less than the outstanding loan amount

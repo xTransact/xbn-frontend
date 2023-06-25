@@ -11,15 +11,6 @@ export const TENOR_MAP = new Map([
 
 export const TENOR_KEYS: number[] = [...TENOR_MAP.keys()]
 export const TENOR_VALUES: number[] = [...TENOR_MAP.values()]
-export const TENOR_SCORE_MAP = new Map([
-  [0, 1],
-  [1, 2],
-  [2, 3],
-  [3, 5],
-  [4, 7],
-  [5, 8],
-  [6, 10],
-])
 
 // 贷款比例
 export const COLLATERAL_MAP = new Map([
@@ -37,18 +28,6 @@ export const COLLATERAL_MAP = new Map([
 
 export const COLLATERAL_KEYS = [...COLLATERAL_MAP.keys()]
 export const COLLATERAL_VALUES = [...COLLATERAL_MAP.values()]
-export const COLLATERAL_SCORE_MAP = new Map([
-  [0, 1],
-  [1, 2],
-  [2, 3],
-  [3, 4],
-  [4, 5],
-  [5, 6],
-  [6, 7],
-  [7, 8],
-  [8, 9],
-  [9, 10],
-])
 
 // 调节系数 * %
 export const RATE_POWER_MAP = new Map([
@@ -67,54 +46,27 @@ export const RATE_POWER_MAP = new Map([
 
 export const RATE_POWER_KEYS = [...RATE_POWER_MAP.keys()]
 export const RATE_POWER_VALUES = [...RATE_POWER_MAP.values()]
-export const RATE_POWER_SCORE_MAP = new Map([
-  [0, 15],
-  [1, 13],
-  [2, 10],
-  [3, 8],
-  [4, 7],
-  [5, 6],
-  [6, 5],
-  [7, 4],
-  [8, 3],
-  [9, 2],
-  [10, 1],
-])
 
 // 微调bottom系数
-export const BOTTOM_RATE_POWER_MAP = new Map([
+export const TERM_POWER_MAP = new Map([
   [0, 0.9],
   [1, 0.95],
   [2, 0.98],
   [3, 0.99],
   [4, 1],
 ])
-export const BOTTOM_RATE_POWER_KEYS = [...BOTTOM_RATE_POWER_MAP.keys()]
-export const BOTTOM_RATE_POWER_VALUES = [...BOTTOM_RATE_POWER_MAP.values()]
-export const BOTTOM_RATE_POWER_SCORE_MAP = new Map([
-  [0, 1],
-  [1, 2],
-  [2, 3],
-  [3, 4],
-  [4, 5],
-])
+export const TERM_POWER_KEYS = [...TERM_POWER_MAP.keys()]
+export const TERM_POWER_VALUES = [...TERM_POWER_MAP.values()]
 
-export const RIGHT_RATE_POWER_MAP = new Map([
+export const RATIO_POWER_MAP = new Map([
   [0, 1],
   [1, 0.99],
   [2, 0.98],
   [3, 0.95],
   [4, 0.9],
 ])
-export const RIGHT_RATE_POWER_KEYS = [...RIGHT_RATE_POWER_MAP.keys()]
-export const RIGHT_RATE_POWER_VALUES = [...RIGHT_RATE_POWER_MAP.values()]
-export const RIGHT_RATE_POWER_SCORE_MAP = new Map([
-  [0, 1],
-  [1, 2],
-  [2, 3],
-  [3, 4],
-  [4, 5],
-])
+export const RATIO_POWER_KEYS = [...RATIO_POWER_MAP.keys()]
+export const RATIO_POWER_VALUES = [...RATIO_POWER_MAP.values()]
 
 // 0-0 means 贷款 1 天 & 贷款 10%
 export const BASE_RATE = new Map([
@@ -203,24 +155,14 @@ export const BASE_RATE = new Map([
   ['6-9', 1800],
 ])
 
-const MAX_SINGLE_LOAN_AMOUNT_SCORE_MAP = new Map([
-  [1, 9],
-  [0.9, 9],
-  [0.8, 8],
-  [0.7, 7],
-  [0.6, 6],
-  [0.5, 5],
-  [0.4, 4],
-  [0.3, 3],
-  [0.2, 2],
-  [0.1, 1],
-  [0, 1],
-])
-export const getMaxSingleLoanScore = (amount: number) => {
-  const arr = [...MAX_SINGLE_LOAN_AMOUNT_SCORE_MAP.keys()]
+export const getMaxSingleLoanScore = (
+  amount: number,
+  config: Map<number, number>,
+) => {
+  const arr = [...config.keys()]
   for (let i = 0; i < arr.length; i++) {
     if (amount >= arr[i]) {
-      return MAX_SINGLE_LOAN_AMOUNT_SCORE_MAP.get(arr[i])
+      return config.get(arr[i])
     }
   }
 }

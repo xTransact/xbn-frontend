@@ -43,7 +43,14 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
             },
           },
           pointer: {
-            show: false,
+            icon: 'circle',
+            length: '30%',
+            showAbove: true,
+            offsetCenter: [0, '-75%'],
+            itemStyle: {
+              borderColor: 'white',
+              borderWidth: 12,
+            },
           },
           title: {
             show: false,
@@ -180,7 +187,7 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
           background={
             'linear-gradient(212.74deg, rgba(0, 0, 255, 0.1) 15.22%, rgba(255, 255, 255, 0.1) 50.63%, rgba(0, 163, 255, 0.1) 83.2%)'
           }
-          boxShadow={'-2px -2px 4px #FFFFFF, 2px 2px 4px #DAE3EF'}
+          boxShadow={' 2px 2px 4px 0px #DAE3EF, -2px -2px 4px 0px #FFF'}
           textAlign={'center'}
           lineHeight={{
             md: '62px',

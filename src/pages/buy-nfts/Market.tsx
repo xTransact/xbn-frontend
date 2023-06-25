@@ -33,7 +33,6 @@ import {
   LoadingComponent,
   SearchInput,
 } from '@/components'
-import { getMaxSingleLoanScore } from '@/constants/interest'
 import { TransactionContext } from '@/context/TransactionContext'
 import {
   NftAssetStatus,

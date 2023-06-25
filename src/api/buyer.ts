@@ -101,14 +101,14 @@ export const apiGetLoan: (query: {
 
 export const apiGetListings: (query: {
   borrower_address: string
-  contract_address: string
-  token_id: string
+  contract_address?: string
+  token_id?: string
+  type?: 1 | 2
+  status?: 1 | 4096
 }) => Promise<ListingsItemType[]> = async (params) => {
   return await request.get(`/lending/api/v1/listings`, {
     params: {
       ...params,
-      type: 2,
-      status: 4096,
     },
   })
 }
@@ -124,4 +124,10 @@ export const apiGetAssetPrice: (query: {
         import.meta.env.VITE_CURRENT_ENV !== 'PRODUCTION' ? 'dev' : undefined,
     },
   })
+}
+
+export const apiGetConfig: () => Promise<{
+  config: ConfigDataType
+}> = async () => {
+  return await request.get(`/api/v1/xbn/config`)
 }
