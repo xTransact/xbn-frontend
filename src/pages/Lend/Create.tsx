@@ -614,14 +614,18 @@ const Create = () => {
       >
         <Box
           position={'fixed'}
-          top={250}
+          top={{
+            md: '260px',
+            sm: '100px',
+            xs: '100px',
+          }}
           zIndex={22}
           right={0}
           bg='white'
           borderRadius={8}
           boxShadow={'0px 4px 12px #F3F6F9'}
           py='8px'
-          px='10px'
+          // px='10px'
         >
           <ScoreChart data={20} />
         </Box>

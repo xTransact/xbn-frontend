@@ -28,9 +28,6 @@ const gradientColor = new echarts.graphic.LinearGradient(0.1, 0.4, 0.8, 0, [
 const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
   const option = useMemo(
     () => ({
-      // tooltip: {
-      //   formatter: !!data ? `beating ${data}% LP` : '',
-      // },
       min: 0,
       max: 100,
       series: [
@@ -57,13 +54,6 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
             show: true,
             roundCap: true,
             width: 10,
-            itemStyle: {
-              borderMiterLimit: 6,
-              borderCap: 'square',
-              borderJoin: 'miter',
-              /* eslint-disable */
-              color: gradientColor,
-            },
           },
           // anchor: {
           //   show: true,
@@ -80,7 +70,7 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
 
           axisTick: {
             distance: -15,
-            splitNumber: 2,
+            splitNumber: 1,
             lineStyle: {
               width: 1,
               color: '#E9EDF3',
@@ -95,6 +85,12 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
           data: [
             {
               value: data,
+              itemStyle: {
+                // borderMiterLimit: 6,
+                // borderCap: 'square',
+                // borderJoin: 'miter',
+                color: gradientColor,
+              },
             },
           ],
         },
