@@ -49,6 +49,7 @@ const CollectionListItem: FunctionComponent<
           w={iconSize}
           h={iconSize}
           borderRadius={8}
+          fit='cover'
         />
         <Text
           fontSize='14px'

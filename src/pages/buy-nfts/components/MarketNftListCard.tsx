@@ -12,6 +12,7 @@ import {
   type ImageProps,
 } from '@chakra-ui/react'
 import useHover from 'ahooks/lib/useHover'
+import BigNumber from 'bignumber.js'
 import { useMemo, type FunctionComponent, useRef } from 'react'
 
 import {
@@ -27,8 +28,9 @@ const MarketNftListCard: FunctionComponent<
   {
     data: Record<string, any>
     imageSize?: ImageProps['w']
+    isDisabled?: boolean
   } & CardProps
-> = ({ data: { node, bestPoolAmount }, imageSize, ...rest }) => {
+> = ({ data: { node, bestPoolAmount }, isDisabled, imageSize, ...rest }) => {
   const {
     imageThumbnailUrl,
     orderPrice,
@@ -43,7 +45,7 @@ const MarketNftListCard: FunctionComponent<
     }
 
     // const eth = wei2Eth(orderPrice)
-    const res = orderPrice - bestPoolAmount
+    const res = BigNumber(orderPrice).minus(bestPoolAmount).toNumber()
     if (res < 0) return 0
     return formatFloat(res, 4)
   }, [orderPrice, bestPoolAmount])
@@ -53,7 +55,10 @@ const MarketNftListCard: FunctionComponent<
   const ref = useRef(null)
   const isHovering = useHover(ref)
 
-  const show = useMemo(() => isHovering || ish5, [ish5, isHovering])
+  const show = useMemo(() => {
+    if (ish5) return false
+    return isHovering || isDisabled
+  }, [ish5, isHovering, isDisabled])
 
   const nftOriginType: MARKET_TYPE_ENUM | undefined = useMemo(() => {
     if (!orderPriceMarket) return
@@ -73,7 +78,7 @@ const MarketNftListCard: FunctionComponent<
       _hover={{
         boxShadow: `var(--chakra-colors-gray-2) 0px 0px 3px`,
       }}
-      cursor='pointer'
+      cursor={isDisabled ? 'not-allowed' : 'pointer'}
       borderRadius={8}
       w='100%'
       h={'100%'}
@@ -104,7 +109,7 @@ const MarketNftListCard: FunctionComponent<
             }
             w='100%'
             fit='cover'
-            transform={`scale(${show ? 1.2 : 1})`}
+            transform={isDisabled ? 'none' : `scale(${isHovering ? 1.2 : 1})`}
             transition='all 0.6s'
           />
         </Box>
@@ -208,7 +213,7 @@ const MarketNftListCard: FunctionComponent<
                 xs: 'block',
                 sm: 'block',
               }}
-              color='blue.3'
+              color={isDisabled ? 'gray.1' : 'blue.3'}
               fontWeight={'700'}
             >
               BUY
@@ -223,6 +228,7 @@ const MarketNftListCard: FunctionComponent<
         borderTopLeftRadius={0}
         borderTopRightRadius={0}
         variant='other'
+        isDisabled={isDisabled}
         h={
           show
             ? {
@@ -240,7 +246,7 @@ const MarketNftListCard: FunctionComponent<
         left={0}
         transition='all 0.15s'
       >
-        {show && 'Buy'}
+        {show ? (isDisabled ? 'No exact matches' : 'BUY') : ''}
       </Button>
       <CardFooter
         px={'12px'}
