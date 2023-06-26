@@ -409,16 +409,17 @@ const Create = () => {
     ).multipliedBy(w)
 
     // 按贷款比例微调分数
-    const ratioValue = RATIO_POWER_MAP.get(ratioPowerKey)?.toString()
+    const ratioValue = (RATIO_POWER_MAP.get(ratioPowerKey) || 0) * 10000
     const ratioScore = BigNumber(
-      loan_ratio_adjustment_factor.find((i) => i.key === ratioValue)?.value ||
-        0,
+      loan_ratio_adjustment_factor.find((i) => i.key === ratioValue.toString())
+        ?.value || 0,
     ).multipliedBy(u)
 
     // 按贷款期限微调分数
-    const termValue = TERM_POWER_MAP.get(termPowerKey)?.toString()
+    const termValue = (TERM_POWER_MAP.get(termPowerKey) || 0) * 10000
     const termScore = BigNumber(
-      loan_term_adjustment_factor.find((i) => i.key === termValue)?.value || 0,
+      loan_term_adjustment_factor.find((i) => i.key === termValue.toString())
+        ?.value || 0,
     ).multipliedBy(v)
 
     return collateralScore

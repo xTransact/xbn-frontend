@@ -94,7 +94,7 @@ const computePoolPoint = (score?: BigNumber, pointsData?: number[]) => {
 }
 
 const getMaxSingleLoanScore = (amount: number, config: Map<number, number>) => {
-  const arr = [...config.keys()]
+  const arr = [...config.keys()].reverse()
   for (let i = 0; i < arr.length; i++) {
     if (amount >= arr[i]) {
       return config.get(arr[i])

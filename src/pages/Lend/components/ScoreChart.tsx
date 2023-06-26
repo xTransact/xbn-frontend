@@ -2,7 +2,7 @@ import { Text, Box, Flex } from '@chakra-ui/react'
 import ReactECharts from 'echarts-for-react'
 import { useMemo, type FunctionComponent } from 'react'
 
-const ScoreChart: FunctionComponent<{ data?: number }> = ({ data = 0 }) => {
+const ScoreChart: FunctionComponent<{ data?: number }> = ({ data }) => {
   const option = useMemo(
     () => ({
       series: [
@@ -170,7 +170,7 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data = 0 }) => {
               borderRadius={'100%'}
               bg='linear-gradient(213deg, rgba(0, 0, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 52.08%, rgba(0, 163, 255, 0.10) 100%)'
             >
-              {!!data ? `${data}%` : '--'}
+              {data !== undefined ? `${data}%` : '--'}
             </Box>
           </Box>
         </Box>
@@ -178,8 +178,8 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data = 0 }) => {
 
       <Text
         whiteSpace={'pre-line'}
-        fontSize={!!data ? '14px' : '12px'}
-        fontWeight={!!data ? '500' : '400'}
+        fontSize={data !== undefined ? '14px' : '12px'}
+        fontWeight={data !== undefined ? '500' : '400'}
         textAlign={'center'}
         mt={{
           md: '-20px',
@@ -188,7 +188,7 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data = 0 }) => {
         }}
         lineHeight={'16px'}
       >
-        {!!data
+        {data !== undefined
           ? `beating ${data}% LP`
           : `Higher The Score \nFaster The Lending Success`}
       </Text>
