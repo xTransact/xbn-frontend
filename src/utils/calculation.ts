@@ -10,6 +10,7 @@ import {
 } from '@/constants/interest'
 import type { LOAN_DAYS_ENUM } from '@/pages/buy-nfts/NftAssetDetail'
 
+import { wei2Eth } from './unit-conversion'
 import { getKeyByValue } from './utils'
 /**
  *
@@ -130,6 +131,8 @@ const computePoolScore = (
     loan_time_concession_flexibility,
   } = poolData
 
+  const maxSingleLoanEth = wei2Eth(maximum_loan_amount) || 0
+
   const collateralKey =
     getKeyByValue(COLLATERAL_MAP, pool_maximum_percentage) ?? 4
   const tenorKey = getKeyByValue(TENOR_MAP, pool_maximum_days) ?? 5
@@ -159,7 +162,7 @@ const computePoolScore = (
   // 单笔最大贷款金额分数
   const maxLoanAmountScore = BigNumber(
     getMaxSingleLoanScore(
-      BigNumber(maximum_loan_amount).dividedBy(floorPrice).toNumber(),
+      BigNumber(maxSingleLoanEth).dividedBy(floorPrice).toNumber(),
       maxLoanAmountMap,
     ) || 0,
   ).multipliedBy(y)
@@ -169,7 +172,6 @@ const computePoolScore = (
     loan_term.find((i) => i.key == pool_maximum_days.toString())?.value || 0,
   ).multipliedBy(z)
 
-  // 最大贷款利率分数
   const maxInterestScore = BigNumber(
     max_loan_interest_rate.find((i) => i.key === interestRank?.toString())
       ?.value || 0,
