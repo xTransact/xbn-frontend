@@ -31,7 +31,12 @@ import {
 } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { apiGetFloorPrice, apiGetPools, apiGetConfig } from '@/api'
+import {
+  apiGetFloorPrice,
+  apiGetPools,
+  apiGetConfig,
+  apiGetPoolPoints,
+} from '@/api'
 import {
   AsyncSelectCollection,
   NotFound,
@@ -56,12 +61,13 @@ import {
   TERM_POWER_MAP,
   RATIO_POWER_MAP,
   RATIO_POWER_KEYS,
-  getMaxSingleLoanScore,
 } from '@/constants/interest'
 import { useCatchContractError, useWallet, type NftCollection } from '@/hooks'
+import { computePoolPoint, getMaxSingleLoanScore } from '@/utils/calculation'
 import { createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
 import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
+import { getKeyByValue } from '@/utils/utils'
 
 import CreatePoolButton from './components/CreatePoolButton'
 import ScoreChart from './components/ScoreChart'
@@ -69,12 +75,6 @@ import SliderWrapper from './components/SliderWrapper'
 import StepDescription from './components/StepDescription'
 
 const xBankContract = createXBankContract()
-
-const getKeyByValue = (map: any, searchValue: string | number) => {
-  for (const [key, value] of map.entries()) {
-    if (value === searchValue) return key
-  }
-}
 
 const Wrapper: FunctionComponent<
   {
@@ -326,6 +326,19 @@ const Create = () => {
     )
   }, [initialItems])
 
+  const { loading: poolPointLoading, data: pointData } = useRequest(
+    apiGetPoolPoints,
+    {
+      defaultParams: [
+        {
+          contract_address: selectCollection?.contractAddress || '',
+        },
+      ],
+      ready: !!selectCollection,
+      refreshDeps: [selectCollection],
+    },
+  )
+
   const [floorPrice, setFloorPrice] = useState<number>()
   const { loading, data: floorPriceData } = useRequest(
     () =>
@@ -347,7 +360,6 @@ const Create = () => {
     },
   )
 
-  console.log(configData)
   const calculateScore: BigNumber | undefined = useMemo(() => {
     if (
       !selectCollection ||
@@ -427,7 +439,12 @@ const Create = () => {
     configData,
   ])
 
-  console.log(calculateScore?.toString())
+  const currentPoolPoint = useMemo(() => {
+    if (!pointData) return
+    if (!calculateScore) return
+    const { percent } = pointData
+    return computePoolPoint(calculateScore, percent)
+  }, [calculateScore, pointData])
 
   useEffect(() => {
     if (!floorPriceData) return
@@ -604,6 +621,7 @@ const Create = () => {
     termPowerKey,
     ratioPowerKey,
   ])
+  console.log('score', calculateScore?.toNumber())
 
   if (!params || !['edit', 'create'].includes(params?.action)) {
     return <NotFound />
@@ -639,7 +657,7 @@ const Create = () => {
           py='8px'
           // px='10px'
         >
-          <ScoreChart data={80} />
+          <ScoreChart data={currentPoolPoint} />
         </Box>
         <Heading
           fontSize={{
@@ -649,14 +667,13 @@ const Create = () => {
           }}
           mb={'8px'}
         >
-          {calculateScore?.toString()}
           {params.action === 'create' ? 'Create New Pool' : 'Manage Pool'}
         </Heading>
         {params.action === 'create' && (
           <Text
             color='gray.3'
             w={{
-              md: '75%',
+              md: '65%',
               sm: '95%',
               xs: '95%',
             }}
@@ -676,7 +693,7 @@ const Create = () => {
       >
         {/* collection */}
         <LoadingComponent
-          loading={loading || updating || configLoading}
+          loading={loading || updating || configLoading || poolPointLoading}
           top={0}
         />
         <Wrapper stepIndex={1}>

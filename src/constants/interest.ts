@@ -154,15 +154,3 @@ export const BASE_RATE = new Map([
   ['6-8', 1620],
   ['6-9', 1800],
 ])
-
-export const getMaxSingleLoanScore = (
-  amount: number,
-  config: Map<number, number>,
-) => {
-  const arr = [...config.keys()]
-  for (let i = 0; i < arr.length; i++) {
-    if (amount >= arr[i]) {
-      return config.get(arr[i])
-    }
-  }
-}

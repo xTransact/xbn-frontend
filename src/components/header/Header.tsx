@@ -236,12 +236,12 @@ const ConnectedIconWallet: FunctionComponent = () => {
                 navigate('/buy-nfts/loans')
               },
             },
-            {
-              label: 'Loan History',
-              onClick: () => {
-                navigate('/history/loan')
-              },
-            },
+            // {
+            //   label: 'Loan History',
+            //   onClick: () => {
+            //     navigate('/history/loan')
+            //   },
+            // },
             {
               label: 'Disconnect',
               onClick: handleDisconnect,

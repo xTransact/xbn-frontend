@@ -39,3 +39,17 @@ export const apiGetFloorPrice: (query: {
     },
   })
 }
+
+export const apiGetPoolPoints: (params: {
+  contract_address: string
+}) => Promise<{
+  percent: number[]
+}> = async (params) => {
+  return await request.get(`/api/v1/xbn/poolPoints`, {
+    params: {
+      ...params,
+      mode:
+        import.meta.env.VITE_CURRENT_ENV !== 'PRODUCTION' ? 'dev' : undefined,
+    },
+  })
+}

@@ -1,83 +1,83 @@
-import { Text, Box, Image, Flex } from '@chakra-ui/react'
-import * as echarts from 'echarts'
+import { Text, Box, Flex } from '@chakra-ui/react'
 import ReactECharts from 'echarts-for-react'
 import { useMemo, type FunctionComponent } from 'react'
 
-import borderImg from '@/assets/border.png'
-
-/* eslint-disable */
-const gradientColor = new echarts.graphic.LinearGradient(0.1, 0.4, 0.8, 0, [
-  {
-    offset: 0.1,
-    color: '#065DFF',
-  },
-  {
-    offset: 0.4,
-    color: '#8DFDFD',
-  },
-  {
-    offset: 0.8,
-    color: '#FFCF5F',
-  },
-  {
-    offset: 1,
-    color: '#FF4218',
-  },
-])
-
-const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
+const ScoreChart: FunctionComponent<{ data?: number }> = ({ data = 0 }) => {
   const option = useMemo(
     () => ({
-      min: 0,
-      max: 100,
       series: [
+        // {
+        //   type: 'gauge',
+        //   min: 0,
+        //   max: 100,
+        //   splitNumber: 12,
+        //   itemStyle: {
+        //     color: '#EBEBFF',
+        //   },
+        //   progress: {
+        //     show: true,
+        //     width: 8,
+        //     roundCap: !!data,
+        //   },
+
+        //   pointer: {
+        //     show: false,
+        //   },
+        //   axisLine: {
+        //     show: false,
+        //   },
+        //   axisTick: {
+        //     show: false,
+        //   },
+        //   splitLine: {
+        //     show: false,
+        //   },
+        //   axisLabel: {
+        //     show: false,
+        //   },
+        //   anchor: {
+        //     show: false,
+        //   },
+        //   title: {
+        //     show: false,
+        //   },
+        //   detail: {
+        //     show: false,
+        //   },
+        //   data: [
+        //     {
+        //       value: data,
+        //     },
+        //   ],
+        // },
+
         {
-          axisLine: {
+          type: 'gauge',
+          min: 0,
+          max: 100,
+          itemStyle: {
+            color: '#0000FF',
+          },
+          progress: {
             show: true,
-            width: 12,
+            width: 6,
+            roundCap: true,
+          },
+
+          pointer: {
+            show: false,
+          },
+          axisLine: {
+            width: 6,
             roundCap: true,
             color: '#EAECF2',
             lineStyle: {
-              shadowColor: '#D1D6E4',
-              shadowBlur: 2,
+              width: 6,
             },
           },
-          pointer: {
-            icon: 'circle',
-            length: '30%',
-            showAbove: true,
-            offsetCenter: [0, '-75%'],
-            itemStyle: {
-              borderColor: 'white',
-              borderWidth: 12,
-            },
-          },
-          title: {
-            show: false,
-          },
-          // name: 'Pressure',
-          type: 'gauge',
-          progress: {
-            show: true,
-            roundCap: true,
-            width: 10,
-          },
-          // anchor: {
-          //   show: true,
-          //   showAbove: true,
-          //   size: 10,
-          // },
-          detail: {
-            show: false,
-            valueAnimation: true,
-            formatter: '{value} %',
-            fontSize: '18px',
-            fontWeight: 700,
-          },
-
           axisTick: {
-            distance: -15,
-            splitNumber: 1,
+            distance: -10,
+            splitNumber: 2,
             lineStyle: {
               width: 1,
               color: '#E9EDF3',
@@ -89,15 +89,12 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
           axisLabel: {
             show: false,
           },
+          detail: {
+            show: false,
+          },
           data: [
             {
               value: data,
-              itemStyle: {
-                // borderMiterLimit: 6,
-                // borderCap: 'square',
-                // borderJoin: 'miter',
-                color: gradientColor,
-              },
             },
           ],
         },
@@ -134,30 +131,9 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
             width: '100%',
             height: '100%',
           }}
-        />
-        <Image
-          src={borderImg}
-          alt=''
-          position={'absolute'}
-          top={{
-            md: '30px',
-            sm: '22px',
-            xs: '22px',
-          }}
-          left={{
-            md: '31px',
-            sm: '22px',
-            xs: '22px',
-          }}
-          boxSize={{
-            md: '62px',
-            sm: '40px',
-            xs: '40px',
-          }}
-          height={{
-            md: '50px',
-            sm: '30px',
-            xs: '30px',
+          opts={{
+            renderer: 'svg',
+            devicePixelRatio: 2,
           }}
         />
         <Box
@@ -172,30 +148,31 @@ const ScoreChart: FunctionComponent<{ data: number }> = ({ data }) => {
             sm: '22px',
             xs: '22px',
           }}
-          fontSize={{
-            md: '18px',
-            sm: '14px',
-            xs: '14px',
-          }}
-          boxSize={{
-            md: '62px',
-            sm: '40px',
-            xs: '40px',
-          }}
-          fontWeight={'700'}
+          w='62px'
+          height={'62px'}
+          p='1px'
+          bg='linear-gradient(to bottom,#FF4218,#FFCF5F,#8DFDFD,#065DFF, #DAE3EF 90%)'
+          // bg='linear-gradient(from -10deg at 50.00% 47.33%, #8DFDFD 0.5524577759206295deg, #FFCF5F 72.71821081638336deg, #FF4218 140.30883193016052deg, #065DFF 245.78956604003906deg)'
           borderRadius={'100%'}
-          background={
-            'linear-gradient(212.74deg, rgba(0, 0, 255, 0.1) 15.22%, rgba(255, 255, 255, 0.1) 50.63%, rgba(0, 163, 255, 0.1) 83.2%)'
-          }
-          boxShadow={' 2px 2px 4px 0px #DAE3EF, -2px -2px 4px 0px #FFF'}
-          textAlign={'center'}
-          lineHeight={{
-            md: '62px',
-            sm: '40px',
-            xs: '40px',
-          }}
+          boxShadow={'2px 2px 4px 0px #DAE3EF, -2px -2px 4px 0px #FFF'}
         >
-          {!!data ? `${data}%` : '--'}
+          <Box bg='white' borderRadius={'100%'} h='100%'>
+            <Box
+              fontSize={{
+                md: '18px',
+                sm: '14px',
+                xs: '14px',
+              }}
+              fontWeight={'700'}
+              textAlign={'center'}
+              boxSize={'60px'}
+              lineHeight={'60px'}
+              borderRadius={'100%'}
+              bg='linear-gradient(213deg, rgba(0, 0, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 52.08%, rgba(0, 163, 255, 0.10) 100%)'
+            >
+              {!!data ? `${data}%` : '--'}
+            </Box>
+          </Box>
         </Box>
       </Box>
 

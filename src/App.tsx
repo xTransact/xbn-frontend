@@ -42,7 +42,7 @@ const H5Demo = lazyWithRetries(() => import('./pages/h5-demo/H5Demo'))
 const NotFound = lazyWithRetries(() => import('./pages/404'))
 
 // loan history
-const History = lazyWithRetries(() => import('./pages/history/History'))
+// const History = lazyWithRetries(() => import('./pages/history/History'))
 
 function App() {
   useScrollToTop()
@@ -54,7 +54,7 @@ function App() {
           path='/lending'
           element={<Navigate replace to='/lending/collections' />}
         />
-        <Route
+        {/* <Route
           path='/history'
           element={<Navigate replace to='/history/loan' />}
         />
@@ -65,7 +65,7 @@ function App() {
               <History />
             </Suspense>
           }
-        />
+        /> */}
         <Route
           path='/lending/my-pools'
           element={
