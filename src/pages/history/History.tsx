@@ -18,7 +18,7 @@ import { useEffect, useMemo, useState, type FunctionComponent } from 'react'
 // import Joyride from 'react-joyride'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { apiGetListings } from '@/api'
+import { apiGetEtherscanLogs, apiGetListings } from '@/api'
 import {
   ConnectWalletModal,
   MyTable,
@@ -31,7 +31,11 @@ import {
 import { RESPONSIVE_MAX_W, UNIT } from '@/constants'
 import { useWallet } from '@/hooks'
 import RootLayout from '@/layouts/RootLayout'
-import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
+import {
+  createWeb3Provider,
+  // createWethContract,
+  createXBankContract,
+} from '@/utils/createContract'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
@@ -107,6 +111,14 @@ const History = () => {
     ready: false,
   })
 
+  const { data } = useRequest(apiGetEtherscanLogs, {
+    defaultParams: [
+      {
+        address: '0x2c288241b589ab765e98e20bfe1dc1916c7e6c84',
+      },
+    ],
+  })
+  console.log('🚀 ~ file: History.tsx:121 ~ History ~ data:', data)
   useEffect(() => {
     interceptFn(() => {
       const { type } = params
@@ -378,7 +390,7 @@ const History = () => {
               'LoanPrepayment',
               {
                 filter: {
-                  // src: currentAccount,
+                  // src: '0xfbAC7b9ff473B1E4e6e31Ab70fA20aB4d30D05e5',
                   //  myIndexedParam: [20, 23],
                   //  myOtherIndexedParam: '0x123456789...',
                 }, // Using an array means OR: e.g. 20 or 23

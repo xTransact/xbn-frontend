@@ -30,7 +30,7 @@ export default ({ mode }) => {
           target: 'https://xbank.global',
           changeOrigin: true,
           secure: false,
-          // rewrite: (path) => path.replace(/^\/query/, ''),
+          rewrite: (path) => path.replace(/^\/query/, ''),
         },
         '/lending/api': {
           // mock
@@ -46,6 +46,12 @@ export default ({ mode }) => {
         // },
         '/api/v1/': {
           target: 'https://xbank.global',
+          changeOrigin: true,
+          secure: false,
+          // rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+        '/api': {
+          target: 'https://api-goerli.etherscan.io/api',
           changeOrigin: true,
           secure: false,
           // rewrite: (path) => path.replace(/^\/api/, ''),

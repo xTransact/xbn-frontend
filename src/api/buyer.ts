@@ -131,3 +131,19 @@ export const apiGetConfig: () => Promise<{
 }> = async () => {
   return await request.get(`/api/v1/xbn/config`)
 }
+
+export const apiGetEtherscanLogs: (
+  params: Record<string, string>,
+) => Promise<any> = async (params) => {
+  return await request.get(`/api`, {
+    params: {
+      module: 'account',
+      action: 'txlist',
+      tag: 'latest',
+      startblock: 9177401,
+      page: 1,
+      // apikey:'ZWXI6MVM78F9P4PSZUT3NPH81ZBKMI5FXN',
+      ...params,
+    },
+  })
+}
