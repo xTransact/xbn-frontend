@@ -169,21 +169,23 @@ const ScoreChart: FunctionComponent<{
           {...innerBoxProps}
         >
           <Box bg='white' borderRadius={'100%'} h='99%'>
-            <Box
+            <Flex
               fontSize={{
                 md: '18px',
                 sm: '14px',
                 xs: '14px',
               }}
               fontWeight={'700'}
+              justify={'center'}
+              alignItems={'center'}
               textAlign={'center'}
               boxSize={'100%'}
-              lineHeight={'70px'}
               borderRadius={'100%'}
-              bg='linear-gradient(213deg, rgba(0, 0, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 52.08%, rgba(0, 163, 255, 0.10) 100%)'
+              bg='linear-gradient(213deg, rgba(0, 0, 255, 0.10) 0%, rgba(255,
+              255, 255, 0.10) 52.08%, rgba(0, 163, 255, 0.10) 100%)'
             >
               {data !== undefined ? `${data}%` : '--'}
-            </Box>
+            </Flex>
           </Box>
         </Box>
       </Box>

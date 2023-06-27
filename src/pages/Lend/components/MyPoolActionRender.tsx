@@ -278,12 +278,12 @@ const MyPoolActionRender: FunctionComponent<
                 }}
                 innerBoxProps={{
                   top: {
-                    md: '32px',
+                    md: '33px',
                     sm: '26px',
                     xs: '22px',
                   },
                   left: {
-                    md: '32px',
+                    md: '33px',
                     sm: '22px',
                     xs: '22px',
                   },
