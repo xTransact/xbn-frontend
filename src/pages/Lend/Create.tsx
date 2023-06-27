@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
+import find from 'lodash-es/find'
 import isEmpty from 'lodash-es/isEmpty'
 import isEqual from 'lodash-es/isEqual'
 import range from 'lodash-es/range'
@@ -61,6 +62,7 @@ import {
   TERM_POWER_MAP,
   RATIO_POWER_MAP,
   RATIO_POWER_KEYS,
+  RATE_POWER_VALUES,
 } from '@/constants/interest'
 import { useCatchContractError, useWallet, type NftCollection } from '@/hooks'
 import { computePoolPoint, getMaxSingleLoanScore } from '@/utils/calculation'
@@ -287,11 +289,19 @@ const Create = () => {
         getKeyByValue(COLLATERAL_MAP, poolData?.pool_maximum_percentage) ?? 4
       currentTenorKey =
         getKeyByValue(TENOR_MAP, poolData?.pool_maximum_days) ?? 5
-      const res =
-        poolData?.pool_maximum_interest_rate /
-        (BASE_RATE.get(`${currentTenorKey}-${currentCollateralKey}`) as number)
 
-      currentInterestPowerKey = getKeyByValue(RATE_POWER_MAP, res) ?? 5
+      // 贷款利率
+      const cKey = `${currentTenorKey}-${currentCollateralKey}`
+      const defaultRate = BigNumber(BASE_RATE.get(cKey) as number)
+      const interestRank =
+        find(RATE_POWER_VALUES, (element) => {
+          return (
+            defaultRate.multipliedBy(element).toFixed(0, BigNumber.ROUND_UP) ===
+            poolData?.pool_maximum_interest_rate.toString()
+          )
+        }) ?? 1
+
+      currentInterestPowerKey = getKeyByValue(RATE_POWER_MAP, interestRank) ?? 5
       currentRatioPowerKey =
         getKeyByValue(
           RATIO_POWER_MAP,

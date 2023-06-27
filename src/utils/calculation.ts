@@ -139,13 +139,12 @@ const computePoolScore = (
 
   const cKey = `${tenorKey}-${collateralKey}`
   const defaultRate = BigNumber(BASE_RATE.get(cKey) as number)
-  const interestRank = find(
-    RATE_POWER_VALUES,
-    (element) =>
-      defaultRate.multipliedBy(element).toFormat(2, BigNumber.ROUND_UP) ===
-      pool_maximum_interest_rate.toString(),
-  )
-  console.log('🚀 ~ file: calculation.ts:133 ~ interestRank:', interestRank)
+  const interestRank = find(RATE_POWER_VALUES, (element) => {
+    return (
+      defaultRate.multipliedBy(element).toFixed(0, BigNumber.ROUND_UP) ===
+      pool_maximum_interest_rate.toString()
+    )
+  })
 
   const maxLoanAmountMap: Map<number, number> = new Map()
   max_loan_amount.forEach(({ key, value }) => {
