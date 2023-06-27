@@ -222,44 +222,46 @@ const ConnectedIconWallet: FunctionComponent = () => {
       </PopoverTrigger>
       <PopoverContent w='160px' top='8px'>
         <PopoverBody p={'10px'}>
-          <Button
-            variant={'link'}
-            color='black.1'
-            p={'10px'}
-            onClick={handleOpenEtherscan}
-            _hover={{
-              textDecoration: 'underline',
-              color: 'blue.1',
-            }}
-          >
-            {formatAddress(currentAccount)}
-          </Button>
-          <Button
-            variant={'link'}
-            color='black.1'
-            p={'10px'}
-            onClick={() => {
-              navigate('/buy-nfts/loans')
-            }}
-            _hover={{
-              textDecoration: 'none',
-              color: 'blue.1',
-            }}
-          >
-            Repay Loans
-          </Button>
-          <Button
-            variant={'link'}
-            color='black.1'
-            p={'10px'}
-            _hover={{
-              textDecoration: 'none',
-              color: 'blue.1',
-            }}
-            onClick={handleDisconnect}
-          >
-            Disconnect
-          </Button>
+          {[
+            {
+              label: formatAddress(currentAccount),
+              onClick: handleOpenEtherscan,
+              _hover: {
+                textDecoration: 'underline',
+              },
+            },
+            {
+              label: 'Repay Loans',
+              onClick: () => {
+                navigate('/buy-nfts/loans')
+              },
+            },
+            // {
+            //   label: 'Loan History',
+            //   onClick: () => {
+            //     navigate('/history/loan')
+            //   },
+            // },
+            {
+              label: 'Disconnect',
+              onClick: handleDisconnect,
+            },
+          ].map(({ label, onClick, _hover, ...rest }) => (
+            <Button
+              key={label}
+              variant={'link'}
+              color='black.1'
+              p={'10px'}
+              onClick={onClick}
+              _hover={{
+                color: 'blue.1',
+                ..._hover,
+              }}
+              {...rest}
+            >
+              {label}
+            </Button>
+          ))}
 
           {(import.meta.env.DEV ||
             window.location.hostname.startsWith('feat-')) && (
