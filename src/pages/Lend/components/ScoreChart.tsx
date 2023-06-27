@@ -205,7 +205,7 @@ const ScoreChart: FunctionComponent<{
         {...labelStyle}
       >
         {data !== undefined
-          ? `beating ${data}% LP`
+          ? `Beating ${data}% LP`
           : `Higher The Score \nFaster The Lending Success`}
       </Text>
     </Flex>

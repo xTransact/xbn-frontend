@@ -125,10 +125,20 @@ const MyPoolActionRender: FunctionComponent<
   }, [onClose])
 
   return (
-    <Flex alignItems='center' gap={'24px'}>
-      <Text color='gray.3' cursor='pointer' fontWeight={'500'} onClick={onOpen}>
-        My Competence
-      </Text>
+    <Flex alignItems='center' gap={'16px'}>
+      <Flex alignItems={'center'} gap='1'>
+        <SvgComponent svgId='icon-gauge' fill={'blue.1'} fontSize={'24px'} />
+        <Text
+          color='blue.1'
+          cursor='pointer'
+          fontWeight={'500'}
+          onClick={onOpen}
+          fontSize={'14px'}
+        >
+          My Competence
+        </Text>
+      </Flex>
+
       <Popover trigger='hover' placement='bottom-start'>
         {({ isOpen: visible }) => (
           <>

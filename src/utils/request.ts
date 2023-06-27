@@ -55,7 +55,7 @@ export const requestInterceptor = async ({
       _baseURL = VITE_LENDING_BASE_URL
     }
   }
-  if (!url?.startsWith('/lending/query') || url !== '/api') {
+  if (!url?.startsWith('/lending/query')) {
     const userToken = getUserToken()
     config.headers.Authorization = userToken
       ? `Bearer ${userToken?.token}`
