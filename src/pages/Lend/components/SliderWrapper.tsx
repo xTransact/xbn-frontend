@@ -63,7 +63,7 @@ const SliderWrapper: FunctionComponent<
             mt='-10'
             bg='white'
             ml='-5'
-            w='12'
+            w='20'
             fontSize={'14px'}
             borderRadius={2}
             fontWeight={'900'}
