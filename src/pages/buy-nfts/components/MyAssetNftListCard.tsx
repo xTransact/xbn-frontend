@@ -298,7 +298,7 @@ const MyAssetNftListCard: FunctionComponent<
           safelistRequestStatus,
           fees,
           slug,
-          isCreatorFeesEnforced,
+          // isCreatorFeesEnforced,
         },
       } = currentCollection
       /**
@@ -306,9 +306,10 @@ const MyAssetNftListCard: FunctionComponent<
        * true => 不允许修改 => 则展示接口传过来的值；
        * false => 允许修改=> 则不管接口读取有没有具体值，都将Creator earnings改为0；
        */
-      const sellerFee = isCreatorFeesEnforced
-        ? fees?.find((i) => i.name === 'seller_fees')?.value || 0
-        : 0
+      // const sellerFee = isCreatorFeesEnforced
+      //   ? fees?.find((i) => i.name === 'seller_fees')?.value || 0
+      //   :
+      const sellerFee = fees?.find((i) => i.name === 'seller_fees')?.value || 0
       const marketPlaceFee =
         fees?.find((i) => i.name === 'opensea_fees')?.value || 0
       setCollectionData({

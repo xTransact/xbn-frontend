@@ -66,9 +66,9 @@ const amortizationCalByDays = (
 }
 
 const computePoolPoint = (score?: BigNumber, pointsData?: number[]) => {
+  if (score === undefined) return
   if (!pointsData) return
   // const calculateScore = BigNumber(600)
-  if (!score) return
   // const percent = [
   //   500, 500, 500, 1000, 1000, 1000, 1000, 1000, 1500, 1500, 1500,
   // ]
@@ -139,12 +139,13 @@ const computePoolScore = (
 
   const cKey = `${tenorKey}-${collateralKey}`
   const defaultRate = BigNumber(BASE_RATE.get(cKey) as number)
-  const interestRank = find(RATE_POWER_VALUES, (element) => {
-    return (
-      defaultRate.multipliedBy(element).toFixed(0, BigNumber.ROUND_UP) ===
-      pool_maximum_interest_rate.toString()
-    )
-  })
+  const interestRank =
+    (find(RATE_POWER_VALUES, (element) => {
+      return (
+        defaultRate.multipliedBy(element).toFixed(0, BigNumber.ROUND_UP) ===
+        pool_maximum_interest_rate.toString()
+      )
+    }) || -1) * 10000
 
   const maxLoanAmountMap: Map<number, number> = new Map()
   max_loan_amount.forEach(({ key, value }) => {
@@ -157,6 +158,7 @@ const computePoolScore = (
     loan_ratio.find((i) => i.key === pool_maximum_percentage.toString())
       ?.value || 0,
   ).multipliedBy(x)
+  console.log(collateralScore.toNumber(), 'collateralScore')
 
   // 单笔最大贷款金额分数
   const maxLoanAmountScore = BigNumber(
@@ -165,16 +167,19 @@ const computePoolScore = (
       maxLoanAmountMap,
     ) || 0,
   ).multipliedBy(y)
+  console.log(maxLoanAmountScore.toNumber(), 'maxLoanAmountScore')
 
   // 贷款期限分数
   const tenorScore = BigNumber(
     loan_term.find((i) => i.key == pool_maximum_days.toString())?.value || 0,
   ).multipliedBy(z)
+  console.log(tenorScore.toNumber(), 'tenorScore')
 
   const maxInterestScore = BigNumber(
     max_loan_interest_rate.find((i) => i.key === interestRank?.toString())
       ?.value || 0,
   ).multipliedBy(w)
+  console.log(maxInterestScore.toNumber(), interestRank, 'maxInterestScore')
 
   // 按贷款比例微调分数
   const ratioScore = BigNumber(
@@ -182,6 +187,7 @@ const computePoolScore = (
       (i) => i.key === loan_ratio_preferential_flexibility.toString(),
     )?.value || 0,
   ).multipliedBy(u)
+  console.log(ratioScore.toNumber(), 'ratioScore')
 
   // 按贷款期限微调分数
   const termScore = BigNumber(
@@ -189,6 +195,7 @@ const computePoolScore = (
       (i) => i.key === loan_time_concession_flexibility.toString(),
     )?.value || 0,
   ).multipliedBy(v)
+  console.log(termScore.toNumber(), 'termScore')
 
   return collateralScore
     .plus(maxLoanAmountScore)

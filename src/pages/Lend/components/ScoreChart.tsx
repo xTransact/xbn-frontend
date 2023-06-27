@@ -1,8 +1,19 @@
-import { Text, Box, Flex } from '@chakra-ui/react'
+import {
+  Text,
+  Box,
+  Flex,
+  type TextProps,
+  type BoxProps,
+} from '@chakra-ui/react'
 import ReactECharts from 'echarts-for-react'
 import { useMemo, type FunctionComponent } from 'react'
 
-const ScoreChart: FunctionComponent<{ data?: number }> = ({ data }) => {
+const ScoreChart: FunctionComponent<{
+  data?: number
+  labelStyle?: TextProps
+  boxProps?: BoxProps
+  innerBoxProps?: BoxProps
+}> = ({ data, labelStyle, boxProps, innerBoxProps }) => {
   const option = useMemo(
     () => ({
       series: [
@@ -124,6 +135,7 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data }) => {
           sm: '84px',
           xs: '84px',
         }}
+        {...boxProps}
       >
         <ReactECharts
           option={option}
@@ -154,8 +166,9 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data }) => {
           // bg='linear-gradient(from -10deg at 50.00% 47.33%, #8DFDFD 0.5524577759206295deg, #FFCF5F 72.71821081638336deg, #FF4218 140.30883193016052deg, #065DFF 245.78956604003906deg)'
           borderRadius={'100%'}
           boxShadow={'2px 2px 4px 0px #DAE3EF, -2px -2px 4px 0px #FFF'}
+          {...innerBoxProps}
         >
-          <Box bg='white' borderRadius={'100%'} h='100%'>
+          <Box bg='white' borderRadius={'100%'} h='99%'>
             <Box
               fontSize={{
                 md: '18px',
@@ -164,7 +177,7 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data }) => {
               }}
               fontWeight={'700'}
               textAlign={'center'}
-              boxSize={'70px'}
+              boxSize={'100%'}
               lineHeight={'70px'}
               borderRadius={'100%'}
               bg='linear-gradient(213deg, rgba(0, 0, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 52.08%, rgba(0, 163, 255, 0.10) 100%)'
@@ -186,6 +199,8 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data }) => {
           xs: '-10px',
         }}
         lineHeight={'16px'}
+        transition='all 0.2s'
+        {...labelStyle}
       >
         {data !== undefined
           ? `beating ${data}% LP`

@@ -395,6 +395,7 @@ const Create = () => {
     const collateralScore = BigNumber(
       loan_ratio.find((i) => i.key === collateralValue)?.value || 0,
     ).multipliedBy(x)
+    console.log(collateralScore.toNumber(), 'collateralScore')
 
     // 单笔最大贷款金额分数
     const maxLoanAmountScore = BigNumber(
@@ -403,12 +404,14 @@ const Create = () => {
         maxLoanAmountMap,
       ) || 0,
     ).multipliedBy(y)
+    console.log(maxLoanAmountScore.toNumber(), 'maxLoanAmountScore')
 
     // 贷款期限分数
     const tenorValue = TENOR_MAP.get(tenorKey)?.toString()
     const tenorScore = BigNumber(
       loan_term.find((i) => i.key == tenorValue)?.value || 0,
     ).multipliedBy(z)
+    console.log(tenorScore.toNumber(), 'tenorScore')
 
     // 最大贷款利率分数
     const maxInterestValue =
@@ -417,6 +420,7 @@ const Create = () => {
       max_loan_interest_rate.find((i) => i.key === maxInterestValue.toString())
         ?.value || 0,
     ).multipliedBy(w)
+    console.log(maxInterestScore.toNumber(), 'maxInterestScore')
 
     // 按贷款比例微调分数
     const ratioValue = (RATIO_POWER_MAP.get(ratioPowerKey) || 0) * 10000
@@ -424,6 +428,7 @@ const Create = () => {
       loan_ratio_adjustment_factor.find((i) => i.key === ratioValue.toString())
         ?.value || 0,
     ).multipliedBy(u)
+    console.log(ratioScore.toNumber(), 'ratioScore')
 
     // 按贷款期限微调分数
     const termValue = (TERM_POWER_MAP.get(termPowerKey) || 0) * 10000
@@ -431,6 +436,7 @@ const Create = () => {
       loan_term_adjustment_factor.find((i) => i.key === termValue.toString())
         ?.value || 0,
     ).multipliedBy(v)
+    console.log(termScore.toNumber(), 'termScore')
 
     return collateralScore
       .plus(maxLoanAmountScore)
