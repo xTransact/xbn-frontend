@@ -139,17 +139,16 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data }) => {
         <Box
           position={'absolute'}
           top={{
-            md: '30px',
+            md: '26px',
             sm: '22px',
             xs: '22px',
           }}
           left={{
-            md: '31px',
+            md: '26px',
             sm: '22px',
             xs: '22px',
           }}
-          w='62px'
-          height={'62px'}
+          boxSize={'72px'}
           p='1px'
           bg='linear-gradient(to bottom,#FF4218,#FFCF5F,#8DFDFD,#065DFF, #DAE3EF 90%)'
           // bg='linear-gradient(from -10deg at 50.00% 47.33%, #8DFDFD 0.5524577759206295deg, #FFCF5F 72.71821081638336deg, #FF4218 140.30883193016052deg, #065DFF 245.78956604003906deg)'
@@ -165,8 +164,8 @@ const ScoreChart: FunctionComponent<{ data?: number }> = ({ data }) => {
               }}
               fontWeight={'700'}
               textAlign={'center'}
-              boxSize={'60px'}
-              lineHeight={'60px'}
+              boxSize={'70px'}
+              lineHeight={'70px'}
               borderRadius={'100%'}
               bg='linear-gradient(213deg, rgba(0, 0, 255, 0.10) 0%, rgba(255, 255, 255, 0.10) 52.08%, rgba(0, 163, 255, 0.10) 100%)'
             >

@@ -25,3 +25,4 @@ interface ImportMeta {
 }
 
 declare module 'web3/dist/web3.min.js'
+declare module 'etherscan-api'

@@ -14,11 +14,12 @@ import {
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import { unix } from 'dayjs'
+import etherscanapi from 'etherscan-api'
 import { useEffect, useMemo, useState, type FunctionComponent } from 'react'
 // import Joyride from 'react-joyride'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { apiGetEtherscanLogs, apiGetListings } from '@/api'
+import { apiGetListings } from '@/api'
 import {
   ConnectWalletModal,
   MyTable,
@@ -44,6 +45,8 @@ enum TAB_KEY {
   REPAY_TAB = 1,
   SALE_TAB = 2,
 }
+
+const api = etherscanapi.init('', 'goerli')
 
 const TabWrapper: FunctionComponent<
   TabProps & {
@@ -111,14 +114,6 @@ const History = () => {
     ready: false,
   })
 
-  const { data } = useRequest(apiGetEtherscanLogs, {
-    defaultParams: [
-      {
-        address: '0x2c288241b589ab765e98e20bfe1dc1916c7e6c84',
-      },
-    ],
-  })
-  console.log('🚀 ~ file: History.tsx:121 ~ History ~ data:', data)
   useEffect(() => {
     interceptFn(() => {
       const { type } = params
@@ -365,6 +360,8 @@ const History = () => {
     ]
   }, [])
 
+  return <NotFound backTo='/' />
+
   if (!params || !['loan', 'repay', 'sale'].includes(params?.type)) {
     return <NotFound backTo='/history/loan' />
   }
@@ -381,6 +378,21 @@ const History = () => {
         <Button
           variant={'primary'}
           onClick={async () => {
+            const balance = api.account.txlist(
+              currentAccount,
+              1,
+              'latest',
+              1,
+              100,
+              'desc',
+            )
+
+            balance.then(function (balanceData: any) {
+              console.log(
+                balanceData.result.filter((i: any) => i.value !== '0'),
+              )
+            })
+            return
             const xBankContract = createXBankContract()
             // const wethContract = createWethContract()
             const web3 = createWeb3Provider()
