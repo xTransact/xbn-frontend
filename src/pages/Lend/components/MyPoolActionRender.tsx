@@ -8,14 +8,34 @@ import {
   Portal,
   type FlexProps,
   Button,
+  useDisclosure,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  Modal,
+  ModalCloseButton,
 } from '@chakra-ui/react'
-import { type FunctionComponent } from 'react'
+import useRequest from 'ahooks/lib/useRequest'
+import {
+  useCallback,
+  type FunctionComponent,
+  useState,
+  useEffect,
+  useMemo,
+} from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { SvgComponent } from '@/components'
+import { apiGetConfig, apiGetFloorPrice, apiGetPoolPoints } from '@/api'
+import { LoadingComponent, SvgComponent } from '@/components'
 import type { NftCollection } from '@/hooks'
+import { MODEL_HEADER_PROPS } from '@/pages/buy-nfts/components/MyAssetNftListCard'
+import { computePoolPoint, computePoolScore } from '@/utils/calculation'
 
+import ScoreChart from './ScoreChart'
 import UpdatePoolAmountButton from './UpdatePoolAmountButton'
+
+import type BigNumber from 'bignumber.js'
 
 const BUTTON_PROPS = {
   variant: 'unstyled',
@@ -39,17 +59,75 @@ const MyPoolActionRender: FunctionComponent<
   }
 > = ({ poolData, collectionData, onClickDetail, onRefresh }) => {
   const navigate = useNavigate()
+  const { isOpen, onClose, onOpen } = useDisclosure()
+  const [score, setScore] = useState<BigNumber>()
+
+  const { loading: poolPointLoading, data: pointData } = useRequest(
+    () =>
+      apiGetPoolPoints({
+        contract_address: poolData?.allow_collateral_contract,
+      }),
+    {
+      ready: isOpen,
+      refreshDeps: [poolData?.allow_collateral_contract],
+    },
+  )
+
+  const { loading: configLoading, data: configData } = useRequest(
+    apiGetConfig,
+    {
+      ready: isOpen,
+      staleTime: 1000 * 60 * 60,
+      cacheKey: 'config-cache-key',
+    },
+  )
+
+  const { loading: floorPriceLoading, data: floorPriceData } = useRequest(
+    () =>
+      apiGetFloorPrice({
+        slug: collectionData?.slug,
+      }),
+    {
+      ready: isOpen,
+      refreshDeps: [collectionData?.slug],
+      // cacheKey: `staleTime-floorPrice-${selectCollection?.nftCollection?.slug}`,
+      // staleTime: 1000 * 60,
+    },
+  )
+
+  useEffect(() => {
+    if (!isOpen) {
+      setScore(undefined)
+      return
+    }
+    if (!configData) return
+    if (!floorPriceData?.floor_price) return
+    const { config } = configData
+
+    const _score = computePoolScore(poolData, config, 0.05)
+    setScore(_score)
+  }, [configData, poolData, floorPriceData, isOpen])
+
+  const point = useMemo(() => {
+    if (score === undefined) return
+    console.log(
+      '🚀 ~ file: MyPoolActionRender.tsx:114 ~ point ~ score:',
+      score.toNumber(),
+    )
+    if (!pointData) return
+    const { percent } = pointData
+    return computePoolPoint(score, percent)
+  }, [score, pointData])
+
+  const handleClose = useCallback(() => {
+    setScore(undefined)
+    onClose()
+  }, [onClose])
+
   return (
     <Flex alignItems='center' gap={'24px'}>
-      <Text
-        color='gray.3'
-        onClick={() => {
-          navigate('/lending/loans')
-          onClickDetail()
-        }}
-        cursor='pointer'
-      >
-        Details
+      <Text color='gray.3' cursor='pointer' fontWeight={'500'} onClick={onOpen}>
+        My Competence
       </Text>
       <Popover trigger='hover' placement='bottom-start'>
         {({ isOpen: visible }) => (
@@ -114,6 +192,17 @@ const MyPoolActionRender: FunctionComponent<
                     >
                       Reset Pool Size
                     </UpdatePoolAmountButton>
+
+                    <Button
+                      {...BUTTON_PROPS}
+                      onClick={() => {
+                        navigate('/lending/loans')
+                        onClickDetail()
+                      }}
+                      // hidden
+                    >
+                      Details
+                    </Button>
                   </Flex>
                 </PopoverBody>
               </PopoverContent>
@@ -121,6 +210,90 @@ const MyPoolActionRender: FunctionComponent<
           </>
         )}
       </Popover>
+
+      <Modal
+        onClose={handleClose}
+        isCentered
+        scrollBehavior='inside'
+        closeOnOverlayClick={false}
+        closeOnEsc={false}
+        isOpen={isOpen}
+      >
+        <ModalOverlay bg='black.2' />
+        <ModalContent
+          maxW={{
+            md: '400px',
+            sm: '326px',
+            xs: '326px',
+          }}
+          maxH={'600px'}
+          borderRadius={16}
+        >
+          <LoadingComponent
+            loading={poolPointLoading || configLoading || floorPriceLoading}
+            top={0}
+            spinnerProps={{
+              mt: '100px',
+            }}
+          />
+
+          <ModalHeader {...MODEL_HEADER_PROPS}>
+            <ModalCloseButton />
+            {/* <SvgComponent
+            svgId='icon-close'
+            onClick={onClose}
+            cursor={'pointer'}
+          /> */}
+          </ModalHeader>
+          <ModalBody
+            m={0}
+            px={{
+              md: '40px',
+              sm: '20px',
+              xs: '20px',
+            }}
+            pb={{
+              md: '40px',
+              sm: '20px',
+              xs: '20px',
+            }}
+            pt={0}
+          >
+            <Flex alignItems={'center'} justify={'center'}>
+              <ScoreChart
+                data={point}
+                labelStyle={{
+                  fontSize: point !== undefined ? '28px' : '18px',
+                  fontWeight: point !== undefined ? '500' : '400',
+                  lineHeight: '20px',
+                  w: '160%',
+                  mt: '-10px',
+                }}
+                boxProps={{
+                  boxSize: {
+                    md: '145px',
+                    sm: '104px',
+                    xs: '104px',
+                  },
+                }}
+                innerBoxProps={{
+                  top: {
+                    md: '33px',
+                    sm: '26px',
+                    xs: '22px',
+                  },
+                  left: {
+                    md: '33px',
+                    sm: '22px',
+                    xs: '22px',
+                  },
+                  boxSize: '80px',
+                }}
+              />
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Flex>
   )
 }

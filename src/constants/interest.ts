@@ -48,25 +48,25 @@ export const RATE_POWER_KEYS = [...RATE_POWER_MAP.keys()]
 export const RATE_POWER_VALUES = [...RATE_POWER_MAP.values()]
 
 // 微调bottom系数
-export const BOTTOM_RATE_POWER_MAP = new Map([
+export const TERM_POWER_MAP = new Map([
   [0, 0.9],
   [1, 0.95],
   [2, 0.98],
   [3, 0.99],
   [4, 1],
 ])
-export const BOTTOM_RATE_POWER_KEYS = [...BOTTOM_RATE_POWER_MAP.keys()]
-export const BOTTOM_RATE_POWER_VALUES = [...BOTTOM_RATE_POWER_MAP.values()]
+export const TERM_POWER_KEYS = [...TERM_POWER_MAP.keys()]
+export const TERM_POWER_VALUES = [...TERM_POWER_MAP.values()]
 
-export const RIGHT_RATE_POWER_MAP = new Map([
+export const RATIO_POWER_MAP = new Map([
   [0, 1],
   [1, 0.99],
   [2, 0.98],
   [3, 0.95],
   [4, 0.9],
 ])
-export const RIGHT_RATE_POWER_KEYS = [...RIGHT_RATE_POWER_MAP.keys()]
-export const RIGHT_RATE_POWER_VALUES = [...RIGHT_RATE_POWER_MAP.values()]
+export const RATIO_POWER_KEYS = [...RATIO_POWER_MAP.keys()]
+export const RATIO_POWER_VALUES = [...RATIO_POWER_MAP.values()]
 
 // 0-0 means 贷款 1 天 & 贷款 10%
 export const BASE_RATE = new Map([

@@ -17,6 +17,7 @@ const {
   VITE_APP_KEY,
   VITE_TEST_BASE_URL,
   VITE_BASE_URL,
+  VITE_ETHERSCAN_IO_URL,
 } = import.meta.env
 
 export const standaloneToast = createStandaloneToast({
@@ -44,7 +45,9 @@ export const requestInterceptor = async ({
 }: InternalAxiosRequestConfig) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
-    if (url?.startsWith('/api/v')) {
+    if (url === '/api') {
+      _baseURL = VITE_ETHERSCAN_IO_URL
+    } else if (url?.startsWith('/api/v')) {
       _baseURL = VITE_TEST_BASE_URL
     } else if (url?.startsWith('/lending/query')) {
       _baseURL = VITE_BASE_URL
@@ -52,7 +55,7 @@ export const requestInterceptor = async ({
       _baseURL = VITE_LENDING_BASE_URL
     }
   }
-  if (!url?.startsWith('/lending/query')) {
+  if (!url?.startsWith('/lending/query') || url !== '/api') {
     const userToken = getUserToken()
     config.headers.Authorization = userToken
       ? `Bearer ${userToken?.token}`
