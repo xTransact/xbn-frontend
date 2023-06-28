@@ -69,7 +69,6 @@ query NftCollectionsByContractAddresses($assetContractAddresses: [String!]!) {
         subscribe
         subscribeCount
       }
-      isCreatorFeesEnforced
     }
   }
 }
