@@ -104,7 +104,11 @@ const MyPoolActionRender: FunctionComponent<
     if (!floorPriceData?.floor_price) return
     const { config } = configData
 
-    const _score = computePoolScore(poolData, config, 0.05)
+    const _score = computePoolScore(
+      poolData,
+      config,
+      floorPriceData?.floor_price,
+    )
     setScore(_score)
   }, [configData, poolData, floorPriceData, isOpen])
 
