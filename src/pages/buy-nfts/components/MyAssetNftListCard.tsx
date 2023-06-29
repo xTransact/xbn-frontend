@@ -271,6 +271,8 @@ const MyAssetNftListCard: FunctionComponent<
         borrower_address: currentAccount,
         token_id: contractData?.token_id || '',
         contract_address: contractData?.asset_contract_address || '',
+        type: 2,
+        status: 4096,
       },
     ],
     refreshDeps: [currentAccount, contractData],

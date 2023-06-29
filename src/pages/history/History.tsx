@@ -109,9 +109,11 @@ const History = () => {
     defaultParams: [
       {
         borrower_address: currentAccount,
+        contract_address: '0x94faf38d706e43fd3c9c764887631eb125dad4c7',
+        type: 2,
+        status: 4096,
       },
     ],
-    ready: false,
   })
 
   useEffect(() => {
@@ -359,8 +361,6 @@ const History = () => {
       },
     ]
   }, [])
-
-  return <NotFound backTo='/' />
 
   if (!params || !['loan', 'repay', 'sale'].includes(params?.type)) {
     return <NotFound backTo='/history/loan' />
