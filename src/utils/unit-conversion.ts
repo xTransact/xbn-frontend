@@ -6,7 +6,7 @@ const wei2Eth: (wei: BigNumber | number | string) => number | undefined = (
 ) => {
   try {
     let weiStr = wei
-    if (!weiStr) return
+    if (weiStr === undefined) return
     if (BigNumber.isBigNumber(weiStr)) {
       weiStr = weiStr.integerValue().toFormat().replaceAll(',', '')
     } else if (typeof weiStr === 'number') {

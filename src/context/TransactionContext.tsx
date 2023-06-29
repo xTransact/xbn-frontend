@@ -16,7 +16,7 @@ import {
   useNftCollectionsByContractAddressesQuery,
 } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
-import { getUserToken } from '@/utils/auth'
+import { clearUserToken, getUserToken } from '@/utils/auth'
 
 export const TransactionContext = createContext<{
   connectWallet: () => Promise<any>
@@ -97,6 +97,7 @@ export const TransactionsProvider = ({
   const handleDisconnect = useCallback(() => {
     setCurrentAccount('')
     setIsConnected(false)
+    clearUserToken()
     window.location.href = '/'
   }, [setCurrentAccount, setIsConnected])
 

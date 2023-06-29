@@ -176,3 +176,60 @@ interface ListingsItemType {
   type: number
   updated_at: string
 }
+
+interface ConfigDataType {
+  weight: {
+    x: number
+    y: number
+    z: number
+    w: number
+    u: number
+    v: number
+  }
+  loan_ratio: [
+    {
+      key:
+        | '1000'
+        | '2000'
+        | '3000'
+        | '4000'
+        | '5000'
+        | '6000'
+        | '7000'
+        | '8000'
+        | '9000'
+        | '10000'
+      value: number
+    },
+  ]
+  max_loan_amount: [
+    {
+      key: string
+      value: number
+    },
+  ]
+  loan_term: [
+    {
+      key: '1' | '3' | '7' | '14' | '30' | '60' | '90'
+      value: number
+    },
+  ]
+  max_loan_interest_rate: [
+    {
+      key: string
+      value: number
+    },
+  ]
+  loan_ratio_adjustment_factor: [
+    {
+      key: '10000' | '9900' | '9800' | '9500' | '9000'
+      value: number
+    },
+  ]
+  loan_term_adjustment_factor: [
+    {
+      key: '10000' | '9900' | '9800' | '9500' | '9000'
+      value: number
+    },
+  ]
+}

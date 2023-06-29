@@ -41,8 +41,8 @@ const MarketingCampaign = lazyWithRetries(
 const H5Demo = lazyWithRetries(() => import('./pages/h5-demo/H5Demo'))
 const NotFound = lazyWithRetries(() => import('./pages/404'))
 
-// 历史记录
-const History = lazyWithRetries(() => import('./pages/history/History'))
+// loan history
+// const History = lazyWithRetries(() => import('./pages/history/History'))
 
 function App() {
   useScrollToTop()
@@ -54,6 +54,18 @@ function App() {
           path='/lending'
           element={<Navigate replace to='/lending/collections' />}
         />
+        {/* <Route
+          path='/history'
+          element={<Navigate replace to='/history/loan' />}
+        />
+        <Route
+          path='/history/:type'
+          element={
+            <Suspense fallback={<Fallback />}>
+              <History />
+            </Suspense>
+          }
+        /> */}
         <Route
           path='/lending/my-pools'
           element={
@@ -157,16 +169,6 @@ function App() {
             <RootLayout>
               <Suspense fallback={<Fallback />}>
                 <LoansForBuyer />
-              </Suspense>
-            </RootLayout>
-          }
-        />
-        <Route
-          path='/history'
-          element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <History />
               </Suspense>
             </RootLayout>
           }

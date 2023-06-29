@@ -1,11 +1,17 @@
-import { Flex, Spinner, type FlexProps } from '@chakra-ui/react'
+import {
+  Flex,
+  Spinner,
+  type FlexProps,
+  type SpinnerProps,
+} from '@chakra-ui/react'
 
 const Index = ({
   loading,
   minHeight,
   top = '24px',
+  spinnerProps,
   ...rest
-}: { loading: boolean } & FlexProps) => {
+}: { loading: boolean; spinnerProps?: SpinnerProps } & FlexProps) => {
   if (!loading) {
     return null
   }
@@ -30,6 +36,7 @@ const Index = ({
         color='blue.1'
         size='xl'
         mt={'80px'}
+        {...spinnerProps}
       />
     </Flex>
   )

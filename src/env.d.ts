@@ -17,6 +17,7 @@ interface ImportMetaEnv {
   readonly VITE_LENDING_BASE_URL: string
   readonly VITE_BASE_URL: string
   readonly VITE_TEST_BASE_URL: string
+  readonly VITE_ETHERSCAN_IO_URL: string
 }
 
 interface ImportMeta {
@@ -24,3 +25,4 @@ interface ImportMeta {
 }
 
 declare module 'web3/dist/web3.min.js'
+declare module 'etherscan-api'

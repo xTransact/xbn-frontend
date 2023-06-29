@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
+import find from 'lodash-es/find'
 import isEmpty from 'lodash-es/isEmpty'
 import isEqual from 'lodash-es/isEqual'
 import range from 'lodash-es/range'
@@ -31,7 +32,12 @@ import {
 } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { apiGetFloorPrice, apiGetPools } from '@/api'
+import {
+  apiGetFloorPrice,
+  apiGetPools,
+  apiGetConfig,
+  apiGetPoolPoints,
+} from '@/api'
 import {
   AsyncSelectCollection,
   NotFound,
@@ -52,28 +58,25 @@ import {
   TENOR_KEYS,
   TENOR_MAP,
   TENOR_VALUES,
-  BOTTOM_RATE_POWER_KEYS,
-  BOTTOM_RATE_POWER_MAP,
-  RIGHT_RATE_POWER_MAP,
-  RIGHT_RATE_POWER_KEYS,
+  TERM_POWER_KEYS,
+  TERM_POWER_MAP,
+  RATIO_POWER_MAP,
+  RATIO_POWER_KEYS,
+  RATE_POWER_VALUES,
 } from '@/constants/interest'
-import type { NftCollection } from '@/hooks'
-import { useCatchContractError, useWallet } from '@/hooks'
+import { useCatchContractError, useWallet, type NftCollection } from '@/hooks'
+import { computePoolPoint, getMaxSingleLoanScore } from '@/utils/calculation'
 import { createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
 import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
+import { getKeyByValue } from '@/utils/utils'
 
 import CreatePoolButton from './components/CreatePoolButton'
+import ScoreChart from './components/ScoreChart'
 import SliderWrapper from './components/SliderWrapper'
 import StepDescription from './components/StepDescription'
 
 const xBankContract = createXBankContract()
-
-const getKeyByValue = (map: any, searchValue: string | number) => {
-  for (const [key, value] of map.entries()) {
-    if (value === searchValue) return key
-  }
-}
 
 const Wrapper: FunctionComponent<
   {
@@ -216,22 +219,44 @@ const Create = () => {
     refreshDeps: [currentAccount],
   })
 
+  const [configData, setConfigData] = useState<
+    ConfigDataType & {
+      maxLoanAmountMap: Map<number, number>
+    }
+  >()
+  const { loading: configLoading } = useRequest(apiGetConfig, {
+    onSuccess: (data) => {
+      if (!data) return
+      const maxLoanAmountMap: Map<number, number> = new Map()
+      data.config.max_loan_amount.forEach(({ key, value }) => {
+        const [start] = key.split('-')
+        maxLoanAmountMap.set(Number(start) / 10000, value)
+      })
+      setConfigData({
+        ...data.config,
+        maxLoanAmountMap,
+      })
+    },
+  })
+
   // collection
   const [selectCollection, setSelectCollection] = useState<{
     contractAddress: string
     nftCollection: NftCollection
   }>()
   // 贷款比例 key
-  const [selectCollateralKey, setSelectCollateralKey] = useState(4)
+  const [collateralKey, setCollateralKey] = useState(4)
   // 单笔最大贷款
   const [maxSingleLoanAmount, setMaxSingleLoanAmount] = useState<string>()
   // 贷款天数 key
-  const [selectTenorKey, setSelectTenorKey] = useState(5)
+  const [tenorKey, setTenorKey] = useState(5)
   // 贷款乘法系数
-  const [interestPower, setInterestPower] = useState(5)
+  const [interestPowerKey, setInterestPowerKey] = useState(5)
 
-  const [sliderRightKey, setSliderRightKey] = useState(2)
-  const [sliderBottomKey, setSliderBottomKey] = useState(2)
+  // 贷款比例微调 right
+  const [ratioPowerKey, setRatioPowerKey] = useState(2)
+  // 贷款天数微调 bottom
+  const [termPowerKey, setTermPowerKey] = useState(2)
 
   const initialCollection = useMemo(() => {
     if (!state) return
@@ -250,57 +275,77 @@ const Create = () => {
   }, [state, params, collectionAddressWithPool])
 
   const initialItems = useMemo(() => {
-    let collateralKey = 4
-    let tenorKey = 5
-    let ratePowerKey = 5
-    let rightFlex = 2
-    let bottomFlex = 2
-    let maximum_loan_amount
+    let currentCollateralKey = 4
+    let currentTenorKey = 5
+    let currentInterestPowerKey = 5
+    let currentRatioPowerKey = 2
+    let currentTermPowerKey = 2
+    let singleMaximumLoanAmount
 
     // 只有编辑进来的 才才需要填入默认值，supply 只需要填入 collection
     if (state && params?.action === 'edit') {
       const { poolData } = state
-      collateralKey =
+      currentCollateralKey =
         getKeyByValue(COLLATERAL_MAP, poolData?.pool_maximum_percentage) ?? 4
-      tenorKey = getKeyByValue(TENOR_MAP, poolData?.pool_maximum_days) ?? 5
-      const res =
-        poolData?.pool_maximum_interest_rate /
-        (BASE_RATE.get(`${tenorKey}-${collateralKey}`) as number)
+      currentTenorKey =
+        getKeyByValue(TENOR_MAP, poolData?.pool_maximum_days) ?? 5
 
-      ratePowerKey = getKeyByValue(RATE_POWER_MAP, res) ?? 5
-      rightFlex =
+      // 贷款利率
+      const cKey = `${currentTenorKey}-${currentCollateralKey}`
+      const defaultRate = BigNumber(BASE_RATE.get(cKey) as number)
+      const interestRank =
+        find(RATE_POWER_VALUES, (element) => {
+          return (
+            defaultRate.multipliedBy(element).toFixed(0, BigNumber.ROUND_UP) ===
+            poolData?.pool_maximum_interest_rate.toString()
+          )
+        }) ?? 1
+
+      currentInterestPowerKey = getKeyByValue(RATE_POWER_MAP, interestRank) ?? 5
+      currentRatioPowerKey =
         getKeyByValue(
-          RIGHT_RATE_POWER_MAP,
+          RATIO_POWER_MAP,
           poolData?.loan_ratio_preferential_flexibility / 10000,
         ) ?? 2
-      bottomFlex =
+      currentTermPowerKey =
         getKeyByValue(
-          BOTTOM_RATE_POWER_MAP,
+          TERM_POWER_MAP,
           poolData?.loan_time_concession_flexibility / 10000,
         ) ?? 2
-      maximum_loan_amount = wei2Eth(poolData.maximum_loan_amount) ?? 0
+      singleMaximumLoanAmount = wei2Eth(poolData.maximum_loan_amount) ?? 0
     }
     return {
-      collateralKey,
-      tenorKey,
-      ratePowerKey,
-      rightFlex,
-      bottomFlex,
-      maximum_loan_amount,
+      collateralKey: currentCollateralKey,
+      tenorKey: currentTenorKey,
+      interestPowerKey: currentInterestPowerKey,
+      ratioPowerKey: currentRatioPowerKey,
+      termPowerKey: currentTermPowerKey,
+      singleMaximumLoanAmount,
     }
   }, [state, params])
 
   useEffect(() => {
     if (!initialItems) return
-    setSelectCollateralKey(initialItems.collateralKey)
-    setSelectTenorKey(initialItems.tenorKey)
-    setInterestPower(initialItems.ratePowerKey)
-    setSliderRightKey(initialItems.rightFlex)
-    setSliderBottomKey(initialItems.bottomFlex)
+    setCollateralKey(initialItems.collateralKey)
+    setTenorKey(initialItems.tenorKey)
+    setInterestPowerKey(initialItems.interestPowerKey)
+    setRatioPowerKey(initialItems.ratioPowerKey)
+    setTermPowerKey(initialItems.termPowerKey)
     setMaxSingleLoanAmount(
-      initialItems?.maximum_loan_amount?.toString() || undefined,
+      initialItems?.singleMaximumLoanAmount?.toString() || undefined,
     )
   }, [initialItems])
+
+  const { loading: poolPointLoading, data: pointData } = useRequest(
+    () =>
+      apiGetPoolPoints({
+        contract_address: selectCollection?.contractAddress || '',
+      }),
+    {
+      ready: !!selectCollection,
+      refreshDeps: [selectCollection],
+    },
+  )
 
   const [floorPrice, setFloorPrice] = useState<number>()
   const { loading, data: floorPriceData } = useRequest(
@@ -322,6 +367,99 @@ const Create = () => {
       },
     },
   )
+
+  const calculateScore: BigNumber | undefined = useMemo(() => {
+    if (
+      !selectCollection ||
+      maxSingleLoanAmount === undefined ||
+      !floorPrice ||
+      !configData
+    )
+      return
+    const {
+      weight: { x, y, z, w, u, v },
+      loan_ratio,
+      loan_term,
+      maxLoanAmountMap,
+      // 贷款期限微调 bottom
+      loan_term_adjustment_factor,
+      // 贷款比例微调 right
+      loan_ratio_adjustment_factor,
+      max_loan_interest_rate,
+    } = configData
+
+    // 贷款比例分数
+    const collateralValue = COLLATERAL_MAP.get(collateralKey)?.toString()
+    const collateralScore = BigNumber(
+      loan_ratio.find((i) => i.key === collateralValue)?.value || 0,
+    ).multipliedBy(x)
+    console.log(collateralScore.toNumber(), 'collateralScore')
+
+    // 单笔最大贷款金额分数
+    const maxLoanAmountScore = BigNumber(
+      getMaxSingleLoanScore(
+        BigNumber(maxSingleLoanAmount).dividedBy(floorPrice).toNumber(),
+        maxLoanAmountMap,
+      ) || 0,
+    ).multipliedBy(y)
+    console.log(maxLoanAmountScore.toNumber(), 'maxLoanAmountScore')
+
+    // 贷款期限分数
+    const tenorValue = TENOR_MAP.get(tenorKey)?.toString()
+    const tenorScore = BigNumber(
+      loan_term.find((i) => i.key == tenorValue)?.value || 0,
+    ).multipliedBy(z)
+    console.log(tenorScore.toNumber(), 'tenorScore')
+
+    // 最大贷款利率分数
+    const maxInterestValue =
+      Number(RATE_POWER_MAP.get(interestPowerKey)) * 10000
+    const maxInterestScore = BigNumber(
+      max_loan_interest_rate.find((i) => i.key === maxInterestValue.toString())
+        ?.value || 0,
+    ).multipliedBy(w)
+    console.log(maxInterestScore.toNumber(), 'maxInterestScore')
+
+    // 按贷款比例微调分数
+    const ratioValue = (RATIO_POWER_MAP.get(ratioPowerKey) || 0) * 10000
+    const ratioScore = BigNumber(
+      loan_ratio_adjustment_factor.find((i) => i.key === ratioValue.toString())
+        ?.value || 0,
+    ).multipliedBy(u)
+    console.log(ratioScore.toNumber(), 'ratioScore')
+
+    // 按贷款期限微调分数
+    const termValue = (TERM_POWER_MAP.get(termPowerKey) || 0) * 10000
+    const termScore = BigNumber(
+      loan_term_adjustment_factor.find((i) => i.key === termValue.toString())
+        ?.value || 0,
+    ).multipliedBy(v)
+    console.log(termScore.toNumber(), 'termScore')
+
+    return collateralScore
+      .plus(maxLoanAmountScore)
+      .plus(tenorScore)
+      .plus(maxInterestScore)
+      .plus(ratioScore)
+      .plus(termScore)
+  }, [
+    selectCollection,
+    collateralKey,
+    tenorKey,
+    maxSingleLoanAmount,
+    floorPrice,
+    interestPowerKey,
+    termPowerKey,
+    ratioPowerKey,
+    configData,
+  ])
+
+  const currentPoolPoint = useMemo(() => {
+    if (!pointData) return
+    if (!calculateScore) return
+    const { percent } = pointData
+    return computePoolPoint(calculateScore, percent)
+  }, [calculateScore, pointData])
 
   useEffect(() => {
     if (!floorPriceData) return
@@ -357,34 +495,32 @@ const Create = () => {
 
   // 基础利率
   const baseRate = useMemo(() => {
-    const cKey = `${selectTenorKey}-${selectCollateralKey}`
+    const cKey = `${tenorKey}-${collateralKey}`
     return BigNumber(BASE_RATE.get(cKey) as number)
-  }, [selectCollateralKey, selectTenorKey])
+  }, [collateralKey, tenorKey])
 
   // 基础利率 * power
   const baseRatePower = useMemo(() => {
     return baseRate
-      .multipliedBy(RATE_POWER_MAP.get(interestPower) as number)
+      .multipliedBy(RATE_POWER_MAP.get(interestPowerKey) as number)
       .integerValue(BigNumber.ROUND_UP)
-  }, [baseRate, interestPower])
+  }, [baseRate, interestPowerKey])
 
   const currentCollaterals = useMemo(
-    () => slice(COLLATERAL_VALUES, 0, selectCollateralKey + 1),
-    [selectCollateralKey],
+    () => slice(COLLATERAL_VALUES, 0, collateralKey + 1),
+    [collateralKey],
   )
   const currentTenors = useMemo(
-    () => slice(TENOR_VALUES, 0, selectTenorKey + 1),
-    [selectTenorKey],
+    () => slice(TENOR_VALUES, 0, tenorKey + 1),
+    [tenorKey],
   )
 
   const tableData = useMemo(() => {
-    const rowCount = selectCollateralKey + 1
-    const colCount = selectTenorKey + 1
+    const rowCount = collateralKey + 1
+    const colCount = tenorKey + 1
     const arr = new Array(rowCount)
-    const sliderBottomValue = BOTTOM_RATE_POWER_MAP.get(
-      sliderBottomKey,
-    ) as number
-    const sliderRightValue = RIGHT_RATE_POWER_MAP.get(sliderRightKey) as number
+    const sliderBottomValue = TERM_POWER_MAP.get(termPowerKey) as number
+    const sliderRightValue = RATIO_POWER_MAP.get(ratioPowerKey) as number
     for (let i = 0; i < rowCount; i++) {
       const forMapArr = range(colCount)
       arr[i] = forMapArr.map((item) => {
@@ -398,13 +534,7 @@ const Create = () => {
       })
     }
     return arr
-  }, [
-    baseRatePower,
-    sliderBottomKey,
-    selectCollateralKey,
-    selectTenorKey,
-    sliderRightKey,
-  ])
+  }, [baseRatePower, termPowerKey, collateralKey, tenorKey, ratioPowerKey])
 
   const collectionSelectorProps = useMemo(
     () => ({
@@ -447,18 +577,16 @@ const Create = () => {
             pool_id,
             pool_amount.toString(),
             eth2Wei(maxSingleLoanAmount)?.toString(),
-            COLLATERAL_MAP.get(selectCollateralKey)?.toString(),
-            TENOR_MAP.get(selectTenorKey)?.toString(),
+            COLLATERAL_MAP.get(collateralKey)?.toString(),
+            TENOR_MAP.get(tenorKey)?.toString(),
             baseRatePower.toString(),
-            (
-              (RIGHT_RATE_POWER_MAP.get(sliderRightKey) as number) * 10000
-            ).toString(),
-            (
-              (BOTTOM_RATE_POWER_MAP.get(sliderBottomKey) as number) * 10000
-            ).toString(),
+            ((RATIO_POWER_MAP.get(ratioPowerKey) as number) * 10000).toString(),
+            ((TERM_POWER_MAP.get(termPowerKey) as number) * 10000).toString(),
           )
           .send({
             from: currentAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null,
           })
 
         setTimeout(() => {
@@ -477,14 +605,14 @@ const Create = () => {
     })
   }, [
     state,
-    sliderBottomKey,
-    sliderRightKey,
+    termPowerKey,
+    ratioPowerKey,
     baseRatePower,
     maxSingleLoanAmount,
     toast,
     toastError,
-    selectTenorKey,
-    selectCollateralKey,
+    tenorKey,
+    collateralKey,
     interceptFn,
     currentAccount,
     navigate,
@@ -492,22 +620,23 @@ const Create = () => {
 
   const isChanged = useMemo(() => {
     return !isEqual(initialItems, {
-      collateralKey: selectCollateralKey,
-      tenorKey: selectTenorKey,
-      ratePowerKey: interestPower,
-      rightFlex: sliderRightKey,
-      bottomFlex: sliderBottomKey,
+      collateralKey: collateralKey,
+      tenorKey: tenorKey,
+      ratePowerKey: interestPowerKey,
+      rightFlex: ratioPowerKey,
+      bottomFlex: termPowerKey,
       maximum_loan_amount: maxSingleLoanAmount,
     })
   }, [
     maxSingleLoanAmount,
     initialItems,
-    selectCollateralKey,
-    selectTenorKey,
-    interestPower,
-    sliderBottomKey,
-    sliderRightKey,
+    collateralKey,
+    tenorKey,
+    interestPowerKey,
+    termPowerKey,
+    ratioPowerKey,
   ])
+  console.log('score', calculateScore?.toNumber())
 
   if (!params || !['edit', 'create'].includes(params?.action)) {
     return <NotFound />
@@ -526,7 +655,25 @@ const Create = () => {
           sm: '10px',
           xs: '10px',
         }}
+        position={'relative'}
       >
+        <Box
+          position={'fixed'}
+          top={{
+            md: '260px',
+            sm: '100px',
+            xs: '100px',
+          }}
+          zIndex={2}
+          right={0}
+          bg='white'
+          borderRadius={8}
+          boxShadow={'0px 4px 12px #F3F6F9'}
+          py='8px'
+          // px='10px'
+        >
+          <ScoreChart data={currentPoolPoint} />
+        </Box>
         <Heading
           fontSize={{
             md: '40px',
@@ -541,7 +688,7 @@ const Create = () => {
           <Text
             color='gray.3'
             w={{
-              md: '75%',
+              md: '65%',
               sm: '95%',
               xs: '95%',
             }}
@@ -560,7 +707,10 @@ const Create = () => {
         position={'relative'}
       >
         {/* collection */}
-        <LoadingComponent loading={loading || updating} top={0} />
+        <LoadingComponent
+          loading={loading || updating || configLoading || poolPointLoading}
+          top={0}
+        />
         <Wrapper stepIndex={1}>
           <Box>
             <Box
@@ -647,43 +797,17 @@ const Create = () => {
             description={`It will determine the highest percentage of the single loan value against the valuation of the NFT collateral at the time of the transaction.\nIn case of borrower default, you can obtain collateral. It's equivalent to buying NFT at a discounted price based on the loan amount you provide.`}
           >
             <SliderWrapper
-              // extraTip={
-              //   !isEmpty(selectCollection) ? (
-              //     <Flex
-              //       bg='white'
-              //       fontSize={'14px'}
-              //       borderRadius={2}
-              //       justify={'flex-start'}
-              //       alignItems={'center'}
-              //       fontWeight={'700'}
-              //       color='gray.3'
-              //       px='12px'
-              //       py='10px'
-              //       w='max-content'
-              //       lineHeight={'18px'}
-              //     >
-              //       current maximum loan amount:
-              //       <SvgComponent svgId='icon-eth' fill='gray.3' />
-              //       {(selectCollection.nftCollection.nftCollectionStat
-              //         .floorPrice *
-              //         (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
-              //         10000}
-              //     </Flex>
-              //   ) : null
-              // }
               unit='%'
-              value={selectCollateralKey}
+              value={collateralKey}
               svgId='icon-intersect'
               defaultValue={initialItems?.collateralKey}
               data={COLLATERAL_KEYS}
               min={COLLATERAL_KEYS[0]}
               max={COLLATERAL_KEYS[COLLATERAL_KEYS.length - 1]}
               step={1}
-              label={`${
-                (COLLATERAL_MAP.get(selectCollateralKey) as number) / 100
-              }`}
+              label={`${(COLLATERAL_MAP.get(collateralKey) as number) / 100}`}
               onChange={(target) => {
-                setSelectCollateralKey(target)
+                setCollateralKey(target)
               }}
             />
           </SecondaryWrapper>
@@ -751,108 +875,20 @@ const Create = () => {
 
           {/* {isEmpty(params) ? <InputSearch /> : params.collectionId} */}
         </Flex>
-        {/* <Wrapper stepIndex={2}>
-          <Box>
-            <SliderWrapper
-              // extraTip={
-              //   !isEmpty(selectCollection) ? (
-              //     <Flex
-              //       bg='white'
-              //       fontSize={'14px'}
-              //       borderRadius={2}
-              //       justify={'flex-start'}
-              //       alignItems={'center'}
-              //       fontWeight={'700'}
-              //       color='gray.3'
-              //       px='12px'
-              //       py='10px'
-              //       w='max-content'
-              //       lineHeight={'18px'}
-              //     >
-              //       current maximum loan amount:
-              //       <SvgComponent svgId='icon-eth' fill='gray.3' />
-              //       {(selectCollection.nftCollection.nftCollectionStat
-              //         .floorPrice *
-              //         (COLLATERAL_MAP.get(selectCollateralKey) as number)) /
-              //         10000}
-              //     </Flex>
-              //   ) : null
-              // }
-              unit='%'
-              value={selectCollateralKey}
-              svgId='icon-intersect'
-              defaultValue={initialItems?.collateralKey}
-              data={COLLATERAL_KEYS}
-              min={COLLATERAL_KEYS[0]}
-              max={COLLATERAL_KEYS[COLLATERAL_KEYS.length - 1]}
-              step={1}
-              label={`${
-                (COLLATERAL_MAP.get(selectCollateralKey) as number) / 100
-              }`}
-              onChange={(target) => {
-                setSelectCollateralKey(target)
-              }}
-            />
-
-            <Tooltip
-              label={!!selectCollection ? '' : 'Please select collection'}
-            >
-              <InputGroup w='484px' mt='24px'>
-                <InputLeftElement
-                  pointerEvents='none'
-                  color='gray.300'
-                  fontSize='1.2em'
-                  top='12px'
-                >
-                  <SvgComponent svgId='icon-eth' fill={'black.1'} />
-                </InputLeftElement>
-                <CustomNumberInput
-                  isDisabled={!selectCollection}
-                  value={maxSingleLoanAmount || ''}
-                  isInvalid={maxSingleLoanAmountStatus?.status === 'error'}
-                  // lineHeight='60px'
-                  placeholder='Please enter amount...'
-                  onSetValue={(v) => setMaxSingleLoanAmount(v)}
-                  px={'32px'}
-                />
-
-                {maxSingleLoanAmountStatus?.status === 'error' && (
-                  <InputRightElement top='14px' mr='8px'>
-                    <SvgComponent svgId='icon-error' svgSize='24px' />
-                  </InputRightElement>
-                )}
-              </InputGroup>
-            </Tooltip>
-
-            {!!maxSingleLoanAmountStatus && (
-              <Text
-                mt='12px'
-                color={
-                  maxSingleLoanAmountStatus?.status === 'error'
-                    ? 'red.1'
-                    : 'orange.1'
-                }
-                fontSize={'14px'}
-              >
-                {maxSingleLoanAmountStatus.message}
-              </Text>
-            )}
-          </Box>
-        </Wrapper> */}
         {/* 贷款天数 tenor */}
         <Wrapper stepIndex={3}>
           <SliderWrapper
             unit='days'
-            value={selectTenorKey}
+            value={tenorKey}
             defaultValue={initialItems?.tenorKey}
             data={TENOR_KEYS}
             svgId='icon-calendar'
             min={TENOR_KEYS[0]}
             max={TENOR_KEYS[TENOR_KEYS.length - 1]}
             step={1}
-            label={`${TENOR_MAP.get(selectTenorKey)}`}
+            label={`${TENOR_MAP.get(tenorKey)}`}
             onChange={(target) => {
-              setSelectTenorKey(target)
+              setTenorKey(target)
             }}
           />
         </Wrapper>
@@ -860,15 +896,15 @@ const Create = () => {
         <Wrapper stepIndex={4}>
           <SliderWrapper
             unit='%'
-            value={interestPower}
-            defaultValue={initialItems?.ratePowerKey}
+            value={interestPowerKey}
+            defaultValue={initialItems?.interestPowerKey}
             data={RATE_POWER_KEYS}
             min={RATE_POWER_KEYS[0]}
             max={RATE_POWER_KEYS[RATE_POWER_KEYS.length - 1]}
             step={1}
             label={`${baseRatePower.dividedBy(100).toFixed(2)}`}
             onChange={(target) => {
-              setInterestPower(target)
+              setInterestPowerKey(target)
             }}
             svgId='icon-intersect'
           />
@@ -910,7 +946,7 @@ const Create = () => {
               ].map((item, i) => (
                 <Flex
                   key={item}
-                  w={`${(1 / (selectTenorKey + 1 || 1)) * 100}%`}
+                  w={`${(1 / (tenorKey + 1 || 1)) * 100}%`}
                   alignItems={'center'}
                   justify='center'
                   h={'40px'}
@@ -959,7 +995,7 @@ const Create = () => {
                           sm: '35px',
                           xs: '35px',
                         }}
-                        w={`${(1 / (selectTenorKey + 1 || 1)) * 100}%`}
+                        w={`${(1 / (tenorKey + 1 || 1)) * 100}%`}
                       >
                         {i === 0 ? (
                           <Text
@@ -1019,13 +1055,13 @@ const Create = () => {
           >
             <Slider
               orientation='vertical'
-              defaultValue={initialItems?.rightFlex}
-              min={RIGHT_RATE_POWER_KEYS[0]}
-              max={RIGHT_RATE_POWER_KEYS[RIGHT_RATE_POWER_KEYS.length - 1]}
+              defaultValue={initialItems?.ratioPowerKey}
+              min={RATIO_POWER_KEYS[0]}
+              max={RATIO_POWER_KEYS[RATIO_POWER_KEYS.length - 1]}
               h='132px'
               step={1}
               onChange={(target) => {
-                setSliderRightKey(target)
+                setRatioPowerKey(target)
               }}
             >
               <SliderTrack bg={`gray.1`}>
@@ -1077,13 +1113,13 @@ const Create = () => {
 
           <Flex hidden={!showFlexibility} justify={'center'} mt='20px'>
             <Slider
-              min={BOTTOM_RATE_POWER_KEYS[0]}
-              max={BOTTOM_RATE_POWER_KEYS[BOTTOM_RATE_POWER_KEYS.length - 1]}
+              min={TERM_POWER_KEYS[0]}
+              max={TERM_POWER_KEYS[TERM_POWER_KEYS.length - 1]}
               w='140px'
               step={1}
-              defaultValue={initialItems?.bottomFlex}
+              defaultValue={initialItems?.termPowerKey}
               onChange={(target) => {
-                setSliderBottomKey(target)
+                setTermPowerKey(target)
               }}
             >
               <SliderTrack bg={`gray.1`}>
@@ -1156,20 +1192,20 @@ const Create = () => {
             }
             data={{
               poolMaximumPercentage: COLLATERAL_MAP.get(
-                selectCollateralKey,
+                collateralKey,
               ) as number,
-              poolMaximumDays: TENOR_MAP.get(selectTenorKey) as number,
+              poolMaximumDays: TENOR_MAP.get(tenorKey) as number,
               allowCollateralContract:
                 selectCollection?.contractAddress as string,
               floorPrice: floorPrice as number,
               poolMaximumInterestRate: BigNumber(baseRatePower)
                 .integerValue()
                 .toNumber(),
-              loanRatioPreferentialFlexibility: RIGHT_RATE_POWER_MAP.get(
-                sliderRightKey,
+              loanRatioPreferentialFlexibility: RATIO_POWER_MAP.get(
+                ratioPowerKey,
               ) as number,
-              loanTimeConcessionFlexibility: BOTTOM_RATE_POWER_MAP.get(
-                sliderBottomKey,
+              loanTimeConcessionFlexibility: TERM_POWER_MAP.get(
+                termPowerKey,
               ) as number,
               maxSingleLoanAmount: maxSingleLoanAmount as string,
             }}
