@@ -800,11 +800,7 @@ const MyAssetNftListCard: FunctionComponent<
                 xs: '20px',
               }}
             >
-              {!!loanError ||
-              !!collectionError ||
-              (!loanData && !fetchInfoLoading) ||
-              ((!floorPriceData || isEmpty(floorPriceData)) &&
-                !floorPriceLoading) ? (
+              {!!loanError || !!collectionError ? (
                 <Flex px='40px' pb='40px'>
                   <Alert
                     px={'40px'}
