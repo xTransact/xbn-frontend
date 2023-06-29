@@ -337,13 +337,11 @@ const Create = () => {
   }, [initialItems])
 
   const { loading: poolPointLoading, data: pointData } = useRequest(
-    apiGetPoolPoints,
+    () =>
+      apiGetPoolPoints({
+        contract_address: selectCollection?.contractAddress || '',
+      }),
     {
-      defaultParams: [
-        {
-          contract_address: selectCollection?.contractAddress || '',
-        },
-      ],
       ready: !!selectCollection,
       refreshDeps: [selectCollection],
     },

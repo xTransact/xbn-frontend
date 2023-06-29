@@ -278,7 +278,6 @@ export type NftCollection = Node & {
   imageThumbnailUrl: Scalars['String']
   imageUrl: Scalars['String']
   instagramUsername: Scalars['String']
-  isCreatorFeesEnforced: Scalars['Boolean']
   largeImageUrl: Scalars['String']
   mediumUsername: Scalars['String']
   name: Scalars['String']
@@ -1146,7 +1145,6 @@ export type NftCollectionsByContractAddressesQuery = {
           twitterUsername: string
           updatedAt: any
           wikiUrl: string
-          isCreatorFeesEnforced: boolean
           fees?:
             | {
                 __typename?: 'NFTCollectionFee'
@@ -1986,7 +1984,6 @@ export const NftCollectionsByContractAddressesDocument = gql`
           subscribe
           subscribeCount
         }
-        isCreatorFeesEnforced
       }
     }
   }
