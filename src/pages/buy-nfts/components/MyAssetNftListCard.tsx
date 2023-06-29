@@ -252,29 +252,33 @@ const MyAssetNftListCard: FunctionComponent<
     setPrice(undefined)
     setDurationValue(undefined)
   }, [type])
-  const { loading: getListingLoading } = useRequest(apiGetListings, {
-    ready: type === 'cancel' && !!contractData,
-    onSuccess(lData) {
-      if (!lData || !lData?.length) {
-        setLastCancelDiffTime(Infinity)
-        return
-      }
-      const latestCancelDate = lData[0].updated_at
-      const diff = dayjs().diff(dayjs(latestCancelDate), 'minutes')
-      setLastCancelDiffTime(diff)
-    },
-    onError() {
-      setLastCancelDiffTime(Infinity)
-    },
-    defaultParams: [
-      {
+  const { loading: getListingLoading } = useRequest(
+    () =>
+      apiGetListings({
         borrower_address: currentAccount,
         token_id: contractData?.token_id || '',
         contract_address: contractData?.asset_contract_address || '',
+        type: 2,
+        status: 4096,
+      }),
+    {
+      ready: type === 'cancel' && !!contractData,
+      onSuccess(lData) {
+        if (!lData || !lData?.length) {
+          setLastCancelDiffTime(Infinity)
+          return
+        }
+        const latestCancelDate = lData[0].updated_at
+        const diff = dayjs().diff(dayjs(latestCancelDate), 'minutes')
+        setLastCancelDiffTime(diff)
       },
-    ],
-    refreshDeps: [currentAccount, contractData],
-  })
+      onError() {
+        setLastCancelDiffTime(Infinity)
+      },
+
+      refreshDeps: [currentAccount, contractData],
+    },
+  )
 
   const {
     loading: collectionLoading,
