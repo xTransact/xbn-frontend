@@ -150,31 +150,17 @@ const Lend = () => {
    * 进入页面 fetch all pools => for 'Collections Tab'
    * filter owner_address === currentAccount => for 'My Pools Tab'
    *  */
-  const [myPoolsData, setMyPoolsData] = useState<PoolsListItemType[]>([])
   const [allPoolsData, setAllPoolsData] = useState<PoolsListItemType[]>([])
-  const { loading: poolsLoading, refreshAsync: refreshMyPools } = useRequest(
-    apiGetPools,
-    {
-      onSuccess: (data) => {
-        if (isEmpty(data)) {
-          return
-        }
-        setAllPoolsData(data)
-        if (!currentAccount) {
-          setMyPoolsData([])
-          return
-        }
-        setMyPoolsData(
-          data.filter(
-            (i) =>
-              i.owner_address.toLowerCase() === currentAccount.toLowerCase(),
-          ),
-        )
-      },
-      refreshDeps: [currentAccount],
-      debounceWait: 10,
+  const { loading: poolsLoading1 } = useRequest(apiGetPools, {
+    onSuccess: (data) => {
+      if (isEmpty(data)) {
+        return
+      }
+      setAllPoolsData(data)
     },
-  )
+    ready: tabKey === TAB_KEY.COLLECTION_TAB,
+    debounceWait: 10,
+  })
 
   /**
    * Collection Tab
@@ -262,6 +248,21 @@ const Lend = () => {
    * My Pools Tab
    * 1. myPoolsData append collection info
    */
+  const [myPoolsData, setMyPoolsData] = useState<PoolsListItemType[]>([])
+  const { loading: poolsLoading2, refreshAsync: refreshMyPools } = useRequest(
+    () =>
+      apiGetPools({
+        owner_address: currentAccount,
+      }),
+    {
+      ready: !!currentAccount && tabKey === TAB_KEY.MY_POOLS_TAB,
+      debounceWait: 10,
+      refreshDeps: [currentAccount],
+      onSuccess: (data) => {
+        setMyPoolsData(data || [])
+      },
+    },
+  )
   const poolList = useMemo(() => {
     if (!myPoolsData) return []
     return myPoolsData?.map((item) => {
@@ -348,7 +349,7 @@ const Lend = () => {
           setTotalLoanCount(data?.length)
         }
       },
-      ready: !!currentAccount,
+      ready: !!currentAccount && tabKey === TAB_KEY.LOANS_TAB,
       refreshDeps: [selectKeyForOpenLoans, currentAccount],
       debounceWait: 100,
     },
@@ -899,7 +900,7 @@ const Lend = () => {
         <TabPanels>
           <TabPanel p={0} pb='20px'>
             <MyTable
-              loading={poolsLoading || collectionLoading}
+              loading={poolsLoading1 || collectionLoading}
               columns={activeCollectionColumns}
               data={filteredActiveCollectionList || []}
               emptyRender={() => {
@@ -925,7 +926,7 @@ const Lend = () => {
           </TabPanel>
           <TabPanel p={0} pb='20px'>
             <MyTable
-              loading={poolsLoading || collectionLoading}
+              loading={poolsLoading2 || collectionLoading}
               columns={myPoolsColumns}
               data={filteredPoolList || []}
               emptyRender={() => {
@@ -985,11 +986,11 @@ const Lend = () => {
 
                 <List spacing='16px' mt='16px' position='relative'>
                   <LoadingComponent
-                    loading={poolsLoading || collectionLoading}
+                    loading={poolsLoading2 || collectionLoading}
                     top={0}
                   />
                   {isEmpty(filteredPoolCollectionList) &&
-                    !poolsLoading &&
+                    !poolsLoading2 &&
                     !collectionLoading && <EmptyComponent />}
                   {!isEmpty(filteredPoolCollectionList) && (
                     <Flex
@@ -1204,12 +1205,12 @@ const Lend = () => {
 
             <List spacing={'16px'} position='relative' mt='16px'>
               <LoadingComponent
-                loading={poolsLoading || collectionLoading}
+                loading={poolsLoading2 || collectionLoading}
                 top={0}
                 borderRadius={8}
               />
               {isEmpty(filteredPoolCollectionList) &&
-                !poolsLoading &&
+                !poolsLoading2 &&
                 !collectionLoading && <EmptyComponent />}
               {!isEmpty(filteredPoolCollectionList) && (
                 <Flex

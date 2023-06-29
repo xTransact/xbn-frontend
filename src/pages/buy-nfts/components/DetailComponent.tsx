@@ -16,7 +16,7 @@ import type { FunctionComponent } from 'react'
 const DetailComponent: FunctionComponent<
   BoxProps & {
     data: {
-      name1: string
+      name1?: string
       name2?: string
       price?: number
       verified: boolean
@@ -50,7 +50,7 @@ const DetailComponent: FunctionComponent<
       {/* 名称*/}
       <Flex alignItems={'baseline'}>
         <Text fontWeight={'500'} noOfLines={1}>
-          {name1}
+          {name1 || '--'}
         </Text>
         {verified && <SvgComponent svgId='icon-verified-fill' />}
       </Flex>

@@ -8,9 +8,9 @@ import { formatFloat } from '@/utils/format'
 const BelongToCollection: FunctionComponent<
   BoxProps & {
     data: {
-      name: string
-      imagePreviewUrl: string
-      safelistRequestStatus: string
+      name?: string
+      imagePreviewUrl?: string
+      safelistRequestStatus?: string
       floorPrice?: number
     }
   }
