@@ -11,12 +11,23 @@ import {
   Heading,
   Tag,
   type TabProps,
+  AlertDescription,
+  Alert,
+  AlertIcon,
+  AlertTitle,
 } from '@chakra-ui/react'
+import { useLocalStorageState } from 'ahooks'
 import useRequest from 'ahooks/lib/useRequest'
 import dayjs from 'dayjs'
 // import etherscanapi from 'etherscan-api'
 import isEmpty from 'lodash-es/isEmpty'
-import { useEffect, useMemo, useState, type FunctionComponent } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type FunctionComponent,
+  useCallback,
+} from 'react'
 // import Joyride from 'react-joyride'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -29,12 +40,17 @@ import {
   type ColumnProps,
   NotFound,
   EthText,
+  Pagination,
 } from '@/components'
 import { RESPONSIVE_MAX_W, LOAN_ORDER_STATUS } from '@/constants'
 import { useBatchAsset, useWallet } from '@/hooks'
+import useAuth from '@/hooks/useAuth'
 import RootLayout from '@/layouts/RootLayout'
+import type { UserTokenType } from '@/utils/auth'
+import { clearUserToken, getUserToken } from '@/utils/auth'
 import { formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
+import { uniq } from '@/utils/utils'
 
 enum TAB_KEY {
   LOAN_TAB = 0,
@@ -100,50 +116,97 @@ const History = () => {
     type: 'sale' | 'loan' | 'repay'
   }
   const navigate = useNavigate()
+  const [isDenied, setIsDenied] = useState(false)
+  const { runAsync } = useAuth()
 
-  const { data: loanData, loading: loanLoading } = useRequest(
-    () =>
-      apiGetLoanOrder({
-        borrower_address: currentAccount,
-      }),
+  const handleSign = useCallback(async () => {
+    clearUserToken()
+    try {
+      await runAsync(currentAccount)
+      setIsDenied(false)
+    } catch (e: any) {
+      if (e.code === -32603) {
+        // 用户拒绝签名
+        setIsDenied(true)
+      }
+    }
+  }, [runAsync, currentAccount])
+
+  const { runAsync: runSignAsync, loading: signLoading } = useRequest(
+    handleSign,
     {
-      ready: tabKey === TAB_KEY.LOAN_TAB && !!currentAccount,
-      refreshDeps: [currentAccount],
+      manual: true,
     },
   )
+  const [userToken] = useLocalStorageState<UserTokenType>('auth')
+
+  const [loanPage, setLoanPage] = useState<number>(1)
+  const {
+    data: loanData,
+    loading: loanLoading,
+    runAsync: fetchLoanData,
+  } = useRequest(apiGetLoanOrder, {
+    manual: true,
+  })
+
+  const sortedLoanData = useMemo(() => {
+    if (!loanData) return []
+    if (isEmpty(loanData)) return []
+    return loanData?.sort(
+      (a, b) => -dayjs(a.created_at).unix() + dayjs(b.created_at).unix(),
+    )
+  }, [loanData])
+
+  const currentLoanData = useMemo(() => {
+    return sortedLoanData.slice((loanPage - 1) * 10, loanPage * 10)
+  }, [loanPage, sortedLoanData])
 
   const batchAssetParamsForLoan = useMemo(() => {
     return []
     if (!loanData) return []
     if (isEmpty(loanData)) return []
-    return loanData?.map((i) => ({
+    const res = loanData?.map((i) => ({
       assetContractAddress: '',
       assetTokenId: i.nft_collateral_id,
     }))
+    return uniq(res || [])
   }, [loanData])
   const {
     data: loanAssetsData,
     // loading: loanAssetLoading
   } = useBatchAsset(batchAssetParamsForLoan)
 
-  const { data: listData, loading: listLoading } = useRequest(
-    () =>
-      apiGetListings({
-        borrower_address: currentAccount,
-      }),
-    {
-      ready: tabKey === TAB_KEY.SALE_TAB && !!currentAccount && false,
-    },
-  )
+  const [listPage, setListPage] = useState<number>(1)
+  const {
+    data: listData,
+    loading: listLoading,
+    runAsync: fetchListData,
+  } = useRequest(apiGetListings, {
+    ready: tabKey === TAB_KEY.SALE_TAB && !!currentAccount && false,
+    manual: true,
+  })
 
-  const batchAssetParamsForList = useMemo(() => {
-    return []
+  const sortedListData = useMemo(() => {
     if (!listData) return []
     if (isEmpty(listData)) return []
-    return listData?.map((i) => ({
+    return listData?.sort(
+      (a, b) => -dayjs(a.created_at).unix() + dayjs(b.created_at).unix(),
+    )
+  }, [listData])
+
+  const currentListData = useMemo(() => {
+    return sortedListData.slice(listPage - 1, listPage * 10)
+  }, [listPage, sortedListData])
+
+  const batchAssetParamsForList = useMemo(() => {
+    if (!listData) return []
+    if (isEmpty(listData)) return []
+    return []
+    const res = listData?.map((i) => ({
       assetContractAddress: i.contract_address,
       assetTokenId: i.token_id,
     }))
+    return uniq(res || [])
   }, [listData])
   const {
     data: listAssetsData,
@@ -153,6 +216,8 @@ const History = () => {
   useEffect(() => {
     interceptFn(() => {
       const { type } = params
+      setLoanPage(1)
+      setListPage(1)
       setTabKey(() => {
         switch (type) {
           case 'loan':
@@ -167,6 +232,55 @@ const History = () => {
       })
     })
   }, [params, interceptFn])
+  useEffect(() => {
+    if (
+      !fetchLoanData ||
+      !currentAccount ||
+      isDenied ||
+      userToken?.address !== currentAccount ||
+      !runSignAsync
+    ) {
+      return
+    }
+    if (tabKey === TAB_KEY.LOAN_TAB) {
+      fetchLoanData({
+        borrower_address: currentAccount,
+      }).catch(async (error) => {
+        if (error.code === 'unauthenticated') {
+          // 未能签名
+          await runSignAsync()
+          setTimeout(() => {
+            fetchLoanData({
+              borrower_address: currentAccount,
+            })
+          }, 1000)
+        }
+      })
+    }
+    if (tabKey === TAB_KEY.SALE_TAB) {
+      fetchListData({
+        borrower_address: currentAccount,
+      }).catch(async (error) => {
+        if (error.code === 'unauthenticated') {
+          // 未能签名
+          await runSignAsync()
+          setTimeout(() => {
+            fetchListData({
+              borrower_address: currentAccount,
+            })
+          }, 1000)
+        }
+      })
+    }
+  }, [
+    currentAccount,
+    isDenied,
+    fetchLoanData,
+    fetchListData,
+    runSignAsync,
+    userToken,
+    tabKey,
+  ])
 
   const loanColumns: ColumnProps[] = useMemo(() => {
     return [
@@ -446,7 +560,11 @@ const History = () => {
         thAlign: 'right',
         key: 'expiration_time',
         render: (value: any, info: any) => {
-          const diffDays = dayjs(value).diff(dayjs(info.created_at), 'days')
+          const diffDays = dayjs(value).diff(
+            dayjs(info.created_at),
+            'days',
+            true,
+          )
           // 用 到期时间 - 创建时间 = 天数
           return <Text>{diffDays} days</Text>
         },
@@ -514,85 +632,159 @@ const History = () => {
           fetch
         </Button>
       </Box>
-      <Tabs
-        pb='40px'
-        isLazy
-        index={tabKey}
-        position='relative'
-        onChange={(key) => {
-          switch (key) {
-            case 0:
-              navigate('/history/loan')
-              break
-            case 1:
-              navigate('/history/repay')
-              break
-            case 2:
-              navigate('/history/sale')
-              break
-
-            default:
-              break
-          }
-        }}
-      >
-        <TabList
-          _active={{
-            color: 'blue.1',
-            fontWeight: 'bold',
-          }}
-          position='sticky'
-          top={{ md: '131px', sm: '131px', xs: '107px' }}
-          bg='white'
-          zIndex={2}
+      {isDenied || !getUserToken() ? (
+        <Alert
+          px={'40px'}
+          status='error'
+          variant='subtle'
+          flexDirection='column'
+          alignItems='center'
+          justifyContent='center'
+          textAlign='center'
+          height='200px'
         >
-          <TabWrapper count={loanData?.length}>Loan</TabWrapper>
-          <TabWrapper hidden>Repay</TabWrapper>
-          <TabWrapper>Sale</TabWrapper>
-        </TabList>
-
-        <TabPanels>
-          <TabPanel p={0} pb='20px'>
-            <MyTable
-              loading={loanLoading}
-              columns={loanColumns}
-              data={(loanData || []).sort(
-                (a, b) =>
-                  -dayjs(a.created_at).unix() + dayjs(b.created_at).unix(),
-              )}
-              emptyRender={() => {
-                return (
-                  <EmptyComponent
-                    action={() => {
-                      return (
-                        <Button
-                          variant={'secondary'}
-                          minW='200px'
-                          onClick={() =>
-                            interceptFn(() => navigate('/buy-nfts/market'))
-                          }
-                        >
-                          + Buy NFTs Pay Later
-                        </Button>
-                      )
-                    }}
-                  />
-                )
+          <AlertIcon boxSize='40px' mr={0} />
+          <AlertTitle mt={4} mb={1} fontSize='lg'>
+            Please click to sign in and accept the xBank Terms of Service
+          </AlertTitle>
+          <AlertDescription>
+            <Button
+              mt='20px'
+              onClick={async () => {
+                if (signLoading) return
+                await runSignAsync()
+                if (tabKey === TAB_KEY.LOAN_TAB) {
+                  setTimeout(() => {
+                    fetchLoanData({
+                      borrower_address: currentAccount,
+                    })
+                  }, 1000)
+                }
+                if (tabKey === TAB_KEY.SALE_TAB) {
+                  setTimeout(() => {
+                    fetchListData({
+                      borrower_address: currentAccount,
+                    })
+                  }, 1000)
+                }
               }}
-            />
-          </TabPanel>
-          <TabPanel p={0} pb='20px' hidden>
-            <MyTable columns={repayColumns} data={[]} />
-          </TabPanel>
-          <TabPanel p={0} pb='20px'>
-            <MyTable
-              columns={saleColumns}
-              data={listData || []}
-              loading={listLoading}
-            />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+              variant={'outline'}
+              isDisabled={signLoading}
+              isLoading={signLoading}
+            >
+              Click to Sign
+            </Button>
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <Tabs
+          pb='40px'
+          isLazy
+          index={tabKey}
+          position='relative'
+          onChange={(key) => {
+            switch (key) {
+              case 0:
+                navigate('/history/loan')
+                break
+              case 1:
+                navigate('/history/repay')
+                break
+              case 2:
+                navigate('/history/sale')
+                break
+
+              default:
+                break
+            }
+          }}
+        >
+          <TabList
+            _active={{
+              color: 'blue.1',
+              fontWeight: 'bold',
+            }}
+            position='sticky'
+            top={{ md: '131px', sm: '131px', xs: '107px' }}
+            bg='white'
+            zIndex={2}
+          >
+            <TabWrapper count={loanData?.length}>Loan</TabWrapper>
+            <TabWrapper hidden>Repay</TabWrapper>
+            <TabWrapper>Sale</TabWrapper>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel p={0} pb='20px'>
+              <MyTable
+                loading={loanLoading}
+                columns={loanColumns}
+                data={currentLoanData}
+                emptyRender={() => {
+                  return (
+                    <EmptyComponent
+                      action={() => {
+                        return (
+                          <Button
+                            variant={'secondary'}
+                            minW='200px'
+                            onClick={() =>
+                              interceptFn(() => navigate('/buy-nfts/market'))
+                            }
+                          >
+                            + Buy NFTs Pay Later
+                          </Button>
+                        )
+                      }}
+                    />
+                  )
+                }}
+              />
+              <Flex justify={'center'} mt='24px'>
+                <Pagination
+                  total={loanData?.length}
+                  pageSize={10}
+                  onChange={(page) => {
+                    console.log('aaa', page)
+                    if (loanPage === page) return
+                    setLoanPage(page)
+                  }}
+                  current={loanPage}
+                  style={{
+                    display:
+                      loanData && loanData?.length > 10 ? 'flex' : 'none',
+                  }}
+                />
+              </Flex>
+            </TabPanel>
+            <TabPanel p={0} pb='20px' hidden>
+              <MyTable columns={repayColumns} data={[]} />
+            </TabPanel>
+            <TabPanel p={0} pb='20px'>
+              <MyTable
+                columns={saleColumns}
+                data={currentListData}
+                loading={listLoading}
+              />
+              <Flex justify={'center'} mt='24px'>
+                <Pagination
+                  total={listData?.length}
+                  pageSize={10}
+                  onChange={(page) => {
+                    if (listPage === page) return
+                    setListPage(page)
+                  }}
+                  current={listPage}
+                  style={{
+                    display:
+                      listData && listData?.length > 10 ? 'flex' : 'none',
+                  }}
+                />
+              </Flex>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      )}
 
       <ConnectWalletModal visible={isOpen} handleClose={onClose} />
     </RootLayout>
