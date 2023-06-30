@@ -7,6 +7,7 @@ import type { FunctionComponent } from 'react'
 const index: FunctionComponent<PaginationProps> = ({
   total,
   defaultCurrent = 1,
+  onChange,
   ...rest
 }) => {
   return (
@@ -14,6 +15,14 @@ const index: FunctionComponent<PaginationProps> = ({
       className='ant-pagination'
       defaultCurrent={defaultCurrent}
       total={total}
+      onChange={(page, pageSize) => {
+        scroll({
+          top: 0,
+          left: 0,
+          behavior: 'smooth',
+        })
+        if (onChange) onChange(page, pageSize)
+      }}
       {...rest}
     />
   )
