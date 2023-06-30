@@ -195,7 +195,7 @@ const History = () => {
   }, [listData])
 
   const currentListData = useMemo(() => {
-    return sortedListData.slice(listPage - 1, listPage * 10)
+    return sortedListData.slice((listPage - 1) * 10, listPage * 10)
   }, [listPage, sortedListData])
 
   const batchAssetParamsForList = useMemo(() => {
