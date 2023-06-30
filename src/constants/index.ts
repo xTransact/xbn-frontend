@@ -83,12 +83,12 @@ export const STEPS_DESCRIPTIONS = [
     text: 'These two conditions can limit the amount of a loan, Your collection pool will use the smaller amount of these two conditions for lending.',
   },
   {
-    title: 'Set Maximum Loan Tenor',
-    text: 'It will determine the maximum duration of a single loan. As long as borrowers repay their loan at the end of the tenor, lenders cannot liquidate the loan positions.',
+    title: 'Set Max Loan Tenor',
+    text: 'It will determine the max duration of a single loan. As long as borrowers repay their loan at the end of the tenor, lenders cannot liquidate the loan positions.',
   },
   {
-    title: 'Set Maximum Interest Rate',
-    text: 'Please choose an interest rate you want under the conditions of the maximum loan duration and maximum loan amount, and we will automatically generate a Lending Offer Table for you. If you are not satisfied with the parameters in the table, you can fine-tune them.\nLower interest rate lending offers will lend out faster.',
+    title: 'Set Max Interest Rate',
+    text: 'Please choose an interest rate you want under the conditions of the max loan duration and max loan amount, and we will automatically generate a Lending Offer Table for you. If you are not satisfied with the parameters in the table, you can fine-tune them.\nLower interest rate lending offers will lend out faster.',
   },
 ]
 

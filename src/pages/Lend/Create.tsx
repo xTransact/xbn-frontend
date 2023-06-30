@@ -479,7 +479,7 @@ const Create = () => {
     if (NumberAmount <= 0) {
       return {
         status: 'error',
-        message: 'You must enter the maximum amount for a single loan',
+        message: 'You must enter the max amount for a single loan',
       }
     }
     if (floorPrice === undefined) return
@@ -563,7 +563,7 @@ const Create = () => {
         if (!maxSingleLoanAmount) {
           toast({
             status: 'error',
-            title: 'maximum single loan amount id required',
+            title: 'max single loan amount id required',
           })
           return
         }
@@ -793,7 +793,7 @@ const Create = () => {
             mb='16px'
           />
           <SecondaryWrapper
-            title='Set maximum collateral factor'
+            title='Set max collateral factor'
             description={`It will determine the highest percentage of the single loan value against the valuation of the NFT collateral at the time of the transaction.\nIn case of borrower default, you can obtain collateral. It's equivalent to buying NFT at a discounted price based on the loan amount you provide.`}
           >
             <SliderWrapper
@@ -813,8 +813,8 @@ const Create = () => {
           </SecondaryWrapper>
 
           <SecondaryWrapper
-            title='Set maximum single loan amount'
-            description={`It will determine the maximum amount of single loan that borrowers can take against this lending offer.\nIn case of borrower default, you can obtain collateral. It's equivalent to buying NFT at a discounted price based on the loan amount you provide.`}
+            title='Set max single loan amount'
+            description={`It will determine the max amount of single loan that borrowers can take against this lending offer.\nIn case of borrower default, you can obtain collateral. It's equivalent to buying NFT at a discounted price based on the loan amount you provide.`}
           >
             <Box>
               <Tooltip

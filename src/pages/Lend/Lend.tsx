@@ -548,7 +548,7 @@ const Lend = () => {
         ),
       },
       {
-        title: 'Maximum Loan Amount',
+        title: 'Max Loan Amount',
         dataIndex: 'maximum_loan_amount',
         key: 'maximum_loan_amount',
         align: 'center',

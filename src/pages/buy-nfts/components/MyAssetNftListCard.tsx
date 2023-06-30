@@ -950,7 +950,7 @@ const MyAssetNftListCard: FunctionComponent<
                           fontSize={'14px'}
                           fontWeight={'500'}
                         >
-                          Minimum input:&nbsp;
+                          Min input:&nbsp;
                           {minInput.toFormat(FORMAT_NUMBER)}
                           <br />
                           Price cannot be less than the outstanding loan amount
