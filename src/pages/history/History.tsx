@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import { unix } from 'dayjs'
-import etherscanapi from 'etherscan-api'
+// import etherscanapi from 'etherscan-api'
 import { useEffect, useMemo, useState, type FunctionComponent } from 'react'
 // import Joyride from 'react-joyride'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -32,11 +32,6 @@ import {
 import { RESPONSIVE_MAX_W, UNIT } from '@/constants'
 import { useWallet } from '@/hooks'
 import RootLayout from '@/layouts/RootLayout'
-import {
-  createWeb3Provider,
-  // createWethContract,
-  createXBankContract,
-} from '@/utils/createContract'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
@@ -46,7 +41,7 @@ enum TAB_KEY {
   SALE_TAB = 2,
 }
 
-const api = etherscanapi.init('', 'goerli')
+// const api = etherscanapi.init('', 'goerli')
 
 const TabWrapper: FunctionComponent<
   TabProps & {
@@ -375,69 +370,7 @@ const History = () => {
         <Text color='gray.3' fontWeight={'500'} fontSize={'20px'}>
           View and track all your loan activity history
         </Text>
-        <Button
-          variant={'primary'}
-          onClick={async () => {
-            const balance = api.account.txlist(
-              currentAccount,
-              1,
-              'latest',
-              1,
-              100,
-              'desc',
-            )
-
-            balance.then(function (balanceData: any) {
-              console.log(
-                balanceData.result.filter((i: any) => i.value !== '0'),
-              )
-            })
-            return
-            const xBankContract = createXBankContract()
-            // const wethContract = createWethContract()
-            const web3 = createWeb3Provider()
-            // const fromBlock = await web3.eth.getBlockNumber()
-
-            await xBankContract.getPastEvents(
-              'LoanPrepayment',
-              {
-                filter: {
-                  // src: '0xfbAC7b9ff473B1E4e6e31Ab70fA20aB4d30D05e5',
-                  //  myIndexedParam: [20, 23],
-                  //  myOtherIndexedParam: '0x123456789...',
-                }, // Using an array means OR: e.g. 20 or 23
-                fromBlock: 1,
-                toBlock: 'latest',
-              },
-              function (error: any, events: any) {
-                if (error) {
-                  console.log(error)
-                  return
-                }
-                console.log(events)
-              },
-            )
-            return
-
-            // 会返回区块生成的时间戳 timestamp
-            // web3.eth.getBlock(9207901, console.log)
-            // 会返回 status true 成功 false 失败
-            // web3.eth.getTransactionReceipt(
-            //   '0x7fc687424676d26fedf7bfafaf14f74207816c1486708f779fcc8bd59ac2d173',
-            //   console.log,
-            // )
-            // 会返回 value
-            web3.eth.getTransaction(
-              '0x7fc687424676d26fedf7bfafaf14f74207816c1486708f779fcc8bd59ac2d173',
-              console.log,
-            )
-
-            // web3.eth.getTransactionReceipt(events[2].transactionHash, console.log)
-            // web3.eth.getTransactionReceipt(events[3].transactionHash, console.log)
-          }}
-        >
-          fetch
-        </Button>
+        <Button variant={'primary'}>fetch</Button>
       </Box>
       <Tabs
         pb='40px'
