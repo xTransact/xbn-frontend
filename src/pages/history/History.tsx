@@ -13,13 +13,14 @@ import {
   type TabProps,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
-import { unix } from 'dayjs'
-import etherscanapi from 'etherscan-api'
+import dayjs from 'dayjs'
+// import etherscanapi from 'etherscan-api'
+import isEmpty from 'lodash-es/isEmpty'
 import { useEffect, useMemo, useState, type FunctionComponent } from 'react'
 // import Joyride from 'react-joyride'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { apiGetListings } from '@/api'
+import { apiGetListings, apiGetLoanOrder } from '@/api'
 import {
   ConnectWalletModal,
   MyTable,
@@ -29,15 +30,10 @@ import {
   NotFound,
   EthText,
 } from '@/components'
-import { RESPONSIVE_MAX_W, UNIT } from '@/constants'
-import { useWallet } from '@/hooks'
+import { RESPONSIVE_MAX_W, LOAN_ORDER_STATUS } from '@/constants'
+import { useBatchAsset, useWallet } from '@/hooks'
 import RootLayout from '@/layouts/RootLayout'
-import {
-  createWeb3Provider,
-  // createWethContract,
-  createXBankContract,
-} from '@/utils/createContract'
-import { formatAddress, formatFloat } from '@/utils/format'
+import { formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
 enum TAB_KEY {
@@ -46,7 +42,7 @@ enum TAB_KEY {
   SALE_TAB = 2,
 }
 
-const api = etherscanapi.init('', 'goerli')
+// const api = etherscanapi.init('', 'goerli')
 
 const TabWrapper: FunctionComponent<
   TabProps & {
@@ -105,16 +101,54 @@ const History = () => {
   }
   const navigate = useNavigate()
 
-  useRequest(apiGetListings, {
-    defaultParams: [
-      {
+  const { data: loanData, loading: loanLoading } = useRequest(
+    () =>
+      apiGetLoanOrder({
         borrower_address: currentAccount,
-        contract_address: '0x94faf38d706e43fd3c9c764887631eb125dad4c7',
-        type: 2,
-        status: 4096,
-      },
-    ],
-  })
+      }),
+    {
+      ready: tabKey === TAB_KEY.LOAN_TAB && !!currentAccount,
+      refreshDeps: [currentAccount],
+    },
+  )
+
+  const batchAssetParamsForLoan = useMemo(() => {
+    return []
+    if (!loanData) return []
+    if (isEmpty(loanData)) return []
+    return loanData?.map((i) => ({
+      assetContractAddress: '',
+      assetTokenId: i.nft_collateral_id,
+    }))
+  }, [loanData])
+  const {
+    data: loanAssetsData,
+    // loading: loanAssetLoading
+  } = useBatchAsset(batchAssetParamsForLoan)
+
+  const { data: listData, loading: listLoading } = useRequest(
+    () =>
+      apiGetListings({
+        borrower_address: currentAccount,
+      }),
+    {
+      ready: tabKey === TAB_KEY.SALE_TAB && !!currentAccount && false,
+    },
+  )
+
+  const batchAssetParamsForList = useMemo(() => {
+    return []
+    if (!listData) return []
+    if (isEmpty(listData)) return []
+    return listData?.map((i) => ({
+      assetContractAddress: i.contract_address,
+      assetTokenId: i.token_id,
+    }))
+  }, [listData])
+  const {
+    data: listAssetsData,
+    // loading: listAssetLoading
+  } = useBatchAsset(batchAssetParamsForList)
 
   useEffect(() => {
     interceptFn(() => {
@@ -138,15 +172,21 @@ const History = () => {
     return [
       {
         title: 'Asset',
-        dataIndex: 'nftCollection',
-        key: 'contractAddress',
+        dataIndex: 'nft_collateral_id',
+        key: 'nft_collateral_id',
         align: 'left',
         width: 320,
-        render: (value: any) => {
+        render: (value: any, info: any) => {
+          const currentInfo = loanAssetsData?.find(
+            (i) =>
+              i.assetContractAddress.toLowerCase() ===
+                info?.nft_collateral_contract.toLowerCase() &&
+              i.tokenID === value,
+          )
           return (
             <Flex alignItems={'center'} gap={'8px'} w='100%'>
               <ImageWithFallback
-                src={value?.imagePreviewUrl}
+                src={currentInfo?.imagePreviewUrl}
                 boxSize={{
                   md: '42px',
                   sm: '32px',
@@ -160,7 +200,9 @@ const History = () => {
                 whiteSpace='nowrap'
                 textOverflow='ellipsis'
               >
-                {value?.name || '--'}
+                {currentInfo?.name || currentInfo?.tokenID
+                  ? `#${currentInfo?.tokenID}`
+                  : '--'}
               </Text>
             </Flex>
           )
@@ -168,53 +210,94 @@ const History = () => {
       },
       {
         title: 'Down payment',
-        dataIndex: 'nftCollection',
-        key: 'id',
-        align: 'right',
-        thAlign: 'right',
+        dataIndex: 'down_payment',
+        key: 'down_payment',
+        render: (value: any) => (
+          <EthText>{formatFloat(wei2Eth(value))}</EthText>
+        ),
       },
       {
         title: 'Loan Amount',
-        dataIndex: 'pool_amount',
-        key: 'pool_amount',
+        dataIndex: 'loan_amount',
+        key: 'loan_amount',
         align: 'center',
         thAlign: 'center',
-        render: (value: any, info: any) => (
-          <EthText>
-            {formatFloat(
-              wei2Eth(Number(value) - Number(info.pool_used_amount)),
-            )}
-          </EthText>
+        render: (value: any) => (
+          <EthText>{formatFloat(wei2Eth(value))}</EthText>
         ),
       },
       {
         title: 'Duration',
-        dataIndex: 'pool_maximum_percentage',
-        key: 'pool_maximum_percentage',
+        dataIndex: 'loan_duration',
+        key: 'loan_duration',
         align: 'center',
         thAlign: 'center',
-        render: (value: any) => <Text>{Number(value) / 100} %</Text>,
+        render: (value: any) => (
+          <Text>{Number(value) / 60 / 60 / 24} days</Text>
+        ),
       },
       {
         title: 'Interest',
-        dataIndex: 'pool_maximum_interest_rate',
-        key: 'pool_maximum_interest_rate',
-        thAlign: 'right',
-        align: 'right',
+        dataIndex: 'loan_interest_rate',
+        key: 'loan_interest_rate',
+        thAlign: 'center',
+        align: 'center',
         render: (value: any) => <Text>{Number(value) / 100}% APR</Text>,
       },
       {
         title: 'Apply Date',
-        dataIndex: 'nftCollection',
-        key: 'nftCollection',
+        dataIndex: 'created_at',
+        key: 'created_at',
+        render: (value: any) => (
+          <Text>{dayjs(value).format('YYYY/MM/DD HH:mm')}</Text>
+        ),
       },
       {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
+        align: 'center',
+        thAlign: 'center',
+        render: (value) => {
+          let res = '--'
+          if (value === LOAN_ORDER_STATUS.Completed) {
+            res = 'Succeeded'
+          }
+          if (value === LOAN_ORDER_STATUS.Refunded) {
+            res = 'Refunded'
+          }
+          if (
+            [
+              LOAN_ORDER_STATUS.New,
+              LOAN_ORDER_STATUS.DownPaymentConfirmed,
+              LOAN_ORDER_STATUS.PendingPurchase,
+              LOAN_ORDER_STATUS.PurchaseSubmitted,
+              LOAN_ORDER_STATUS.PurchaseConfirmed,
+              LOAN_ORDER_STATUS.PendingLoan,
+              LOAN_ORDER_STATUS.LoanSubmitted,
+            ].includes(value)
+          ) {
+            res = 'Processing'
+          }
+          return <Text>{res}</Text>
+        },
+      },
+      {
+        title: 'Remark',
+        dataIndex: 'id',
+        key: 'id',
+        align: 'center',
+        thAlign: 'center',
+        render: (_: any, info: any) => (
+          <Text>
+            {info?.status === LOAN_ORDER_STATUS.Refunded
+              ? 'Refunded down payment'
+              : ''}
+          </Text>
+        ),
       },
     ]
-  }, [])
+  }, [loanAssetsData])
 
   const repayColumns: ColumnProps[] = useMemo(() => {
     return [
@@ -307,52 +390,84 @@ const History = () => {
     return [
       {
         title: 'Asset',
-        dataIndex: 'lender_address',
-        key: 'lender_address',
-        render: (value: any) => <Text>{formatAddress(value.toString())}</Text>,
+        dataIndex: 'token_id',
+        key: 'token_id',
+        render: (value: any, info: any) => {
+          const currentInfo = listAssetsData?.find(
+            (i) =>
+              i.assetContractAddress.toLowerCase() ===
+                info?.contract_address.toLowerCase() && i.tokenID === value,
+          )
+          return (
+            <Flex alignItems={'center'} gap={'8px'} w='100%'>
+              <ImageWithFallback
+                src={currentInfo?.imagePreviewUrl}
+                boxSize={{
+                  md: '42px',
+                  sm: '32px',
+                  xs: '32px',
+                }}
+                borderRadius={8}
+              />
+              <Text
+                display='inline-block'
+                overflow='hidden'
+                whiteSpace='nowrap'
+                textOverflow='ellipsis'
+              >
+                {currentInfo?.name || currentInfo?.tokenID
+                  ? `#${currentInfo?.tokenID}`
+                  : '--'}
+              </Text>
+            </Flex>
+          )
+        },
       },
       {
         title: 'List Price',
-        dataIndex: 'borrower_address',
-        key: 'borrower_address',
+        dataIndex: 'price',
+        key: 'price',
         thAlign: 'right',
         align: 'right',
-        render: (value: any) => <Text>{formatAddress(value.toString())}</Text>,
+        render: (value: any) => <Text>{formatFloat(wei2Eth(value))}</Text>,
       },
       {
         title: 'Platform',
-        dataIndex: 'loan_start_time',
+        dataIndex: 'platform',
         thAlign: 'right',
         align: 'right',
-        key: 'loan_start_time',
-        render: (value: any) => (
-          <Text>{unix(value).format('YYYY/MM/DD HH:mm:ss')}</Text>
-        ),
+        key: 'platform',
+        render: (value: any) => <Text>{value}</Text>,
       },
       {
         title: 'Duration',
-        dataIndex: 'loan_amount',
+        dataIndex: 'expiration_time',
         align: 'right',
         thAlign: 'right',
-        key: 'loan_amount',
-        render: (value: any) => (
-          <Text>
-            {formatFloat(wei2Eth(value))} {UNIT}
-          </Text>
-        ),
+        key: 'expiration_time',
+        render: (value: any, info: any) => {
+          const diffDays = dayjs(value).diff(dayjs(info.created_at), 'days')
+          // 用 到期时间 - 创建时间 = 天数
+          return <Text>{diffDays} days</Text>
+        },
       },
       {
         title: 'type',
-        dataIndex: 'loan_duration',
+        dataIndex: 'type',
         align: 'right',
         thAlign: 'right',
-        key: 'loan_duration',
-        render: (value: any) => <Text>{value / 24 / 60 / 60} days</Text>,
+        key: 'type',
+        render: (value: any) => (
+          <Text>{value === 1 ? 'Listing' : 'Cancel Listing'}</Text>
+        ),
       },
       {
         title: 'Date',
-        dataIndex: 'installment',
-        key: 'installment',
+        dataIndex: 'created_at',
+        key: 'created_at',
+        render: (value: any) => (
+          <Text>{dayjs(value).format('YYYY/MM/DD HH:mm')}</Text>
+        ),
       },
       {
         title: 'Status',
@@ -360,9 +475,16 @@ const History = () => {
         key: 'status',
       },
     ]
-  }, [])
+  }, [listAssetsData])
 
-  if (!params || !['loan', 'repay', 'sale'].includes(params?.type)) {
+  if (
+    !params ||
+    ![
+      'loan',
+      // 'repay',
+      'sale',
+    ].includes(params?.type)
+  ) {
     return <NotFound backTo='/history/loan' />
   }
 
@@ -376,64 +498,17 @@ const History = () => {
           View and track all your loan activity history
         </Text>
         <Button
+          hidden
           variant={'primary'}
           onClick={async () => {
-            const balance = api.account.txlist(
-              currentAccount,
-              1,
-              'latest',
-              1,
-              100,
-              'desc',
-            )
-
-            balance.then(function (balanceData: any) {
-              console.log(
-                balanceData.result.filter((i: any) => i.value !== '0'),
-              )
-            })
-            return
-            const xBankContract = createXBankContract()
-            // const wethContract = createWethContract()
-            const web3 = createWeb3Provider()
-            // const fromBlock = await web3.eth.getBlockNumber()
-
-            await xBankContract.getPastEvents(
-              'LoanPrepayment',
-              {
-                filter: {
-                  // src: '0xfbAC7b9ff473B1E4e6e31Ab70fA20aB4d30D05e5',
-                  //  myIndexedParam: [20, 23],
-                  //  myOtherIndexedParam: '0x123456789...',
-                }, // Using an array means OR: e.g. 20 or 23
-                fromBlock: 1,
-                toBlock: 'latest',
-              },
-              function (error: any, events: any) {
-                if (error) {
-                  console.log(error)
-                  return
-                }
-                console.log(events)
-              },
-            )
-            return
-
-            // 会返回区块生成的时间戳 timestamp
-            // web3.eth.getBlock(9207901, console.log)
-            // 会返回 status true 成功 false 失败
-            // web3.eth.getTransactionReceipt(
-            //   '0x7fc687424676d26fedf7bfafaf14f74207816c1486708f779fcc8bd59ac2d173',
-            //   console.log,
+            // const balance =await  api.account.txlist(
+            //   currentAccount,
+            //   1,
+            //   'latest',
+            //   1,
+            //   100,
+            //   'desc',
             // )
-            // 会返回 value
-            web3.eth.getTransaction(
-              '0x7fc687424676d26fedf7bfafaf14f74207816c1486708f779fcc8bd59ac2d173',
-              console.log,
-            )
-
-            // web3.eth.getTransactionReceipt(events[2].transactionHash, console.log)
-            // web3.eth.getTransactionReceipt(events[3].transactionHash, console.log)
           }}
         >
           fetch
@@ -471,16 +546,20 @@ const History = () => {
           bg='white'
           zIndex={2}
         >
-          <TabWrapper count={2}>Loan</TabWrapper>
-          <TabWrapper>Repay</TabWrapper>
+          <TabWrapper count={loanData?.length}>Loan</TabWrapper>
+          <TabWrapper hidden>Repay</TabWrapper>
           <TabWrapper>Sale</TabWrapper>
         </TabList>
 
         <TabPanels>
           <TabPanel p={0} pb='20px'>
             <MyTable
+              loading={loanLoading}
               columns={loanColumns}
-              data={[]}
+              data={(loanData || []).sort(
+                (a, b) =>
+                  -dayjs(a.created_at).unix() + dayjs(b.created_at).unix(),
+              )}
               emptyRender={() => {
                 return (
                   <EmptyComponent
@@ -502,11 +581,15 @@ const History = () => {
               }}
             />
           </TabPanel>
-          <TabPanel p={0} pb='20px'>
+          <TabPanel p={0} pb='20px' hidden>
             <MyTable columns={repayColumns} data={[]} />
           </TabPanel>
           <TabPanel p={0} pb='20px'>
-            <MyTable columns={saleColumns} data={[]} />
+            <MyTable
+              columns={saleColumns}
+              data={listData || []}
+              loading={listLoading}
+            />
           </TabPanel>
         </TabPanels>
       </Tabs>
