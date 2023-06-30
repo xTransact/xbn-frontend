@@ -372,7 +372,7 @@ const History = () => {
         key: 'status',
         align: 'center',
         thAlign: 'center',
-        render: (value) => {
+        render: (value: any) => {
           let res = '--'
           if (value === LOAN_ORDER_STATUS.Completed) {
             res = 'Succeeded'
