@@ -9,6 +9,8 @@ import { createRoot } from 'react-dom/client'
 import { PhotoProvider } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
 import { BrowserRouter } from 'react-router-dom'
+import 'slick-carousel/slick/slick-theme.css'
+import 'slick-carousel/slick/slick.css'
 import 'video-react/dist/video-react.css' // import css
 
 import '@/assets/iconfont/iconfont.js'
