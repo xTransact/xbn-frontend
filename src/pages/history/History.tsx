@@ -20,6 +20,7 @@ import useLocalStorageState from 'ahooks/lib/useLocalStorageState'
 import useRequest from 'ahooks/lib/useRequest'
 import dayjs, { unix } from 'dayjs'
 // import etherscanapi from 'etherscan-api'
+import capitalize from 'lodash-es/capitalize'
 import isEmpty from 'lodash-es/isEmpty'
 import {
   useEffect,
@@ -382,7 +383,7 @@ const History = () => {
         thAlign: 'center',
         align: 'center',
         render: (value: any) => (
-          <Text>{dayjs(value).format('YYYY/MM/DD HH:mm')}</Text>
+          <Text>{dayjs(value).format('YYYY-MM-DD HH:mm')}</Text>
         ),
       },
       {
@@ -562,7 +563,9 @@ const History = () => {
         key: 'price',
         align: 'center',
         thAlign: 'center',
-        render: (value: any) => <EthText>{formatFloat(value)}</EthText>,
+        render: (value: any, info: any) => (
+          <EthText>{info.type === 1 ? formatFloat(value) : '--'}</EthText>
+        ),
       },
       {
         title: 'Platform',
@@ -570,10 +573,10 @@ const History = () => {
         align: 'center',
         thAlign: 'center',
         key: 'platform',
-        render: (value: any) => <Text>{value}</Text>,
+        render: (value: any) => <Text>{capitalize(value)}</Text>,
       },
       {
-        title: 'Expiration Date',
+        title: 'Expiration',
         dataIndex: 'expiration_time',
         align: 'center',
         thAlign: 'center',
@@ -581,7 +584,7 @@ const History = () => {
         render: (value: any, info: any) => {
           return (
             <Text>
-              {info.type === 1 ? unix(value).format('YYYY/MM/DD HH:mm') : '--'}
+              {info.type === 1 ? unix(value).format('YYYY-MM-DD HH:mm') : '--'}
             </Text>
           )
         },
@@ -610,6 +613,8 @@ const History = () => {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
+        align: 'center',
+        thAlign: 'center',
         render: (value: any, info: any) => {
           let status = '--'
           // Listing 操作
