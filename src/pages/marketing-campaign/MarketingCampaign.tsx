@@ -47,6 +47,7 @@ import IconCopied from '@/assets/marketing/copied.png'
 import IconInviteFriend from '@/assets/marketing/icon-box-check-line.png'
 import IconCopy from '@/assets/marketing/icon-copy.png'
 import ImgQuestionBox from '@/assets/marketing/icon-win-box.png'
+import ImgLeaderBoardTitle from '@/assets/marketing/leader-board-title.png'
 import IconTelegram from '@/assets/marketing/telegram.png'
 import IconTwitter from '@/assets/marketing/twitter.png'
 import IconLogo from '@/assets/marketing/xbank-logo.png'
@@ -63,6 +64,7 @@ import ImgBrowser from '@/assets/marketing/icon-browser.svg'
 import ImgCoinInBox from '@/assets/marketing/icon-coin-in-box.svg'
 import ImgPlusWallet from '@/assets/marketing/icon-plus-wallet.svg'
 import ImgWalletOk from '@/assets/marketing/icon-wallet-ok.svg'
+
 const { VITE_APP_GALXE_TAKS_LINK } = import.meta.env
 const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% down payment, win Boxdrop`
 const SHARE_TWITTER_TEXT = `xBank is An NFT Open Money Market Powering Web3 Adopters with Onboarding Leverage with NFT BNPL and Improving Money Efficiency for Holders\nJoin @xBank_Official, buy top NFTs pay later, with 0% downpayment, and earn Boxdrop`
@@ -164,7 +166,13 @@ const TitleWithQuestionBox = (props: { title: string; src?: any }) => {
     </HStack>
   )
 }
+
+enum TAB_KEY {
+  WIN_BOX,
+  LEADER_BOARD,
+}
 export default function MarketingCampaign() {
+  const [tabKey, setTabKey] = useState<TAB_KEY>(TAB_KEY.WIN_BOX)
   const navigate = useNavigate()
   const toast = useToast()
   const { currentAccount: address, connectWallet } = useWallet()
@@ -395,13 +403,160 @@ export default function MarketingCampaign() {
         {/* <ReactSVG src={BannerImg} wrapper='div' width={'100%'} /> */}
         {/* <Image src={BannerImg} width='100%' /> */}
       </Box>
-      <Box>
+      <Container width={'100%'} maxW='1440px'>
+        <Box>
+          <Box
+            borderRadius={{
+              md: '16px 16px 0px 0px',
+              sm: '4px 4px 0px 0px',
+              xs: '4px 4px 0px 0px',
+            }}
+            background='linear-gradient(212deg, #FFBADB 0%, #458FFF 47.92%, #1CFEF0 100%)'
+            w='100%'
+            h={{
+              md: '24px',
+              sm: '6px',
+              xs: '6px',
+            }}
+          />
+          <Flex
+            px={{
+              md: '38px',
+              sm: '10px',
+              xs: '10px',
+            }}
+            py={{
+              md: '30px',
+              sm: '8px',
+              xs: '10px',
+            }}
+            w='100%'
+            background='#022650'
+            boxShadow={'0px 0.5px 0px 0px #1DE4FE'}
+            borderBottomEndRadius={{
+              md: '16px',
+              xs: '4px',
+              sm: '4px',
+            }}
+            gap={{
+              md: '20px',
+              sm: '4px',
+              xs: '4px',
+            }}
+          >
+            <Flex
+              justify={'center'}
+              flex={1}
+              borderRadius={{
+                md: '16px',
+                sm: '4px',
+                xs: '4px',
+              }}
+              onClick={() => {
+                if (tabKey === TAB_KEY.WIN_BOX) return
+                setTabKey(TAB_KEY.WIN_BOX)
+              }}
+              bg={
+                tabKey === TAB_KEY.WIN_BOX
+                  ? 'linear-gradient(212deg, #FFBADB 0%, #458FFF 47.92%, #1CFEF0 100%)'
+                  : '#021E3F'
+              }
+            >
+              <Image
+                src={ImgQuestionBox}
+                boxSize={{
+                  md: '84px',
+                  sm: '20px',
+                  xs: '20px',
+                }}
+              />
+              <Text
+                display={'inline-block'}
+                fontSize={{
+                  md: '48px',
+                  sm: '24px',
+                  xs: '24px',
+                }}
+                // lineHeight={'74px'}
+                fontFamily={'HarmonyOS Sans SC Black'}
+                bgGradient={
+                  tabKey === TAB_KEY.WIN_BOX
+                    ? 'unset'
+                    : 'linear-gradient(45deg, #1CFEF0 23%, #458FFF 46%, #FFBADB 90%)'
+                }
+                color='white'
+                bgClip={tabKey === TAB_KEY.WIN_BOX ? 'unset' : 'text'}
+              >
+                Win Boxs
+              </Text>
+            </Flex>
+            <Flex
+              justify={'center'}
+              flex={1}
+              onClick={() => {
+                if (tabKey === TAB_KEY.LEADER_BOARD) return
+                setTabKey(TAB_KEY.LEADER_BOARD)
+              }}
+              borderRadius={{
+                md: '16px',
+                sm: '4px',
+                xs: '4px',
+              }}
+              bg={
+                tabKey === TAB_KEY.LEADER_BOARD
+                  ? 'linear-gradient(212deg, #FFBADB 0%, #458FFF 47.92%, #1CFEF0 100%)'
+                  : '#021E3F'
+              }
+            >
+              <Image
+                src={ImgQuestionBox}
+                boxSize={{
+                  md: '84px',
+                  sm: '20px',
+                  xs: '20px',
+                }}
+              />
+              <Text
+                display={'inline-block'}
+                fontSize={{
+                  md: '48px',
+                  sm: '24px',
+                  xs: '24px',
+                }}
+                // lineHeight={'74px'}
+                fontFamily={'HarmonyOS Sans SC Black'}
+                bgGradient={
+                  tabKey === TAB_KEY.LEADER_BOARD
+                    ? 'unset'
+                    : 'linear-gradient(45deg, #1CFEF0 23%, #458FFF 46%, #FFBADB 90%)'
+                }
+                color='white'
+                bgClip={tabKey === TAB_KEY.LEADER_BOARD ? 'unset' : 'text'}
+              >
+                LEADERBOARD
+              </Text>
+            </Flex>
+          </Flex>
+          <Box
+            borderTopColor={'blue'}
+            borderTopWidth={'40px'}
+            borderLeftColor={'transparent'}
+            borderLeftWidth={'25px'}
+            borderRightColor={'transparent'}
+            borderRightWidth={'25px'}
+            h={0}
+            w='99.8%'
+            margin='0 auto'
+          />
+        </Box>
+      </Container>
+
+      <Box hidden={tabKey !== TAB_KEY.WIN_BOX}>
         <Container width={'100%'} maxW='1440px'>
           <Box
             bgGradient={'linear-gradient(0deg, #071E38, #071E38)'}
             color={'#FFFFFF'}
           >
-            <TitleWithQuestionBox title='Win Box' />
             <Box
               marginBottom={{
                 md: '72px',
@@ -1763,6 +1918,37 @@ export default function MarketingCampaign() {
             </Box> */}
           </Container>
         </Box>
+      </Box>
+
+      {/* 排行榜 */}
+      <Box hidden={tabKey !== TAB_KEY.LEADER_BOARD}>
+        <Container width={'100%'} maxW='1440px'>
+          <Image src={ImgLeaderBoardTitle} />
+          <Box
+            borderBottomRadius={{
+              md: '16px',
+              sm: '4px',
+              xs: '4px',
+            }}
+            borderWidth={1}
+            borderColor={'#fff'}
+            borderTopWidth={0}
+            boxShadow={'0px 4px 0px 0px #1DE4FE'}
+          >
+            <Text
+              color='#B5C4D7'
+              fontSize={{
+                md: '24px',
+              }}
+              textAlign={'center'}
+              fontFamily='HarmonyOS Sans SC'
+              fontWeight='500'
+              lineHeight={{ md: '20px' }}
+            >
+              The more you lend, the more you borrow, the higher you rank
+            </Text>
+          </Box>
+        </Container>
       </Box>
       <AlertDialog
         motionPreset='slideInBottom'
