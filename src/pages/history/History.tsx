@@ -16,9 +16,9 @@ import {
   AlertIcon,
   AlertTitle,
 } from '@chakra-ui/react'
-import { useLocalStorageState } from 'ahooks'
+import useLocalStorageState from 'ahooks/lib/useLocalStorageState'
 import useRequest from 'ahooks/lib/useRequest'
-import dayjs from 'dayjs'
+import dayjs, { unix } from 'dayjs'
 // import etherscanapi from 'etherscan-api'
 import isEmpty from 'lodash-es/isEmpty'
 import {
@@ -42,12 +42,15 @@ import {
   EthText,
   Pagination,
 } from '@/components'
-import { RESPONSIVE_MAX_W, LOAN_ORDER_STATUS } from '@/constants'
+import {
+  RESPONSIVE_MAX_W,
+  LOAN_ORDER_STATUS,
+  LISTING_ORDER_STATUS,
+} from '@/constants'
 import { useBatchAsset, useWallet } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
 import RootLayout from '@/layouts/RootLayout'
-import type { UserTokenType } from '@/utils/auth'
-import { clearUserToken, getUserToken } from '@/utils/auth'
+import { clearUserToken, getUserToken, type UserTokenType } from '@/utils/auth'
 import { formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 import { uniq } from '@/utils/utils'
@@ -58,6 +61,17 @@ enum TAB_KEY {
   SALE_TAB = 2,
 }
 
+enum LOAN_ORDER_STATUS_TEXT {
+  Succeeded = 'Succeeded',
+  Refunded = 'Refunded',
+  Processing = 'Processing',
+}
+
+enum LISTING_ORDER_STATUS_TEXT {
+  Succeeded = 'Succeeded',
+  Sold = 'Sold',
+  Failed = 'Failed',
+}
 // const api = etherscanapi.init('', 'goerli')
 
 const TabWrapper: FunctionComponent<
@@ -162,11 +176,10 @@ const History = () => {
   }, [loanPage, sortedLoanData])
 
   const batchAssetParamsForLoan = useMemo(() => {
-    return []
     if (!loanData) return []
     if (isEmpty(loanData)) return []
     const res = loanData?.map((i) => ({
-      assetContractAddress: '',
+      assetContractAddress: i.allow_collateral_contract,
       assetTokenId: i.nft_collateral_id,
     }))
     return uniq(res || [])
@@ -182,7 +195,7 @@ const History = () => {
     loading: listLoading,
     runAsync: fetchListData,
   } = useRequest(apiGetListings, {
-    ready: tabKey === TAB_KEY.SALE_TAB && !!currentAccount && false,
+    ready: tabKey === TAB_KEY.SALE_TAB && !!currentAccount,
     manual: true,
   })
 
@@ -201,13 +214,17 @@ const History = () => {
   const batchAssetParamsForList = useMemo(() => {
     if (!listData) return []
     if (isEmpty(listData)) return []
-    return []
     const res = listData?.map((i) => ({
       assetContractAddress: i.contract_address,
       assetTokenId: i.token_id,
     }))
+    // return res
     return uniq(res || [])
   }, [listData])
+  console.log(
+    '🚀 ~ file: History.tsx:208 ~ batchAssetParamsForList ~ batchAssetParamsForList:',
+    batchAssetParamsForList,
+  )
   const {
     data: listAssetsData,
     // loading: listAssetLoading
@@ -289,12 +306,12 @@ const History = () => {
         dataIndex: 'nft_collateral_id',
         key: 'nft_collateral_id',
         align: 'left',
-        width: 320,
+        width: 240,
         render: (value: any, info: any) => {
           const currentInfo = loanAssetsData?.find(
             (i) =>
               i.assetContractAddress.toLowerCase() ===
-                info?.nft_collateral_contract.toLowerCase() &&
+                info?.allow_collateral_contract.toLowerCase() &&
               i.tokenID === value,
           )
           return (
@@ -307,6 +324,7 @@ const History = () => {
                   xs: '32px',
                 }}
                 borderRadius={8}
+                fit={'contain'}
               />
               <Text
                 display='inline-block'
@@ -314,9 +332,8 @@ const History = () => {
                 whiteSpace='nowrap'
                 textOverflow='ellipsis'
               >
-                {currentInfo?.name || currentInfo?.tokenID
-                  ? `#${currentInfo?.tokenID}`
-                  : '--'}
+                {currentInfo?.name ||
+                  (currentInfo?.tokenID ? `#${currentInfo?.tokenID}` : '--')}
               </Text>
             </Flex>
           )
@@ -362,6 +379,8 @@ const History = () => {
         title: 'Apply Date',
         dataIndex: 'created_at',
         key: 'created_at',
+        thAlign: 'center',
+        align: 'center',
         render: (value: any) => (
           <Text>{dayjs(value).format('YYYY/MM/DD HH:mm')}</Text>
         ),
@@ -373,12 +392,12 @@ const History = () => {
         align: 'center',
         thAlign: 'center',
         render: (value: any) => {
-          let res = '--'
+          let status = '--'
           if (value === LOAN_ORDER_STATUS.Completed) {
-            res = 'Succeeded'
+            status = LOAN_ORDER_STATUS_TEXT.Succeeded
           }
           if (value === LOAN_ORDER_STATUS.Refunded) {
-            res = 'Refunded'
+            status = LOAN_ORDER_STATUS_TEXT.Refunded
           }
           if (
             [
@@ -391,9 +410,9 @@ const History = () => {
               LOAN_ORDER_STATUS.LoanSubmitted,
             ].includes(value)
           ) {
-            res = 'Processing'
+            status = LOAN_ORDER_STATUS_TEXT.Processing
           }
-          return <Text>{res}</Text>
+          return <Text>{status}</Text>
         },
       },
       {
@@ -506,6 +525,7 @@ const History = () => {
         title: 'Asset',
         dataIndex: 'token_id',
         key: 'token_id',
+        width: 240,
         render: (value: any, info: any) => {
           const currentInfo = listAssetsData?.find(
             (i) =>
@@ -529,9 +549,8 @@ const History = () => {
                 whiteSpace='nowrap'
                 textOverflow='ellipsis'
               >
-                {currentInfo?.name || currentInfo?.tokenID
-                  ? `#${currentInfo?.tokenID}`
-                  : '--'}
+                {currentInfo?.name ||
+                  (currentInfo?.tokenID ? `#${currentInfo?.tokenID}` : '--')}
               </Text>
             </Flex>
           )
@@ -541,39 +560,37 @@ const History = () => {
         title: 'List Price',
         dataIndex: 'price',
         key: 'price',
-        thAlign: 'right',
-        align: 'right',
-        render: (value: any) => <Text>{formatFloat(wei2Eth(value))}</Text>,
+        align: 'center',
+        thAlign: 'center',
+        render: (value: any) => <EthText>{formatFloat(value)}</EthText>,
       },
       {
         title: 'Platform',
         dataIndex: 'platform',
-        thAlign: 'right',
-        align: 'right',
+        align: 'center',
+        thAlign: 'center',
         key: 'platform',
         render: (value: any) => <Text>{value}</Text>,
       },
       {
-        title: 'Duration',
+        title: 'Expiration Date',
         dataIndex: 'expiration_time',
-        align: 'right',
-        thAlign: 'right',
+        align: 'center',
+        thAlign: 'center',
         key: 'expiration_time',
         render: (value: any, info: any) => {
-          const diffDays = dayjs(value).diff(
-            dayjs(info.created_at),
-            'days',
-            true,
+          return (
+            <Text>
+              {info.type === 1 ? unix(value).format('YYYY/MM/DD HH:mm') : '--'}
+            </Text>
           )
-          // 用 到期时间 - 创建时间 = 天数
-          return <Text>{diffDays} days</Text>
         },
       },
       {
         title: 'type',
         dataIndex: 'type',
-        align: 'right',
-        thAlign: 'right',
+        align: 'center',
+        thAlign: 'center',
         key: 'type',
         render: (value: any) => (
           <Text>{value === 1 ? 'Listing' : 'Cancel Listing'}</Text>
@@ -583,6 +600,8 @@ const History = () => {
         title: 'Date',
         dataIndex: 'created_at',
         key: 'created_at',
+        align: 'center',
+        thAlign: 'center',
         render: (value: any) => (
           <Text>{dayjs(value).format('YYYY/MM/DD HH:mm')}</Text>
         ),
@@ -591,6 +610,30 @@ const History = () => {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
+        render: (value: any, info: any) => {
+          let status = '--'
+          // Listing 操作
+          if (info.type === 1) {
+            if (value === LISTING_ORDER_STATUS.Listed)
+              status = LISTING_ORDER_STATUS_TEXT.Succeeded
+            if (value === LISTING_ORDER_STATUS.Completed)
+              status = LISTING_ORDER_STATUS_TEXT.Sold
+          }
+          // Cancel List 操作
+          if (info.type === 2 && value === LISTING_ORDER_STATUS.Completed) {
+            status = LISTING_ORDER_STATUS_TEXT.Succeeded
+          }
+          if (
+            [
+              LISTING_ORDER_STATUS.Rejected,
+              LISTING_ORDER_STATUS.InstRejected,
+              LISTING_ORDER_STATUS.Failed,
+            ].includes(value)
+          ) {
+            status = LISTING_ORDER_STATUS_TEXT.Failed
+          }
+          return <Text>{status}</Text>
+        },
       },
     ]
   }, [listAssetsData])

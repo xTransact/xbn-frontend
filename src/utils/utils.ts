@@ -10,8 +10,9 @@ const getKeyByValue = (map: any, searchValue: string | number) => {
 const uniq = (arr: any[]) => {
   const map = new Map()
   for (const i of arr) {
-    if (!map.has(i.id)) {
-      map.set(i.id, i)
+    const id = JSON.stringify(i)
+    if (!map.has(id)) {
+      map.set(id, i)
     }
   }
   return [...map.values()]

@@ -117,6 +117,35 @@ export enum LISTING_TYPE {
   CANCEL = 2,
 }
 
+export enum LISTING_ORDER_STATUS {
+  // 新建
+  New = 1,
+  // 开始处理时首先置的状态，防止重复处理
+  PendingProgress = 2,
+  // 需要进行 approve 时
+  PendingApproval = 3,
+  // 该资产已经进行过 approve/cancel交易已广播
+  Approved = 8,
+  // 已挂单
+  Listed = 16,
+  //
+  CoinTransferred = 32,
+  // final
+  Rejected = 64,
+  // final
+  InstRejected = 128,
+  // final 已取消
+  Cancelled = 256,
+  // final
+  Expired = 512,
+  // final
+  Refunded = 1024,
+  //
+  Failed = 2048,
+  // final 挂单被卖出
+  Completed = 4096,
+}
+
 export enum LOAN_ORDER_STATUS {
   // 新建
   New = 1,
