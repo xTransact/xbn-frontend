@@ -14,7 +14,8 @@ import range from 'lodash-es/range'
 import { useState, type FunctionComponent, useMemo } from 'react'
 
 import arrowImg from '@/assets/guide-arrow.png'
-import lp1 from '@/assets/lp1.png'
+import lp11 from '@/assets/lp1-1.png'
+import lp12 from '@/assets/lp1-2.png'
 import lp21 from '@/assets/lp2-1.png'
 import lp22 from '@/assets/lp2-2.png'
 import lp23 from '@/assets/lp2-3.png'
@@ -34,9 +35,17 @@ const EthComponent: FunctionComponent<
   <Flex alignItems={'center'} gap='2px' {...rest}>
     <SvgComponent
       svgId={isPrimary ? 'icon-eth-color' : 'icon-eth'}
-      fontSize={'32px'}
+      fontSize={{ md: '32px', sm: '16px', xs: '16px' }}
     />
-    <Text fontSize={'32px'} fontWeight={'900'}>
+    <Text
+      fontSize={{
+        md: '32px',
+        sm: '18px',
+        xs: '18px',
+      }}
+      fontWeight={'900'}
+      color={isPrimary ? 'blue.1' : 'black.1'}
+    >
       {num}
     </Text>
   </Flex>
@@ -54,70 +63,340 @@ const StepImageComponent: FunctionComponent<{ order: number }> = ({
   switch (order) {
     case 1:
       return (
-        <Flex>
-          <Image src={lp1} w='630px' h='211px' />
+        <Flex
+          justify={{
+            md: 'space-between',
+            sm: 'center',
+            xs: 'center',
+          }}
+          w='100%'
+          alignItems={'center'}
+          flexWrap={{
+            md: 'nowrap',
+            sm: 'wrap',
+            xs: 'wrap',
+          }}
+          px={{
+            md: '30px',
+            sm: '10px',
+            xs: '10px',
+          }}
+          rowGap={'10px'}
+        >
+          <Image
+            src={lp11}
+            h={{
+              md: '211px',
+              sm: '128px',
+              xs: '128px',
+            }}
+          />
+          <Box
+            w={{
+              md: 'auto',
+              sm: '100%',
+              xs: '100%',
+            }}
+          >
+            <Image
+              src={arrowImg}
+              w={{
+                md: '64px',
+                sm: '32px',
+                xs: '32px',
+              }}
+              margin={'0 auto'}
+              h={{
+                md: '48px',
+                sm: '24px',
+                xs: '24px',
+              }}
+              transform={{
+                md: 'none',
+                sm: 'rotate(90deg)',
+              }}
+            />
+          </Box>
+
+          <Image
+            src={lp12}
+            h={{
+              md: '211px',
+              sm: '128px',
+              xs: '128px',
+            }}
+          />
         </Flex>
       )
 
     case 2:
       return (
-        <Flex gap='10px' alignItems={'center'} justify={'space-between'}>
-          <Box position={'relative'} w='30%'>
-            <Image src={lp21} w='190px' />
+        <Flex
+          gap='10px'
+          alignItems={'center'}
+          justify={{
+            md: 'space-between',
+            sm: 'center',
+            xs: 'center',
+          }}
+          flexWrap={{
+            md: 'nowrap',
+            sm: 'wrap',
+            xs: 'wrap',
+          }}
+          px={{
+            md: '30px',
+            sm: '10px',
+            xs: '10px',
+          }}
+        >
+          <Box
+            position={'relative'}
+            w={{
+              md: '30%',
+              sm: '40%',
+              xs: '40%',
+            }}
+          >
+            <Image
+              src={lp21}
+              w={{
+                md: '190px',
+                sm: '80px',
+                xs: '80px',
+              }}
+            />
             <EthComponent
               num={60}
               isPrimary
               position={'absolute'}
-              right={'-10px'}
-              top={'0px'}
+              right={{
+                md: '-10px',
+                sm: '70px',
+                xs: '70px',
+              }}
+              top={{
+                md: '0px',
+                sm: '-16px',
+                xs: '-16px',
+              }}
             />
-            <Text fontWeight={'500'}>
+            <Text
+              fontWeight={'500'}
+              fontSize={{
+                md: '16px',
+                xs: '12px',
+                sm: '12px',
+              }}
+              transform={{
+                md: 'none',
+                sm: `scale(0.83333)`,
+                xs: `scale(0.83333)`,
+              }}
+              transformOrigin='center'
+            >
               You can sell at anytime including the loan is outstanding{' '}
             </Text>
           </Box>
           <Box
-            w='48px'
-            h='16px'
+            w={{
+              md: '48px',
+              sm: '10%',
+              xs: '10%',
+            }}
+            h={{
+              md: '16px',
+              sm: '12px',
+              xs: '12px',
+            }}
             borderRadius={2}
             bg='conic-gradient(from 11.86deg at 46.81% 64.71%, #6865FF 0deg, rgba(120, 117, 255, 0) 360deg), linear-gradient(200.52deg, #F5F3FF 8.81%, #A494FF 70.86%, #FFFFFF 90.41%)'
           />
           <Flex
-            w='30%'
+            w={{
+              md: '30%',
+              sm: '40%',
+              xs: '40%',
+            }}
             textAlign={'center'}
             flexDir={'column'}
             alignItems={'center'}
             justify={'center'}
           >
             <EthComponent num={50} />
-            <Image src={lp22} w='140px' />
-            <Text fontWeight={'500'}>Automatically repaid upon sale</Text>
+            <Image
+              src={lp22}
+              w={{
+                md: '180px',
+                sm: '84px',
+                xs: '84px',
+              }}
+            />
+            <Text
+              fontWeight={'500'}
+              fontSize={{
+                md: '16px',
+                xs: '12px',
+                sm: '12px',
+              }}
+              transform={{
+                md: 'none',
+                sm: `scale(0.83333)`,
+                xs: `scale(0.83333)`,
+              }}
+              transformOrigin='center'
+            >
+              Automatically repaid upon sale
+            </Text>
           </Flex>
-          <Image src={arrowImg} w='64px' />
+          <Image
+            src={arrowImg}
+            w={'64px'}
+            display={{
+              md: 'block',
+              sm: 'none',
+              xs: 'none',
+            }}
+          />
           <Flex
-            w='30%'
+            w={{
+              md: '30%',
+              sm: '50%',
+              xs: '50%',
+            }}
             textAlign={'center'}
             flexDir={'column'}
             alignItems={'center'}
             justify={'center'}
+            pos={'relative'}
           >
-            <EthComponent num={10} isPrimary />
-            <Image src={lp23} w='140px' />
-            <Text fontWeight={'500'}>You got profits</Text>
+            <Image
+              src={arrowImg}
+              w={'32px'}
+              display={{
+                md: 'none',
+                sm: 'block',
+                xs: 'block',
+              }}
+              transform={'rotate(90deg)'}
+              mb='16px'
+            />
+            <EthComponent
+              num={10}
+              isPrimary
+              pos={'absolute'}
+              top={{
+                md: '0',
+                sm: '30px',
+                xs: '30px',
+              }}
+            />
+            <Image
+              src={lp23}
+              w={{
+                md: '140px',
+                sm: '84px',
+                xs: '84px',
+              }}
+            />
+            <Text
+              fontWeight={'500'}
+              fontSize={{
+                md: '16px',
+                xs: '12px',
+                sm: '12px',
+              }}
+              transform={{
+                md: 'none',
+                sm: `scale(0.83333)`,
+                xs: `scale(0.83333)`,
+              }}
+              transformOrigin='center'
+            >
+              You got profits
+            </Text>
           </Flex>
         </Flex>
       )
 
     case 3:
       return (
-        <Flex justify={'space-around'} w='100%' alignItems={'center'}>
+        <Flex
+          justify={{
+            md: 'space-around',
+            sm: 'space-between',
+            xs: 'space-between',
+          }}
+          w='100%'
+          alignItems={'center'}
+          px={{
+            md: '30px',
+            sm: '10px',
+            xs: '10px',
+          }}
+        >
           <Flex flexDir={'column'} justify={'center'} alignItems={'center'}>
-            <Image src={lp31} w='160px' />
-            <Text>You can settle your loan anytime</Text>
+            <Image
+              src={lp31}
+              w={{
+                md: '160px',
+                sm: '86px',
+                xs: '86px',
+              }}
+            />
+            <Text
+              fontSize={{
+                md: '16px',
+                xs: '12px',
+                sm: '12px',
+              }}
+              transform={{
+                md: 'none',
+                sm: `scale(0.83333)`,
+                xs: `scale(0.83333)`,
+              }}
+              transformOrigin='center'
+            >
+              You can settle your loan anytime
+            </Text>
           </Flex>
-          <Image src={arrowImg} w='64px' h='48px' />
+          <Image
+            src={arrowImg}
+            w={{
+              md: '64px',
+              sm: '32px',
+              xs: '32px',
+            }}
+            h={{
+              md: '48px',
+              sm: '24px',
+              xs: '24px',
+            }}
+          />
           <Flex flexDir={'column'} justify={'center'} alignItems={'center'}>
-            <Image src={lp32} w='200px' />
-            <Text>You owned</Text>
+            <Image
+              src={lp32}
+              w={{
+                md: '200px',
+                sm: '182px',
+                xs: '182px',
+              }}
+            />
+            <Text
+              fontSize={{
+                md: '16px',
+                xs: '12px',
+                sm: '12px',
+              }}
+              transform={{
+                md: 'none',
+                sm: `scale(0.83333)`,
+                xs: `scale(0.83333)`,
+              }}
+              transformOrigin='center'
+            >
+              You owned
+            </Text>
           </Flex>
         </Flex>
       )
@@ -170,15 +449,37 @@ const BuyerGuideModal: FunctionComponent<{
           xl: '900px',
           lg: '900px',
           md: '576px',
-          sm: '326px',
+          sm: '350px',
           xs: '326px',
         }}
-        maxH={'600px'}
+        maxH={{
+          md: '600px',
+          sm: '700px',
+          xs: '700px',
+        }}
         borderRadius={16}
         key={index}
+        bg={{
+          md: 'white',
+          sm: 'transparent',
+          xs: 'transparent',
+        }}
       >
-        <ModalHeader {...MODEL_HEADER_PROPS}>
-          <Flex alignItems={'center'} gap='4px' fontWeight={'700'}>
+        <ModalHeader
+          {...MODEL_HEADER_PROPS}
+          borderBottomRadius={0}
+          px={{
+            md: '40px',
+            sm: '10px',
+            xs: '10px',
+          }}
+        >
+          <Flex
+            alignItems={'center'}
+            gap='4px'
+            fontWeight={'700'}
+            lineHeight={'32px'}
+          >
             <Image src={icon} />
             {title}
           </Flex>
@@ -188,27 +489,47 @@ const BuyerGuideModal: FunctionComponent<{
             cursor={'pointer'}
           /> */}
         </ModalHeader>
-        <ModalBody
-          m={0}
-          p={0}
-          px={{
-            md: '40px',
-            sm: '20px',
-            xs: '20px',
-          }}
-        >
-          <Text color='gray.4' mb='20px'>
-            {description}
-          </Text>
-          <Flex
-            bg='gray.5'
-            px='30px'
-            h='300px'
-            alignItems={'center'}
-            justify={'center'}
+        <ModalBody m={0} p={0}>
+          <Box
+            bg='white'
+            borderBottomRadius={16}
+            px={{
+              md: '40px',
+              sm: '10px',
+              xs: '10px',
+            }}
           >
-            <StepImageComponent order={index} />
-          </Flex>
+            <Text
+              color='gray.4'
+              mb='20px'
+              fontSize={{
+                md: '16px',
+                xs: '14px',
+                sm: '14px',
+              }}
+              lineHeight={{
+                md: '24px',
+                sm: '20px',
+                xs: '20px',
+              }}
+              px={0}
+            >
+              {description}
+            </Text>
+            <Flex
+              bg='gray.5'
+              h={{
+                md: '300px',
+                sm: '350px',
+                xs: '350px',
+              }}
+              alignItems={'center'}
+              justify={'center'}
+              borderBottomRadius={20}
+            >
+              <StepImageComponent order={index} />
+            </Flex>
+          </Box>
 
           {/* button */}
           <Flex
@@ -220,14 +541,22 @@ const BuyerGuideModal: FunctionComponent<{
             }}
             position={'sticky'}
             bottom={'0px'}
-            bg='white'
             mt='8px'
+            bg={{
+              md: 'white',
+              sm: 'transparent',
+              xs: 'transparent',
+            }}
             justify={'center'}
           >
             <Button
               w='158px'
               h='40px'
-              variant={step === BUYER_GUIDES.length ? 'primary' : 'outline'}
+              variant={{
+                md: step === BUYER_GUIDES.length ? 'primary' : 'outline',
+                sm: step === BUYER_GUIDES.length ? 'primary' : 'outlineOther',
+                xs: step === BUYER_GUIDES.length ? 'primary' : 'outlineOther',
+              }}
               px='30px'
               onClick={() => {
                 if (step === BUYER_GUIDES.length) {
@@ -256,7 +585,11 @@ const BuyerGuideModal: FunctionComponent<{
                 w={i + 1 === step ? '24px' : '16px'}
                 h='6px'
                 borderRadius={8}
-                borderColor={'blue.4'}
+                borderColor={{
+                  md: 'blue.4',
+                  sm: i + 1 === step ? 'blue.1' : 'white',
+                  xs: i + 1 === step ? 'blue.1' : 'white',
+                }}
                 borderWidth={1}
                 bg={i + 1 === step ? 'blue.1' : 'white'}
                 onClick={() => {
