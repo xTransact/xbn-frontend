@@ -759,7 +759,7 @@ const History = () => {
           >
             <TabWrapper count={loanData?.length}>Loan</TabWrapper>
             <TabWrapper hidden>Repay</TabWrapper>
-            <TabWrapper>Sale</TabWrapper>
+            <TabWrapper count={listData?.length}>Sale</TabWrapper>
           </TabList>
 
           <TabPanels>
