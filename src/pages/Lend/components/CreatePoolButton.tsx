@@ -14,7 +14,6 @@ import {
   InputRightElement,
   useDisclosure,
   Flex,
-  Tooltip,
   Box,
 } from '@chakra-ui/react'
 import { useRequest } from 'ahooks'
@@ -33,6 +32,7 @@ import {
   ConnectWalletModal,
   CustomNumberInput,
   SvgComponent,
+  TooltipComponent,
 } from '@/components'
 import { WETH_CONTRACT_ADDRESS, XBANK_CONTRACT_ADDRESS } from '@/constants'
 import { useCatchContractError, useWallet } from '@/hooks'
@@ -404,7 +404,7 @@ const CreatePoolButton: FunctionComponent<
                     {expectedLoanCount}
                     &nbsp;loans
                   </Text>
-                  <Tooltip
+                  <TooltipComponent
                     whiteSpace={'pre-line'}
                     label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , \nFor example: ${amount}/${formatFloat(
                       defaultAmount,
@@ -420,14 +420,13 @@ const CreatePoolButton: FunctionComponent<
                     color='gray.4'
                     boxShadow={'0px 0px 10px #D1D6DC'}
                   >
-                    <Box cursor={'pointer'} ml='16px'>
-                      <SvgComponent
-                        svgId='icon-tip'
-                        fill='gray.1'
-                        fontSize={'20px'}
-                      />
-                    </Box>
-                  </Tooltip>
+                    <SvgComponent
+                      svgId='icon-tip'
+                      fill='gray.1'
+                      fontSize={'20px'}
+                      ml='16px'
+                    />
+                  </TooltipComponent>
                 </Flex>
               )}
             </FormControl>

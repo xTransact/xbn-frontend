@@ -79,11 +79,6 @@ const TabWrapper: FunctionComponent<TabProps> = ({ children, ...rest }) => {
         color: 'blue.1',
         borderBottomWidth: 2,
         borderColor: 'blue.1',
-        w: {
-          md: 'auto',
-          sm: '200px',
-          xs: '200px',
-        },
       }}
       display={'inline-block'}
       {...rest}

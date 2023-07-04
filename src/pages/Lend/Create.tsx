@@ -13,7 +13,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Tooltip,
   type FlexProps,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
@@ -46,6 +45,7 @@ import {
   SvgComponent,
   CustomNumberInput,
   LoadingComponent,
+  TooltipComponent,
 } from '@/components'
 import { STEPS_DESCRIPTIONS } from '@/constants'
 import {
@@ -120,62 +120,62 @@ const SecondaryWrapper: FunctionComponent<
     title: string
     description: string
   } & FlexProps
-> = ({ description, title, children }) => (
-  <Flex
-    justify={'space-between'}
-    w='100%'
-    alignItems={'center'}
-    p={{
-      md: '10px 0 10px 8px',
-      sm: '10px 0 10px 8px',
-      xs: '10px 0 10px 8px',
-    }}
-    flexWrap={{
-      md: 'nowrap',
-      sm: 'wrap',
-      xs: 'wrap',
-    }}
-    gap='10px'
-  >
-    <Flex alignItems={'center'} gap='6px'>
-      <Box
-        boxSize={'16px'}
-        borderRadius={'100%'}
-        borderWidth={4}
-        borderColor={'blue.1'}
-        mr='18px'
-      />
-      <Text> {title}</Text>
-      <Tooltip
-        label={description}
-        placement='auto-start'
-        hasArrow
-        bg='white'
-        borderRadius={8}
-        p='10px'
-        fontSize={'14px'}
-        lineHeight={'18px'}
-        fontWeight={'500'}
-        boxShadow={'0px 0px 10px #D1D6DC'}
-        color='gray.3'
-        whiteSpace={'pre-line'}
-      >
-        <Box cursor={'pointer'}>
-          <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
-        </Box>
-      </Tooltip>
-    </Flex>
-    <Box
-      w={{
-        md: 'auto',
-        sm: '100%',
-        xs: '100%',
+> = ({ description, title, children }) => {
+  return (
+    <Flex
+      justify={'space-between'}
+      w='100%'
+      alignItems={'center'}
+      p={{
+        md: '10px 0 10px 8px',
+        sm: '10px 0 10px 8px',
+        xs: '10px 0 10px 8px',
       }}
+      flexWrap={{
+        md: 'nowrap',
+        sm: 'wrap',
+        xs: 'wrap',
+      }}
+      gap='10px'
     >
-      {children}
-    </Box>
-  </Flex>
-)
+      <Flex alignItems={'center'} gap='6px'>
+        <Box
+          boxSize={'16px'}
+          borderRadius={'100%'}
+          borderWidth={4}
+          borderColor={'blue.1'}
+          mr='18px'
+        />
+        <Text> {title}</Text>
+        <TooltipComponent
+          label={description}
+          placement='auto-start'
+          hasArrow
+          bg='white'
+          borderRadius={8}
+          p='10px'
+          fontSize={'14px'}
+          lineHeight={'18px'}
+          fontWeight={'500'}
+          boxShadow={'0px 0px 10px #D1D6DC'}
+          color='gray.3'
+          whiteSpace={'pre-line'}
+        >
+          <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
+        </TooltipComponent>
+      </Flex>
+      <Box
+        w={{
+          md: 'auto',
+          sm: '100%',
+          xs: '100%',
+        }}
+      >
+        {children}
+      </Box>
+    </Flex>
+  )
+}
 
 const Create = () => {
   const params = useParams() as {
@@ -817,7 +817,7 @@ const Create = () => {
             description={`It will determine the max amount of single loan that borrowers can take against this lending offer.\nIn case of borrower default, you can obtain collateral. It's equivalent to buying NFT at a discounted price based on the loan amount you provide.`}
           >
             <Box>
-              <Tooltip
+              <TooltipComponent
                 label={!!selectCollection ? '' : 'Please select collection'}
               >
                 <InputGroup
@@ -855,7 +855,7 @@ const Create = () => {
                     </InputRightElement>
                   )}
                 </InputGroup>
-              </Tooltip>
+              </TooltipComponent>
 
               {!!maxSingleLoanAmountStatus && (
                 <Text
@@ -1076,7 +1076,7 @@ const Create = () => {
                 }}
               />
             </Slider>
-            <Tooltip
+            <TooltipComponent
               label={
                 'You can use this to adjust how much the interest rate is favorable as the collateral factor goes down.'
               }
@@ -1092,14 +1092,8 @@ const Create = () => {
               color='gray.3'
               whiteSpace={'pre-line'}
             >
-              <Box cursor={'pointer'}>
-                <SvgComponent
-                  svgId='icon-tip'
-                  fill='gray.1'
-                  fontSize={'20px'}
-                />
-              </Box>
-            </Tooltip>
+              <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
+            </TooltipComponent>
           </Flex>
           {/* 切换展示微调滑杆 */}
           <Flex
@@ -1134,7 +1128,7 @@ const Create = () => {
                 }}
               />
             </Slider>
-            <Tooltip
+            <TooltipComponent
               label={
                 'You can use this to adjust how much the interest rate is favorable as the loan tenor shortens.'
               }
@@ -1150,14 +1144,8 @@ const Create = () => {
               color='gray.3'
               whiteSpace={'pre-line'}
             >
-              <Box cursor={'pointer'}>
-                <SvgComponent
-                  svgId='icon-tip'
-                  fill='gray.1'
-                  fontSize={'20px'}
-                />
-              </Box>
-            </Tooltip>
+              <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
+            </TooltipComponent>
           </Flex>
         </Box>
       </Flex>
