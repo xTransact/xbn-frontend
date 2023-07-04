@@ -233,3 +233,18 @@ interface ConfigDataType {
     },
   ]
 }
+
+interface RankItemType {
+  address: string
+  rank: number
+  box_bronze_num: number
+  box_silver_num: number
+  box_gold_num: number
+  box_platinum_num: number
+}
+
+interface RankDataType {
+  info: RankItemType | null
+  ranking_infos: RankItemType[]
+  count: number
+}

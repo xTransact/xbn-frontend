@@ -50,12 +50,6 @@ export default ({ mode }) => {
           secure: false,
           // rewrite: (path) => path.replace(/^\/api/, ''),
         },
-        '/api': {
-          target: 'https://api-goerli.etherscan.io/api',
-          changeOrigin: true,
-          secure: false,
-          // rewrite: (path) => path.replace(/^\/api/, ''),
-        },
       },
     },
     build: {

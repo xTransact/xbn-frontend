@@ -32,3 +32,10 @@ export const apiRewardExists: () => Promise<{ status: boolean }> = () => {
 export const apiGalxeRedeem: () => Promise<any> = () => {
   return request.post('/api/v1/xbn/user/galxe/redeem')
 }
+
+// 获取盒子排行榜
+export const apiGetRanking: () => Promise<{
+  data: RankDataType
+}> = () => {
+  return request.get('/api/v1/xbn/ranking')
+}
