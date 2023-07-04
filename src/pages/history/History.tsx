@@ -199,7 +199,7 @@ const History = () => {
     loading: listLoading,
     runAsync: fetchListData,
   } = useRequest(apiGetListings, {
-    ready: tabKey === TAB_KEY.SALE_TAB && !!currentAccount,
+    ready: !!currentAccount,
     manual: true,
   })
 
@@ -260,38 +260,32 @@ const History = () => {
     ) {
       return
     }
-    if (tabKey === TAB_KEY.LOAN_TAB) {
-      fetchLoanData({
-        borrower_address: currentAccount,
-      }).catch(async (error) => {
-        if (error.code === 'unauthenticated') {
-          // 未能签名
-          await runSignAsync()
-          setTimeout(() => {
-            fetchLoanData({
-              borrower_address: currentAccount,
-            })
-          }, 1000)
-        }
-      })
-      return
-    }
-    if (tabKey === TAB_KEY.SALE_TAB) {
-      fetchListData({
-        borrower_address: currentAccount,
-      }).catch(async (error) => {
-        if (error.code === 'unauthenticated') {
-          // 未能签名
-          await runSignAsync()
-          setTimeout(() => {
-            fetchListData({
-              borrower_address: currentAccount,
-            })
-          }, 1000)
-        }
-      })
-      return
-    }
+    fetchLoanData({
+      borrower_address: currentAccount,
+    }).catch(async (error) => {
+      if (error.code === 'unauthenticated') {
+        // 未能签名
+        await runSignAsync()
+        setTimeout(() => {
+          fetchLoanData({
+            borrower_address: currentAccount,
+          })
+        }, 1000)
+      }
+    })
+    fetchListData({
+      borrower_address: currentAccount,
+    }).catch(async (error) => {
+      if (error.code === 'unauthenticated') {
+        // 未能签名
+        await runSignAsync()
+        setTimeout(() => {
+          fetchListData({
+            borrower_address: currentAccount,
+          })
+        }, 1000)
+      }
+    })
   }, [
     currentAccount,
     isDenied,
@@ -299,7 +293,6 @@ const History = () => {
     fetchListData,
     runSignAsync,
     userToken,
-    tabKey,
   ])
 
   const loanColumns: ColumnProps[] = useMemo(() => {
