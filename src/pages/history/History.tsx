@@ -66,12 +66,15 @@ enum LOAN_ORDER_STATUS_TEXT {
   Succeeded = 'Succeeded',
   Refunded = 'Refunded',
   Processing = 'Processing',
+  Failed = 'Failed',
 }
 
 enum LISTING_ORDER_STATUS_TEXT {
   Succeeded = 'Succeeded',
   Sold = 'Sold',
   Failed = 'Failed',
+  Canceled = 'Canceled',
+  Processing = 'Processing',
 }
 // const api = etherscanapi.init('', 'goerli')
 
@@ -222,10 +225,7 @@ const History = () => {
     // return res
     return uniq(res || [])
   }, [listData])
-  console.log(
-    '🚀 ~ file: History.tsx:208 ~ batchAssetParamsForList ~ batchAssetParamsForList:',
-    batchAssetParamsForList,
-  )
+
   const {
     data: listAssetsData,
     // loading: listAssetLoading
@@ -274,6 +274,7 @@ const History = () => {
           }, 1000)
         }
       })
+      return
     }
     if (tabKey === TAB_KEY.SALE_TAB) {
       fetchListData({
@@ -289,6 +290,7 @@ const History = () => {
           }, 1000)
         }
       })
+      return
     }
   }, [
     currentAccount,
@@ -396,11 +398,9 @@ const History = () => {
           let status = '--'
           if (value === LOAN_ORDER_STATUS.Completed) {
             status = LOAN_ORDER_STATUS_TEXT.Succeeded
-          }
-          if (value === LOAN_ORDER_STATUS.Refunded) {
+          } else if (value === LOAN_ORDER_STATUS.Refunded) {
             status = LOAN_ORDER_STATUS_TEXT.Refunded
-          }
-          if (
+          } else if (
             [
               LOAN_ORDER_STATUS.New,
               LOAN_ORDER_STATUS.DownPaymentConfirmed,
@@ -412,6 +412,8 @@ const History = () => {
             ].includes(value)
           ) {
             status = LOAN_ORDER_STATUS_TEXT.Processing
+          } else {
+            status = LOAN_ORDER_STATUS_TEXT.Failed
           }
           return <Text>{status}</Text>
         },
@@ -623,6 +625,8 @@ const History = () => {
               status = LISTING_ORDER_STATUS_TEXT.Succeeded
             if (value === LISTING_ORDER_STATUS.Completed)
               status = LISTING_ORDER_STATUS_TEXT.Sold
+            if (value === LISTING_ORDER_STATUS.Cancelled)
+              status = LISTING_ORDER_STATUS_TEXT.Canceled
           }
           // Cancel List 操作
           if (info.type === 2 && value === LISTING_ORDER_STATUS.Completed) {
@@ -636,6 +640,17 @@ const History = () => {
             ].includes(value)
           ) {
             status = LISTING_ORDER_STATUS_TEXT.Failed
+          }
+          if (
+            [
+              LISTING_ORDER_STATUS.New,
+              LISTING_ORDER_STATUS.PendingProgress,
+              LISTING_ORDER_STATUS.PendingApproval,
+              LISTING_ORDER_STATUS.Approved,
+              LISTING_ORDER_STATUS.CoinTransferred,
+            ].includes(value)
+          ) {
+            status = LISTING_ORDER_STATUS_TEXT.Processing
           }
           return <Text>{status}</Text>
         },

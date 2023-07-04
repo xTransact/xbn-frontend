@@ -158,9 +158,11 @@ function App() {
         <Route
           path='/buy-nfts/complete'
           element={
-            <Suspense fallback={<Fallback />}>
-              <CompleteList />
-            </Suspense>
+            <RootLayout>
+              <Suspense fallback={<Fallback />}>
+                <CompleteList />
+              </Suspense>
+            </RootLayout>
           }
         />
         <Route
