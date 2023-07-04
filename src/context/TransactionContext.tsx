@@ -25,7 +25,7 @@ export const TransactionContext = createContext<{
   connectLoading: boolean
   handleSwitchNetwork: () => Promise<any>
   handleDisconnect: () => void
-  collectionList: { contractAddress: string; nftCollection: NftCollection }[]
+  collectionList: XBNCollectionItemType[]
   collectionLoading: boolean
 }>({
   connectWallet: async () => {},
@@ -48,13 +48,16 @@ export const TransactionsProvider = ({
   const { runAsync: signAuth } = useAuth()
   // collection 提取到外层
   const [collectionAddressArr, setCollectionAddressArr] = useState<string[]>([])
-  const { loading } = useRequest(apiGetActiveCollection, {
-    debounceWait: 100,
-    retryCount: 5,
-    onSuccess: (data) => {
-      setCollectionAddressArr(data.map((i) => i.contract_addr))
+  const { loading, data: xbnCollectionData } = useRequest(
+    apiGetActiveCollection,
+    {
+      debounceWait: 100,
+      retryCount: 5,
+      onSuccess: (data) => {
+        setCollectionAddressArr(data.map((i) => i.contract_addr))
+      },
     },
-  })
+  )
 
   const { loading: collectionLoading, data: collectionData } =
     useNftCollectionsByContractAddressesQuery({
@@ -74,7 +77,19 @@ export const TransactionsProvider = ({
     //   }
     // }),
     {
-      return collectionData?.nftCollectionsByContractAddresses || []
+      const collectionFromGraphQL =
+        collectionData?.nftCollectionsByContractAddresses || []
+      const res = xbnCollectionData?.map((item, index) => {
+        const current = collectionFromGraphQL?.find(
+          (i) => i.contractAddress === item.contract_addr,
+        )
+        return {
+          ...current,
+          priority: item?.priority || index,
+          tags: item?.tags || ['haa'],
+        }
+      })
+      return res
     }, [collectionData])
 
   const toast = useToast()
@@ -266,10 +281,7 @@ export const TransactionsProvider = ({
         handleDisconnect,
         isConnected: isConnected as boolean,
         // @ts-ignore
-        collectionList: collectionList as {
-          contractAddress: string
-          nftCollection: NftCollection
-        }[],
+        collectionList: collectionList as CollectionItemType[],
         collectionLoading: loading || collectionLoading,
       }}
     >

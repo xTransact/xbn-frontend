@@ -131,10 +131,11 @@ const Market = () => {
   const collectionData = useMemo(() => {
     if (!collectionList) return
     if (isEmpty(collectionList)) return []
-    return collectionList.filter((i) =>
-      collectionWithPoolsIds.includes(i.contractAddress),
-    )
+    return collectionList
+      .filter((i) => collectionWithPoolsIds.includes(i.contractAddress))
+      .sort((a, b) => -a.priority + b.priority)
   }, [collectionList, collectionWithPoolsIds])
+  console.log(collectionData)
 
   const initialCollection = useMemo(() => {
     if (!collectionData || isEmpty(collectionData)) {
@@ -291,7 +292,7 @@ const Market = () => {
   const filteredCollectionList = useMemo(() => {
     if (!collectionData) return
     if (!debounceCollectionSearchValue) return collectionData || []
-    return filter(collectionData, (item) =>
+    return collectionData.filter((item) =>
       item.nftCollection.name
         .toLocaleLowerCase()
         .includes(debounceCollectionSearchValue.toLocaleLowerCase()),
@@ -367,6 +368,7 @@ const Market = () => {
             sm: '100%',
             xs: '100%',
           }}
+          pos={'relative'}
         >
           <Box
             borderColor='gray.2'
@@ -536,6 +538,18 @@ const Market = () => {
                 </DrawerContent>
               </Drawer>
             </Box>
+          </Box>
+          {/* Add Desired Collection */}
+          <Box
+            bg='white'
+            pos={'sticky'}
+            top={'90vh'}
+            zIndex={9}
+            px={{ md: '24px', sm: 0, xs: 0 }}
+          >
+            <Button w='100%' variant={'primary'}>
+              Add Desired Collection
+            </Button>
           </Box>
         </Box>
 
