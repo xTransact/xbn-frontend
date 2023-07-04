@@ -334,6 +334,7 @@ export default function MarketingCampaign() {
             xs: '30px',
           }}
           mt={{
+            '2xl': '250px',
             xl: '120px',
             lg: '90px',
             md: '50px',
@@ -1495,6 +1496,11 @@ export default function MarketingCampaign() {
                                       xs: '12px',
                                       sm: '12px',
                                     }}
+                                    h={{
+                                      md: 'auto',
+                                      sm: '30px',
+                                      xs: '30px',
+                                    }}
                                   />
                                 ) : (
                                   <Image
@@ -1520,16 +1526,6 @@ export default function MarketingCampaign() {
                                 sm: '4px',
                                 xs: '4px',
                               }}
-                              fontSize={{
-                                md: '20px',
-                                sm: '12px',
-                                xs: '12px',
-                              }}
-                              fontFamily={{
-                                md: 'HarmonyOS Sans SC Bold',
-                                sm: 'HarmonyOS Sans SC',
-                                xs: 'HarmonyOS Sans SC',
-                              }}
                               paddingX={{
                                 md: '83px',
                                 sm: '10px',
@@ -1551,8 +1547,28 @@ export default function MarketingCampaign() {
                                 onCopy()
                                 onOpen()
                               }}
+                              minW={'100px'}
                             >
-                              Get Sliver Box
+                              <Text
+                                fontSize={{
+                                  md: '20px',
+                                  sm: '12px',
+                                  xs: '12px',
+                                }}
+                                fontFamily={{
+                                  md: 'HarmonyOS Sans SC Bold',
+                                  sm: 'HarmonyOS Sans SC',
+                                  xs: 'HarmonyOS Sans SC',
+                                }}
+                                transform={{
+                                  md: 'none',
+                                  sm: 'scale(0.83333)',
+                                  xs: 'scale(0.83333)',
+                                }}
+                                transformOrigin='center'
+                              >
+                                Get Sliver Box
+                              </Text>
                             </Button>
                           </Flex>
                         </Box>
