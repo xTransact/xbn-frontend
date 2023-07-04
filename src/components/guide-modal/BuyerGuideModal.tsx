@@ -464,6 +464,7 @@ const BuyerGuideModal: FunctionComponent<{
           sm: 'transparent',
           xs: 'transparent',
         }}
+        boxShadow={'none'}
       >
         <ModalHeader
           {...MODEL_HEADER_PROPS}
@@ -501,7 +502,11 @@ const BuyerGuideModal: FunctionComponent<{
           >
             <Text
               color='gray.4'
-              mb='20px'
+              mb={{
+                md: '20px',
+                sm: index === 3 ? 0 : '20px',
+                xs: index === 3 ? 0 : '20px',
+              }}
               fontSize={{
                 md: '16px',
                 xs: '14px',
@@ -526,6 +531,11 @@ const BuyerGuideModal: FunctionComponent<{
               alignItems={'center'}
               justify={'center'}
               borderBottomRadius={20}
+              mt={{
+                md: 0,
+                sm: index === 2 ? '90px' : index === 1 ? '40px' : 0,
+                xs: index === 2 ? '90px' : index === 1 ? '40px' : 0,
+              }}
             >
               <StepImageComponent order={index} />
             </Flex>
