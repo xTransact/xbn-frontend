@@ -779,6 +779,7 @@ const Lend = () => {
             display={{
               md: 'flex',
               sm: 'none',
+              xs: 'none',
             }}
           >
             <ScaleFade in={showSearch} initialScale={0.9}>
