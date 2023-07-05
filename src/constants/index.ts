@@ -116,3 +116,61 @@ export enum LISTING_TYPE {
   LISTING = 1,
   CANCEL = 2,
 }
+
+export enum LISTING_ORDER_STATUS {
+  // 新建
+  New = 1,
+  // 开始处理时首先置的状态，防止重复处理
+  PendingProgress = 2,
+  // 需要进行 approve 时
+  PendingApproval = 3,
+  // 该资产已经进行过 approve/cancel交易已广播
+  Approved = 8,
+  // 已挂单
+  Listed = 16,
+  //
+  CoinTransferred = 32,
+  // final
+  Rejected = 64,
+  // final
+  InstRejected = 128,
+  // final 已取消
+  Cancelled = 256,
+  // final
+  Expired = 512,
+  // final
+  Refunded = 1024,
+  //
+  Failed = 2048,
+  // final 挂单被卖出
+  Completed = 4096,
+}
+
+export enum LOAN_ORDER_STATUS {
+  // 新建
+  New = 1,
+  // 收到首付
+  DownPaymentConfirmed = 2,
+  // 开始购买NFT时首先置的状态，防止重复处理
+  PendingPurchase = 4,
+  // 购买nft交易已广播
+  PurchaseSubmitted = 8,
+  // 购买交易已被打包，购买nft完成。购买NFT的最后一个状态
+  PurchaseConfirmed = 16,
+  // 开始调用合约beginLoan时首先置的状态，防止重复处理
+  PendingLoan = 32,
+  // 生成loan的交易已广播
+  LoanSubmitted = 64,
+  // final    未通过我们的校验，拒绝掉
+  Rejected = 128,
+  // final    marketplace拒绝了，比如no matching order
+  MarketRejected = 256,
+  // final
+  Cancelled = 512,
+  // final    给用户和LP退款
+  Refunded = 1024,
+  // 后端自用，用于不确定失败原因，找到原因后进行重试
+  Failed = 2048,
+  // final    loan 生成成功
+  Completed = 4096,
+}

@@ -147,3 +147,11 @@ export const apiGetEtherscanLogs: (
     },
   })
 }
+
+export const apiGetLoanOrder: (query: {
+  borrower_address: string
+}) => Promise<LoanOrderItemType[]> = async (data) => {
+  return await request.get(`/lending/api/v1/loan-order`, {
+    params: data,
+  })
+}

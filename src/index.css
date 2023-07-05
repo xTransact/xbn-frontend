@@ -1,28 +1,28 @@
-@font-face {
+/* @font-face {
   font-family: HarmonyOS;
   src: url(/font/HarmonyOS_Sans_SC_Regular.ttf);
-}
+} */
 
-@font-face {
+/* @font-face {
   font-family: 'HarmonyOS Sans Black';
   src: url(/font/HarmonyOS_Sans_Black.ttf);
-}
-@font-face {
+} */
+/* @font-face {
   font-family: 'HarmonyOS Sans Bold';
   src: url(/font/HarmonyOS_Sans_Bold.ttf);
-}
-@font-face {
+} */
+/* @font-face {
   font-family: 'HarmonyOS Sans Light';
   src: url(/font/HarmonyOS_Sans_Light.ttf);
-}
-@font-face {
+} */
+/* @font-face {
   font-family: 'HarmonyOS Sans Medium';
   src: url(/font/HarmonyOS_Sans_Medium.ttf);
-}
-@font-face {
+} */
+/* @font-face {
   font-family: 'HarmonyOS Sans Regular';
   src: url(/font/HarmonyOS_Sans_Regular.ttf);
-}
+} */
 @font-face {
   font-family: 'HarmonyOS Sans SC Black';
   src: url(/font/HarmonyOS_Sans_SC_Black.ttf);
@@ -31,10 +31,10 @@
   font-family: 'HarmonyOS Sans SC Bold';
   src: url(/font/HarmonyOS_Sans_SC_Bold.ttf);
 }
-@font-face {
+/* @font-face {
   font-family: 'HarmonyOS Sans SC Light';
   src: url(/font/HarmonyOS_Sans_SC_Light.ttf);
-}
+} */
 @font-face {
   font-family: 'HarmonyOS Sans SC Medium';
   src: url(/font/HarmonyOS_Sans_SC_Medium.ttf);
@@ -43,14 +43,14 @@
   font-family: 'HarmonyOS Sans SC Regular';
   src: url(/font/HarmonyOS_Sans_SC_Regular.ttf);
 }
-@font-face {
+/* @font-face {
   font-family: 'HarmonyOS Sans SC Thin';
   src: url(/font/HarmonyOS_Sans_SC_Thin.ttf);
-}
-@font-face {
+} */
+/* @font-face {
   font-family: 'HarmonyOS Sans Thin';
   src: url(/font/HarmonyOS_Sans_Thin.ttf);
-}
+} */
 @font-face {
   font-family: 'HarmonyOS Sans SC';
   src: url(/font/HarmonyOS_Sans_SC_Regular.ttf);

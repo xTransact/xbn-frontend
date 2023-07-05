@@ -1,4 +1,4 @@
-type UserTokenType = {
+export type UserTokenType = {
   expires: string
   token: string
   address: string
