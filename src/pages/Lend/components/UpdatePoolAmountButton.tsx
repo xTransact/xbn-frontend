@@ -149,7 +149,7 @@ const UpdatePoolAmountButton: FunctionComponent<
     if (!amount) return false
     /**
      * 校验逻辑：Has been lent + Available in wallet 需要大于等于 Your balance
-     * 如果两者相加小于 Your balance，则点击Approve/Comfirm按钮用toast报错：Insufficient funds，Maximum input：xxx
+     * 如果两者相加小于 Your balance，则点击Approve/Comfirm按钮用toast报错：Insufficient Max input：xxx
      * xxx = Has been lent + Available in wallet
      *     = poolUsedAmount + latest weth
      */

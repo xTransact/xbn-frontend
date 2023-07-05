@@ -139,7 +139,7 @@ const MyPoolActionRender: FunctionComponent<
           onClick={onOpen}
           fontSize={'14px'}
         >
-          My Competence
+          My Pool Score
         </Text>
       </Flex>
 
