@@ -18,7 +18,6 @@ import useDebounce from 'ahooks/lib/useDebounce'
 import useInfiniteScroll from 'ahooks/lib/useInfiniteScroll'
 import useRequest from 'ahooks/lib/useRequest'
 import bigNumber from 'bignumber.js'
-import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
 import max from 'lodash-es/max'
 import min from 'lodash-es/min'
@@ -540,13 +539,7 @@ const Market = () => {
             </Box>
           </Box>
           {/* Add Desired Collection */}
-          <Box
-            bg='white'
-            pos={'sticky'}
-            top={'90vh'}
-            zIndex={9}
-            px={{ md: '24px', sm: 0, xs: 0 }}
-          >
+          <Box bg='white' pos={'sticky'} top={'90vh'} zIndex={9}>
             <Button w='100%' variant={'primary'}>
               Add Desired Collection
             </Button>

@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { useLocalStorageState, useRequest } from 'ahooks'
+import compact from 'lodash-es/compact'
 import isEmpty from 'lodash-es/isEmpty'
 import {
   useEffect,
@@ -11,10 +12,7 @@ import {
 } from 'react'
 
 import { apiGetActiveCollection } from '@/api'
-import {
-  type NftCollection,
-  useNftCollectionsByContractAddressesQuery,
-} from '@/hooks'
+import { useNftCollectionsByContractAddressesQuery } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
 import { clearUserToken, getUserToken } from '@/utils/auth'
 
@@ -81,16 +79,19 @@ export const TransactionsProvider = ({
         collectionData?.nftCollectionsByContractAddresses || []
       const res = xbnCollectionData?.map((item, index) => {
         const current = collectionFromGraphQL?.find(
-          (i) => i.contractAddress === item.contract_addr,
+          (i) =>
+            i.contractAddress?.toLowerCase() ===
+            item.contract_addr?.toLowerCase(),
         )
+        if (!current) return
         return {
           ...current,
           priority: item?.priority || index,
           tags: item?.tags || ['haa'],
         }
       })
-      return res
-    }, [collectionData])
+      return compact(res)
+    }, [collectionData, xbnCollectionData])
 
   const toast = useToast()
 
