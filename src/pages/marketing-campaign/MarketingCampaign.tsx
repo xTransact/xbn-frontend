@@ -110,6 +110,7 @@ const RankPercentage: FunctionComponent<{
     const total = BigNumber(data?.box_gold_num)
       .plus(data?.box_bronze_num)
       .plus(data?.box_silver_num)
+    if (total.eq(0)) return
 
     const res = [
       {
