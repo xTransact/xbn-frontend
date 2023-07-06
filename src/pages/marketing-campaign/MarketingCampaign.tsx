@@ -444,7 +444,7 @@ export default function MarketingCampaign() {
   })
 
   useAsyncEffect(async () => {
-    if (!state.expired) {
+    if (!state.expired && isLogin) {
       // 查询用户盒子数量
       const boxResp = await apiGetBoxes()
       setBoxAmounts({
@@ -455,10 +455,10 @@ export default function MarketingCampaign() {
         box_silver: boxResp?.box_silver || 0,
       })
     }
-  }, [state.expired])
+  }, [state.expired, isLogin])
   useAsyncEffect(async () => {
     // 查询用户是否使用过 XBN
-    if (!state.expired) {
+    if (!state.expired && isLogin) {
       const list = await apiGetLoans({
         lender_address: address,
         borrower_address: address,
@@ -467,16 +467,16 @@ export default function MarketingCampaign() {
         hasUsedXBN: list.length > 0,
       })
     }
-  }, [state.expired, address])
+  }, [state.expired, address, isLogin])
   useAsyncEffect(async () => {
-    if (!state.expired && state.hasUsedXBN) {
+    if (!state.expired && state.hasUsedXBN && isLogin) {
       const data = await apiGetInviteCode()
       setInviteCode(data.code)
       setInvitationLink(
         window.location.host + `/buy-nfts/market?invitation_code=${data.code}`,
       )
     }
-  }, [state.expired, state.hasUsedXBN])
+  }, [state.expired, state.hasUsedXBN, isLogin])
   useAsyncEffect(async () => {
     if (state.expired) {
       // 过期了，需要连钱包
@@ -493,7 +493,7 @@ export default function MarketingCampaign() {
           expired,
         })
       }
-    } else {
+    } else if (isLogin) {
       // 查询用户是否做过任务
       const galxeStatusData = await apiGalxeStatus()
       if (galxeStatusData.status) {
@@ -524,7 +524,7 @@ export default function MarketingCampaign() {
         }
       }
     }
-  }, [state.expired])
+  }, [state.expired, isLogin])
   return (
     <Box bgGradient={'linear-gradient(0deg, #071E38, #071E38), #F9F9FF;'}>
       <Header />
