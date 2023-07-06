@@ -340,6 +340,24 @@ const Market = () => {
   return (
     <>
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
+      {/* Add Desired Collection */}
+      <Box
+        bg='white'
+        pos={'sticky'}
+        top={'92vh'}
+        zIndex={9}
+        w={{
+          xl: '300px',
+          lg: '260px',
+          md: '100%',
+          sm: '100%',
+          xs: '100%',
+        }}
+      >
+        <Button w='100%' variant={'primary'}>
+          Add Desired Collection
+        </Button>
+      </Box>
       <Box
         mb={{ md: '40px', sm: 0, xs: 0 }}
         mt={{
@@ -389,8 +407,8 @@ const Market = () => {
             }}
             top='151px'
           >
-            <Heading size={'md'} mb='16px'>
-              Collections
+            <Heading fontSize={'16px'} mb='16px'>
+              Top 100 Collections
             </Heading>
             {/* pc collection list */}
             <Box
@@ -399,7 +417,7 @@ const Market = () => {
                 sm: 'none',
                 xs: 'none',
               }}
-              pb='40px'
+              pb='20px'
             >
               <Box
                 hidden={
@@ -484,8 +502,8 @@ const Market = () => {
                 <DrawerOverlay />
                 <DrawerContent borderTopRadius={16} pb='40px'>
                   <DrawerBody>
-                    <Heading fontSize={'24px'} pt='40px' pb='32px'>
-                      Collections
+                    <Heading fontSize={'16px'} pt='40px' pb='32px'>
+                      Top 100 Collections
                     </Heading>
                     <Box
                       hidden={
@@ -537,12 +555,6 @@ const Market = () => {
                 </DrawerContent>
               </Drawer>
             </Box>
-          </Box>
-          {/* Add Desired Collection */}
-          <Box bg='white' pos={'sticky'} top={'90vh'} zIndex={9}>
-            <Button w='100%' variant={'primary'}>
-              Add Desired Collection
-            </Button>
           </Box>
         </Box>
 
