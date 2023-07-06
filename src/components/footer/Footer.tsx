@@ -49,7 +49,7 @@ export const COMMUNITY_DATA = [
     icon: 'icon-discord',
   },
   {
-    title: 'Linked in',
+    title: 'Linked In',
     url: LINKEDIN_URL,
     icon: 'icon-medium',
   },
