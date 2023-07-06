@@ -275,8 +275,8 @@ const RankItem: FunctionComponent<{
         data?.box_gold_num ?? '--',
         data?.box_silver_num ?? '--',
         data?.box_bronze_num ?? '--',
-      ].map((i, index) => (
-        <Flex {...INITIAL_RANK_BOX_PROPS} key={i || index}>
+      ].map((i) => (
+        <Flex {...INITIAL_RANK_BOX_PROPS} key={`${i}-${Math.random()}`}>
           <Text {...INITIAL_TEXT_PROPS}>{i}</Text>
         </Flex>
       ))}
