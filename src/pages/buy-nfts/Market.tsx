@@ -329,7 +329,7 @@ const Market = () => {
       lg: grid,
       md: grid,
       sm: 2,
-      xs: 1,
+      xs: 2,
     }),
     [grid],
   )

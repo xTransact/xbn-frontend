@@ -31,7 +31,13 @@ import maxBy from 'lodash-es/maxBy'
 import omit from 'lodash-es/omit'
 import reduce from 'lodash-es/reduce'
 import sortBy from 'lodash-es/sortBy'
-import { useEffect, useMemo, useState, type FunctionComponent } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type FunctionComponent,
+  useRef,
+} from 'react'
 // import Joyride from 'react-joyride'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -83,7 +89,7 @@ const TabWrapper: FunctionComponent<TabProps> = ({ children, ...rest }) => {
       display={'inline-block'}
       {...rest}
     >
-      <Text fontWeight='bold' noOfLines={1} fontSize='16px'>
+      <Text fontWeight='bold' fontSize='16px'>
         {children}
       </Text>
     </Tab>
@@ -107,6 +113,7 @@ const Lend = () => {
   const { isOpen: guideVisible, onClose: closeGuide } = useGuide({
     key: 'has-read-lp-guide',
   })
+  const tabListRef = useRef<HTMLDivElement>(null)
 
   const [tabKey, setTabKey] = useState<TAB_KEY>(TAB_KEY.COLLECTION_TAB)
 
@@ -140,6 +147,15 @@ const Lend = () => {
       }
     })
   }, [pathname, interceptFn])
+
+  useEffect(() => {
+    if (!tabListRef?.current) return
+    if (tabKey !== TAB_KEY.LOANS_TAB) {
+      tabListRef.current.scrollTo(0, 0)
+    } else {
+      tabListRef.current.scrollTo(tabListRef.current.scrollWidth, 0)
+    }
+  }, [tabKey, tabListRef])
 
   /**
    * 进入页面 fetch all pools => for 'Collections Tab'
@@ -828,39 +844,49 @@ const Lend = () => {
           </Flex>
         )}
 
-        <TabList
-          _active={{
-            color: 'blue.1',
-            fontWeight: 'bold',
+        <Box
+          overflowX={{
+            sm: 'hidden',
+            xs: 'auto',
           }}
-          position='sticky'
-          top={{ md: '131px', sm: '131px', xs: '107px' }}
-          bg='white'
-          zIndex={2}
+          ref={tabListRef}
+          className='scroll-bar-hidden'
         >
-          <TabWrapper>Collections</TabWrapper>
-          <TabWrapper>
-            My Pools
-            {!isEmpty(myPoolsData) && (
-              <Tag
-                bg={'blue.1'}
-                color='white'
-                borderRadius={15}
-                fontSize='12px'
-                w='27px'
-                h='20px'
-                textAlign={'center'}
-                justifyContent='center'
-                lineHeight={2}
-                fontWeight='700'
-                ml='4px'
-              >
-                {poolList?.length}
-              </Tag>
-            )}
-          </TabWrapper>
-          <TabWrapper>Outstanding Loans</TabWrapper>
-        </TabList>
+          <TabList
+            _active={{
+              color: 'blue.1',
+              fontWeight: 'bold',
+            }}
+            position='sticky'
+            top={{ md: '131px', sm: '131px', xs: '107px' }}
+            bg='white'
+            zIndex={2}
+            w='max-content'
+          >
+            <TabWrapper>Collections</TabWrapper>
+            <TabWrapper>
+              My Pools
+              {!isEmpty(myPoolsData) && (
+                <Tag
+                  bg={'blue.1'}
+                  color='white'
+                  borderRadius={15}
+                  fontSize='12px'
+                  w='27px'
+                  h='20px'
+                  textAlign={'center'}
+                  justifyContent='center'
+                  lineHeight={2}
+                  fontWeight='700'
+                  ml='4px'
+                >
+                  {poolList?.length}
+                </Tag>
+              )}
+            </TabWrapper>
+            <TabWrapper>Outstanding Loans</TabWrapper>
+          </TabList>
+        </Box>
 
         <Box
           display={{

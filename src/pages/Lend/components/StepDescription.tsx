@@ -19,10 +19,22 @@ const StepDescription: FunctionComponent<
           bg='blue.1'
           color='white'
           borderRadius={'50%'}
-          boxSize={'32px'}
+          boxSize={{
+            md: '32px',
+            sm: '18px',
+            xs: '18px',
+          }}
           justifyContent='center'
-          fontSize='18px'
-          lineHeight={'30px'}
+          fontSize={{
+            md: '18px',
+            sm: '14px',
+            xs: '14px',
+          }}
+          lineHeight={{
+            md: '30px',
+            sm: 'normal',
+            xs: 'normal',
+          }}
         >
           {step}
         </Flex>
@@ -45,7 +57,15 @@ const StepDescription: FunctionComponent<
           color='gray.3'
           whiteSpace={'pre-line'}
         >
-          <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
+          <SvgComponent
+            svgId='icon-tip'
+            fill='gray.1'
+            fontSize={{
+              md: '20px',
+              sm: '14px',
+              xs: '14px',
+            }}
+          />
         </TooltipComponent>
       </Flex>
     </Box>

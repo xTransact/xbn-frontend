@@ -161,7 +161,15 @@ const SecondaryWrapper: FunctionComponent<
           color='gray.3'
           whiteSpace={'pre-line'}
         >
-          <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
+          <SvgComponent
+            svgId='icon-tip'
+            fill='gray.1'
+            fontSize={{
+              md: '20px',
+              sm: '14px',
+              xs: '14px',
+            }}
+          />
         </TooltipComponent>
       </Flex>
       <Box
@@ -831,7 +839,11 @@ const Create = () => {
                     pointerEvents='none'
                     color='gray.300'
                     fontSize='1.2em'
-                    top='12px'
+                    top={{
+                      md: '12px',
+                      sm: '3px',
+                      xs: '3px',
+                    }}
                   >
                     <SvgComponent svgId='icon-eth' fill={'black.1'} />
                   </InputLeftElement>
@@ -850,8 +862,22 @@ const Create = () => {
                   />
 
                   {maxSingleLoanAmountStatus?.status === 'error' && (
-                    <InputRightElement top='14px' mr='8px'>
-                      <SvgComponent svgId='icon-error' svgSize='24px' />
+                    <InputRightElement
+                      top={{
+                        md: '14px',
+                        sm: '4px',
+                        xs: '4px',
+                      }}
+                      mr='8px'
+                    >
+                      <SvgComponent
+                        svgId='icon-error'
+                        svgSize={{
+                          md: '24px',
+                          sm: '16px',
+                          xs: '16px',
+                        }}
+                      />
                     </InputRightElement>
                   )}
                 </InputGroup>
@@ -923,7 +949,11 @@ const Create = () => {
         >
           <Flex
             justify={'center'}
-            mb={'46px'}
+            mb={{
+              md: '46px',
+              sm: '20px',
+              xs: '20px',
+            }}
             fontSize={'18px'}
             fontWeight={'700'}
           >
@@ -934,7 +964,7 @@ const Create = () => {
             w={{
               md: '90%',
               sm: '100%',
-              xs: '10%',
+              xs: '100%',
             }}
             borderRadius={16}
             margin={'0 auto'}
@@ -1092,7 +1122,15 @@ const Create = () => {
               color='gray.3'
               whiteSpace={'pre-line'}
             >
-              <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
+              <SvgComponent
+                svgId='icon-tip'
+                fill='gray.1'
+                fontSize={{
+                  md: '20px',
+                  sm: '14px',
+                  xs: '14px',
+                }}
+              />
             </TooltipComponent>
           </Flex>
           {/* 切换展示微调滑杆 */}
@@ -1144,7 +1182,15 @@ const Create = () => {
               color='gray.3'
               whiteSpace={'pre-line'}
             >
-              <SvgComponent svgId='icon-tip' fill='gray.1' fontSize={'20px'} />
+              <SvgComponent
+                svgId='icon-tip'
+                fill='gray.1'
+                fontSize={{
+                  md: '20px',
+                  sm: '14px',
+                  xs: '14px',
+                }}
+              />
             </TooltipComponent>
           </Flex>
         </Box>
@@ -1154,7 +1200,11 @@ const Create = () => {
         <Button
           variant={'outline'}
           w='160px'
-          h='52px'
+          h={{
+            md: '52px',
+            sm: '40px',
+            xs: '40px',
+          }}
           gap='4px'
           onClick={() => {
             navigate(-1)
@@ -1167,7 +1217,11 @@ const Create = () => {
           <CreatePoolButton
             variant={'primary'}
             w='240px'
-            h='52px'
+            h={{
+              md: '52px',
+              sm: '40px',
+              xs: '40px',
+            }}
             isDisabled={
               isEmpty(selectCollection) ||
               collectionAddressWithPool?.includes(
@@ -1212,7 +1266,11 @@ const Create = () => {
             }
             variant={'primary'}
             w='240px'
-            h='52px'
+            h={{
+              md: '52px',
+              sm: '40px',
+              xs: '40px',
+            }}
             isLoading={loading || updating}
             onClick={handleUpdatePool}
           >

@@ -137,7 +137,7 @@ const MyAssets = () => {
       lg: grid,
       md: grid,
       sm: 2,
-      xs: 1,
+      xs: 2,
     }),
     [grid],
   )
@@ -297,7 +297,7 @@ const MyAssets = () => {
                           lg: grid === 4 ? '220px' : '298px',
                           md: grid === 4 ? '170px' : '234px',
                           sm: '174px',
-                          xs: '174px',
+                          xs: '160px',
                         }}
                         data={{
                           assetData: {

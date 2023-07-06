@@ -45,7 +45,11 @@ const CustomNumberInput: FunctionComponent<
               v,
         )
       }}
-      h='60px'
+      h={{
+        md: '60px',
+        sm: '42px',
+        xs: '42px',
+      }}
       _focus={{
         borderColor: isInvalid ? 'red.1' : 'blue.1',
       }}
