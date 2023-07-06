@@ -847,11 +847,38 @@ export default function MarketingCampaign() {
               <CusCard title='My Boxdrops'>
                 <CardBody
                   padding={{
-                    md: 10,
+                    md: '16px',
                     sm: 2,
                     xs: 2,
                   }}
                 >
+                  {!!rankData?.data?.info && (
+                    <Flex
+                      display={{ md: 'flex', sm: 'none', xs: 'none' }}
+                      justifyContent={'center'}
+                      mb='30px'
+                    >
+                      <Flex
+                        fontFamily={'HarmonyOS Sans SC Bold'}
+                        gap='10px'
+                        alignItems={'center'}
+                        borderRadius={16}
+                        bg='#021E3F'
+                        padding='4px 0px 4px 16px'
+                      >
+                        You are now ranked {rankData?.data?.info?.rank}
+                        <Button
+                          variant={'linear'}
+                          w='192px'
+                          h='39px'
+                          borderRadius={12}
+                          onClick={() => setTabKey(TAB_KEY.LEADER_BOARD)}
+                        >
+                          check leadboard
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  )}
                   <Flex
                     justifyContent={'space-around'}
                     alignItems={'center'}
