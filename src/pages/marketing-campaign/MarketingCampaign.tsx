@@ -287,7 +287,16 @@ const RankItem: FunctionComponent<{
         </Text>
       </Flex>
       {/* 百分比 */}
-      <Flex {...INITIAL_RANK_BOX_PROPS} flex={1}>
+      <Flex
+        {...INITIAL_RANK_BOX_PROPS}
+        flex={1}
+        px={{
+          lg: '30px',
+          md: 0,
+          sm: 0,
+          xs: 0,
+        }}
+      >
         <RankPercentage data={data} />
       </Flex>
     </Flex>
