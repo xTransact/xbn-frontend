@@ -1784,7 +1784,7 @@ export default function MarketingCampaign() {
         motionPreset='slideInBottom'
         leastDestructiveRef={cancelRef}
         onClose={onClose}
-        isOpen={true}
+        isOpen={isOpen}
         isCentered
         size={'auto'}
       >
