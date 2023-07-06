@@ -83,7 +83,9 @@ const INITIAL_TEXT_PROPS: TextProps = {
   fontFamily: 'HarmonyOS Sans SC',
   textAlign: 'center',
   fontSize: {
-    md: '20px',
+    xl: '20px',
+    lg: '18px',
+    md: '14px',
     sm: '12px',
     xs: '12px',
   },
@@ -154,6 +156,13 @@ const RankPercentage: FunctionComponent<{
   )
 }
 
+const INITIAL_WIDTH = {
+  xl: '156px',
+  lg: '120px',
+  md: '98px',
+  sm: '44px',
+  xs: '44px',
+}
 const RankItem: FunctionComponent<{
   data: RankItemType
   isHighlight?: boolean
@@ -166,11 +175,13 @@ const RankItem: FunctionComponent<{
         xs: '2px',
       },
       h: {
-        md: '80px',
+        xl: '80px',
+        lg: '60px',
+        md: '60px',
         sm: isHighlight ? '40px' : '44px',
         xs: isHighlight ? '40px' : '44px',
       },
-      flex: 1,
+      w: INITIAL_WIDTH,
       alignItems: 'center',
       justify: 'center',
     }
@@ -184,7 +195,9 @@ const RankItem: FunctionComponent<{
           <Image
             src={ImgNo1}
             w={{
-              md: '60px',
+              xl: '60px',
+              lg: '48px',
+              md: '32px',
               sm: '18px',
               xs: '18px',
             }}
@@ -195,7 +208,9 @@ const RankItem: FunctionComponent<{
           <Image
             src={ImgNo2}
             w={{
-              md: '60px',
+              xl: '60px',
+              lg: '48px',
+              md: '32px',
               sm: '18px',
               xs: '18px',
             }}
@@ -206,7 +221,9 @@ const RankItem: FunctionComponent<{
           <Image
             src={ImgNo3}
             w={{
-              md: '60px',
+              xl: '60px',
+              lg: '48px',
+              md: '32px',
               sm: '18px',
               xs: '18px',
             }}
@@ -248,18 +265,9 @@ const RankItem: FunctionComponent<{
       }
     >
       {/* rank */}
-      <Flex
-        {...INITIAL_RANK_BOX_PROPS}
-        flex={{
-          md: 1,
-          sm: 1.3,
-          xs: 1.3,
-        }}
-      >
-        {rankData}
-      </Flex>
+      <Flex {...INITIAL_RANK_BOX_PROPS}>{rankData}</Flex>
       {/* user */}
-      <Flex {...INITIAL_RANK_BOX_PROPS} flex={2}>
+      <Flex {...INITIAL_RANK_BOX_PROPS}>
         <Text {...INITIAL_TEXT_PROPS}>{data.address}</Text>
       </Flex>
       {[
@@ -279,7 +287,7 @@ const RankItem: FunctionComponent<{
         </Text>
       </Flex>
       {/* 百分比 */}
-      <Flex {...INITIAL_RANK_BOX_PROPS} flex={2}>
+      <Flex {...INITIAL_RANK_BOX_PROPS} flex={1}>
         <RankPercentage data={data} />
       </Flex>
     </Flex>
@@ -555,7 +563,11 @@ export default function MarketingCampaign() {
           flexDir={'column'}
           fontWeight={'900'}
           color={'white'}
-          maxW={'70%'}
+          maxW={{
+            md: '70%',
+            sm: '100%',
+            xs: '100%',
+          }}
           fontFamily={'HarmonyOS Sans SC'}
           lineHeight={{
             xl: '90px',
@@ -569,11 +581,13 @@ export default function MarketingCampaign() {
             xl: '120px',
             lg: '90px',
             md: '50px',
+            xs: 0,
+            sm: 0,
           }}
           pt={{
             md: 0,
-            sm: '32px',
-            xs: '32px',
+            sm: '28px',
+            xs: '24px',
           }}
         >
           <Text
@@ -724,6 +738,7 @@ export default function MarketingCampaign() {
             <Flex
               justify={'center'}
               flex={1}
+              alignItems={'center'}
               cursor={'pointer'}
               onClick={() => {
                 if (tabKey === TAB_KEY.LEADER_BOARD) return
@@ -1784,7 +1799,11 @@ export default function MarketingCampaign() {
                         onClick={() => {
                           navigate('/buy-nfts/market')
                         }}
-                        noOfLines={2}
+                        noOfLines={{
+                          md: 2,
+                          sm: 1,
+                          xs: 1,
+                        }}
                       >
                         Unlock invitations by completing a lending or borrowing
                       </Button>
@@ -1884,8 +1903,8 @@ export default function MarketingCampaign() {
                                 fontFamily={'HarmonyOS Sans SC Regular'}
                                 px={{
                                   md: '18px',
-                                  sm: '10px',
-                                  xs: '10px',
+                                  sm: '4px',
+                                  xs: '4px',
                                 }}
                                 noOfLines={2}
                               >
@@ -1899,11 +1918,6 @@ export default function MarketingCampaign() {
                                       md: '24px',
                                       xs: '12px',
                                       sm: '12px',
-                                    }}
-                                    h={{
-                                      md: 'auto',
-                                      sm: '30px',
-                                      xs: '30px',
                                     }}
                                   />
                                 ) : (
@@ -2330,49 +2344,49 @@ export default function MarketingCampaign() {
                   {[
                     {
                       title: 'Ranking',
-                      flex: 1,
+                      w: INITIAL_WIDTH,
                     },
                     {
                       title: 'User',
-                      flex: 2,
+                      w: INITIAL_WIDTH,
                     },
                     {
                       title: 'Gold',
-                      flex: 1,
+                      w: INITIAL_WIDTH,
                     },
                     {
                       title: 'Silver',
-                      flex: 1,
+                      w: INITIAL_WIDTH,
                     },
                     {
                       title: 'Bronze',
-                      flex: 1,
+                      w: INITIAL_WIDTH,
                     },
                     {
                       title: 'Total',
-                      flex: 1,
+                      w: INITIAL_WIDTH,
                     },
                     {
                       title: '',
-                      flex: 2,
                     },
                   ].map((item) => (
                     <Box
                       key={item.title}
-                      p={{
+                      px={{
                         md: '14px',
-                        sm: '2px',
-                        xs: '2px',
+                        sm: '0px',
+                        xs: '0px',
                       }}
+                      py={{ md: '14px', sm: '2px', xs: '2px' }}
                       color={'white'}
                       fontFamily={'HarmonyOS Sans SC Medium'}
-                      flex={item.flex}
                       borderRightColor={'white'}
                       borderRightWidth={{
                         md: !!item.title ? 1 : 0,
                         sm: !!item.title ? 0.25 : 0,
                         xs: !!item.title ? 0.25 : 0,
                       }}
+                      w={item.w || 'auto'}
                     >
                       <Text
                         textAlign={{
@@ -2380,15 +2394,22 @@ export default function MarketingCampaign() {
                           sm: 'center',
                           xs: 'center',
                         }}
+                        letterSpacing={{
+                          md: 0,
+                          sm: '-0.4px',
+                          xs: '-0.4px',
+                        }}
                         fontSize={{
-                          md: '24px',
+                          xl: '24px',
+                          lg: '20px',
+                          md: '18px',
                           sm: '12px',
                           xs: '12px',
                         }}
                         transform={{
                           md: 'none',
-                          sm: 'scale(0.83333)',
-                          xs: 'scale(0.83333)',
+                          sm: 'scale(0.83334)',
+                          xs: 'scale(0.83334)',
                         }}
                         transformOrigin='center'
                         lineHeight={{
