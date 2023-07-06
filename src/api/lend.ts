@@ -8,9 +8,10 @@ export const apiGetActiveCollection: () => Promise<
   })
 }
 
-export const apiGetPools: (
-  query: Record<string, string>,
-) => Promise<PoolsListItemType[]> = async (query) => {
+export const apiGetPools: (query: {
+  allow_collateral_contract?: string
+  owner_address?: string
+}) => Promise<PoolsListItemType[]> = async (query) => {
   return await request.get(`/lending/api/v1/nft/pools`, {
     params: query,
   })

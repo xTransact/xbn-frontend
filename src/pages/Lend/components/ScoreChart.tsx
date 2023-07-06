@@ -153,12 +153,12 @@ const ScoreChart: FunctionComponent<{
           top={{
             md: '26px',
             sm: '18px',
-            xs: '22px',
+            xs: '18px',
           }}
           left={{
             md: '26px',
             sm: '18px',
-            xs: '22px',
+            xs: '18px',
           }}
           boxSize={{
             md: '72px',

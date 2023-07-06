@@ -366,7 +366,11 @@ const CreatePoolButton: FunctionComponent<
                   pointerEvents='none'
                   color='gray.300'
                   fontSize='1.2em'
-                  top='12px'
+                  top={{
+                    md: '12px',
+                    sm: '6px',
+                    xs: '6px',
+                  }}
                 >
                   <SvgComponent svgId='icon-eth' fill={'black.1'} />
                 </InputLeftElement>
@@ -386,8 +390,22 @@ const CreatePoolButton: FunctionComponent<
                 />
 
                 {isError && (
-                  <InputRightElement top='14px' mr='8px'>
-                    <SvgComponent svgId='icon-error' svgSize='24px' />
+                  <InputRightElement
+                    top={{
+                      md: '14px',
+                      sm: '4px',
+                      xs: '4px',
+                    }}
+                    mr='8px'
+                  >
+                    <SvgComponent
+                      svgId='icon-error'
+                      svgSize={{
+                        md: '24px',
+                        sm: '16px',
+                        xs: '16px',
+                      }}
+                    />
                   </InputRightElement>
                 )}
               </InputGroup>
@@ -423,7 +441,11 @@ const CreatePoolButton: FunctionComponent<
                     <SvgComponent
                       svgId='icon-tip'
                       fill='gray.1'
-                      fontSize={'20px'}
+                      fontSize={{
+                        md: '20px',
+                        sm: '14px',
+                        xs: '14px',
+                      }}
                       ml='16px'
                     />
                   </TooltipComponent>
@@ -451,7 +473,11 @@ const CreatePoolButton: FunctionComponent<
               sm: '23px',
               xs: '23px',
             }}
-            h='52px'
+            h={{
+              md: '52px',
+              sm: '40px',
+              xs: '40px',
+            }}
             isDisabled={isError || !Number(amount)}
             onClick={onConfirm}
             loadingText={

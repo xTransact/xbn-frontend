@@ -233,15 +233,15 @@ const ConnectedIconWallet: FunctionComponent = () => {
             {
               label: 'Repay Loans',
               onClick: () => {
-                navigate('/buy-nfts/loans')
+                navigate('/loans')
               },
             },
-            // {
-            //   label: 'Loan History',
-            //   onClick: () => {
-            //     navigate('/history/loan')
-            //   },
-            // },
+            {
+              label: 'Loan History',
+              onClick: () => {
+                navigate('/history/loan')
+              },
+            },
             {
               label: 'Disconnect',
               onClick: handleDisconnect,

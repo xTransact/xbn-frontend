@@ -47,17 +47,21 @@ const CollectionDescription: FunctionComponent<{
         <Flex
           rowGap={'16px'}
           wrap='wrap'
-          justify='flex-start'
+          justify={{
+            md: 'flex-start',
+            sm: 'space-between',
+            xs: 'space-between',
+          }}
           columnGap={{
             xl: '80px',
             lg: '50px',
             md: '50px',
-            sm: '40px',
-            xs: '40px',
+            sm: '30px',
+            xs: '20px',
           }}
         >
           {[
-            range(5).map((i) => (
+            range(3).map((i) => (
               <Skeleton
                 h='60px'
                 key={i}
@@ -89,7 +93,13 @@ const CollectionDescription: FunctionComponent<{
   } = data
 
   return (
-    <Box mb={'40px'}>
+    <Box
+      mb={{
+        md: '40px',
+        sm: '20px',
+        xs: '20px',
+      }}
+    >
       <Flex gap={'20px'} mb={'32px'}>
         <ImageWithFallback
           src={imagePreviewUrl}
@@ -167,16 +177,20 @@ const CollectionDescription: FunctionComponent<{
       <Flex
         rowGap={'16px'}
         wrap='wrap'
-        justify='flex-start'
+        justify={{
+          md: 'flex-start',
+          sm: 'space-between',
+          xs: 'space-between',
+        }}
         columnGap={{
           xl: '80px',
           lg: '50px',
           md: '50px',
-          sm: '40px',
-          xs: '40px',
+          sm: '30px',
+          xs: '0px',
         }}
       >
-        <Flex flexDir='column' alignItems='center' m={0}>
+        <Flex flexDir='column' alignItems='center' m={0} w='88px'>
           <Flex alignItems={'center'}>
             <SvgComponent svgId='icon-eth' svgSize='20px' />
             <Heading
@@ -197,7 +211,7 @@ const CollectionDescription: FunctionComponent<{
           </Text>
         </Flex>
         {/* min dp */}
-        <Flex flexDir='column' alignItems='center'>
+        <Flex flexDir='column' alignItems='center' w='120px'>
           <Flex alignItems={'center'}>
             <SvgComponent svgId='icon-eth' svgSize='20px' />
             <Heading
@@ -252,7 +266,7 @@ const CollectionDescription: FunctionComponent<{
           </Text>
         </Flex> */}
         {/* supply */}
-        <Flex flexDir='column' alignItems='center'>
+        <Flex flexDir='column' alignItems='center' w='88px'>
           <Flex alignItems={'center'}>
             <Heading
               fontSize={{ md: '24px', sm: '20px', xs: '20px' }}
