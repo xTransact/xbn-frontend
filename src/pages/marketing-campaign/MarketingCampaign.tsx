@@ -2468,15 +2468,43 @@ export default function MarketingCampaign() {
         size={'auto'}
       >
         <AlertDialogOverlay />
-        <AlertDialogContent borderRadius={'15px'} w='576px'>
+        <AlertDialogContent
+          borderRadius={'15px'}
+          w={{
+            md: '576px',
+            sm: '80%',
+            xs: '80%',
+          }}
+        >
           <AlertDialogCloseButton opacity={0} />
-          <Image src={ImgDialogBanner} w='576px' />
+          <Image src={ImgDialogBanner} w='100%' />
           <AlertDialogFooter>
-            <Stack w='576px' gap={'20px'} mb='20px' alignItems={'center'}>
+            <Stack
+              w='100%'
+              gap={{
+                md: '20px',
+                sm: '10px',
+                xs: '10px',
+              }}
+              mb={{
+                md: '20px',
+                sm: '10px',
+                xs: '10px',
+              }}
+              alignItems={'center'}
+            >
               <Flex>
                 <Text
-                  fontSize={'24px'}
-                  lineHeight={'32px'}
+                  fontSize={{
+                    md: '24px',
+                    sm: '14px',
+                    xs: '14px',
+                  }}
+                  lineHeight={{
+                    md: '32px',
+                    sm: 'normal',
+                    xs: 'normal',
+                  }}
                   textAlign={'center'}
                   fontFamily={'HarmonyOS Sans SC Medium'}
                 >
@@ -2488,10 +2516,18 @@ export default function MarketingCampaign() {
                 onClick={onClose}
                 variant={'linear'}
                 color='#FFFFFF'
-                h='50px'
-                fontSize={'20px'}
+                h={{ md: '50px', sm: '40px', xs: '40px' }}
+                fontSize={{
+                  md: '20px',
+                  sm: '14px',
+                  xs: '14px',
+                }}
                 fontFamily={'HarmonyOS Sans SC Bold'}
-                w='300px'
+                w={{
+                  md: '300px',
+                  sm: '200px',
+                  xs: '200px',
+                }}
               >
                 OK
               </Button>
