@@ -51,12 +51,12 @@ export const COMMUNITY_DATA = [
   {
     title: 'Linked in',
     url: LINKEDIN_URL,
-    icon: 'icon-linked',
+    icon: 'icon-medium',
   },
   {
     title: 'Medium',
     url: MEDIUM_URL,
-    icon: 'icon-medium',
+    icon: 'icon-linked',
   },
 ]
 
