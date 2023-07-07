@@ -265,8 +265,8 @@ const Lend = () => {
         owner_address: currentAccount,
       }),
     {
-      ready: !!currentAccount && tabKey === TAB_KEY.MY_POOLS_TAB,
-      debounceWait: 10,
+      ready: !!currentAccount && tabKey !== TAB_KEY.COLLECTION_TAB,
+      debounceWait: 100,
       refreshDeps: [currentAccount],
       onSuccess: (data) => {
         setMyPoolsData(data || [])
