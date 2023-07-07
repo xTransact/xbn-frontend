@@ -340,7 +340,7 @@ const Market = () => {
   return (
     <>
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
-      {/* Add Desired Collection */}
+      {/* Propose Listing */}
       <Box
         bg='white'
         pos={'sticky'}
@@ -355,7 +355,7 @@ const Market = () => {
         }}
       >
         <Button w='100%' variant={'primary'}>
-          Add Desired Collection
+          Propose Listing
         </Button>
       </Box>
       <Box
@@ -408,7 +408,7 @@ const Market = () => {
             top='151px'
           >
             <Heading fontSize={'16px'} mb='16px'>
-              Top 100 Collections
+              Top Collections
             </Heading>
             {/* pc collection list */}
             <Box
@@ -503,7 +503,7 @@ const Market = () => {
                 <DrawerContent borderTopRadius={16} pb='40px'>
                   <DrawerBody>
                     <Heading fontSize={'16px'} pt='40px' pb='32px'>
-                      Top 100 Collections
+                      Top Collections
                     </Heading>
                     <Box
                       hidden={

@@ -4,7 +4,12 @@ import isEmpty from 'lodash-es/isEmpty'
 import range from 'lodash-es/range'
 import { useRef, useState, type FunctionComponent } from 'react'
 
-import { EmptyComponent, ImageWithFallback, SvgComponent } from '@/components'
+import {
+  CollectionTag,
+  EmptyComponent,
+  ImageWithFallback,
+  SvgComponent,
+} from '@/components'
 import type { NftCollection } from '@/hooks'
 import { formatFloat } from '@/utils/format'
 
@@ -127,6 +132,7 @@ const CollectionDescription: FunctionComponent<{
             {safelistRequestStatus === 'verified' && (
               <SvgComponent svgId='icon-verified-fill' />
             )}
+            <CollectionTag />
           </Flex>
 
           <Text
