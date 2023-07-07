@@ -2287,6 +2287,7 @@ export default function MarketingCampaign() {
                 sm: 'space-between',
                 xs: 'space-between',
               }}
+              alignItems={'center'}
             >
               <Box>
                 <Image
@@ -2298,38 +2299,6 @@ export default function MarketingCampaign() {
                   }}
                   w='220px'
                 />
-                <Text
-                  color={{
-                    md: '#B5C4D7',
-                    sm: 'white',
-                    xs: 'white',
-                  }}
-                  fontSize={{
-                    md: '24px',
-                    sm: '12px',
-                    xs: '12px',
-                  }}
-                  textAlign={{
-                    md: 'center',
-                    sm: 'left',
-                    xs: 'left',
-                  }}
-                  fontFamily='HarmonyOS Sans SC'
-                  fontWeight={{
-                    md: '500',
-                    sm: '400',
-                    xs: '400',
-                  }}
-                  transform={{
-                    md: 'none',
-                    sm: 'scale(0.83333)',
-                    xs: 'scale(0.83333)',
-                  }}
-                  transformOrigin='left'
-                  lineHeight={{ md: '20px', sm: 'normal', xs: 'normal' }}
-                >
-                  Lend More, Borrow More, Rank Higher!
-                </Text>
               </Box>
               <Image
                 src={ImgH5Prize}
@@ -2343,11 +2312,6 @@ export default function MarketingCampaign() {
             </Flex>
 
             <Box
-              mt={{
-                md: '40px',
-                sm: '6px',
-                xs: '6px',
-              }}
               bg='#072444'
               borderRadius={{
                 md: '16px',
