@@ -34,6 +34,7 @@ import {
   LoadingComponent,
   SearchInput,
 } from '@/components'
+import { RESPONSIVE_MAX_W } from '@/constants'
 import { TransactionContext } from '@/context/TransactionContext'
 import {
   NftAssetStatus,
@@ -45,6 +46,7 @@ import {
   type NftAsset,
   useGuide,
 } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { wei2Eth } from '@/utils/unit-conversion'
 
 import CollectionDescription from './components/CollectionDescription'
@@ -337,7 +339,7 @@ const Market = () => {
     key: 'has-read-buyer-guide',
   })
   return (
-    <>
+    <RootLayout maxW={{ ...RESPONSIVE_MAX_W, xl: 1376, lg: 1200 }} px={0}>
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
       {/* Propose Listing */}
       <Box
@@ -345,8 +347,8 @@ const Market = () => {
         top={'92vh'}
         zIndex={9}
         w={{
-          xl: '300px',
-          lg: '260px',
+          xl: '360px',
+          lg: '300px',
           md: '100%',
           sm: '100%',
           xs: '100%',
@@ -366,7 +368,7 @@ const Market = () => {
       <Box
         mb={{ md: '40px', sm: 0, xs: 0 }}
         mt={{
-          md: '60px',
+          md: '30px',
           sm: '16px',
           xs: '16px',
         }}
@@ -379,13 +381,13 @@ const Market = () => {
       <Flex
         mt={'10px'}
         mb='100px'
-        gap={9}
+        gap={'36px'}
         flexWrap={{ lg: 'nowrap', md: 'wrap', sm: 'wrap', xs: 'wrap' }}
       >
         <Box
           w={{
-            xl: '300px',
-            lg: '260px',
+            xl: '360px',
+            lg: '300px',
             md: '100%',
             sm: '100%',
             xs: '100%',
@@ -563,8 +565,8 @@ const Market = () => {
 
         <Box
           w={{
-            xl: '820px',
-            lg: '640px',
+            xl: '980px',
+            lg: '864px',
             md: '100%',
             sm: '100%',
             xs: '100%',
@@ -633,8 +635,8 @@ const Market = () => {
                     <MarketNftListCard
                       data={{ ...item, bestPoolAmount }}
                       imageSize={{
-                        xl: grid === 4 ? '190px' : '260px',
-                        lg: grid === 4 ? '152px' : '206px',
+                        xl: grid === 4 ? '231px' : '314px',
+                        lg: grid === 4 ? '208px' : '280px',
                         md: grid === 4 ? '172px' : '234px',
                         sm: '174px',
                         xs: '174px',
@@ -772,7 +774,7 @@ const Market = () => {
         </Box>
       </Flex>
       <ConnectWalletModal visible={isOpen} handleClose={onClose} />
-    </>
+    </RootLayout>
   )
 }
 

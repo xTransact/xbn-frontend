@@ -125,11 +125,9 @@ function App() {
         <Route
           path='/buy-nfts/market/:collectionId?'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <Market />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <Market />
+            </Suspense>
           }
         />
 
