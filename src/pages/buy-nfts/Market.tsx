@@ -13,6 +13,7 @@ import {
   SimpleGrid,
   Text,
   useDisclosure,
+  Image,
 } from '@chakra-ui/react'
 import useDebounce from 'ahooks/lib/useDebounce'
 import useInfiniteScroll from 'ahooks/lib/useInfiniteScroll'
@@ -25,6 +26,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { apiGetFloorPrice, apiGetPools } from '@/api'
+import ImgLabel from '@/assets/desire-label.png'
 import {
   BuyerGuideModal,
   ConnectWalletModal,
@@ -41,7 +43,6 @@ import {
   useNftCollectionAssetsLazyQuery,
   useWallet,
   type NftAsset,
-  type NftCollection,
   useGuide,
 } from '@/hooks'
 import { wei2Eth } from '@/utils/unit-conversion'
@@ -85,10 +86,8 @@ const Market = () => {
     onOpen: openDraw,
     onClose: closeDraw,
   } = useDisclosure()
-  const [selectCollection, setSelectCollection] = useState<{
-    contractAddress: string
-    nftCollection: NftCollection
-  }>()
+  const [selectCollection, setSelectCollection] =
+    useState<XBNCollectionItemType>()
   const [assetSearchValue, setAssetSearchValue] = useState('')
   const debounceSearchValue = useDebounce(assetSearchValue, { wait: 500 })
   const [collectionSearchValue, setCollectionSearchValue] = useState('')
@@ -354,6 +353,13 @@ const Market = () => {
           xs: '100%',
         }}
       >
+        <Image
+          src={ImgLabel}
+          w='160px'
+          right={0}
+          position={'absolute'}
+          top='-55%'
+        />
         <Button w='100%' variant={'primary'}>
           Propose Listing
         </Button>
@@ -472,7 +478,6 @@ const Market = () => {
                       selectCollection?.nftCollection?.id ===
                       item?.nftCollection?.id
                     }
-                    iconSize='26px'
                   />
                 ))}
               </List>
@@ -572,6 +577,7 @@ const Market = () => {
             data={selectCollection?.nftCollection}
             floorPrice={floorPrice}
             bestPoolAmount={bestPoolAmount}
+            tags={selectCollection?.tags}
           />
           <Toolbar
             loading={collectionLoading || poolsLoading}

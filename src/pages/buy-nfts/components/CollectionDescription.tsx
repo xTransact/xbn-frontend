@@ -18,7 +18,8 @@ const CollectionDescription: FunctionComponent<{
   loading?: boolean
   bestPoolAmount?: number
   floorPrice?: number
-}> = ({ data, loading, bestPoolAmount, floorPrice }) => {
+  tags?: string[]
+}> = ({ data, loading, bestPoolAmount, floorPrice, tags }) => {
   const [show, setShow] = useState(false)
   const ref = useRef<HTMLParagraphElement>(null)
   const offsetHeight = ref.current?.offsetHeight
@@ -122,7 +123,7 @@ const CollectionDescription: FunctionComponent<{
           }}
         />
         <Box pos='relative'>
-          <Flex>
+          <Flex alignItems={'center'}>
             <Heading
               fontSize={{ md: '32px', sm: '20px', xs: '20px' }}
               display='flex'
@@ -132,7 +133,11 @@ const CollectionDescription: FunctionComponent<{
             {safelistRequestStatus === 'verified' && (
               <SvgComponent svgId='icon-verified-fill' />
             )}
-            <CollectionTag />
+            <Flex gap={'10px'}>
+              {tags?.map((item, index) => (
+                <CollectionTag key={item} priority={index + 1} title={item} />
+              ))}
+            </Flex>
           </Flex>
 
           <Text

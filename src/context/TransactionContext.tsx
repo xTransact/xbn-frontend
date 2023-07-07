@@ -87,7 +87,7 @@ export const TransactionsProvider = ({
         return {
           ...current,
           priority: item?.priority || index,
-          tags: item?.tags || ['haa'],
+          tags: item?.tags || ['ZERO Rate', 'trending', '2x Box'],
         }
       })
       return compact(res)

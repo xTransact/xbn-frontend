@@ -12,9 +12,10 @@ import type { FunctionComponent, ReactNode } from 'react'
 const CollectionTag: FunctionComponent<
   FlexProps & {
     icon?: ReactNode
-    priority?: 1 | 2 | 3 | 4
+    priority?: number
+    title?: string
   }
-> = ({ children, icon, priority = 1 }) => {
+> = ({ children, title, icon, priority = 1 }) => {
   const src = useMemo(() => {
     switch (priority) {
       case 1:
@@ -30,26 +31,36 @@ const CollectionTag: FunctionComponent<
         return ImgTag1
     }
   }, [priority])
-  if (!children) return null
+  if (!children && !title) return null
   return (
     <Flex
       pr='4px'
-      gap='2px'
+      gap='4px'
       height={'20px'}
       borderWidth={1}
       borderColor={'blue.4'}
+      alignItems={'center'}
       borderRadius={4}
       bg='conic-gradient(from 189deg at 75.95% 6.03%, rgba(255, 255, 255, 0.20) 0deg, rgba(255, 255, 255, 0.00) 360deg), linear-gradient(90deg, #4A40FF 0%, #ADA6FF 100%)'
     >
-      {!!priority ? <Image src={src} alt='' /> : !!icon ? icon : null}
-      <Text
-        textShadow={'0px 0.6000000238418579px 0px #0F00ED'}
-        fontSize={'12px'}
-        fontFamily={'HarmonyOS Sans SC Bold'}
-        color={'white'}
-      >
-        {children}
-      </Text>
+      {!!priority ? (
+        <Image src={src} alt='' w={'18px'} />
+      ) : !!icon ? (
+        icon
+      ) : null}
+      {!!children ? (
+        children
+      ) : (
+        <Text
+          textShadow={'0px 0.6000000238418579px 0px #0F00ED'}
+          fontSize={'12px'}
+          fontFamily={'HarmonyOS Sans SC Bold'}
+          color={'white'}
+          lineHeight={'20px'}
+        >
+          {title}
+        </Text>
+      )}
     </Flex>
   )
 }

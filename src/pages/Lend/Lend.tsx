@@ -62,9 +62,8 @@ import { useWallet, useBatchAsset, useGuide } from '@/hooks'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
-import CollectionListItem from '../buy-nfts/components/CollectionListItem'
-
 import AllPoolsDescription from './components/AllPoolsDescription'
+import CollectionListItem from './components/CollectionListItem'
 import MyPoolActionRender from './components/MyPoolActionRender'
 
 type Dictionary<T> = Record<string, T>
