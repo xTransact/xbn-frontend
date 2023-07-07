@@ -49,14 +49,14 @@ export const COMMUNITY_DATA = [
     icon: 'icon-discord',
   },
   {
-    title: 'Linked in',
+    title: 'Linked In',
     url: LINKEDIN_URL,
-    icon: 'icon-linked',
+    icon: 'icon-medium',
   },
   {
     title: 'Medium',
     url: MEDIUM_URL,
-    icon: 'icon-medium',
+    icon: 'icon-linked',
   },
 ]
 
