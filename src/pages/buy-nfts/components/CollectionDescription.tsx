@@ -211,7 +211,16 @@ const CollectionDescription: FunctionComponent<{
           </Text>
         </Flex>
         {/* min dp */}
-        <Flex flexDir='column' alignItems='center' w='120px'>
+        <Flex
+          flexDir='column'
+          alignItems='center'
+          w={{
+            md: '160px',
+            sm: '120px',
+            xs: '120px',
+          }}
+          justify={'center'}
+        >
           <Flex alignItems={'center'}>
             <SvgComponent svgId='icon-eth' svgSize='20px' />
             <Heading
@@ -219,6 +228,7 @@ const CollectionDescription: FunctionComponent<{
               fontWeight='700'
               display='flex'
               mb={'4px'}
+              textAlign={'center'}
             >
               {floorPrice !== undefined && bestPoolAmount !== undefined
                 ? formatFloat(
