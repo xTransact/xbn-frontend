@@ -104,30 +104,36 @@ const INITIAL_TEXT_PROPS: TextProps = {
 
 const RankPercentage: FunctionComponent<{
   data: RankItemType
-}> = ({ data }) => {
+  total?: number
+}> = ({ data, total }) => {
   const percentageData = useMemo(() => {
     if (!data) return
-    const total = BigNumber(data?.box_gold_num)
-      .plus(data?.box_bronze_num)
-      .plus(data?.box_silver_num)
-    if (total.eq(0)) return
+    const { box_bronze_num, box_gold_num, box_silver_num } = data
+
+    if (!total) return
 
     const res = [
       {
-        percentage: BigNumber(data?.box_gold_num).dividedBy(total).toNumber(),
+        percentage: !box_gold_num
+          ? 0
+          : BigNumber(box_gold_num).dividedBy(total).toNumber(),
         colorScheme: 'gold',
       },
       {
-        percentage: BigNumber(data?.box_silver_num).dividedBy(total).toNumber(),
+        percentage: !box_silver_num
+          ? 0
+          : BigNumber(box_silver_num).dividedBy(total).toNumber(),
         colorScheme: 'silver',
       },
       {
-        percentage: BigNumber(data?.box_bronze_num).dividedBy(total).toNumber(),
+        percentage: !box_bronze_num
+          ? 0
+          : BigNumber(box_bronze_num).dividedBy(total).toNumber(),
         colorScheme: 'bronze',
       },
     ]
     return res.filter((i) => !!i.percentage)
-  }, [data])
+  }, [data, total])
   if (!data) return null
 
   return (
@@ -138,21 +144,20 @@ const RankPercentage: FunctionComponent<{
       borderRadius={{ md: '16px', sm: 0, xs: 0 }}
       overflow={'hidden'}
     >
-      {!!percentageData
-        ? percentageData?.map((item) => (
-            <Box
-              w={`${item.percentage * 100}%`}
-              key={item.colorScheme}
-              h={{ md: '18px', sm: '4px', xs: '4px' }}
-              // bg={item.colorScheme}
-              bgSize={'20px 20px'}
-              bgImage={
-                'linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)'
-              }
-              bgColor={item.colorScheme}
-            />
-          ))
-        : '--'}
+      {!!percentageData &&
+        percentageData?.map((item) => (
+          <Box
+            w={`${item.percentage * 100}%`}
+            key={item.colorScheme}
+            h={{ md: '18px', sm: '4px', xs: '4px' }}
+            // bg={item.colorScheme}
+            bgSize={'20px 20px'}
+            bgImage={
+              'linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)'
+            }
+            bgColor={item.colorScheme}
+          />
+        ))}
     </Flex>
   )
 }
@@ -191,6 +196,8 @@ const RankItem: FunctionComponent<{
     if (!data) return '--'
     const { rank } = data
     switch (rank) {
+      case undefined:
+        return <Text {...INITIAL_TEXT_PROPS}>unranked</Text>
       case 1:
         return (
           <Image
@@ -239,6 +246,18 @@ const RankItem: FunctionComponent<{
         )
     }
   }, [data])
+  const { rank, address, box_bronze_num, box_gold_num, box_silver_num } =
+    data || {}
+
+  const totalBoxNum = useMemo(() => {
+    if (
+      box_bronze_num === undefined &&
+      box_gold_num === undefined &&
+      box_silver_num === undefined
+    )
+      return
+    return (box_bronze_num || 0) + (box_gold_num || 0) + (box_silver_num || 0)
+  }, [box_bronze_num, box_gold_num, box_silver_num])
   if (!data) return null
 
   return (
@@ -256,25 +275,27 @@ const RankItem: FunctionComponent<{
       }}
       bg={
         isHighlight
-          ? data.rank < 4
+          ? rank && rank < 4
             ? 'linear-gradient(313deg, #00F 0%, rgba(39, 180, 255, 0.00) 100%), #051B34'
             : 'linear-gradient(270deg, rgba(0, 23, 147, 0.60) 0%, rgba(0, 60, 150, 0.00) 100%), linear-gradient(180deg, #17AFFF 0%, #0048DA 100%)'
           : 'linear-gradient(180deg, #05356F 0%, rgba(2, 38, 80, 0.00) 100%)'
       }
       backgroundBlendMode={
-        isHighlight && data?.rank < 4 ? 'hard-light, normal' : 'lighten'
+        isHighlight && rank && rank < 4 ? 'hard-light, normal' : 'lighten'
       }
     >
       {/* rank */}
       <Flex {...INITIAL_RANK_BOX_PROPS}>{rankData}</Flex>
       {/* user */}
       <Flex {...INITIAL_RANK_BOX_PROPS}>
-        <Text {...INITIAL_TEXT_PROPS}>{data.address}</Text>
+        <Text {...INITIAL_TEXT_PROPS} color={isHighlight ? 'red.1' : 'white'}>
+          {address}
+        </Text>
       </Flex>
       {[
-        data?.box_gold_num ?? '--',
-        data?.box_silver_num ?? '--',
-        data?.box_bronze_num ?? '--',
+        box_gold_num ?? '--',
+        box_silver_num ?? '--',
+        box_bronze_num ?? '--',
       ].map((i) => (
         <Flex {...INITIAL_RANK_BOX_PROPS} key={`${i}-${Math.random()}`}>
           <Text {...INITIAL_TEXT_PROPS}>{i}</Text>
@@ -283,9 +304,7 @@ const RankItem: FunctionComponent<{
 
       {/* Total */}
       <Flex {...INITIAL_RANK_BOX_PROPS}>
-        <Text {...INITIAL_TEXT_PROPS}>
-          {data.box_gold_num + data.box_silver_num + data.box_bronze_num}
-        </Text>
+        <Text {...INITIAL_TEXT_PROPS}>{totalBoxNum ?? '--'}</Text>
       </Flex>
       {/* 百分比 */}
       <Flex
@@ -298,7 +317,7 @@ const RankItem: FunctionComponent<{
           xs: 0,
         }}
       >
-        <RankPercentage data={data} />
+        <RankPercentage data={data} total={totalBoxNum} />
       </Flex>
     </Flex>
   )
@@ -2437,6 +2456,14 @@ export default function MarketingCampaign() {
                   {!!rankData?.data?.info && (
                     <RankItem
                       data={{ ...rankData?.data?.info, address: 'You' }}
+                      isHighlight
+                    />
+                  )}
+                  {isLogin && !rankData?.data?.info && (
+                    <RankItem
+                      data={{
+                        address: 'You',
+                      }}
                       isHighlight
                     />
                   )}
