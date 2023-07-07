@@ -47,6 +47,9 @@ const components = {
         _loading: {
           color: 'gray.3',
         },
+        _focusVisible: {
+          boxShadow: 'none',
+        },
       },
       other: {
         bg: 'blue.3',
@@ -79,6 +82,17 @@ const components = {
         _hover: {
           bg: 'white',
           opacity: 0.8,
+        },
+      },
+      outlineOther: {
+        color: 'blue.1',
+        bg: 'white',
+        _hover: {
+          bg: 'blue.2',
+          opacity: 0.8,
+        },
+        _focusVisible: {
+          boxShadow: 'none',
         },
       },
       // // 5. We can add responsive variants

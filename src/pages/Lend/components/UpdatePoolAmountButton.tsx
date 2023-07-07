@@ -13,8 +13,6 @@ import {
   InputLeftElement,
   useDisclosure,
   Flex,
-  Tooltip,
-  Box,
 } from '@chakra-ui/react'
 import useRequest from 'ahooks/lib/useRequest'
 import BigNumber from 'bignumber.js'
@@ -33,6 +31,7 @@ import {
   CustomNumberInput,
   LoadingComponent,
   SvgComponent,
+  TooltipComponent,
 } from '@/components'
 import { useCatchContractError, useWallet } from '@/hooks'
 import { createWethContract, createXBankContract } from '@/utils/createContract'
@@ -346,7 +345,11 @@ const UpdatePoolAmountButton: FunctionComponent<
                   pointerEvents='none'
                   color='gray.300'
                   fontSize='1.2em'
-                  top='14px'
+                  top={{
+                    md: '12px',
+                    sm: '6px',
+                    xs: '6px',
+                  }}
                 >
                   <SvgComponent svgId='icon-eth' fill={'black.1'} />
                 </InputLeftElement>
@@ -376,7 +379,7 @@ const UpdatePoolAmountButton: FunctionComponent<
                     {expectedLoanCount}
                     &nbsp;loans
                   </Text>
-                  <Tooltip
+                  <TooltipComponent
                     whiteSpace={'pre-line'}
                     label={`Based on the loan amount you have set, number of loans = amount deposited / set loan amount , \nFor example: ${amount}/${formatFloat(
                       defaultAmount,
@@ -391,14 +394,17 @@ const UpdatePoolAmountButton: FunctionComponent<
                     fontWeight={'400'}
                     color='gray.4'
                   >
-                    <Box cursor={'pointer'} ml='16px'>
-                      <SvgComponent
-                        svgId='icon-tip'
-                        fill='gray.1'
-                        fontSize={'20px'}
-                      />
-                    </Box>
-                  </Tooltip>
+                    <SvgComponent
+                      svgId='icon-tip'
+                      fill='gray.1'
+                      fontSize={{
+                        md: '20px',
+                        sm: '14px',
+                        xs: '14px',
+                      }}
+                      ml='16px'
+                    />
+                  </TooltipComponent>
                 </Flex>
               )}
             </FormControl>
@@ -414,7 +420,11 @@ const UpdatePoolAmountButton: FunctionComponent<
               sm: '23px',
               xs: '23px',
             }}
-            h='52px'
+            h={{
+              md: '52px',
+              sm: '40px',
+              xs: '40px',
+            }}
             isDisabled={isError || !Number(amount)}
             onClick={onConfirm}
             loadingText={'updating'}

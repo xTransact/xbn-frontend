@@ -32,11 +32,12 @@ import {
   useState,
   type FunctionComponent,
 } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import {
   apiGetAssetPrice,
   apiGetFloorPrice,
+  apiGetPools,
   apiGetXCurrency,
   apiPostLoanOrder,
 } from '@/api'
@@ -56,6 +57,7 @@ import {
   useAssetQuery,
   useBatchWethBalance,
   useCatchContractError,
+  useNftCollectionsByContractAddressesQuery,
 } from '@/hooks'
 import { amortizationCalByDays } from '@/utils/calculation'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
@@ -124,19 +126,7 @@ const NftAssetDetail = () => {
   const [loanStep, setLoanStep] = useState<'loading' | 'success' | undefined>()
   const { isOpen, onClose, currentAccount, interceptFn } = useWallet()
   const [platform, setPlatform] = useState<MARKET_TYPE_ENUM | undefined>()
-  const {
-    state,
-  }: {
-    state: {
-      collection: {
-        name: string
-        imagePreviewUrl: string
-        safelistRequestStatus: string
-        slug: string
-      }
-      poolsList: PoolsListItemType[]
-    }
-  } = useLocation()
+
   const assetVariable = useParams() as {
     contractAddress: string
     tokenID: string
@@ -159,13 +149,54 @@ const NftAssetDetail = () => {
 
   const [commodityWeiPrice, setCommodityWeiPrice] = useState(BigNumber(0))
 
-  const { collection, poolsList: originPoolList } = state || {}
+  const [collection, setCollection] = useState<{
+    name: string
+    imagePreviewUrl: string
+    safelistRequestStatus: string
+    slug: string
+  }>()
+  const { loading: collectionLoading } =
+    useNftCollectionsByContractAddressesQuery({
+      variables: {
+        assetContractAddresses: [assetVariable?.contractAddress],
+      },
+      skip: isEmpty(assetVariable),
+      onCompleted(data) {
+        if (!data) return
+        const { nftCollectionsByContractAddresses } = data
+        if (
+          !nftCollectionsByContractAddresses ||
+          isEmpty(nftCollectionsByContractAddresses)
+        )
+          return
+        const { name, slug, imagePreviewUrl, safelistRequestStatus } =
+          nftCollectionsByContractAddresses[0].nftCollection
+        setCollection({
+          name,
+          imagePreviewUrl,
+          slug,
+          safelistRequestStatus,
+        })
+      },
+    })
+
   const { data: detail, loading: assetFetchLoading } = useAssetQuery({
     variables: {
       assetContractAddress: assetVariable?.contractAddress,
       assetTokenId: assetVariable?.tokenID,
     },
   })
+  const { loading: poolsLoading, data: originPoolList } = useRequest(
+    () =>
+      apiGetPools({
+        allow_collateral_contract: detail?.asset?.assetContractAddress,
+      }),
+    {
+      debounceWait: 100,
+      ready: !!detail,
+      refreshDeps: [detail?.asset?.assetContractAddress],
+    },
+  )
 
   const {
     loading: floorPriceLoading,
@@ -174,7 +205,7 @@ const NftAssetDetail = () => {
   } = useRequest(
     () =>
       apiGetFloorPrice({
-        slug: collection.slug || '',
+        slug: collection?.slug || '',
       }),
     {
       ready: !!collection,
@@ -562,7 +593,7 @@ const NftAssetDetail = () => {
         status: 'info',
         title: 'The loan is being generated, please wait and refresh later',
       })
-      navigate('/buy-nfts/loans')
+      navigate('/loans')
     }
   }, [loanStep, isAutoLeave, toast, navigate])
 
@@ -593,7 +624,9 @@ const NftAssetDetail = () => {
   const poolFilterLoading = useMemo(
     () =>
       balanceFetchLoading ||
+      poolsLoading ||
       assetFetchLoading ||
+      collectionLoading ||
       ordersPriceFetchLoading ||
       fetchSpreadLoading ||
       floorPriceLoading,
@@ -603,9 +636,11 @@ const NftAssetDetail = () => {
       ordersPriceFetchLoading,
       fetchSpreadLoading,
       floorPriceLoading,
+      poolsLoading,
+      collectionLoading,
     ],
   )
-  if (!state || isEmpty(state) || (isEmpty(detail) && !assetFetchLoading))
+  if (isEmpty(detail) && !assetFetchLoading)
     return <NotFound title='Asset not found' backTo='/buy-nfts/market' />
   if (!!loanStep) {
     return (
@@ -617,7 +652,7 @@ const NftAssetDetail = () => {
           return
         }}
         onSuccessBack={() => {
-          navigate('/buy-nfts/loans')
+          navigate('/loans')
           return
         }}
         successTitle='Purchase completed'
@@ -632,7 +667,7 @@ const NftAssetDetail = () => {
     <NFTDetailContainer>
       {/* 手机端 */}
       <H5SecondaryHeader title='Buy NFTs' mb='20px' />
-      {assetFetchLoading || floorPriceLoading ? (
+      {assetFetchLoading || collectionLoading || floorPriceLoading ? (
         <Skeleton
           h='120px'
           borderRadius={16}
@@ -676,7 +711,7 @@ const NftAssetDetail = () => {
         </Flex>
       )}
       {/* pc 端 */}
-      {assetFetchLoading || floorPriceLoading ? (
+      {assetFetchLoading || collectionLoading || floorPriceLoading ? (
         <Skeleton
           height={700}
           borderRadius={16}
@@ -782,12 +817,24 @@ const NftAssetDetail = () => {
           }
         >
           <Flex
-            p={'16px'}
+            p={{
+              md: '16px',
+              sm: '4px',
+              xs: '4px',
+            }}
             pr={'24px'}
             border={`1px solid var(--chakra-colors-gray-1)`}
-            borderRadius={16}
+            borderRadius={{
+              md: 16,
+              sm: 8,
+              xs: 8,
+            }}
             alignItems='center'
-            gap={'16px'}
+            gap={{
+              md: '16px',
+              sm: '4px',
+              xs: '4px',
+            }}
           >
             {downPaymentWei && (
               <Flex
@@ -797,12 +844,16 @@ const NftAssetDetail = () => {
                 gap={'4px'}
                 alignItems='center'
                 justify={'center'}
-                minW='96px'
+                minW={{
+                  md: '96px',
+                  sm: '60px',
+                  xs: '60px',
+                }}
                 px={'8px'}
                 w={{
                   md: '148px',
-                  sm: '100px',
-                  xs: '100px',
+                  sm: '80px',
+                  xs: '80px',
                 }}
               >
                 <SvgComponent svgId='icon-eth' svgSize='20px' />
@@ -833,14 +884,17 @@ const NftAssetDetail = () => {
                 lg: '350px',
                 md: '436px',
                 sm: '230px',
-                xs: '230px',
+                xs: '220px',
               }}
             >
               {COLLATERAL.map((item) => (
                 <SliderMark value={item} fontSize='14px' key={item} zIndex={1}>
                   <Box
-                    w={'8px'}
-                    h={'8px'}
+                    boxSize={{
+                      md: '8px',
+                      xs: '6px',
+                      sm: '6px',
+                    }}
                     borderRadius={8}
                     borderWidth={1}
                     borderColor='white'
@@ -855,8 +909,16 @@ const NftAssetDetail = () => {
                 />
               </SliderTrack>
               <SliderThumb
-                boxSize={'24px'}
-                borderWidth={5}
+                boxSize={{
+                  md: '24px',
+                  sm: '14px',
+                  xs: '14px',
+                }}
+                borderWidth={{
+                  md: 5,
+                  sm: 3,
+                  xs: 3,
+                }}
                 borderColor={'blue.1'}
                 _focus={{
                   boxShadow: 'none',
@@ -881,7 +943,9 @@ const NftAssetDetail = () => {
         <EmptyPools
           isShow={
             isEmpty(selectPool) &&
+            !poolsLoading &&
             !assetFetchLoading &&
+            !collectionLoading &&
             !ordersPriceFetchLoading &&
             !balanceFetchLoading &&
             !floorPriceLoading

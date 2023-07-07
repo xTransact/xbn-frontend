@@ -16,7 +16,7 @@ import {
   AlertDescription,
   Button,
 } from '@chakra-ui/react'
-import { useRequest } from 'ahooks'
+import { useLocalStorageState, useRequest } from 'ahooks'
 import isEmpty from 'lodash-es/isEmpty'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -30,6 +30,7 @@ import {
 } from '@/components'
 import { useBatchAsset, useWallet } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
+import type { UserTokenType } from '@/utils/auth'
 import { clearUserToken, getUserToken } from '@/utils/auth'
 
 import MyAssetNftListCard from './components/MyAssetNftListCard'
@@ -90,28 +91,42 @@ const MyAssets = () => {
       manual: true,
     },
   )
-  const { data, loading, refresh } = useRequest(apiGetMyAssets, {
+
+  const {
+    data,
+    loading,
+    runAsync: fetchMyAsset,
+  } = useRequest(apiGetMyAssets, {
     debounceWait: 100,
-    defaultParams: [
-      {
-        wallet_address: currentAccount,
-      },
-    ],
-    refreshDeps: [currentAccount],
-    ready:
-      !!currentAccount &&
-      !isDenied &&
-      getUserToken()?.address === currentAccount,
-    onError: async (error: any) => {
+    manual: true,
+  })
+
+  const [userToken] = useLocalStorageState<UserTokenType>('auth')
+
+  useEffect(() => {
+    if (
+      !fetchMyAsset ||
+      !currentAccount ||
+      isDenied ||
+      userToken?.address !== currentAccount ||
+      !runSignAsync
+    ) {
+      return
+    }
+    fetchMyAsset({
+      wallet_address: currentAccount,
+    }).catch(async (error) => {
       if (error.code === 'unauthenticated') {
         // 未能签名
         await runSignAsync()
         setTimeout(() => {
-          refresh()
+          fetchMyAsset({
+            wallet_address: currentAccount,
+          })
         }, 1000)
       }
-    },
-  })
+    })
+  }, [currentAccount, isDenied, fetchMyAsset, runSignAsync, userToken])
 
   const batchAssetParams = useMemo(() => {
     if (!data) return []
@@ -137,7 +152,7 @@ const MyAssets = () => {
       lg: grid,
       md: grid,
       sm: 2,
-      xs: 1,
+      xs: 2,
     }),
     [grid],
   )
@@ -196,7 +211,9 @@ const MyAssets = () => {
                 if (signLoading) return
                 await runSignAsync()
                 setTimeout(() => {
-                  refresh()
+                  fetchMyAsset({
+                    wallet_address: currentAccount,
+                  })
                 }, 1000)
               }}
               variant={'outline'}
@@ -297,7 +314,7 @@ const MyAssets = () => {
                           lg: grid === 4 ? '220px' : '298px',
                           md: grid === 4 ? '170px' : '234px',
                           sm: '174px',
-                          xs: '174px',
+                          xs: '160px',
                         }}
                         data={{
                           assetData: {
@@ -307,7 +324,11 @@ const MyAssets = () => {
                           },
                           contractData: { ...item },
                         }}
-                        onRefreshList={refresh}
+                        onRefreshList={() => {
+                          fetchMyAsset({
+                            wallet_address: currentAccount,
+                          })
+                        }}
                       />
                     )
                   })}

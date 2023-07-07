@@ -11,7 +11,14 @@ const EmptyPools: FunctionComponent<
 > = ({ onReset, isShow }) => {
   if (!isShow) return null
   return (
-    <Box mt='64px'>
+    <Box
+      mt={{
+        md: '64px',
+        sm: '20px',
+        xs: '20px',
+      }}
+      mb='20px'
+    >
       <Heading fontSize={'24px'} fontWeight={'700'} mb='12px'>
         No exact matches
       </Heading>

@@ -70,9 +70,14 @@ export const MODEL_HEADER_PROPS: ModalHeaderProps = {
     sm: '20px',
     xs: '20px',
   },
-  fontSize: '28px',
+  fontSize: {
+    md: '28px',
+    sm: '24px',
+    xs: '24px',
+  },
   fontWeight: '700',
   position: 'sticky',
+  lineHeight: '32px',
   top: 0,
   bg: 'white',
   zIndex: 2,
@@ -776,7 +781,11 @@ const MyAssetNftListCard: FunctionComponent<
               >
                 <Button
                   w='100%'
-                  h='52px'
+                  h={{
+                    md: '52px',
+                    sm: '40px',
+                    xs: '40px',
+                  }}
                   isDisabled={lastCancelDiffTime < 10}
                   isLoading={listingLoading}
                   variant='primary'
@@ -885,7 +894,7 @@ const MyAssetNftListCard: FunctionComponent<
                               borderColor={'rgba(0, 0, 0, 0.2)'}
                               borderWidth={1}
                               borderRadius={8}
-                              py='20px'
+                              py={{ md: '20px', sm: '12px', xs: '12px' }}
                               w='100%'
                               lineHeight={'18px'}
                               cursor={'pointer'}
@@ -928,11 +937,19 @@ const MyAssetNftListCard: FunctionComponent<
                         )}
                         <InputRightElement
                           bg='gray.5'
-                          h='57px'
+                          h={{
+                            md: '57px',
+                            sm: '40px',
+                            xs: '40px',
+                          }}
                           borderRightRadius={8}
                           borderColor={isAmountError ? 'red.1' : 'gray.4'}
                           borderWidth={0}
-                          pr='70px'
+                          pr={{
+                            md: '70px',
+                            sm: '50px',
+                            xs: '50px',
+                          }}
                           pl='32px'
                           top={'1.5px'}
                           right={'1px'}
@@ -983,29 +1000,70 @@ const MyAssetNftListCard: FunctionComponent<
                       <Text fontWeight={'700'} mb='16px'>
                         Duration
                       </Text>
-                      <Select
-                        {...DURATION_PROPS}
-                        noOptionsMessage={() => (
-                          <Box>
-                            <Heading fontSize={'16px'}>
-                              No options available
-                            </Heading>
-                            <Text fontSize={'12px'} mt='10px'>
-                              Loan ends &nbsp;
-                              {unix(loanData?.loanEndedTime || 0).format(
-                                'YYYY/MM/DD HH:mm:ss',
-                              )}
-                            </Text>
-                          </Box>
-                        )}
-                        onChange={(e: any) =>
-                          setDurationValue(e?.value as number)
-                        }
-                        options={durationOptions?.map((item) => ({
-                          label: `${item} Days`,
-                          value: item,
-                        }))}
-                      />
+                      <Box
+                        display={{
+                          md: 'block',
+                          sm: 'none',
+                          xs: 'none',
+                        }}
+                      >
+                        <Select
+                          {...DURATION_PROPS}
+                          noOptionsMessage={() => (
+                            <Box>
+                              <Heading fontSize={'16px'}>
+                                No options available
+                              </Heading>
+                              <Text fontSize={'12px'} mt='10px'>
+                                Loan ends &nbsp;
+                                {unix(loanData?.loanEndedTime || 0).format(
+                                  'YYYY/MM/DD HH:mm:ss',
+                                )}
+                              </Text>
+                            </Box>
+                          )}
+                          onChange={(e: any) =>
+                            setDurationValue(e?.value as number)
+                          }
+                          options={durationOptions?.map((item) => ({
+                            label: `${item} Days`,
+                            value: item,
+                          }))}
+                        />
+                      </Box>
+                      <Box
+                        display={{
+                          md: 'none',
+                          sm: 'block',
+                          xs: 'block',
+                        }}
+                      >
+                        <Select
+                          {...DURATION_PROPS}
+                          h='42px'
+                          noOptionsMessage={() => (
+                            <Box>
+                              <Heading fontSize={'16px'}>
+                                No options available
+                              </Heading>
+                              <Text fontSize={'12px'} mt='10px'>
+                                Loan ends &nbsp;
+                                {unix(loanData?.loanEndedTime || 0).format(
+                                  'YYYY/MM/DD HH:mm:ss',
+                                )}
+                              </Text>
+                            </Box>
+                          )}
+                          onChange={(e: any) =>
+                            setDurationValue(e?.value as number)
+                          }
+                          options={durationOptions?.map((item) => ({
+                            label: `${item} Days`,
+                            value: item,
+                          }))}
+                        />
+                      </Box>
+
                       {/* 换算美元 */}
                       {/* <Text
                 fontSize={'14px'}
@@ -1089,7 +1147,11 @@ const MyAssetNftListCard: FunctionComponent<
                       onClick={handleListing}
                       variant={'primary'}
                       w='100%'
-                      h='52px'
+                      h={{
+                        md: '52px',
+                        sm: '40px',
+                        xs: '40px',
+                      }}
                       isDisabled={
                         !durationValue || !isChanged || !price || isAmountError
                       }

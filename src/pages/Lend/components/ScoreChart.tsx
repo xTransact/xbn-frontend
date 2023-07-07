@@ -152,15 +152,19 @@ const ScoreChart: FunctionComponent<{
           position={'absolute'}
           top={{
             md: '26px',
-            sm: '22px',
-            xs: '22px',
+            sm: '18px',
+            xs: '18px',
           }}
           left={{
             md: '26px',
-            sm: '22px',
-            xs: '22px',
+            sm: '18px',
+            xs: '18px',
           }}
-          boxSize={'72px'}
+          boxSize={{
+            md: '72px',
+            sm: '48px',
+            xs: '48px',
+          }}
           p='1px'
           bg='linear-gradient(to bottom,#FF4218,#FFCF5F,#8DFDFD,#065DFF, #DAE3EF 90%)'
           // bg='linear-gradient(from -10deg at 50.00% 47.33%, #8DFDFD 0.5524577759206295deg, #FFCF5F 72.71821081638336deg, #FF4218 140.30883193016052deg, #065DFF 245.78956604003906deg)'
