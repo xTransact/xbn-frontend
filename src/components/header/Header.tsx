@@ -283,7 +283,6 @@ const MobileDrawBtn = () => {
   } = useDisclosure()
   const activePath = useActivePath()
   const btnRef = useRef<HTMLButtonElement>(null)
-  const navigate = useNavigate()
 
   return (
     <>
