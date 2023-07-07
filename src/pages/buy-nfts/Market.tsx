@@ -341,7 +341,6 @@ const Market = () => {
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
       {/* Propose Listing */}
       <Box
-        bg='white'
         pos={'sticky'}
         top={'92vh'}
         zIndex={9}
@@ -495,7 +494,6 @@ const Market = () => {
               <CollectionListItem
                 isActive
                 data={selectCollection}
-                rightIconId='icon-arrow-down'
                 onClick={openDraw}
               />
               <Divider mt='16px' />

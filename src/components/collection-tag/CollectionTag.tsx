@@ -34,8 +34,16 @@ const CollectionTag: FunctionComponent<
   if (!children && !title) return null
   return (
     <Flex
-      pr='4px'
-      gap='4px'
+      pr={{
+        md: '4px',
+        sm: 0,
+        xs: 0,
+      }}
+      gap={{
+        md: '4px',
+        sm: 0,
+        xs: 0,
+      }}
       height={'20px'}
       borderWidth={1}
       borderColor={'blue.4'}
@@ -44,7 +52,15 @@ const CollectionTag: FunctionComponent<
       bg='conic-gradient(from 189deg at 75.95% 6.03%, rgba(255, 255, 255, 0.20) 0deg, rgba(255, 255, 255, 0.00) 360deg), linear-gradient(90deg, #4A40FF 0%, #ADA6FF 100%)'
     >
       {!!priority ? (
-        <Image src={src} alt='' w={'18px'} />
+        <Image
+          src={src}
+          alt=''
+          w={{
+            md: '18px',
+            sm: '14px',
+            xs: '14px',
+          }}
+        />
       ) : !!icon ? (
         icon
       ) : null}
@@ -57,6 +73,12 @@ const CollectionTag: FunctionComponent<
           fontFamily={'HarmonyOS Sans SC Bold'}
           color={'white'}
           lineHeight={'20px'}
+          transform={{
+            md: 'none',
+            sm: 'scale(0.83333)',
+            xs: 'scale(0.83333)',
+          }}
+          transformOrigin={'center'}
         >
           {title}
         </Text>

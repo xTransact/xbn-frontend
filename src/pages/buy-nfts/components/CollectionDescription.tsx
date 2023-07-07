@@ -123,7 +123,14 @@ const CollectionDescription: FunctionComponent<{
           }}
         />
         <Box pos='relative'>
-          <Flex alignItems={'center'}>
+          <Flex
+            alignItems={'center'}
+            flexWrap={{
+              md: 'nowrap',
+              sm: 'wrap',
+              xs: 'wrap',
+            }}
+          >
             <Heading
               fontSize={{ md: '32px', sm: '20px', xs: '20px' }}
               display='flex'
