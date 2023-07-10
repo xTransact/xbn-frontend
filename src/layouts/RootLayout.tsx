@@ -7,7 +7,12 @@ const RootLayout: React.FC<ContainerProps> = ({ children, ...rest }) => {
   return (
     <>
       <Header />
-      <Container maxW={RESPONSIVE_MAX_W} minH={'calc(100vh - 440px)'} {...rest}>
+      <Container
+        maxW={RESPONSIVE_MAX_W}
+        minH={'calc(100vh - 440px)'}
+        px={0}
+        {...rest}
+      >
         {children}
       </Container>
       <Footer />

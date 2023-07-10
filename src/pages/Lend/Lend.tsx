@@ -56,9 +56,10 @@ import {
   SearchInput,
   LenderGuideModal,
 } from '@/components'
-import { UNIT } from '@/constants'
+import { RESPONSIVE_MAX_W, UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
 import { useWallet, useBatchAsset, useGuide } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
@@ -742,7 +743,7 @@ const Lend = () => {
   } = useDisclosure()
 
   return (
-    <Box mb='100px'>
+    <RootLayout maxW={{ ...RESPONSIVE_MAX_W }} mb='100px'>
       <LenderGuideModal isOpen={guideVisible} onClose={closeGuide} />
 
       <Box
@@ -861,7 +862,7 @@ const Lend = () => {
             top={{ md: '131px', sm: '131px', xs: '107px' }}
             bg='white'
             zIndex={2}
-            w={{ md: '100%', sm: '100%', xs: 'max-content' }}
+            w={{ md: '100%', sm: 'max-content', xs: 'max-content' }}
           >
             <TabWrapper>Collections</TabWrapper>
             <TabWrapper>
@@ -978,8 +979,9 @@ const Lend = () => {
                 borderRadius={12}
                 p={'24px'}
                 w={{
-                  lg: '25%',
-                  md: '30%',
+                  xl: '360px',
+                  lg: '300px',
+                  md: '260px',
                 }}
                 display={{
                   md: 'block',
@@ -1089,6 +1091,10 @@ const Lend = () => {
                       loading: loansLoading,
                       data: sortBy(loansData[0], (i) => -i.loan_start_time),
                       key: '1',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                     {
                       tableTitle: () => (
@@ -1116,6 +1122,10 @@ const Lend = () => {
                       data: sortBy(loansData[1], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '2',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                     {
                       tableTitle: () => (
@@ -1143,6 +1153,10 @@ const Lend = () => {
                       data: sortBy(loansData[2], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '3',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                   ]}
                 />
@@ -1286,7 +1300,7 @@ const Lend = () => {
         </DrawerContent>
       </Drawer>
       <ConnectWalletModal visible={isOpen} handleClose={onClose} />
-    </Box>
+    </RootLayout>
   )
 }
 

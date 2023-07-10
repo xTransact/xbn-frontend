@@ -339,7 +339,7 @@ const Market = () => {
     key: 'has-read-buyer-guide',
   })
   return (
-    <RootLayout maxW={{ ...RESPONSIVE_MAX_W, xl: 1376, lg: 1200 }} px={0}>
+    <RootLayout maxW={{ ...RESPONSIVE_MAX_W }}>
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
       {/* Propose Listing */}
       <Box

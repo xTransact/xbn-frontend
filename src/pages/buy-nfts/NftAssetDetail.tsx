@@ -59,6 +59,7 @@ import {
   useCatchContractError,
   useNftCollectionsByContractAddressesQuery,
 } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { amortizationCalByDays } from '@/utils/calculation'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
@@ -96,27 +97,34 @@ const NFTDetailContainer: FunctionComponent<FlexProps> = ({
   children,
   ...rest
 }) => (
-  <Flex
-    justify={{
-      lg: 'space-between',
+  <RootLayout
+    px={{
+      xl: '84px',
+      lg: '120px',
     }}
-    alignItems='flex-start'
-    flexWrap={{ lg: 'nowrap', md: 'wrap' }}
-    gap={{
-      md: '40px',
-      sm: 0,
-      xs: 0,
-    }}
-    mb={{ md: '80px' }}
-    flexDir={{
-      md: 'row',
-      sm: 'column',
-      xs: 'column',
-    }}
-    {...rest}
   >
-    {children}
-  </Flex>
+    <Flex
+      justify={{
+        lg: 'space-between',
+      }}
+      alignItems='flex-start'
+      flexWrap={{ lg: 'nowrap', md: 'wrap' }}
+      gap={{
+        md: '40px',
+        sm: 0,
+        xs: 0,
+      }}
+      mb={{ md: '80px' }}
+      flexDir={{
+        md: 'row',
+        sm: 'column',
+        xs: 'column',
+      }}
+      {...rest}
+    >
+      {children}
+    </Flex>
+  </RootLayout>
 )
 
 const NftAssetDetail = () => {

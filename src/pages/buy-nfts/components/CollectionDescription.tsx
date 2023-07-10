@@ -120,15 +120,7 @@ const CollectionDescription: FunctionComponent<{
           borderStyle={'solid'}
         />
         <Box pos='relative'>
-          <Flex
-            alignItems={'center'}
-            flexWrap={{
-              md: 'nowrap',
-              sm: 'wrap',
-              xs: 'wrap',
-            }}
-            gap={'8px'}
-          >
+          <Flex alignItems={'center'} flexWrap={'wrap'} gap={'8px'}>
             <Heading
               fontSize={{ md: '32px', sm: '20px', xs: '20px' }}
               display='flex'

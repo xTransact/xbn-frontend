@@ -47,7 +47,7 @@ import {
   LoadingComponent,
   TooltipComponent,
 } from '@/components'
-import { STEPS_DESCRIPTIONS } from '@/constants'
+import { RESPONSIVE_MAX_W, STEPS_DESCRIPTIONS } from '@/constants'
 import {
   BASE_RATE,
   COLLATERAL_KEYS,
@@ -65,6 +65,7 @@ import {
   RATE_POWER_VALUES,
 } from '@/constants/interest'
 import { useCatchContractError, useWallet, type NftCollection } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { computePoolPoint, getMaxSingleLoanScore } from '@/utils/calculation'
 import { createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
@@ -653,7 +654,7 @@ const Create = () => {
     return <NotFound title='pool not found' />
   }
   return (
-    <>
+    <RootLayout maxW={{ ...RESPONSIVE_MAX_W }}>
       <H5SecondaryHeader />
 
       <Box
@@ -1278,7 +1279,7 @@ const Create = () => {
           </Button>
         )}
       </Flex>
-    </>
+    </RootLayout>
   )
 }
 

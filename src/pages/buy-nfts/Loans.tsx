@@ -34,6 +34,7 @@ import {
 } from '@/components'
 import { UNIT } from '@/constants'
 import { useBatchAsset, useWallet, useCatchContractError } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
@@ -438,7 +439,7 @@ const Loans = () => {
   }, [statuedLoans])
 
   return (
-    <Box my='60px'>
+    <RootLayout my='100px'>
       <Heading size={'2xl'} mb='60px'>
         Loans
       </Heading>
@@ -882,7 +883,7 @@ const Loans = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </Box>
+    </RootLayout>
   )
 }
 

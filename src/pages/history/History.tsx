@@ -663,7 +663,7 @@ const History = () => {
   }
 
   return (
-    <RootLayout mb='100px' maxW={{ ...RESPONSIVE_MAX_W, xl: 1408 }}>
+    <RootLayout mb='100px' maxW={{ ...RESPONSIVE_MAX_W }}>
       <Box mt='60px' mb='40px'>
         <Heading fontWeight={'700'} fontSize={'48px'}>
           My Loan History

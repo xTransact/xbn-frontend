@@ -69,11 +69,9 @@ function App() {
         <Route
           path='/lending/my-pools'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <Lend />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <Lend />
+            </Suspense>
           }
         />
 
@@ -88,32 +86,26 @@ function App() {
         <Route
           path='/lending/:action'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <PoolCreateAndEdit />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <PoolCreateAndEdit />
+            </Suspense>
           }
         />
         <Route
           path='/lending/collections'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <Lend />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <Lend />
+            </Suspense>
           }
         />
 
         <Route
           path='/lending/loans'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <Lend />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <Lend />
+            </Suspense>
           }
         />
 
@@ -136,41 +128,33 @@ function App() {
           path='/asset/:contractAddress/:tokenID'
           // path='/asset/:asset_contract_address'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <NftAssetDetail />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <NftAssetDetail />
+            </Suspense>
           }
         />
         <Route
           path='/buy-nfts/my-assets'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <MyAssets />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <MyAssets />
+            </Suspense>
           }
         />
         <Route
           path='/buy-nfts/complete'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <CompleteList />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <CompleteList />
+            </Suspense>
           }
         />
         <Route
           path='/loans'
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <LoansForBuyer />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <LoansForBuyer />
+            </Suspense>
           }
         />
         {/* <Route path='lending'>
@@ -220,11 +204,9 @@ function App() {
         />
         <Route
           element={
-            <RootLayout>
-              <Suspense fallback={<Fallback />}>
-                <NotFound />
-              </Suspense>
-            </RootLayout>
+            <Suspense fallback={<Fallback />}>
+              <NotFound />
+            </Suspense>
           }
           path='*'
         />
