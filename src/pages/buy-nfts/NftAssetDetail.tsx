@@ -99,8 +99,7 @@ const NFTDetailContainer: FunctionComponent<FlexProps> = ({
 }) => (
   <RootLayout
     px={{
-      xl: '84px',
-      lg: '120px',
+      xl: '20px',
     }}
   >
     <Flex
@@ -724,8 +723,8 @@ const NftAssetDetail = () => {
           height={700}
           borderRadius={16}
           w={{
-            xl: '500px',
-            lg: '400px',
+            xl: '600px',
+            lg: '500px',
             md: '80%',
           }}
           display={{
@@ -750,8 +749,8 @@ const NftAssetDetail = () => {
             md: 'center',
           }}
           w={{
-            xl: '500px',
-            lg: '400px',
+            xl: '600px',
+            lg: '500px',
             md: '100%',
           }}
           mt={'32px'}
@@ -771,8 +770,8 @@ const NftAssetDetail = () => {
             }}
             borderRadius={20}
             boxSize={{
-              xl: '500px',
-              lg: '400px',
+              xl: '600px',
+              lg: '500px',
               md: '100%',
             }}
             fit='contain'
@@ -785,8 +784,8 @@ const NftAssetDetail = () => {
       )}
       <Box
         w={{
-          xl: '620px',
-          lg: '500px',
+          xl: '690px',
+          lg: '640px',
           md: '100%',
           sm: '100%',
           xs: '100%',
@@ -889,7 +888,7 @@ const NftAssetDetail = () => {
               value={percentage}
               w={{
                 xl: '450px',
-                lg: '350px',
+                lg: '400px',
                 md: '436px',
                 sm: '230px',
                 xs: '220px',
@@ -1005,7 +1004,7 @@ const NftAssetDetail = () => {
                         })
                       }
                       p={{
-                        xl: '16px',
+                        xl: '12px',
                         lg: '10px',
                         md: '8px',
                         sm: '8px',
