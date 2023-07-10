@@ -27,7 +27,7 @@ const CollectionDescription: FunctionComponent<{
   if (loading) {
     return (
       <Flex flexDirection={'column'} mb={'24px'}>
-        <Flex mb={'40px'} gap={'12px'}>
+        <Flex mb={'40px'} gap={'24px'}>
           <Skeleton
             h='108px'
             w='108px'
@@ -37,13 +37,7 @@ const CollectionDescription: FunctionComponent<{
           />
           <Skeleton
             h='108px'
-            w={{
-              xl: '760px',
-              lg: '520px',
-              md: '100%',
-              sm: '100%',
-              xs: '100%',
-            }}
+            flex={1}
             startColor='rgba(27, 34, 44, 0.1)'
             endColor='rgba(27, 34, 44, 0.2)'
             borderRadius={16}
@@ -121,6 +115,9 @@ const CollectionDescription: FunctionComponent<{
             sm: '48px',
             xs: '48px',
           }}
+          borderWidth={2}
+          borderColor={'gray.2'}
+          borderStyle={'solid'}
         />
         <Box pos='relative'>
           <Flex
@@ -130,6 +127,7 @@ const CollectionDescription: FunctionComponent<{
               sm: 'wrap',
               xs: 'wrap',
             }}
+            gap={'8px'}
           >
             <Heading
               fontSize={{ md: '32px', sm: '20px', xs: '20px' }}

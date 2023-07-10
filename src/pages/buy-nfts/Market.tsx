@@ -356,10 +356,10 @@ const Market = () => {
       >
         <Image
           src={ImgLabel}
-          w='160px'
+          w='190px'
           right={0}
           position={'absolute'}
-          top='-55%'
+          top='-65%'
         />
         <Button w='100%' variant={'outline'}>
           Propose Listing
@@ -563,15 +563,7 @@ const Market = () => {
           </Box>
         </Box>
 
-        <Box
-          w={{
-            xl: '980px',
-            lg: '864px',
-            md: '100%',
-            sm: '100%',
-            xs: '100%',
-          }}
-        >
+        <Box flex={1}>
           <CollectionDescription
             loading={collectionLoading || poolsLoading || floorPriceLoading}
             data={selectCollection?.nftCollection}

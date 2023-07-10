@@ -41,6 +41,9 @@ const CollectionListItem: FunctionComponent<
           h={iconSize}
           borderRadius={8}
           fit='cover'
+          borderWidth={1}
+          borderStyle={'solid'}
+          borderColor={'gray.2'}
         />
         <Flex flexDir={'column'} alignItems={'flex-start'}>
           <Text
@@ -58,7 +61,14 @@ const CollectionListItem: FunctionComponent<
           <CollectionTag priority={1} title='0 interest' />
         </Flex>
       </Flex>
-      <SvgComponent svgId='icon-verified-fill' />
+      <SvgComponent
+        svgId='icon-verified-fill'
+        fontSize={{
+          md: '20px',
+          sm: '16px',
+          xs: '16px',
+        }}
+      />
     </Flex>
   )
 }
