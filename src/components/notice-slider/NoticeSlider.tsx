@@ -45,15 +45,6 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
       }}
     >
       <Flex alignItems={'center'} gap={'4px'}>
-        <SvgComponent
-          svgId='icon-notice'
-          fill={'red.1'}
-          fontSize={{
-            md: '24px',
-            sm: '18px',
-            xs: '18px',
-          }}
-        />
         <Text
           color='blue.1'
           fontSize={{
@@ -129,7 +120,7 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
 const NoticeSlider: FunctionComponent<NoticeSliderProps> = ({ data }) => {
   if (!data || isEmpty(data)) return null
   return (
-    <Box
+    <Flex
       borderRadius={'8px'}
       borderWidth={1}
       borderColor={'blue.1'}
@@ -144,7 +135,17 @@ const NoticeSlider: FunctionComponent<NoticeSliderProps> = ({ data }) => {
         xs: '4px',
       }}
       bg='rgba(179, 179, 255, 0.20)'
+      alignItems={'center'}
     >
+      <SvgComponent
+        svgId='icon-notice'
+        fill={'red.1'}
+        fontSize={{
+          md: '24px',
+          sm: '18px',
+          xs: '18px',
+        }}
+      />
       {data.length === 1 ? (
         <ItemWrapper {...data[0]} />
       ) : (
@@ -167,7 +168,7 @@ const NoticeSlider: FunctionComponent<NoticeSliderProps> = ({ data }) => {
           ))}
         </Slider>
       )}
-    </Box>
+    </Flex>
   )
 }
 
