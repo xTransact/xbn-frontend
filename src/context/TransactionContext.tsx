@@ -88,11 +88,14 @@ export const TransactionsProvider = ({
           ...current,
           priority: item?.priority || index,
           tags: item?.tags || [
-            'ZERO Rate',
+            '0 down payment',
+            '0 interest',
+            'low interest',
+            'long term',
+            '1.5x box rewards',
+            '2x box rewards',
             'trending',
-            '2x Box',
-            'xxxxx',
-            'xxxsss',
+            'new',
           ],
         }
       })

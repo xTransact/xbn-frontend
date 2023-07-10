@@ -56,7 +56,7 @@ import {
   SearchInput,
   LenderGuideModal,
 } from '@/components'
-import { RESPONSIVE_MAX_W, UNIT } from '@/constants'
+import { UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
 import { useWallet, useBatchAsset, useGuide } from '@/hooks'
 import RootLayout from '@/layouts/RootLayout'
@@ -743,7 +743,7 @@ const Lend = () => {
   } = useDisclosure()
 
   return (
-    <RootLayout maxW={{ ...RESPONSIVE_MAX_W }} mb='100px'>
+    <RootLayout mb='100px'>
       <LenderGuideModal isOpen={guideVisible} onClose={closeGuide} />
 
       <Box

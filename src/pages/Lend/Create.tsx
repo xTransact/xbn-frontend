@@ -47,7 +47,7 @@ import {
   LoadingComponent,
   TooltipComponent,
 } from '@/components'
-import { RESPONSIVE_MAX_W, STEPS_DESCRIPTIONS } from '@/constants'
+import { STEPS_DESCRIPTIONS } from '@/constants'
 import {
   BASE_RATE,
   COLLATERAL_KEYS,
@@ -654,7 +654,7 @@ const Create = () => {
     return <NotFound title='pool not found' />
   }
   return (
-    <RootLayout maxW={{ ...RESPONSIVE_MAX_W }}>
+    <RootLayout>
       <H5SecondaryHeader />
 
       <Box

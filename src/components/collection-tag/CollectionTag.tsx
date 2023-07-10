@@ -1,36 +1,35 @@
-import { Flex, Text, Image } from '@chakra-ui/react'
-import { useMemo } from 'react'
+import { Flex, Text, Image, type FlexProps } from '@chakra-ui/react'
+import { useMemo, type FunctionComponent, type ReactNode } from 'react'
 
-import ImgTag1 from '@/assets/tag-1.png'
-import ImgTag2 from '@/assets/tag-2.png'
-import ImgTag3 from '@/assets/tag-3.png'
-import ImgTag4 from '@/assets/tag-4.png'
+import ImgTagCrown from '@/assets/tag-crown.png'
+import ImgTagDiamond from '@/assets/tag-diamond.png'
+import ImgTagLike from '@/assets/tag-like.png'
+import ImgTagStar from '@/assets/tag-star.png'
 
-import type { FlexProps } from '@chakra-ui/react'
-import type { FunctionComponent, ReactNode } from 'react'
-
+/**
+ *
+ * 判断 tag 的文案：
+ * 包含 'box rewards'  => 五角星
+ * 包含 'trending' => 火
+ * 包含 'interest' => 皇冠
+ * 包含 'down payment' => 点赞
+ * 包含 'new'  或者 包含 'long term' => 钻石
+ * @returns
+ */
 const CollectionTag: FunctionComponent<
   FlexProps & {
     icon?: ReactNode
-    priority?: number
     title?: string
   }
-> = ({ children, title, icon, priority = 1 }) => {
+> = ({ children, title, icon }) => {
   const src = useMemo(() => {
-    switch (priority) {
-      case 1:
-        return ImgTag1
-      case 2:
-        return ImgTag2
-      case 3:
-        return ImgTag3
-      case 4:
-        return ImgTag4
-
-      default:
-        return ImgTag1
-    }
-  }, [priority])
+    if (title?.includes('box rewards')) return ImgTagStar
+    // 火的图标还没有
+    if (title?.includes('trending')) return ImgTagStar
+    if (title?.includes('interest')) return ImgTagCrown
+    if (title?.includes('down payment')) return ImgTagLike
+    return ImgTagDiamond
+  }, [title])
   if (!children && !title) return null
   return (
     <Flex
@@ -51,7 +50,7 @@ const CollectionTag: FunctionComponent<
       borderRadius={4}
       bg='conic-gradient(from 189deg at 75.95% 6.03%, rgba(255, 255, 255, 0.20) 0deg, rgba(255, 255, 255, 0.00) 360deg), linear-gradient(90deg, #4A40FF 0%, #ADA6FF 100%)'
     >
-      {!!priority ? (
+      {!!src ? (
         <Image
           src={src}
           alt=''

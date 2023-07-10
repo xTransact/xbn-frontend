@@ -34,7 +34,6 @@ import {
   LoadingComponent,
   SearchInput,
 } from '@/components'
-import { RESPONSIVE_MAX_W } from '@/constants'
 import { TransactionContext } from '@/context/TransactionContext'
 import {
   NftAssetStatus,
@@ -133,9 +132,8 @@ const Market = () => {
     if (isEmpty(collectionList)) return []
     return collectionList
       .filter((i) => collectionWithPoolsIds.includes(i.contractAddress))
-      .sort((a, b) => -a.priority + b.priority)
+      .sort((a, b) => a.priority - b.priority)
   }, [collectionList, collectionWithPoolsIds])
-  console.log(collectionData)
 
   const initialCollection = useMemo(() => {
     if (!collectionData || isEmpty(collectionData)) {
@@ -339,19 +337,22 @@ const Market = () => {
     key: 'has-read-buyer-guide',
   })
   return (
-    <RootLayout maxW={{ ...RESPONSIVE_MAX_W }}>
+    <RootLayout>
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
       {/* Propose Listing */}
       <Box
         pos={'sticky'}
         top={'92vh'}
+        display={{
+          md: 'block',
+          sm: 'none',
+          xs: 'none',
+        }}
         zIndex={9}
         w={{
           xl: '360px',
           lg: '300px',
           md: '100%',
-          sm: '100%',
-          xs: '100%',
         }}
       >
         <Image
@@ -556,6 +557,18 @@ const Market = () => {
                         />
                       ))}
                     </List>
+                    <Box w={'100%'} mt='20px' position={'relative'}>
+                      <Image
+                        src={ImgLabel}
+                        w='190px'
+                        right={0}
+                        position={'absolute'}
+                        top='-70%'
+                      />
+                      <Button w='100%' variant={'outline'}>
+                        Propose Listing
+                      </Button>
+                    </Box>
                   </DrawerBody>
                 </DrawerContent>
               </Drawer>

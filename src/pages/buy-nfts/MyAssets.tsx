@@ -27,7 +27,6 @@ import {
   LoadingComponent,
   SvgComponent,
 } from '@/components'
-import { RESPONSIVE_MAX_W } from '@/constants'
 import { useBatchAsset, useWallet } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
 import RootLayout from '@/layouts/RootLayout'
@@ -159,7 +158,7 @@ const MyAssets = () => {
   )
 
   return (
-    <RootLayout maxW={{ ...RESPONSIVE_MAX_W }} mb='100px'>
+    <RootLayout mb='100px'>
       <Flex
         py='20px'
         onClick={() => navigate(-1)}

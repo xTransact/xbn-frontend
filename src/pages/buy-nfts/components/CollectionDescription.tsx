@@ -130,9 +130,9 @@ const CollectionDescription: FunctionComponent<{
             {safelistRequestStatus === 'verified' && (
               <SvgComponent svgId='icon-verified-fill' />
             )}
-            <Flex gap={'10px'}>
-              {tags?.map((item, index) => (
-                <CollectionTag key={item} priority={index + 1} title={item} />
+            <Flex gap={'10px'} flexWrap={'wrap'}>
+              {tags?.map((item) => (
+                <CollectionTag key={item} title={item} />
               ))}
             </Flex>
           </Flex>

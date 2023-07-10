@@ -43,11 +43,7 @@ import {
   EthText,
   Pagination,
 } from '@/components'
-import {
-  RESPONSIVE_MAX_W,
-  LOAN_ORDER_STATUS,
-  LISTING_ORDER_STATUS,
-} from '@/constants'
+import { LOAN_ORDER_STATUS, LISTING_ORDER_STATUS } from '@/constants'
 import { useBatchAsset, useWallet } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
 import RootLayout from '@/layouts/RootLayout'
@@ -663,7 +659,7 @@ const History = () => {
   }
 
   return (
-    <RootLayout mb='100px' maxW={{ ...RESPONSIVE_MAX_W }}>
+    <RootLayout mb='100px'>
       <Box mt='60px' mb='40px'>
         <Heading fontWeight={'700'} fontSize={'48px'}>
           My Loan History

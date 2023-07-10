@@ -63,7 +63,7 @@ function AsyncSelectCollection({
   const { collectionList, collectionLoading } = useContext(TransactionContext)
   const sortedCollectionList = useMemo(() => {
     if (!collectionList) return []
-    return collectionList?.sort((a, b) => b.priority - a.priority)
+    return collectionList?.sort((a, b) => a.priority - b.priority)
   }, [collectionList])
   // const [collectionAddressArr, setCollectionAddressArr] = useState<string[]>([])
   // const { loading } = useRequest(apiGetActiveCollection, {
