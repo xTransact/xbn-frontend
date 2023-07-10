@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Flex,
   Highlight,
@@ -40,19 +39,24 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
       justify={'space-between'}
       h={{
         md: '36px',
-        sm: '30px',
-        xs: '30px',
+        sm: '36px',
+        xs: '36px',
       }}
     >
-      <Flex alignItems={'center'} gap={'4px'}>
+      <Flex alignItems={'center'} gap={'4px'} flex={1}>
         <Text
           color='blue.1'
           fontSize={{
             md: '20px',
-            sm: '16px',
-            xs: '16px',
+            sm: '12px',
+            xs: '12px',
           }}
           fontWeight={'700'}
+          lineHeight={{
+            md: 'normal',
+            sm: '14px',
+            xs: '14px',
+          }}
           {...titleProps}
         >
           {highlightTitle ? (
@@ -78,16 +82,20 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
           }}
           h={{
             md: '36px',
-            sm: '30px',
-            xs: '30px',
+            sm: '24px',
+            xs: '24px',
           }}
           variant={'primary'}
           fontSize={{
             md: '18px',
-            sm: '14px',
-            xs: '14px',
+            sm: '12px',
+            xs: '12px',
           }}
-          borderRadius={'8px'}
+          borderRadius={{
+            md: '8px',
+            sm: '4px',
+            xs: '4px',
+          }}
           {...buttonProps}
         >
           {button}
@@ -145,6 +153,7 @@ const NoticeSlider: FunctionComponent<NoticeSliderProps> = ({ data }) => {
           sm: '18px',
           xs: '18px',
         }}
+        marginRight={'4px'}
       />
       {data.length === 1 ? (
         <ItemWrapper {...data[0]} />
