@@ -361,7 +361,7 @@ const Market = () => {
           position={'absolute'}
           top='-55%'
         />
-        <Button w='100%' variant={'primary'}>
+        <Button w='100%' variant={'outline'}>
           Propose Listing
         </Button>
       </Box>
