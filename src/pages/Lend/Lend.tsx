@@ -862,7 +862,7 @@ const Lend = () => {
             top={{ md: '131px', sm: '131px', xs: '107px' }}
             bg='white'
             zIndex={2}
-            w='max-content'
+            w={{ md: '100%', sm: '100%', xs: 'max-content' }}
           >
             <TabWrapper>Collections</TabWrapper>
             <TabWrapper>
