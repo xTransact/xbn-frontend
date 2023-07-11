@@ -3,6 +3,7 @@ import { useMemo, type FunctionComponent, type ReactNode } from 'react'
 
 import ImgTagCrown from '@/assets/tag-crown.png'
 import ImgTagDiamond from '@/assets/tag-diamond.png'
+import ImgTagFire from '@/assets/tag-fire.png'
 import ImgTagLike from '@/assets/tag-like.png'
 import ImgTagStar from '@/assets/tag-star.png'
 
@@ -24,8 +25,7 @@ const CollectionTag: FunctionComponent<
 > = ({ children, title, icon }) => {
   const src = useMemo(() => {
     if (title?.includes('box rewards')) return ImgTagStar
-    // 火的图标还没有
-    if (title?.includes('trending')) return ImgTagStar
+    if (title?.includes('trending')) return ImgTagFire
     if (title?.includes('interest')) return ImgTagCrown
     if (title?.includes('down payment')) return ImgTagLike
     return ImgTagDiamond
