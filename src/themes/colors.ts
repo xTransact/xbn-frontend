@@ -33,6 +33,9 @@ const colors = {
   orange: {
     1: '#FF6632',
   },
+  gold: '#FFC700',
+  silver: '#BBC2CF',
+  bronze: '#B18053',
   // ...
 }
 
