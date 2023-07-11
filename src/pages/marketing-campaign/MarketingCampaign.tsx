@@ -811,7 +811,7 @@ export default function MarketingCampaign() {
                 color='white'
                 bgClip={tabKey === TAB_KEY.LEADER_BOARD ? 'unset' : 'text'}
               >
-                Leader Board
+                LeaderBoard
               </Text>
             </Flex>
           </Flex>
