@@ -13,7 +13,7 @@ import SvgComponent from '../svg-component/SvgComponent'
 
 import type { FunctionComponent } from 'react'
 
-type NoticeItemType = {
+export type NoticeItemType = {
   title: string
   titleProps?: TextProps
   highlightTitle?: string
@@ -22,7 +22,7 @@ type NoticeItemType = {
 }
 
 type NoticeSliderProps = {
-  data: NoticeItemType[]
+  data?: NoticeItemType[]
 }
 
 const ItemWrapper: FunctionComponent<NoticeItemType> = ({
@@ -53,7 +53,7 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
           }}
           fontWeight={'700'}
           lineHeight={{
-            md: 'normal',
+            md: '38px',
             sm: '14px',
             xs: '14px',
           }}

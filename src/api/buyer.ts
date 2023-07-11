@@ -155,3 +155,9 @@ export const apiGetLoanOrder: (query: {
     params: data,
   })
 }
+
+export const apiGetNotice: () => Promise<{ type: number }[]> = async () => {
+  return await request.get(
+    `https://www.fastmock.site/mock/9b1763038152f49675038983b826d34e/api/notice`,
+  )
+}
