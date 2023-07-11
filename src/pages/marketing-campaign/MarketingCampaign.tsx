@@ -786,7 +786,7 @@ export default function MarketingCampaign() {
             >
               <Image
                 src={ImgLeaderBoardIcon}
-                boxSize={{
+                w={{
                   lg: '84px',
                   md: '56px',
                   sm: '20px',
