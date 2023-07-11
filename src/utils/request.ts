@@ -45,9 +45,7 @@ export const requestInterceptor = async ({
 }: InternalAxiosRequestConfig) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
-    if (url === '/api') {
-      _baseURL = VITE_ETHERSCAN_IO_URL
-    } else if (url?.startsWith('/api/v')) {
+    if (url?.startsWith('/api/v')) {
       _baseURL = VITE_TEST_BASE_URL
     } else if (url?.startsWith('/lending/query')) {
       _baseURL = VITE_BASE_URL
@@ -78,7 +76,7 @@ request.interceptors.response.use(
     // 超时提示 axios 超时后, error.code = "ECONNABORTED" (https://github.com/axios/axios/blob/26b06391f831ef98606ec0ed406d2be1742e9850/lib/adapters/xhr.js#L95-L101)
     if (
       (e?.code == 'ECONNABORTED' && e?.message.indexOf('timeout') != -1) ||
-      e?.code === 'ERR_BAD_RESPONSE'
+      e?.response?.status >= 500
     ) {
       if (toast.isActive('network-error')) return
       toast({
@@ -87,10 +85,21 @@ request.interceptors.response.use(
         duration: 5000,
         id: 'network-error',
       })
+      return
     }
     const {
       response: { data },
     } = e
+    if (typeof data === 'string') {
+      toast({
+        title: 'Oops, network error...',
+        description: data,
+        status: 'error',
+        isClosable: true,
+        id: 'request-error-toast',
+      })
+      return
+    }
 
     if (data?.error && !isEmpty(data?.error)) {
       const {

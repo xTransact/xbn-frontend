@@ -329,7 +329,7 @@ const Market = () => {
       lg: grid,
       md: grid,
       sm: 2,
-      xs: 1,
+      xs: 2,
     }),
     [grid],
   )
@@ -633,8 +633,7 @@ const Market = () => {
                         ) {
                           return
                         }
-                        const { nftCollection, contractAddress } =
-                          selectCollection
+                        const { nftCollection } = selectCollection
                         interceptFn(() => {
                           navigate(`/asset/${address}/${tokenID}`, {
                             state: {
@@ -645,10 +644,6 @@ const Market = () => {
                                   nftCollection?.safelistRequestStatus,
                                 slug: nftCollection?.slug,
                               },
-                              poolsList:
-                                poolsMap && contractAddress
-                                  ? poolsMap.get(contractAddress)
-                                  : [],
                             },
                             // replace: true,
                           })
@@ -727,10 +722,6 @@ const Market = () => {
                                   ?.safelistRequestStatus,
                               slug: selectCollection?.nftCollection?.slug,
                             },
-                            poolsList:
-                              poolsMap && selectCollection?.contractAddress
-                                ? poolsMap.get(selectCollection.contractAddress)
-                                : [],
                           },
                         },
                       )

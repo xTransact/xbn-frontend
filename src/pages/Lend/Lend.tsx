@@ -31,7 +31,13 @@ import maxBy from 'lodash-es/maxBy'
 import omit from 'lodash-es/omit'
 import reduce from 'lodash-es/reduce'
 import sortBy from 'lodash-es/sortBy'
-import { useEffect, useMemo, useState, type FunctionComponent } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type FunctionComponent,
+  useRef,
+} from 'react'
 // import Joyride from 'react-joyride'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -79,16 +85,11 @@ const TabWrapper: FunctionComponent<TabProps> = ({ children, ...rest }) => {
         color: 'blue.1',
         borderBottomWidth: 2,
         borderColor: 'blue.1',
-        w: {
-          md: 'auto',
-          sm: '200px',
-          xs: '200px',
-        },
       }}
       display={'inline-block'}
       {...rest}
     >
-      <Text fontWeight='bold' noOfLines={1} fontSize='16px'>
+      <Text fontWeight='bold' fontSize='16px'>
         {children}
       </Text>
     </Tab>
@@ -112,6 +113,7 @@ const Lend = () => {
   const { isOpen: guideVisible, onClose: closeGuide } = useGuide({
     key: 'has-read-lp-guide',
   })
+  const tabListRef = useRef<HTMLDivElement>(null)
 
   const [tabKey, setTabKey] = useState<TAB_KEY>(TAB_KEY.COLLECTION_TAB)
 
@@ -146,35 +148,30 @@ const Lend = () => {
     })
   }, [pathname, interceptFn])
 
+  useEffect(() => {
+    if (!tabListRef?.current) return
+    if (tabKey !== TAB_KEY.LOANS_TAB) {
+      tabListRef.current.scrollTo(0, 0)
+    } else {
+      tabListRef.current.scrollTo(tabListRef.current.scrollWidth, 0)
+    }
+  }, [tabKey, tabListRef])
+
   /**
    * 进入页面 fetch all pools => for 'Collections Tab'
    * filter owner_address === currentAccount => for 'My Pools Tab'
    *  */
-  const [myPoolsData, setMyPoolsData] = useState<PoolsListItemType[]>([])
   const [allPoolsData, setAllPoolsData] = useState<PoolsListItemType[]>([])
-  const { loading: poolsLoading, refreshAsync: refreshMyPools } = useRequest(
-    apiGetPools,
-    {
-      onSuccess: (data) => {
-        if (isEmpty(data)) {
-          return
-        }
-        setAllPoolsData(data)
-        if (!currentAccount) {
-          setMyPoolsData([])
-          return
-        }
-        setMyPoolsData(
-          data.filter(
-            (i) =>
-              i.owner_address.toLowerCase() === currentAccount.toLowerCase(),
-          ),
-        )
-      },
-      refreshDeps: [currentAccount],
-      debounceWait: 10,
+  const { loading: poolsLoading1 } = useRequest(apiGetPools, {
+    onSuccess: (data) => {
+      if (isEmpty(data)) {
+        return
+      }
+      setAllPoolsData(data)
     },
-  )
+    ready: tabKey === TAB_KEY.COLLECTION_TAB,
+    debounceWait: 10,
+  })
 
   /**
    * Collection Tab
@@ -262,6 +259,21 @@ const Lend = () => {
    * My Pools Tab
    * 1. myPoolsData append collection info
    */
+  const [myPoolsData, setMyPoolsData] = useState<PoolsListItemType[]>([])
+  const { loading: poolsLoading2, refreshAsync: refreshMyPools } = useRequest(
+    () =>
+      apiGetPools({
+        owner_address: currentAccount,
+      }),
+    {
+      ready: !!currentAccount && tabKey !== TAB_KEY.COLLECTION_TAB,
+      debounceWait: 100,
+      refreshDeps: [currentAccount],
+      onSuccess: (data) => {
+        setMyPoolsData(data || [])
+      },
+    },
+  )
   const poolList = useMemo(() => {
     if (!myPoolsData) return []
     return myPoolsData?.map((item) => {
@@ -348,7 +360,7 @@ const Lend = () => {
           setTotalLoanCount(data?.length)
         }
       },
-      ready: !!currentAccount,
+      ready: !!currentAccount && tabKey === TAB_KEY.LOANS_TAB,
       refreshDeps: [selectKeyForOpenLoans, currentAccount],
       debounceWait: 100,
     },
@@ -547,7 +559,7 @@ const Lend = () => {
         ),
       },
       {
-        title: 'Maximum Loan Amount',
+        title: 'Max Loan Amount',
         dataIndex: 'maximum_loan_amount',
         key: 'maximum_loan_amount',
         align: 'center',
@@ -784,6 +796,7 @@ const Lend = () => {
             display={{
               md: 'flex',
               sm: 'none',
+              xs: 'none',
             }}
           >
             <ScaleFade in={showSearch} initialScale={0.9}>
@@ -832,39 +845,49 @@ const Lend = () => {
           </Flex>
         )}
 
-        <TabList
-          _active={{
-            color: 'blue.1',
-            fontWeight: 'bold',
+        <Box
+          overflowX={{
+            sm: 'hidden',
+            xs: 'auto',
           }}
-          position='sticky'
-          top={{ md: '131px', sm: '131px', xs: '107px' }}
-          bg='white'
-          zIndex={2}
+          ref={tabListRef}
+          className='scroll-bar-hidden'
         >
-          <TabWrapper>Collections</TabWrapper>
-          <TabWrapper>
-            My Pools
-            {!isEmpty(myPoolsData) && (
-              <Tag
-                bg={'blue.1'}
-                color='white'
-                borderRadius={15}
-                fontSize='12px'
-                w='27px'
-                h='20px'
-                textAlign={'center'}
-                justifyContent='center'
-                lineHeight={2}
-                fontWeight='700'
-                ml='4px'
-              >
-                {poolList?.length}
-              </Tag>
-            )}
-          </TabWrapper>
-          <TabWrapper>Outstanding Loans</TabWrapper>
-        </TabList>
+          <TabList
+            _active={{
+              color: 'blue.1',
+              fontWeight: 'bold',
+            }}
+            position='sticky'
+            top={{ md: '131px', sm: '131px', xs: '107px' }}
+            bg='white'
+            zIndex={2}
+            w={{ md: '100%', sm: '100%', xs: 'max-content' }}
+          >
+            <TabWrapper>Collections</TabWrapper>
+            <TabWrapper>
+              My Pools
+              {!isEmpty(myPoolsData) && (
+                <Tag
+                  bg={'blue.1'}
+                  color='white'
+                  borderRadius={15}
+                  fontSize='12px'
+                  w='27px'
+                  h='20px'
+                  textAlign={'center'}
+                  justifyContent='center'
+                  lineHeight={2}
+                  fontWeight='700'
+                  ml='4px'
+                >
+                  {poolList?.length}
+                </Tag>
+              )}
+            </TabWrapper>
+            <TabWrapper>Outstanding Loans</TabWrapper>
+          </TabList>
+        </Box>
 
         <Box
           display={{
@@ -899,7 +922,7 @@ const Lend = () => {
         <TabPanels>
           <TabPanel p={0} pb='20px'>
             <MyTable
-              loading={poolsLoading || collectionLoading}
+              loading={poolsLoading1 || collectionLoading}
               columns={activeCollectionColumns}
               data={filteredActiveCollectionList || []}
               emptyRender={() => {
@@ -925,7 +948,7 @@ const Lend = () => {
           </TabPanel>
           <TabPanel p={0} pb='20px'>
             <MyTable
-              loading={poolsLoading || collectionLoading}
+              loading={poolsLoading2 || collectionLoading}
               columns={myPoolsColumns}
               data={filteredPoolList || []}
               emptyRender={() => {
@@ -985,11 +1008,11 @@ const Lend = () => {
 
                 <List spacing='16px' mt='16px' position='relative'>
                   <LoadingComponent
-                    loading={poolsLoading || collectionLoading}
+                    loading={poolsLoading2 || collectionLoading}
                     top={0}
                   />
                   {isEmpty(filteredPoolCollectionList) &&
-                    !poolsLoading &&
+                    !poolsLoading2 &&
                     !collectionLoading && <EmptyComponent />}
                   {!isEmpty(filteredPoolCollectionList) && (
                     <Flex
@@ -1204,12 +1227,12 @@ const Lend = () => {
 
             <List spacing={'16px'} position='relative' mt='16px'>
               <LoadingComponent
-                loading={poolsLoading || collectionLoading}
+                loading={poolsLoading2 || collectionLoading}
                 top={0}
                 borderRadius={8}
               />
               {isEmpty(filteredPoolCollectionList) &&
-                !poolsLoading &&
+                !poolsLoading2 &&
                 !collectionLoading && <EmptyComponent />}
               {!isEmpty(filteredPoolCollectionList) && (
                 <Flex

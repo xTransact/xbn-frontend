@@ -11,7 +11,7 @@ export const RESPONSIVE_MAX_W = {
   lg: 968,
   md: 768,
   sm: 390,
-  xs: 320,
+  xs: '100%',
 }
 
 export const UNIT = 'ETH'
@@ -83,12 +83,12 @@ export const STEPS_DESCRIPTIONS = [
     text: 'These two conditions can limit the amount of a loan, Your collection pool will use the smaller amount of these two conditions for lending.',
   },
   {
-    title: 'Set Maximum Loan Tenor',
-    text: 'It will determine the maximum duration of a single loan. As long as borrowers repay their loan at the end of the tenor, lenders cannot liquidate the loan positions.',
+    title: 'Set Max Loan Tenor',
+    text: 'It will determine the max duration of a single loan. As long as borrowers repay their loan at the end of the tenor, lenders cannot liquidate the loan positions.',
   },
   {
-    title: 'Set Maximum Interest Rate',
-    text: 'Please choose an interest rate you want under the conditions of the maximum loan duration and maximum loan amount, and we will automatically generate a Lending Offer Table for you. If you are not satisfied with the parameters in the table, you can fine-tune them.\nLower interest rate lending offers will lend out faster.',
+    title: 'Set Max Interest Rate',
+    text: 'Please choose an interest rate you want under the conditions of the max loan duration and max loan amount, and we will automatically generate a Lending Offer Table for you. If you are not satisfied with the parameters in the table, you can fine-tune them.\nLower interest rate lending offers will lend out faster.',
   },
 ]
 
@@ -115,4 +115,62 @@ export const CHAIN_BASE_URL: Record<string, string> = {
 export enum LISTING_TYPE {
   LISTING = 1,
   CANCEL = 2,
+}
+
+export enum LISTING_ORDER_STATUS {
+  // 新建
+  New = 1,
+  // 开始处理时首先置的状态，防止重复处理
+  PendingProgress = 2,
+  // 需要进行 approve 时
+  PendingApproval = 3,
+  // 该资产已经进行过 approve/cancel交易已广播
+  Approved = 8,
+  // 已挂单
+  Listed = 16,
+  //
+  CoinTransferred = 32,
+  // final
+  Rejected = 64,
+  // final
+  InstRejected = 128,
+  // final 已取消
+  Cancelled = 256,
+  // final
+  Expired = 512,
+  // final
+  Liquidated = 1024,
+  //
+  Failed = 2048,
+  // final 挂单被卖出
+  Completed = 4096,
+}
+
+export enum LOAN_ORDER_STATUS {
+  // 新建
+  New = 1,
+  // 收到首付
+  DownPaymentConfirmed = 2,
+  // 开始购买NFT时首先置的状态，防止重复处理
+  PendingPurchase = 4,
+  // 购买nft交易已广播
+  PurchaseSubmitted = 8,
+  // 购买交易已被打包，购买nft完成。购买NFT的最后一个状态
+  PurchaseConfirmed = 16,
+  // 开始调用合约beginLoan时首先置的状态，防止重复处理
+  PendingLoan = 32,
+  // 生成loan的交易已广播
+  LoanSubmitted = 64,
+  // final    未通过我们的校验，拒绝掉
+  Rejected = 128,
+  // final    marketplace拒绝了，比如no matching order
+  MarketRejected = 256,
+  // final
+  Cancelled = 512,
+  // final    给用户和LP退款
+  Refunded = 1024,
+  // 后端自用，用于不确定失败原因，找到原因后进行重试
+  Failed = 2048,
+  // final    loan 生成成功
+  Completed = 4096,
 }

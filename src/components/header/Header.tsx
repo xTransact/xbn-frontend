@@ -233,15 +233,15 @@ const ConnectedIconWallet: FunctionComponent = () => {
             {
               label: 'Repay Loans',
               onClick: () => {
-                navigate('/buy-nfts/loans')
+                navigate('/loans')
               },
             },
-            // {
-            //   label: 'Loan History',
-            //   onClick: () => {
-            //     navigate('/history/loan')
-            //   },
-            // },
+            {
+              label: 'Loan History',
+              onClick: () => {
+                navigate('/history/loan')
+              },
+            },
             {
               label: 'Disconnect',
               onClick: handleDisconnect,
@@ -562,6 +562,23 @@ const Header = () => {
               }
               hidden={!currentAccount}
             /> */}
+            <Flex
+              cursor='pointer'
+              onClick={() => {
+                navigate('/marketing-campaign')
+              }}
+              alignItems={'center'}
+              marginRight={'-16px'}
+            >
+              <Image
+                src='/gift.gif'
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  marginTop: '-30px',
+                }}
+              />
+            </Flex>
             <ConnectedIconWallet />
             <MobileDrawBtn />
           </Flex>

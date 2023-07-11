@@ -9,13 +9,18 @@
 @pagination-item-bg-active: #ebebff;
 @pagination-item-link-bg: #fff;
 @pagination-item-disabled-color-active: #fff;
-@pagination-item-disabled-bg-active: darken(hsv(0, 0, 96%), 10%);
+@pagination-item-disabled-bg-active: #e9edf3;
 @pagination-item-input-bg: #fff;
 
 .@{pagination-prefix-cls} {
   margin: 0;
   padding: 0;
   font-size: 14px;
+  .rc-pagination-disabled:hover {
+    button {
+      background-color: @pagination-item-disabled-bg-active;
+    }
+  }
 
   ul,
   ol {
@@ -62,7 +67,8 @@
     a {
       display: block;
       padding: 0 6px;
-      color: rgba(0, 0, 0, 0.85);
+      color: var(--chakra-colors-gray-3);
+      font-weight: 600;
       transition: none;
 
       &:hover {
@@ -124,7 +130,7 @@
     display: inline-block;
     min-width: @pagination-item-size;
     height: @pagination-item-size;
-    color: rgba(0, 0, 0, 0.85);
+    color: var(--chakra-colors-gray-3);
     line-height: @pagination-item-size;
     text-align: center;
     vertical-align: middle;
@@ -139,7 +145,7 @@
     outline: 0;
 
     button {
-      color: rgba(0, 0, 0, 0.85);
+      color: var(--chakra-colors-gray-3);
       cursor: pointer;
       user-select: none;
     }
@@ -147,6 +153,7 @@
     &:hover button {
       // border-color: #40a9ff;
       background: @pagination-item-bg-active;
+      border-radius: 100%;
     }
 
     .@{pagination-prefix-cls}-item-link {
