@@ -562,6 +562,23 @@ const Header = () => {
               }
               hidden={!currentAccount}
             /> */}
+            <Flex
+              cursor='pointer'
+              onClick={() => {
+                navigate('/marketing-campaign')
+              }}
+              alignItems={'center'}
+              marginRight={'-16px'}
+            >
+              <Image
+                src='/gift.gif'
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  marginTop: '-30px',
+                }}
+              />
+            </Flex>
             <ConnectedIconWallet />
             <MobileDrawBtn />
           </Flex>

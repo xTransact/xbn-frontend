@@ -11,7 +11,7 @@ export const RESPONSIVE_MAX_W = {
   lg: 968,
   md: 768,
   sm: 390,
-  xs: 320,
+  xs: '100%',
 }
 
 export const UNIT = 'ETH'
@@ -139,7 +139,7 @@ export enum LISTING_ORDER_STATUS {
   // final
   Expired = 512,
   // final
-  Refunded = 1024,
+  Liquidated = 1024,
   //
   Failed = 2048,
   // final 挂单被卖出

@@ -1,14 +1,24 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Flex,
+  Highlight,
+  Text,
+  type ButtonProps,
+  type TextProps,
+} from '@chakra-ui/react'
 import isEmpty from 'lodash-es/isEmpty'
 import Slider from 'react-slick'
 
 import SvgComponent from '../svg-component/SvgComponent'
 
-import type { ButtonProps } from '@chakra-ui/react'
 import type { FunctionComponent } from 'react'
 
 type NoticeItemType = {
   title: string
+  titleProps?: TextProps
+  highlightTitle?: string
+  button?: string
   buttonProps?: ButtonProps
 }
 
@@ -19,9 +29,21 @@ type NoticeSliderProps = {
 const ItemWrapper: FunctionComponent<NoticeItemType> = ({
   title,
   buttonProps,
+  titleProps,
+  highlightTitle,
+
+  button,
 }) => {
   return (
-    <Flex alignItems={'center'} justify={'space-between'}>
+    <Flex
+      alignItems={'center'}
+      justify={'space-between'}
+      h={{
+        md: '36px',
+        sm: '30px',
+        xs: '30px',
+      }}
+    >
       <Flex alignItems={'center'} gap={'4px'}>
         <SvgComponent
           svgId='icon-notice'
@@ -40,32 +62,46 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
             xs: '16px',
           }}
           fontWeight={'700'}
+          {...titleProps}
         >
-          {title}
+          {highlightTitle ? (
+            <Highlight
+              query={highlightTitle}
+              styles={{
+                color: 'red.1',
+              }}
+            >
+              {title}
+            </Highlight>
+          ) : (
+            title
+          )}
         </Text>
       </Flex>
-      <Button
-        px={{
-          md: '20px',
-          sm: '10px',
-          xs: '10px',
-        }}
-        h={{
-          md: '36px',
-          sm: '30px',
-          xs: '30px',
-        }}
-        variant={'primary'}
-        fontSize={{
-          md: '20px',
-          sm: '14px',
-          xs: '14px',
-        }}
-        borderRadius={'8px'}
-        {...buttonProps}
-      >
-        {buttonProps?.title}
-      </Button>
+      {button && (
+        <Button
+          px={{
+            md: '20px',
+            sm: '10px',
+            xs: '10px',
+          }}
+          h={{
+            md: '36px',
+            sm: '30px',
+            xs: '30px',
+          }}
+          variant={'primary'}
+          fontSize={{
+            md: '18px',
+            sm: '14px',
+            xs: '14px',
+          }}
+          borderRadius={'8px'}
+          {...buttonProps}
+        >
+          {button}
+        </Button>
+      )}
     </Flex>
   )
 }
@@ -123,7 +159,7 @@ const NoticeSlider: FunctionComponent<NoticeSliderProps> = ({ data }) => {
           slidesToShow={1}
           slidesToScroll={1}
           pauseOnHover={true}
-          fade
+          // fade
           vertical
         >
           {data.map((i) => (

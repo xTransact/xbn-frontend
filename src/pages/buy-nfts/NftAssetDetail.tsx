@@ -817,12 +817,24 @@ const NftAssetDetail = () => {
           }
         >
           <Flex
-            p={'16px'}
+            p={{
+              md: '16px',
+              sm: '4px',
+              xs: '4px',
+            }}
             pr={'24px'}
             border={`1px solid var(--chakra-colors-gray-1)`}
-            borderRadius={16}
+            borderRadius={{
+              md: 16,
+              sm: 8,
+              xs: 8,
+            }}
             alignItems='center'
-            gap={'16px'}
+            gap={{
+              md: '16px',
+              sm: '4px',
+              xs: '4px',
+            }}
           >
             {downPaymentWei && (
               <Flex
@@ -832,12 +844,16 @@ const NftAssetDetail = () => {
                 gap={'4px'}
                 alignItems='center'
                 justify={'center'}
-                minW='96px'
+                minW={{
+                  md: '96px',
+                  sm: '60px',
+                  xs: '60px',
+                }}
                 px={'8px'}
                 w={{
                   md: '148px',
-                  sm: '100px',
-                  xs: '100px',
+                  sm: '80px',
+                  xs: '80px',
                 }}
               >
                 <SvgComponent svgId='icon-eth' svgSize='20px' />
@@ -868,14 +884,17 @@ const NftAssetDetail = () => {
                 lg: '350px',
                 md: '436px',
                 sm: '230px',
-                xs: '230px',
+                xs: '220px',
               }}
             >
               {COLLATERAL.map((item) => (
                 <SliderMark value={item} fontSize='14px' key={item} zIndex={1}>
                   <Box
-                    w={'8px'}
-                    h={'8px'}
+                    boxSize={{
+                      md: '8px',
+                      xs: '6px',
+                      sm: '6px',
+                    }}
                     borderRadius={8}
                     borderWidth={1}
                     borderColor='white'
@@ -890,8 +909,16 @@ const NftAssetDetail = () => {
                 />
               </SliderTrack>
               <SliderThumb
-                boxSize={'24px'}
-                borderWidth={5}
+                boxSize={{
+                  md: '24px',
+                  sm: '14px',
+                  xs: '14px',
+                }}
+                borderWidth={{
+                  md: 5,
+                  sm: 3,
+                  xs: 3,
+                }}
                 borderColor={'blue.1'}
                 _focus={{
                   boxShadow: 'none',

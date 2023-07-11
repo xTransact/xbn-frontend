@@ -861,7 +861,11 @@ const Loans = () => {
             >
               <Button
                 w='100%'
-                h='52px'
+                h={{
+                  md: '52px',
+                  sm: '40px',
+                  xs: '40px',
+                }}
                 variant='primary'
                 px='30px'
                 disabled={!prepayData}
