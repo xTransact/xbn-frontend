@@ -50,6 +50,11 @@ export default ({ mode }) => {
           secure: false,
           // rewrite: (path) => path.replace(/^\/api/, ''),
         },
+        '/data/': {
+          target: env.VITE_CURRENCY_BASE_URL,
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
     build: {

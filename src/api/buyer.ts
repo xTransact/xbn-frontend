@@ -68,20 +68,9 @@ export const apiTest: (id: string) => Promise<any> = async (variables) => {
 }
 
 export const apiGetXCurrency: () => Promise<{
-  resources: {
-    resource: {
-      fields: {
-        name: string
-        price: number
-      }
-    }
-  }[]
+  USD: number
 }> = async () => {
-  return await request.get('/api/ver2/exchange/xcurrency/latest', {
-    headers: {
-      appkey: 'FAceBe8acE1A11e990a19F43a0Dae3f5',
-    },
-  })
+  return await request.get('/data/price?fsym=ETH&tsyms=USD')
 }
 
 export const apiPostListing: (data: ListingDataType) => Promise<any> = async (

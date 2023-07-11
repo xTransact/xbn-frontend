@@ -17,7 +17,7 @@ const {
   VITE_APP_KEY,
   VITE_TEST_BASE_URL,
   VITE_BASE_URL,
-  VITE_ETHERSCAN_IO_URL,
+  VITE_CURRENCY_BASE_URL,
 } = import.meta.env
 
 export const standaloneToast = createStandaloneToast({
@@ -49,6 +49,8 @@ export const requestInterceptor = async ({
       _baseURL = VITE_TEST_BASE_URL
     } else if (url?.startsWith('/lending/query')) {
       _baseURL = VITE_BASE_URL
+    } else if (url === '/data/price?fsym=ETH&tsyms=USD') {
+      _baseURL = VITE_CURRENCY_BASE_URL
     } else {
       _baseURL = VITE_LENDING_BASE_URL
     }

@@ -602,17 +602,10 @@ const NftAssetDetail = () => {
   // 获取 eth => USD 汇率
   useRequest(apiGetXCurrency, {
     onSuccess: (data) => {
-      if (!data || isEmpty(data)) return
-      const { resources } = data
-
-      const res = resources.find((item) => {
-        return item.resource.fields.name === 'USD/ETH'
-      })?.resource.fields.price
-      if (!res) return
-      setUsdPrice(BigNumber(1).dividedBy(Number(res)))
+      setUsdPrice(BigNumber(data.USD))
     },
     debounceWait: 100,
-    ready: false,
+    // ready: false,
     // refreshDeps: [commodityWeiPrice],
   })
 
