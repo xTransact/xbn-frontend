@@ -27,14 +27,14 @@ export default ({ mode }) => {
       proxy: {
         '/lending/query': {
           // mock
-          target: 'https://xbank.global',
+          target: env.VITE_BASE_URL,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/query/, ''),
         },
         '/lending/api': {
           // mock
-          target: 'https://xbank.global/',
+          target: env.VITE_LENDING_BASE_URL,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ''),
@@ -45,13 +45,7 @@ export default ({ mode }) => {
         //   secure: false,
         // },
         '/api/v1/': {
-          target: 'https://xbank.global',
-          changeOrigin: true,
-          secure: false,
-          // rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-        '/api': {
-          target: 'https://api-goerli.etherscan.io/api',
+          target: env.VITE_TEST_BASE_URL,
           changeOrigin: true,
           secure: false,
           // rewrite: (path) => path.replace(/^\/api/, ''),
