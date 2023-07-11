@@ -45,9 +45,7 @@ export const requestInterceptor = async ({
 }: InternalAxiosRequestConfig) => {
   let _baseURL = baseURL
   if (MODE !== 'development') {
-    if (url === '/api') {
-      _baseURL = VITE_ETHERSCAN_IO_URL
-    } else if (url?.startsWith('/api/v')) {
+    if (url?.startsWith('/api/v')) {
       _baseURL = VITE_TEST_BASE_URL
     } else if (url?.startsWith('/lending/query')) {
       _baseURL = VITE_BASE_URL

@@ -1800,8 +1800,8 @@ export default function MarketingCampaign() {
                     }}
                     h={{
                       md: '54px',
-                      xs: '12px',
-                      sm: '12px',
+                      sm: '28px',
+                      xs: '28px',
                     }}
                     fontFamily={'HarmonyOS Sans SC Bold'}
                     onClick={async () => {
