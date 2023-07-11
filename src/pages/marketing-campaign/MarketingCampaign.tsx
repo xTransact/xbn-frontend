@@ -717,6 +717,7 @@ export default function MarketingCampaign() {
             <Flex
               justify={'center'}
               flex={1}
+              gap={'10px'}
               alignItems={'center'}
               borderRadius={{
                 md: '16px',
@@ -783,6 +784,7 @@ export default function MarketingCampaign() {
                   ? 'linear-gradient(212deg, #FFBADB 0%, #458FFF 47.92%, #1CFEF0 100%)'
                   : '#021E3F'
               }
+              gap={'10px'}
             >
               <Image
                 src={ImgLeaderBoardIcon}
