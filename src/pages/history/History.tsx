@@ -641,6 +641,9 @@ const History = () => {
           ) {
             status = LISTING_ORDER_STATUS_TEXT.Processing
           }
+          if (value === LISTING_ORDER_STATUS.Liquidated) {
+            status = LISTING_ORDER_STATUS_TEXT.Canceled
+          }
           return <Text>{status}</Text>
         },
       },

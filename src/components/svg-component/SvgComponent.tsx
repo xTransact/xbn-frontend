@@ -1,8 +1,8 @@
-import { Box, type BoxProps, chakra } from '@chakra-ui/react'
+import { Box, type BoxProps, chakra, type TextProps } from '@chakra-ui/react'
 import { type FunctionComponent } from 'react'
 
 const SvgComponent: FunctionComponent<
-  { svgId: string; svgSize?: any } & BoxProps
+  { svgId: string; svgSize?: TextProps['fontSize'] } & BoxProps
 > = ({
   svgId,
   // h,

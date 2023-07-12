@@ -21,10 +21,10 @@ import {
   Stack,
   useToast,
 } from '@chakra-ui/react'
-import { useAsyncEffect, useSetState } from 'ahooks'
+import { useAsyncEffect, useRequest, useSetState } from 'ahooks'
 import BigNumber from 'bignumber.js'
 import moment from 'moment'
-import React, { useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { apiGetLoans } from '@/api'
@@ -33,9 +33,11 @@ import {
   apiGalxeStatus,
   apiGetBoxes,
   apiGetInviteCode,
+  apiGetRanking,
   apiRewardExists,
 } from '@/api/marketing-campaign'
 // import BannerImg from '@/assets/marketing/banner-4x.png'
+import ImgH5LeaderBoard from '@/assets/marketing/ROLLING 24H LEADERBOARD.png'
 import ImgDialogBanner from '@/assets/marketing/banner-dialog.png'
 import BannerImg from '@/assets/marketing/banner.png'
 import BoxShadow from '@/assets/marketing/box-shadow.png'
@@ -44,13 +46,19 @@ import Box2 from '@/assets/marketing/box2.png'
 import Box3 from '@/assets/marketing/box3.png'
 import Box4 from '@/assets/marketing/box4.png'
 import IconCopied from '@/assets/marketing/copied.png'
+import ImgH5Prize from '@/assets/marketing/h5-price.png'
 import IconInviteFriend from '@/assets/marketing/icon-box-check-line.png'
 import IconCopy from '@/assets/marketing/icon-copy.png'
 import ImgQuestionBox from '@/assets/marketing/icon-win-box.png'
+import ImgLeaderBoardIcon from '@/assets/marketing/leader-board-icon.png'
+import ImgLeaderBoardTitle from '@/assets/marketing/leader-board-title.png'
+import ImgNo1 from '@/assets/marketing/no1.png'
+import ImgNo2 from '@/assets/marketing/no2.png'
+import ImgNo3 from '@/assets/marketing/no3.png'
 import IconTelegram from '@/assets/marketing/telegram.png'
 import IconTwitter from '@/assets/marketing/twitter.png'
 import IconLogo from '@/assets/marketing/xbank-logo.png'
-import { Header } from '@/components'
+import { Header, LoadingComponent } from '@/components'
 import { useWallet } from '@/hooks'
 import { getUserToken } from '@/utils/auth'
 
@@ -63,9 +71,257 @@ import ImgBrowser from '@/assets/marketing/icon-browser.svg'
 import ImgCoinInBox from '@/assets/marketing/icon-coin-in-box.svg'
 import ImgPlusWallet from '@/assets/marketing/icon-plus-wallet.svg'
 import ImgWalletOk from '@/assets/marketing/icon-wallet-ok.svg'
+
+import type { FlexProps, TextProps } from '@chakra-ui/react'
+import type { FunctionComponent } from 'react'
+
 const { VITE_APP_GALXE_TAKS_LINK } = import.meta.env
 const SHARE_TELEGRAM_TEXT = `Buy NFT pay later with 0% down payment, win Boxdrop`
 const SHARE_TWITTER_TEXT = `xBank is An NFT Open Money Market Powering Web3 Adopters with Onboarding Leverage with NFT BNPL and Improving Money Efficiency for Holders\nJoin @xBank_Official, buy top NFTs pay later, with 0% downpayment, and earn Boxdrop`
+const INITIAL_TEXT_PROPS: TextProps = {
+  color: 'white',
+  fontFamily: 'HarmonyOS Sans SC',
+  textAlign: 'center',
+  fontSize: {
+    xl: '20px',
+    lg: '18px',
+    md: '14px',
+    sm: '12px',
+    xs: '12px',
+  },
+  transform: {
+    md: 'none',
+    sm: 'scale(0.83333)',
+    xs: 'scale(0.83333)',
+  },
+  transformOrigin: 'center',
+  lineHeight: {
+    md: '20px',
+    sm: 'normal',
+    xs: 'normal',
+  },
+}
+
+const RankPercentage: FunctionComponent<{
+  data: RankItemType
+  total?: number
+}> = ({ data, total }) => {
+  const percentageData = useMemo(() => {
+    if (!data) return
+    const { box_bronze_num, box_gold_num, box_silver_num } = data
+
+    if (!total) return
+
+    const res = [
+      {
+        percentage: !box_gold_num
+          ? 0
+          : BigNumber(box_gold_num).dividedBy(total).toNumber(),
+        colorScheme: 'gold',
+      },
+      {
+        percentage: !box_silver_num
+          ? 0
+          : BigNumber(box_silver_num).dividedBy(total).toNumber(),
+        colorScheme: 'silver',
+      },
+      {
+        percentage: !box_bronze_num
+          ? 0
+          : BigNumber(box_bronze_num).dividedBy(total).toNumber(),
+        colorScheme: 'bronze',
+      },
+    ]
+    return res.filter((i) => !!i.percentage)
+  }, [data, total])
+  if (!data) return null
+
+  return (
+    <Flex
+      w='100%'
+      gap={'2px'}
+      bg='transparent'
+      borderRadius={{ md: '16px', sm: 0, xs: 0 }}
+      overflow={'hidden'}
+    >
+      {!!percentageData &&
+        percentageData?.map((item) => (
+          <Box
+            w={`${item.percentage * 100}%`}
+            key={item.colorScheme}
+            h={{ md: '18px', sm: '4px', xs: '4px' }}
+            // bg={item.colorScheme}
+            bgSize={'20px 20px'}
+            bgImage={
+              'linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent)'
+            }
+            bgColor={item.colorScheme}
+          />
+        ))}
+    </Flex>
+  )
+}
+
+const INITIAL_WIDTH = {
+  xl: '156px',
+  lg: '120px',
+  md: '98px',
+  sm: '44px',
+  xs: '44px',
+}
+const RankItem: FunctionComponent<{
+  data: RankItemType
+  isHighlight?: boolean
+}> = ({ data, isHighlight }) => {
+  const INITIAL_RANK_BOX_PROPS: FlexProps = useMemo(() => {
+    return {
+      p: {
+        md: '12px',
+        sm: '2px',
+        xs: '2px',
+      },
+      h: {
+        xl: '80px',
+        lg: '60px',
+        md: '60px',
+        sm: isHighlight ? '40px' : '44px',
+        xs: isHighlight ? '40px' : '44px',
+      },
+      w: INITIAL_WIDTH,
+      alignItems: 'center',
+      justify: 'center',
+    }
+  }, [isHighlight])
+  const rankData = useMemo(() => {
+    if (!data) return '--'
+    const { rank } = data
+    switch (rank) {
+      case undefined:
+        return <Text {...INITIAL_TEXT_PROPS}>unranked</Text>
+      case 1:
+        return (
+          <Image
+            src={ImgNo1}
+            w={{
+              xl: '60px',
+              lg: '48px',
+              md: '32px',
+              sm: '18px',
+              xs: '18px',
+            }}
+          />
+        )
+      case 2:
+        return (
+          <Image
+            src={ImgNo2}
+            w={{
+              xl: '60px',
+              lg: '48px',
+              md: '32px',
+              sm: '18px',
+              xs: '18px',
+            }}
+          />
+        )
+      case 3:
+        return (
+          <Image
+            src={ImgNo3}
+            w={{
+              xl: '60px',
+              lg: '48px',
+              md: '32px',
+              sm: '18px',
+              xs: '18px',
+            }}
+          />
+        )
+
+      default:
+        return (
+          <Text {...INITIAL_TEXT_PROPS}>
+            {rank < 10 ? `0${rank}` : rank?.toString()}
+          </Text>
+        )
+    }
+  }, [data])
+  const { rank, address, box_bronze_num, box_gold_num, box_silver_num } =
+    data || {}
+
+  const totalBoxNum = useMemo(() => {
+    if (
+      box_bronze_num === undefined &&
+      box_gold_num === undefined &&
+      box_silver_num === undefined
+    )
+      return
+    return (box_bronze_num || 0) + (box_gold_num || 0) + (box_silver_num || 0)
+  }, [box_bronze_num, box_gold_num, box_silver_num])
+  if (!data) return null
+
+  return (
+    <Flex
+      w='100%'
+      borderRadius={{
+        md: 8,
+        sm: 4,
+        xs: 4,
+      }}
+      mt={{
+        md: '8px',
+        sm: '4px',
+        xs: '4px',
+      }}
+      bg={
+        isHighlight
+          ? rank && rank < 4
+            ? 'linear-gradient(313deg, #00F 0%, rgba(39, 180, 255, 0.00) 100%), #051B34'
+            : 'linear-gradient(270deg, rgba(0, 23, 147, 0.60) 0%, rgba(0, 60, 150, 0.00) 100%), linear-gradient(180deg, #17AFFF 0%, #0048DA 100%)'
+          : 'linear-gradient(180deg, #05356F 0%, rgba(2, 38, 80, 0.00) 100%)'
+      }
+      backgroundBlendMode={
+        isHighlight && rank && rank < 4 ? 'hard-light, normal' : 'lighten'
+      }
+    >
+      {/* rank */}
+      <Flex {...INITIAL_RANK_BOX_PROPS}>{rankData}</Flex>
+      {/* user */}
+      <Flex {...INITIAL_RANK_BOX_PROPS}>
+        <Text {...INITIAL_TEXT_PROPS} color={isHighlight ? 'red.1' : 'white'}>
+          {address}
+        </Text>
+      </Flex>
+      {[
+        box_gold_num ?? '--',
+        box_silver_num ?? '--',
+        box_bronze_num ?? '--',
+      ].map((i) => (
+        <Flex {...INITIAL_RANK_BOX_PROPS} key={`${i}-${Math.random()}`}>
+          <Text {...INITIAL_TEXT_PROPS}>{i}</Text>
+        </Flex>
+      ))}
+
+      {/* Total */}
+      <Flex {...INITIAL_RANK_BOX_PROPS}>
+        <Text {...INITIAL_TEXT_PROPS}>{totalBoxNum ?? '--'}</Text>
+      </Flex>
+      {/* 百分比 */}
+      <Flex
+        {...INITIAL_RANK_BOX_PROPS}
+        flex={1}
+        px={{
+          lg: '30px',
+          md: 0,
+          sm: 0,
+          xs: 0,
+        }}
+      >
+        <RankPercentage data={data} total={totalBoxNum} />
+      </Flex>
+    </Flex>
+  )
+}
 const CusCard = (props: {
   title?: string
   children?: React.ReactNode
@@ -164,9 +420,16 @@ const TitleWithQuestionBox = (props: { title: string; src?: any }) => {
     </HStack>
   )
 }
+
+enum TAB_KEY {
+  WIN_BOX,
+  LEADER_BOARD,
+}
 export default function MarketingCampaign() {
+  const [tabKey, setTabKey] = useState<TAB_KEY>(TAB_KEY.WIN_BOX)
   const navigate = useNavigate()
   const toast = useToast()
+  const isLogin = getUserToken()?.address
   const { currentAccount: address, connectWallet } = useWallet()
   const [state, setState] = useSetState({
     hasClaimed: false,
@@ -193,9 +456,14 @@ export default function MarketingCampaign() {
   } = useClipboard('')
 
   const [inviteCode, setInviteCode] = useState('')
+  // 盒子排行榜
+  const { data: rankData, loading: rankLoading } = useRequest(apiGetRanking, {
+    debounceWait: 100,
+    refreshDeps: [isLogin],
+  })
 
   useAsyncEffect(async () => {
-    if (!state.expired) {
+    if (!state.expired && isLogin) {
       // 查询用户盒子数量
       const boxResp = await apiGetBoxes()
       setBoxAmounts({
@@ -206,10 +474,10 @@ export default function MarketingCampaign() {
         box_silver: boxResp?.box_silver || 0,
       })
     }
-  }, [state.expired])
+  }, [state.expired, isLogin])
   useAsyncEffect(async () => {
     // 查询用户是否使用过 XBN
-    if (!state.expired) {
+    if (!state.expired && isLogin) {
       const list = await apiGetLoans({
         lender_address: address,
         borrower_address: address,
@@ -218,16 +486,16 @@ export default function MarketingCampaign() {
         hasUsedXBN: list.length > 0,
       })
     }
-  }, [state.expired, address])
+  }, [state.expired, address, isLogin])
   useAsyncEffect(async () => {
-    if (!state.expired && state.hasUsedXBN) {
+    if (!state.expired && state.hasUsedXBN && isLogin) {
       const data = await apiGetInviteCode()
       setInviteCode(data.code)
       setInvitationLink(
         window.location.host + `/buy-nfts/market?invitation_code=${data.code}`,
       )
     }
-  }, [state.expired, state.hasUsedXBN])
+  }, [state.expired, state.hasUsedXBN, isLogin])
   useAsyncEffect(async () => {
     if (state.expired) {
       // 过期了，需要连钱包
@@ -244,7 +512,7 @@ export default function MarketingCampaign() {
           expired,
         })
       }
-    } else {
+    } else if (isLogin) {
       // 查询用户是否做过任务
       const galxeStatusData = await apiGalxeStatus()
       if (galxeStatusData.status) {
@@ -275,7 +543,7 @@ export default function MarketingCampaign() {
         }
       }
     }
-  }, [state.expired])
+  }, [state.expired, isLogin])
   return (
     <Box bgGradient={'linear-gradient(0deg, #071E38, #071E38), #F9F9FF;'}>
       <Header />
@@ -324,7 +592,11 @@ export default function MarketingCampaign() {
           flexDir={'column'}
           fontWeight={'900'}
           color={'white'}
-          maxW={'70%'}
+          maxW={{
+            md: '70%',
+            sm: '100%',
+            xs: '100%',
+          }}
           fontFamily={'HarmonyOS Sans SC'}
           lineHeight={{
             xl: '90px',
@@ -338,11 +610,13 @@ export default function MarketingCampaign() {
             xl: '120px',
             lg: '90px',
             md: '50px',
+            xs: 0,
+            sm: 0,
           }}
           pt={{
             md: 0,
-            sm: '32px',
-            xs: '32px',
+            sm: '28px',
+            xs: '24px',
           }}
         >
           <Text
@@ -396,13 +670,189 @@ export default function MarketingCampaign() {
         {/* <ReactSVG src={BannerImg} wrapper='div' width={'100%'} /> */}
         {/* <Image src={BannerImg} width='100%' /> */}
       </Box>
-      <Box>
+      {/* 两个 tab */}
+      <Container width={'100%'} maxW='1440px'>
+        <Box>
+          {/* 渐变色头 */}
+          <Box
+            borderRadius={{
+              md: '16px 16px 0px 0px',
+              sm: '4px 4px 0px 0px',
+              xs: '4px 4px 0px 0px',
+            }}
+            background='linear-gradient(212deg, #FFBADB 0%, #458FFF 47.92%, #1CFEF0 100%)'
+            w='100%'
+            h={{
+              md: '24px',
+              sm: '6px',
+              xs: '6px',
+            }}
+          />
+          {/* 两个 tab */}
+          <Flex
+            px={{
+              md: '38px',
+              sm: '10px',
+              xs: '10px',
+            }}
+            py={{
+              md: '30px',
+              sm: '8px',
+              xs: '10px',
+            }}
+            w='100%'
+            background='#022650'
+            boxShadow={'0px 0.5px 0px 0px #1DE4FE'}
+            borderBottomRadius={{
+              md: '16px',
+              xs: '4px',
+              sm: '4px',
+            }}
+            gap={{
+              md: '20px',
+              sm: '4px',
+              xs: '4px',
+            }}
+          >
+            <Flex
+              justify={'center'}
+              flex={1}
+              gap={'10px'}
+              alignItems={'center'}
+              borderRadius={{
+                md: '16px',
+                sm: '4px',
+                xs: '4px',
+              }}
+              onClick={() => {
+                if (tabKey === TAB_KEY.WIN_BOX) return
+                setTabKey(TAB_KEY.WIN_BOX)
+              }}
+              bg={
+                tabKey === TAB_KEY.WIN_BOX
+                  ? 'linear-gradient(212deg, #FFBADB 0%, #458FFF 47.92%, #1CFEF0 100%)'
+                  : '#021E3F'
+              }
+              cursor={'pointer'}
+            >
+              <Image
+                src={ImgQuestionBox}
+                boxSize={{
+                  lg: '84px',
+                  md: '56px',
+                  sm: '20px',
+                  xs: '20px',
+                }}
+              />
+              <Text
+                display={'inline-block'}
+                fontSize={{
+                  lg: '48px',
+                  md: '36px',
+                  sm: '14px',
+                  xs: '14px',
+                }}
+                // lineHeight={'74px'}
+                fontFamily={'HarmonyOS Sans SC Black'}
+                bgGradient={
+                  tabKey === TAB_KEY.WIN_BOX
+                    ? 'unset'
+                    : 'linear-gradient(45deg, #1CFEF0 23%, #458FFF 46%, #FFBADB 90%)'
+                }
+                color='white'
+                bgClip={tabKey === TAB_KEY.WIN_BOX ? 'unset' : 'text'}
+              >
+                Win Boxs
+              </Text>
+            </Flex>
+            <Flex
+              justify={'center'}
+              flex={1}
+              alignItems={'center'}
+              cursor={'pointer'}
+              onClick={() => {
+                if (tabKey === TAB_KEY.LEADER_BOARD) return
+                setTabKey(TAB_KEY.LEADER_BOARD)
+              }}
+              borderRadius={{
+                md: '16px',
+                sm: '4px',
+                xs: '4px',
+              }}
+              bg={
+                tabKey === TAB_KEY.LEADER_BOARD
+                  ? 'linear-gradient(212deg, #FFBADB 0%, #458FFF 47.92%, #1CFEF0 100%)'
+                  : '#021E3F'
+              }
+              gap={'10px'}
+            >
+              <Image
+                src={ImgLeaderBoardIcon}
+                w={{
+                  lg: '84px',
+                  md: '56px',
+                  sm: '20px',
+                  xs: '20px',
+                }}
+              />
+              <Text
+                display={'inline-block'}
+                fontSize={{
+                  lg: '48px',
+                  md: '36px',
+                  sm: '14px',
+                  xs: '14px',
+                }}
+                // lineHeight={'74px'}
+                fontFamily={'HarmonyOS Sans SC Black'}
+                bgGradient={
+                  tabKey === TAB_KEY.LEADER_BOARD
+                    ? 'unset'
+                    : 'linear-gradient(45deg, #1CFEF0 23%, #458FFF 46%, #FFBADB 90%)'
+                }
+                color='white'
+                bgClip={tabKey === TAB_KEY.LEADER_BOARD ? 'unset' : 'text'}
+              >
+                LeaderBoard
+              </Text>
+            </Flex>
+          </Flex>
+          {/* 底部阴影 */}
+          <Box
+            bgImage={'linear-gradient(to right, #38E9FC 2.99%, #0000FF 98.3%)'}
+            h={{
+              md: '20px',
+              sm: '4px',
+              xs: '4px',
+            }}
+            transformOrigin={'50% 100% 0'}
+            transform={{
+              md: 'perspective(400px) rotateX(135deg)',
+              sm: 'perspective(200px) rotateX(135deg)',
+              xs: 'perspective(200px) rotateX(135deg)',
+            }}
+            position={'relative'}
+            top={{
+              md: '-20px',
+              sm: '-4px',
+              xs: '-4px',
+            }}
+            w={{
+              md: '98%',
+              sm: '99%',
+              xs: '99%',
+            }}
+            margin='0 auto'
+          />
+        </Box>
+      </Container>
+
+      <Box hidden={tabKey !== TAB_KEY.WIN_BOX}>
         <Container width={'100%'} maxW='1440px'>
           <Box
             bgGradient={'linear-gradient(0deg, #071E38, #071E38)'}
             color={'#FFFFFF'}
           >
-            <TitleWithQuestionBox title='Win Box' />
             <Box
               marginBottom={{
                 md: '72px',
@@ -418,11 +868,38 @@ export default function MarketingCampaign() {
               <CusCard title='My Boxdrops'>
                 <CardBody
                   padding={{
-                    md: 10,
+                    md: '16px',
                     sm: 2,
                     xs: 2,
                   }}
                 >
+                  {!!rankData?.data?.info && (
+                    <Flex
+                      display={{ md: 'flex', sm: 'none', xs: 'none' }}
+                      justifyContent={'center'}
+                      mb='30px'
+                    >
+                      <Flex
+                        fontFamily={'HarmonyOS Sans SC Bold'}
+                        gap='10px'
+                        alignItems={'center'}
+                        borderRadius={16}
+                        bg='#021E3F'
+                        padding='4px 0px 4px 16px'
+                      >
+                        You are now ranked {rankData?.data?.info?.rank}
+                        <Button
+                          variant={'linear'}
+                          w='192px'
+                          h='39px'
+                          borderRadius={12}
+                          onClick={() => setTabKey(TAB_KEY.LEADER_BOARD)}
+                        >
+                          check leadboard
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  )}
                   <Flex
                     justifyContent={'space-around'}
                     alignItems={'center'}
@@ -1323,8 +1800,8 @@ export default function MarketingCampaign() {
                     }}
                     h={{
                       md: '54px',
-                      xs: '12px',
-                      sm: '12px',
+                      sm: '28px',
+                      xs: '28px',
                     }}
                     fontFamily={'HarmonyOS Sans SC Bold'}
                     onClick={async () => {
@@ -1380,7 +1857,11 @@ export default function MarketingCampaign() {
                         onClick={() => {
                           navigate('/buy-nfts/market')
                         }}
-                        noOfLines={2}
+                        noOfLines={{
+                          md: 2,
+                          sm: 1,
+                          xs: 1,
+                        }}
                       >
                         Unlock invitations by completing a lending or borrowing
                       </Button>
@@ -1480,8 +1961,8 @@ export default function MarketingCampaign() {
                                 fontFamily={'HarmonyOS Sans SC Regular'}
                                 px={{
                                   md: '18px',
-                                  sm: '10px',
-                                  xs: '10px',
+                                  sm: '4px',
+                                  xs: '4px',
                                 }}
                                 noOfLines={2}
                               >
@@ -1495,11 +1976,6 @@ export default function MarketingCampaign() {
                                       md: '24px',
                                       xs: '12px',
                                       sm: '12px',
-                                    }}
-                                    h={{
-                                      md: 'auto',
-                                      sm: '30px',
-                                      xs: '30px',
                                     }}
                                   />
                                 ) : (
@@ -1779,6 +2255,229 @@ export default function MarketingCampaign() {
             </Box> */}
           </Container>
         </Box>
+      </Box>
+
+      {/* 排行榜 */}
+      <Box hidden={tabKey !== TAB_KEY.LEADER_BOARD} pb='200px'>
+        <Container width={'100%'} maxW='1440px'>
+          {/* pc 端的头 */}
+          <Image
+            src={ImgLeaderBoardTitle}
+            display={{
+              md: 'block',
+              sm: 'none',
+              xs: 'none',
+            }}
+            mt='40px'
+          />
+          <Box
+            p={{
+              md: '16px',
+              sm: '10px',
+              xs: '10px',
+            }}
+            borderBottomRadius={{
+              md: '16px',
+              sm: '4px',
+              xs: '4px',
+            }}
+            borderTopRadius={{
+              md: 0,
+              sm: '4px',
+              xs: '4px',
+            }}
+            bg='#022650'
+            borderWidth={1}
+            borderColor={'#fff'}
+            borderTopWidth={{
+              md: 0,
+              sm: 1,
+              xs: 1,
+            }}
+            boxShadow={'0px 4px 0px 0px #1DE4FE'}
+            mt={{
+              md: 0,
+              sm: '20px',
+              xs: '20px',
+            }}
+          >
+            {/* h5 端的头 */}
+            <Flex
+              justify={{
+                md: 'center',
+                sm: 'space-between',
+                xs: 'space-between',
+              }}
+              alignItems={'center'}
+            >
+              <Box>
+                <Image
+                  src={ImgH5LeaderBoard}
+                  display={{
+                    md: 'none',
+                    sm: 'initial',
+                    xs: 'initial',
+                  }}
+                  w='220px'
+                />
+              </Box>
+              <Image
+                src={ImgH5Prize}
+                boxSize='42px'
+                display={{
+                  md: 'none',
+                  sm: 'initial',
+                  xs: 'initial',
+                }}
+              />
+            </Flex>
+
+            <Box
+              bg='#072444'
+              borderRadius={{
+                md: '16px',
+                sm: '4px',
+                xs: '4px',
+              }}
+              p={{
+                md: '20px',
+                sm: '8px',
+                xs: '8px',
+              }}
+            >
+              {/* 前 100 排名 */}
+              <Box>
+                {/* 表头 */}
+                <Flex
+                  w='100%'
+                  borderWidth={{
+                    md: 1,
+                    sm: '0.25px',
+                    xs: '0.25px',
+                  }}
+                  borderColor={'white'}
+                  borderRadius={{
+                    md: 8,
+                    sm: 2,
+                    xs: 2,
+                  }}
+                  bg='blue.1'
+                >
+                  {[
+                    {
+                      title: 'Ranking',
+                      w: INITIAL_WIDTH,
+                    },
+                    {
+                      title: 'User',
+                      w: INITIAL_WIDTH,
+                    },
+                    {
+                      title: 'Gold',
+                      w: INITIAL_WIDTH,
+                    },
+                    {
+                      title: 'Silver',
+                      w: INITIAL_WIDTH,
+                    },
+                    {
+                      title: 'Bronze',
+                      w: INITIAL_WIDTH,
+                    },
+                    {
+                      title: 'Total',
+                      w: INITIAL_WIDTH,
+                    },
+                    {
+                      title: '',
+                    },
+                  ].map((item) => (
+                    <Box
+                      key={item.title}
+                      px={{
+                        md: '14px',
+                        sm: '0px',
+                        xs: '0px',
+                      }}
+                      py={{ md: '14px', sm: '2px', xs: '2px' }}
+                      color={'white'}
+                      fontFamily={'HarmonyOS Sans SC Medium'}
+                      borderRightColor={'white'}
+                      borderRightWidth={{
+                        md: !!item.title ? 1 : 0,
+                        sm: !!item.title ? 0.25 : 0,
+                        xs: !!item.title ? 0.25 : 0,
+                      }}
+                      w={item.w || 'auto'}
+                    >
+                      <Text
+                        textAlign={{
+                          md: 'center',
+                          sm: 'center',
+                          xs: 'center',
+                        }}
+                        letterSpacing={{
+                          md: 0,
+                          sm: '-0.4px',
+                          xs: '-0.4px',
+                        }}
+                        fontSize={{
+                          xl: '24px',
+                          lg: '20px',
+                          md: '18px',
+                          sm: '12px',
+                          xs: '12px',
+                        }}
+                        transform={{
+                          md: 'none',
+                          sm: 'scale(0.83334)',
+                          xs: 'scale(0.83334)',
+                        }}
+                        transformOrigin='center'
+                        lineHeight={{
+                          md: '20px',
+                          sm: 'normal',
+                          xs: 'normal',
+                        }}
+                      >
+                        {item.title}
+                      </Text>
+                    </Box>
+                  ))}
+                </Flex>
+                {/* 内容 */}
+                <Box
+                  py={{
+                    md: '8px',
+                    sm: 0,
+                    xs: 0,
+                  }}
+                  position={'relative'}
+                >
+                  <LoadingComponent loading={rankLoading} top={0} />
+                  {!!rankData?.data?.info && (
+                    <RankItem
+                      data={{ ...rankData?.data?.info, address: 'You' }}
+                      isHighlight
+                    />
+                  )}
+                  {isLogin && !rankData?.data?.info && (
+                    <RankItem
+                      data={{
+                        address: 'You',
+                      }}
+                      isHighlight
+                    />
+                  )}
+
+                  {rankData?.data?.ranking_infos.map((item) => (
+                    <RankItem key={item.address} data={item} />
+                  ))}
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Container>
       </Box>
       <AlertDialog
         motionPreset='slideInBottom'

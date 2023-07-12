@@ -227,6 +227,7 @@ const CollectionDescription: FunctionComponent<{
             sm: '120px',
             xs: '120px',
           }}
+          justify={'center'}
         >
           <Flex alignItems={'center'}>
             <SvgComponent svgId='icon-eth' svgSize='20px' />
@@ -235,6 +236,7 @@ const CollectionDescription: FunctionComponent<{
               fontWeight='700'
               display='flex'
               mb={'4px'}
+              textAlign={'center'}
             >
               {floorPrice !== undefined && bestPoolAmount !== undefined
                 ? formatFloat(

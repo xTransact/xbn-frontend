@@ -468,7 +468,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>
@@ -625,7 +631,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>
@@ -694,7 +706,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>

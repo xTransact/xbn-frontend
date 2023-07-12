@@ -512,8 +512,8 @@ const Market = () => {
               >
                 <DrawerOverlay />
                 <DrawerContent borderTopRadius={16} pb='40px'>
-                  <DrawerBody>
-                    <Heading fontSize={'16px'} pt='40px' pb='32px'>
+                  <DrawerBody overflow={'initial'}>
+                    <Heading fontSize={'16px'} pt='20px' pb='16px'>
                       Top Collections
                     </Heading>
                     <Box
@@ -531,7 +531,13 @@ const Market = () => {
                       />
                     </Box>
 
-                    <List spacing='16px' mt='16px' position='relative'>
+                    <List
+                      spacing='16px'
+                      mt='16px'
+                      position='relative'
+                      overflowY={'auto'}
+                      h='300px'
+                    >
                       <LoadingComponent
                         loading={collectionLoading || poolsLoading}
                         top={0}

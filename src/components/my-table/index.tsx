@@ -7,6 +7,7 @@ import {
   Tr,
   Flex,
   type FlexProps,
+  type BoxProps,
   type TableProps,
   type TextProps,
   Box,
@@ -31,7 +32,7 @@ export interface ColumnProps {
   align?: 'left' | 'right' | 'center'
   // thead
   thAlign?: 'left' | 'right' | 'center'
-  width?: number
+  width?: BoxProps['width']
   render?: ColumnRenderType
   sortable?: boolean
   fixedRight?: boolean
@@ -98,7 +99,11 @@ const MyTable = ({
         </Box>
       )}
       {!isEmpty(data) && (
-        <TableContainer position={'relative'} maxW={maxW || '100%'}>
+        <TableContainer
+          position={'relative'}
+          maxW={maxW || '100%'}
+          className='table-container'
+        >
           <ChakraTable
             variant='unstyled'
             style={{

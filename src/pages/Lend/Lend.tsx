@@ -629,7 +629,12 @@ const Lend = () => {
         dataIndex: 'id',
         key: 'id',
         align: 'left',
-        width: 180,
+        width: {
+          lg: 200,
+          md: 150,
+          sm: 130,
+          xs: 130,
+        },
         thAlign: 'left',
         render: (_: any, info: any) => {
           // const currentInfo = batchNftListInfo?.get(
@@ -653,7 +658,6 @@ const Lend = () => {
                 borderRadius={4}
               />
               <Text
-                w={'60%'}
                 display='inline-block'
                 overflow='hidden'
                 whiteSpace='nowrap'
@@ -862,7 +866,16 @@ const Lend = () => {
             top={{ md: '131px', sm: '131px', xs: '107px' }}
             bg='white'
             zIndex={2}
-            w={{ md: '100%', sm: 'max-content', xs: 'max-content' }}
+            w={{
+              md: '100%',
+              sm: '100%',
+              xs: 'max-content',
+            }}
+            justifyContent={{
+              md: 'flex-start',
+              sm: 'space-between',
+              xs: 'space-between',
+            }}
           >
             <TabWrapper>Collections</TabWrapper>
             <TabWrapper>
