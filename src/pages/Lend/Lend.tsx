@@ -865,7 +865,20 @@ const Lend = () => {
               color: 'blue.1',
               fontWeight: 'bold',
             }}
-            w={{ md: '100%', sm: '100%', xs: 'max-content' }}
+            position='sticky'
+            top={{ md: '131px', sm: '131px', xs: '107px' }}
+            bg='white'
+            zIndex={2}
+            w={{
+              md: '100%',
+              sm: '100%',
+              xs: 'max-content',
+            }}
+            justifyContent={{
+              md: 'flex-start',
+              sm: 'space-between',
+              xs: 'space-between',
+            }}
           >
             <TabWrapper>Collections</TabWrapper>
             <TabWrapper>
