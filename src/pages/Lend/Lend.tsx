@@ -836,7 +836,9 @@ const Lend = () => {
             >
               <SvgComponent svgId='icon-search' fill={'gray.3'} />
             </Flex>
-            {!isEmpty(poolList) && (
+            {((tabKey === TAB_KEY.COLLECTION_TAB &&
+              !isEmpty(activeCollectionList)) ||
+              (tabKey === TAB_KEY.MY_POOLS_TAB && !isEmpty(myPoolsData))) && (
               <Button
                 variant={'secondary'}
                 minW='200px'

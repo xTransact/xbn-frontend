@@ -398,10 +398,11 @@ const Market = () => {
             <Box
               pos={'absolute'}
               bottom={0}
-              pb='20px'
+              pb='24px'
+              pt='10px'
               bg='white'
-              left={4}
-              right={4}
+              left={'24px'}
+              right={'24px'}
               display={{
                 md: 'block',
                 sm: 'none',
@@ -438,7 +439,7 @@ const Market = () => {
                 }
               >
                 <SearchInput
-                  placeholder='Collections...'
+                  placeholder='Search...'
                   isDisabled={collectionLoading || poolsLoading}
                   value={collectionSearchValue}
                   onChange={(e) => {
