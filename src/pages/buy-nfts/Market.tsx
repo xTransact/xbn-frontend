@@ -339,33 +339,7 @@ const Market = () => {
   return (
     <RootLayout>
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
-      {/* Propose Listing */}
-      <Box
-        pos={'sticky'}
-        top={'92vh'}
-        display={{
-          md: 'block',
-          sm: 'none',
-          xs: 'none',
-        }}
-        zIndex={9}
-        w={{
-          xl: '360px',
-          lg: '300px',
-          md: '100%',
-        }}
-      >
-        <Image
-          src={ImgLabel}
-          w='190px'
-          right={0}
-          position={'absolute'}
-          top='-65%'
-        />
-        <Button w='100%' variant={'outline'}>
-          Propose Listing
-        </Button>
-      </Box>
+
       <Box
         mb={{ md: '40px', sm: 0, xs: 0 }}
         mt={{
@@ -393,28 +367,59 @@ const Market = () => {
             sm: '100%',
             xs: '100%',
           }}
-          pos={'relative'}
+          position={{
+            md: 'sticky',
+            sm: 'static',
+            xs: 'static',
+          }}
+          h={{
+            md: 'calc(100vh - 270px)',
+            sm: 'auto',
+            xs: 'auto',
+          }}
+          top='151px'
+          bg='white'
+          zIndex={2}
+          borderColor='gray.2'
+          borderWidth={{ md: 1, sm: 0, xs: 0 }}
+          borderRadius={{ md: '12px', sm: 0, xs: 0 }}
         >
           <Box
-            borderColor='gray.2'
-            borderWidth={{ md: 1, sm: 0, xs: 0 }}
-            borderRadius={{ md: '12px', sm: 0, xs: 0 }}
             pt={{ md: '24px', sm: 0, xs: 0 }}
             px={{ md: '24px', sm: 0, xs: 0 }}
-            // overflowY='auto'
-            overflowX={'visible'}
-            position={{
-              md: 'sticky',
-              sm: 'static',
-              xs: 'static',
+            h='90%'
+            overflowX={{
+              md: 'auto',
+              sm: 'visible',
+              xs: 'visible',
             }}
-            minH={{
-              md: '400px',
-              sm: '100px',
-              xs: '100px',
-            }}
-            top='151px'
           >
+            {/* Propose Listing */}
+            <Box
+              pos={'absolute'}
+              bottom={0}
+              pb='20px'
+              bg='white'
+              left={4}
+              right={4}
+              display={{
+                md: 'block',
+                sm: 'none',
+                xs: 'none',
+              }}
+              zIndex={10}
+            >
+              <Image
+                src={ImgLabel}
+                w='190px'
+                right={0}
+                position={'absolute'}
+                top='-45%'
+              />
+              <Button w='100%' variant={'outline'}>
+                Propose Listing
+              </Button>
+            </Box>
             <Heading fontSize={'16px'} mb='16px'>
               Top Collections
             </Heading>
@@ -456,7 +461,7 @@ const Market = () => {
                 <LoadingComponent
                   loading={collectionLoading || poolsLoading}
                   top={0}
-                  minH={'220px'}
+                  minH={'180px'}
                 />
                 {isEmpty(filteredCollectionList) &&
                   !collectionLoading &&
