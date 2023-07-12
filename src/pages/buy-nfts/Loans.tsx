@@ -31,6 +31,7 @@ import {
   type ColumnProps,
   SvgComponent,
   LoadingComponent,
+  NoticeSlider,
 } from '@/components'
 import { UNIT } from '@/constants'
 import { useBatchAsset, useWallet, useCatchContractError } from '@/hooks'
@@ -69,7 +70,8 @@ const MODEL_HEADER_PROPS: ModalHeaderProps = {
 
 const Loans = () => {
   // const navigate = useNavigate()
-  const { isOpen, onClose, interceptFn, currentAccount } = useWallet()
+  const { isOpen, onClose, interceptFn, currentAccount, noticeData } =
+    useWallet()
   const { toastError, toast } = useCatchContractError()
   const [repayLoadingMap, setRepayLoadingMap] =
     useState<Record<string, boolean>>()
@@ -443,6 +445,7 @@ const Loans = () => {
         Loans
       </Heading>
 
+      <NoticeSlider data={noticeData} />
       <Flex justify={'space-between'} mt='16px'>
         <Box w='100%'>
           <TableList
