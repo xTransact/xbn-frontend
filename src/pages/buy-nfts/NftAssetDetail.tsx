@@ -219,10 +219,6 @@ const NftAssetDetail = () => {
       },
     },
   )
-  console.log(
-    '🚀 ~ file: NftAssetDetail.tsx:175 ~ NftAssetDetail ~ floorPriceData:',
-    floorPriceData,
-  )
 
   const { loading: ordersPriceFetchLoading, refresh: refreshOrderPrice } =
     useRequest(apiGetAssetPrice, {

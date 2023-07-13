@@ -302,7 +302,7 @@ const Loans = () => {
       let lastTime = BigNumber(loan_start_time)
       if (BigNumber(repaid_principal).gt(0)) {
         // 如果已还金额大于 0
-        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息）
         const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
 
         // 已还次数 = 已还金额 / 每期还款金额
@@ -421,7 +421,7 @@ const Loans = () => {
       if (BigNumber(repaid_principal).gt(0)) {
         // 如果已还金额大于 0
 
-        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息 ）
         const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
 
         // 已还次数 = 已还金额 / 每期还款金额
