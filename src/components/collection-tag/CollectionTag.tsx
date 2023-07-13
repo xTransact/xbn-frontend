@@ -22,7 +22,7 @@ const CollectionTag: FunctionComponent<
     icon?: ReactNode
     title?: string
   }
-> = ({ children, title, icon }) => {
+> = ({ children, title, icon, ...rest }) => {
   const src = useMemo(() => {
     if (title?.includes('box rewards')) return ImgTagStar
     if (title?.includes('trending')) return ImgTagFire
@@ -49,6 +49,7 @@ const CollectionTag: FunctionComponent<
       alignItems={'center'}
       borderRadius={4}
       bg='conic-gradient(from 189deg at 75.95% 6.03%, rgba(255, 255, 255, 0.20) 0deg, rgba(255, 255, 255, 0.00) 360deg), linear-gradient(90deg, #4A40FF 0%, #ADA6FF 100%)'
+      {...rest}
     >
       {!!src ? (
         <Image
@@ -79,6 +80,7 @@ const CollectionTag: FunctionComponent<
           }}
           transformOrigin={'center'}
           noOfLines={1}
+          w='100%'
         >
           {title}
         </Text>

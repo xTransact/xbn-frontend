@@ -59,7 +59,7 @@ const CollectionListItem: FunctionComponent<
             &nbsp;
           </Text>
           {data?.tags && data?.tags?.length && (
-            <CollectionTag title={data?.tags[0]} />
+            <CollectionTag title={data?.tags[0]} maxW={'140px'} />
           )}
         </Flex>
       </Flex>
