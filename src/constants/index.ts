@@ -174,3 +174,8 @@ export enum LOAN_ORDER_STATUS {
   // final    loan 生成成功
   Completed = 4096,
 }
+
+export enum NotificationType {
+  loan_in_generating = 'loan_in_generating',
+  loan_repayment = 'loan_repayment',
+}

@@ -70,8 +70,14 @@ const MODEL_HEADER_PROPS: ModalHeaderProps = {
 
 const Loans = () => {
   // const navigate = useNavigate()
-  const { isOpen, onClose, interceptFn, currentAccount, noticeData } =
-    useWallet()
+  const {
+    isOpen,
+    onClose,
+    interceptFn,
+    currentAccount,
+    noticeData,
+    refreshNotice,
+  } = useWallet()
   const { toastError, toast } = useCatchContractError()
   const [repayLoadingMap, setRepayLoadingMap] =
     useState<Record<string, boolean>>()
@@ -163,6 +169,7 @@ const Loans = () => {
               title: 'successful repayment',
             })
             refresh()
+            refreshNotice()
           }, 3000)
         } catch (error: any) {
           toastError(error)
@@ -173,7 +180,7 @@ const Loans = () => {
         }
       })
     },
-    [interceptFn, currentAccount, refresh, toastError, toast],
+    [interceptFn, currentAccount, refresh, toastError, toast, refreshNotice],
   )
 
   const loansForBuyerColumns: ColumnProps[] = [
@@ -383,6 +390,7 @@ const Loans = () => {
           })
           refresh()
           setPrepayData(undefined)
+          refreshNotice()
         }, 3000)
       } catch (error: any) {
         toastError(error)
@@ -393,7 +401,15 @@ const Loans = () => {
         }))
       }
     })
-  }, [prepayData, refresh, toastError, toast, currentAccount, interceptFn])
+  }, [
+    prepayData,
+    refresh,
+    toastError,
+    toast,
+    currentAccount,
+    interceptFn,
+    refreshNotice,
+  ])
 
   const handleClose = useCallback(() => {
     if (!prepayData) return

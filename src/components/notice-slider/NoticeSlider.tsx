@@ -7,6 +7,7 @@ import {
   type TextProps,
 } from '@chakra-ui/react'
 import isEmpty from 'lodash-es/isEmpty'
+import { useNavigate } from 'react-router-dom'
 import Slider from 'react-slick'
 
 import SvgComponent from '../svg-component/SvgComponent'
@@ -19,6 +20,7 @@ export type NoticeItemType = {
   highlightTitle?: string
   button?: string
   buttonProps?: ButtonProps
+  link?: string
 }
 
 type NoticeSliderProps = {
@@ -30,9 +32,10 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
   buttonProps,
   titleProps,
   highlightTitle,
-
+  link,
   button,
 }) => {
+  const navigate = useNavigate()
   return (
     <Flex
       alignItems={'center'}
@@ -42,6 +45,7 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
         sm: '36px',
         xs: '36px',
       }}
+      w='100%'
     >
       <Flex alignItems={'center'} gap={'4px'} flex={1}>
         <Text
@@ -73,7 +77,7 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
           )}
         </Text>
       </Flex>
-      {button && (
+      {button && link && (
         <Button
           px={{
             md: '20px',
@@ -95,6 +99,9 @@ const ItemWrapper: FunctionComponent<NoticeItemType> = ({
             md: '8px',
             sm: '4px',
             xs: '4px',
+          }}
+          onClick={() => {
+            navigate(link)
           }}
           {...buttonProps}
         >

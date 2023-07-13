@@ -1,42 +1,57 @@
 import useRequest from 'ahooks/lib/useRequest'
+import bigNumber from 'bignumber.js'
 import compact from 'lodash-es/compact'
-import { useMemo } from 'react'
+import { useMemo, type DependencyList } from 'react'
 
 import { apiGetNotice } from '@/api'
 import type { NoticeItemType } from '@/components/notice-slider/NoticeSlider'
-
-import type { DependencyList } from 'react'
+import { NotificationType } from '@/constants'
 
 type OptionType = {
   ready?: boolean
   refreshDeps?: DependencyList
   manual?: boolean
 }
-const useNotice = ({
-  ready = true,
-  refreshDeps,
-  manual = false,
-}: OptionType) => {
-  const { data, loading, ...rest } = useRequest(apiGetNotice, {
-    ready,
-    refreshDeps,
-    manual,
-  })
+const useNotice = (
+  address: string,
+  { ready = true, refreshDeps, manual = false }: OptionType,
+) => {
+  // const navigate = useNavigate()
+  const { data, loading, ...rest } = useRequest(
+    () =>
+      apiGetNotice({
+        wallet_address: address,
+      }),
+    {
+      ready,
+      refreshDeps,
+      manual,
+    },
+  )
   const formatData: NoticeItemType[] | undefined = useMemo(() => {
     if (!data) return
     return compact(
-      data?.map(({ type }) => {
+      data?.map(({ type, left_time, sum }) => {
         switch (type) {
-          case 1:
-            return {
-              title:
-                'You have {} loan that is due in {} days, remember to repay',
-              button: 'See Now',
+          case NotificationType.loan_repayment:
+            let formatTime = ''
+            if (left_time && left_time > 24) {
+              formatTime = `${bigNumber(left_time)
+                .dividedBy(24)
+                .toFormat(bigNumber.ROUND_UP)} days`
+            } else {
+              formatTime = `${left_time} hours`
             }
-          case 2:
             return {
-              title: 'You have {} loans in the process of being generated',
+              title: `You have ${sum} loan that is due in ${formatTime}, remember to repay`,
+              button: 'See Now',
+              link: '/loans',
+            }
+          case NotificationType.loan_in_generating:
+            return {
+              title: `You have ${sum} loans in the process of being generated`,
               button: 'View details',
+              link: '/history',
             }
 
           default:
