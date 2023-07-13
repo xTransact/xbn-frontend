@@ -391,9 +391,11 @@ const History = () => {
           let status = '--'
           if (value === LOAN_ORDER_STATUS.Completed) {
             status = LOAN_ORDER_STATUS_TEXT.Succeeded
-          } else if (value === LOAN_ORDER_STATUS.Refunded) {
+          }
+          if (value === LOAN_ORDER_STATUS.Refunded) {
             status = LOAN_ORDER_STATUS_TEXT.Refunded
-          } else if (
+          }
+          if (
             [
               LOAN_ORDER_STATUS.New,
               LOAN_ORDER_STATUS.DownPaymentConfirmed,
@@ -405,9 +407,9 @@ const History = () => {
             ].includes(value)
           ) {
             status = LOAN_ORDER_STATUS_TEXT.Processing
-          } else {
-            status = LOAN_ORDER_STATUS_TEXT.Failed
           }
+          if (value === LOAN_ORDER_STATUS.Failed)
+            status = LOAN_ORDER_STATUS_TEXT.Failed
           return <Text>{status}</Text>
         },
       },
@@ -804,7 +806,6 @@ const History = () => {
                   total={loanData?.length}
                   pageSize={10}
                   onChange={(page) => {
-                    console.log('aaa', page)
                     if (loanPage === page) return
                     setLoanPage(page)
                   }}
