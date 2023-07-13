@@ -648,10 +648,18 @@ const Create = () => {
   console.log('score', calculateScore?.toNumber())
 
   if (!params || !['edit', 'create'].includes(params?.action)) {
-    return <NotFound />
+    return (
+      <RootLayout>
+        <NotFound />
+      </RootLayout>
+    )
   }
   if (params.action === 'edit' && (!state || isEmpty(state))) {
-    return <NotFound title='pool not found' />
+    return (
+      <RootLayout>
+        <NotFound title='pool not found' />
+      </RootLayout>
+    )
   }
   return (
     <RootLayout>

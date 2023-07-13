@@ -161,6 +161,7 @@ const NftAssetDetail = () => {
     imagePreviewUrl: string
     safelistRequestStatus: string
     slug: string
+    id: string
   }>()
   const { loading: collectionLoading } =
     useNftCollectionsByContractAddressesQuery({
@@ -176,13 +177,14 @@ const NftAssetDetail = () => {
           isEmpty(nftCollectionsByContractAddresses)
         )
           return
-        const { name, slug, imagePreviewUrl, safelistRequestStatus } =
+        const { name, slug, imagePreviewUrl, safelistRequestStatus, id } =
           nftCollectionsByContractAddresses[0].nftCollection
         setCollection({
           name,
           imagePreviewUrl,
           slug,
           safelistRequestStatus,
+          id,
         })
       },
     })
@@ -648,25 +650,31 @@ const NftAssetDetail = () => {
     ],
   )
   if (isEmpty(detail) && !assetFetchLoading)
-    return <NotFound title='Asset not found' backTo='/buy-nfts/market' />
+    return (
+      <RootLayout>
+        <NotFound title='Asset not found' backTo='/buy-nfts/market' />
+      </RootLayout>
+    )
   if (!!loanStep) {
     return (
-      <MiddleStatus
-        imagePreviewUrl={detail?.asset?.imagePreviewUrl}
-        animationUrl={detail?.asset?.animationUrl}
-        onLoadingBack={() => {
-          setLoanStep(undefined)
-          return
-        }}
-        onSuccessBack={() => {
-          navigate('/loans')
-          return
-        }}
-        successTitle='Purchase completed'
-        successDescription='Loan has been initialized.'
-        step={loanStep}
-        loadingText='Buying this NFT from market. If unsuccessful, the down payment will be returned.'
-      />
+      <RootLayout>
+        <MiddleStatus
+          imagePreviewUrl={detail?.asset?.imagePreviewUrl}
+          animationUrl={detail?.asset?.animationUrl}
+          onLoadingBack={() => {
+            setLoanStep(undefined)
+            return
+          }}
+          onSuccessBack={() => {
+            navigate('/loans')
+            return
+          }}
+          successTitle='Purchase completed'
+          successDescription='Loan has been initialized.'
+          step={loanStep}
+          loadingText='Buying this NFT from market. If unsuccessful, the down payment will be returned.'
+        />
+      </RootLayout>
     )
   }
 
@@ -804,6 +812,7 @@ const NftAssetDetail = () => {
               : '',
             verified: collection?.safelistRequestStatus === 'verified',
             platform,
+            collectionId: collection?.id,
           }}
           // onReFresh={}
           loading={assetFetchLoading}

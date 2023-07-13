@@ -5,6 +5,7 @@ import {
   Skeleton,
   Text,
   type BoxProps,
+  chakra,
 } from '@chakra-ui/react'
 
 import type { MARKET_TYPE_ENUM } from '@/components'
@@ -22,13 +23,14 @@ const DetailComponent: FunctionComponent<
       verified: boolean
       usdPrice?: string
       platform?: MARKET_TYPE_ENUM
+      collectionId?: string
     }
     loading?: boolean
     onRefreshPrice?: () => void
     refreshLoading?: boolean
   }
 > = ({
-  data: { name1, name2, price, verified, usdPrice, platform },
+  data: { name1, name2, price, verified, usdPrice, platform, collectionId },
   loading,
   onRefreshPrice,
   refreshLoading,
@@ -49,9 +51,17 @@ const DetailComponent: FunctionComponent<
     <Box mt={8} {...rest}>
       {/* 名称*/}
       <Flex alignItems={'baseline'}>
-        <Text fontWeight={'500'} noOfLines={1}>
-          {name1 || '--'}
-        </Text>
+        <chakra.a href={`/buy-nfts/market/${collectionId}`}>
+          <Text
+            fontWeight={'500'}
+            noOfLines={1}
+            color={'black.1'}
+            _hover={{ color: 'gray.3' }}
+          >
+            {name1 || '--'}
+          </Text>
+        </chakra.a>
+
         {verified && <SvgComponent svgId='icon-verified-fill' />}
       </Flex>
       <Heading fontSize={'40px'} noOfLines={1}>
