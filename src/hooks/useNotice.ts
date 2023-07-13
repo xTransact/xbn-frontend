@@ -46,12 +46,14 @@ const useNotice = (
               title: `You have ${sum} loan that is due in ${formatTime}, remember to repay`,
               button: 'See Now',
               link: '/loans',
+              type,
             }
           case NotificationType.loan_in_generating:
             return {
               title: `You have ${sum} loans in the process of being generated`,
               button: 'View details',
               link: '/history',
+              type,
             }
 
           default:

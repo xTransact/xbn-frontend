@@ -33,7 +33,7 @@ import {
   LoadingComponent,
   NoticeSlider,
 } from '@/components'
-import { UNIT } from '@/constants'
+import { UNIT, NotificationType } from '@/constants'
 import { useBatchAsset, useWallet, useCatchContractError } from '@/hooks'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatAddress, formatFloat } from '@/utils/format'
@@ -461,7 +461,11 @@ const Loans = () => {
         Loans
       </Heading>
 
-      <NoticeSlider data={noticeData} />
+      <NoticeSlider
+        data={noticeData?.filter(
+          (i) => i.type === NotificationType.loan_repayment,
+        )}
+      />
       <Flex justify={'space-between'} mt='16px'>
         <Box w='100%'>
           <TableList

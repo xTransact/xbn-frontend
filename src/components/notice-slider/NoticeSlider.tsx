@@ -21,6 +21,7 @@ export type NoticeItemType = {
   button?: string
   buttonProps?: ButtonProps
   link?: string
+  type: NotificationType
 }
 
 type NoticeSliderProps = {
