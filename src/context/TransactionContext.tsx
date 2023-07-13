@@ -77,7 +77,7 @@ export const TransactionsProvider = ({
     {
       const collectionFromGraphQL =
         collectionData?.nftCollectionsByContractAddresses || []
-      const res = xbnCollectionData?.map((item, index) => {
+      const res = xbnCollectionData?.map((item) => {
         const current = collectionFromGraphQL?.find(
           (i) =>
             i.contractAddress?.toLowerCase() ===
@@ -86,17 +86,8 @@ export const TransactionsProvider = ({
         if (!current) return
         return {
           ...current,
-          priority: item?.priority || index,
-          tags: item?.tags || [
-            '0 down payment',
-            '0 interest',
-            'low interest',
-            'long term',
-            '1.5x box rewards',
-            '2x box rewards',
-            'trending',
-            'new',
-          ],
+          priority: item?.priority,
+          tags: item?.tags,
         }
       })
       return compact(res)

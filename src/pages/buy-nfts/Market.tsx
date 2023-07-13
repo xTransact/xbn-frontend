@@ -362,7 +362,7 @@ const Market = () => {
         <Box
           w={{
             xl: '360px',
-            lg: '300px',
+            lg: '320px',
             md: '100%',
             sm: '100%',
             xs: '100%',
@@ -415,7 +415,7 @@ const Market = () => {
                 w='190px'
                 right={0}
                 position={'absolute'}
-                top='-45%'
+                top={'-20%'}
               />
               <Button w='100%' variant={'outline'}>
                 Propose Listing

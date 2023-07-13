@@ -78,6 +78,7 @@ const CollectionTag: FunctionComponent<
             xs: 'scale(0.83333)',
           }}
           transformOrigin={'center'}
+          noOfLines={1}
         >
           {title}
         </Text>

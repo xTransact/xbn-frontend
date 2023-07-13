@@ -58,7 +58,9 @@ const CollectionListItem: FunctionComponent<
             {data?.nftCollection?.name || '--'}
             &nbsp;
           </Text>
-          <CollectionTag title='0 interest' />
+          {data?.tags && data?.tags?.length && (
+            <CollectionTag title={data?.tags[0]} />
+          )}
         </Flex>
       </Flex>
       <SvgComponent
