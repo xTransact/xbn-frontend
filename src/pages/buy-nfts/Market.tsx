@@ -583,7 +583,15 @@ const Market = () => {
                         position={'absolute'}
                         top='-70%'
                       />
-                      <Button w='100%' variant={'outline'}>
+                      <Button
+                        w='100%'
+                        variant={'outline'}
+                        onClick={() => {
+                          window.open(
+                            import.meta.env.VITE_COLLECTION_NOTION_LINK,
+                          )
+                        }}
+                      >
                         Propose Listing
                       </Button>
                     </Box>
