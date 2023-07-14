@@ -15,6 +15,7 @@ type NftCollection = Node & {
   imageThumbnailUrl: Scalars['String']
   imageUrl: Scalars['String']
   instagramUsername: Scalars['String']
+  isCreatorFeesEnforced: Scalars['Boolean']
   largeImageUrl: Scalars['String']
   mediumUsername: Scalars['String']
   name: Scalars['String']
