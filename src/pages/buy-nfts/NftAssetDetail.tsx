@@ -61,7 +61,7 @@ import {
 } from '@/hooks'
 import { amortizationCalByDays } from '@/utils/calculation'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
-import { formatFloat } from '@/utils/format'
+import { formatFloat, getFullNum } from '@/utils/format'
 import { eth2Wei, wei2Eth } from '@/utils/unit-conversion'
 
 import BelongToCollection from './components/BelongToCollection'
@@ -330,7 +330,10 @@ const NftAssetDetail = () => {
       setSelectPool(undefined)
       return []
     }
-    const floorPriceWei = eth2Wei(floorPriceData?.floor_price)
+
+    const res = getFullNum(floorPriceData?.floor_price)
+
+    const floorPriceWei = eth2Wei(res)
     if (floorPriceWei === undefined) {
       setSelectPool(undefined)
       return []
