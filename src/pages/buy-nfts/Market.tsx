@@ -356,7 +356,7 @@ const Market = () => {
       <NoticeSlider data={noticeData} />
 
       <Flex
-        mt={'10px'}
+        mt={'20px'}
         mb='100px'
         gap={'36px'}
         flexWrap={{ lg: 'nowrap', md: 'wrap', sm: 'wrap', xs: 'wrap' }}

@@ -100,7 +100,11 @@ const CollectionDescription: FunctionComponent<{
         xs: '20px',
       }}
     >
-      <Flex gap={'20px'} mb={'32px'}>
+      <Flex
+        gap={'20px'}
+        mb={'32px'}
+        alignItems={!!description ? 'flex-start' : 'center'}
+      >
         <ImageWithFallback
           src={imagePreviewUrl}
           borderRadius={{
@@ -121,10 +125,7 @@ const CollectionDescription: FunctionComponent<{
         />
         <Box pos='relative'>
           <Flex alignItems={'center'} flexWrap={'wrap'} gap={'8px'}>
-            <Heading
-              fontSize={{ md: '32px', sm: '20px', xs: '20px' }}
-              display='flex'
-            >
+            <Heading fontSize={{ md: '32px', sm: '20px', xs: '20px' }}>
               {name}
             </Heading>
             {safelistRequestStatus === 'verified' && (
@@ -143,6 +144,7 @@ const CollectionDescription: FunctionComponent<{
             fontWeight='medium'
             noOfLines={!show ? 2 : undefined}
             lineHeight='20px'
+            hidden={!description}
           >
             {description}
           </Text>
