@@ -231,8 +231,8 @@ const Lend = () => {
           ...rest,
         }
       }),
-      'pool_amount',
-      (i) => Number(i.pool_amount),
+      'pool_size',
+      (i) => Number(i.pool_size),
     )
   }, [collectionList, allPoolsData, currentAccount])
 
