@@ -392,13 +392,6 @@ const Market = () => {
           <Box
             pt={{ md: '24px', sm: 0, xs: 0 }}
             px={{ md: '24px', sm: 0, xs: 0 }}
-            h='90%'
-            overflowX={{
-              md: 'auto',
-              sm: 'visible',
-              xs: 'visible',
-            }}
-            className='scroll-hover-show'
           >
             {/* Propose Listing */}
             <Box
@@ -470,6 +463,19 @@ const Market = () => {
                   sm: 'none',
                   xs: 'none',
                 }}
+                h={{
+                  md: noticeData?.length
+                    ? 'calc(100vh - 560px)'
+                    : 'calc(100vh - 488px)',
+                  sm: 'auto',
+                  xs: 'auto',
+                }}
+                overflowY={{
+                  md: 'auto',
+                  sm: 'visible',
+                  xs: 'visible',
+                }}
+                className='scroll-hover-show'
               >
                 <LoadingComponent
                   loading={collectionLoading || poolsLoading}

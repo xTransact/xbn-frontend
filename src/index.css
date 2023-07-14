@@ -85,12 +85,12 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--chakra-colors-gray-1);
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--chakra-colors-gray-5);
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 ::selection {
