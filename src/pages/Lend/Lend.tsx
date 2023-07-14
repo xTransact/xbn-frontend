@@ -797,9 +797,9 @@ const Lend = () => {
           <Flex
             position={'absolute'}
             right={0}
-            top={0}
+            top={'8px'}
             gap={'16px'}
-            zIndex={3}
+            zIndex={22}
             display={{
               md: 'flex',
               sm: 'none',
