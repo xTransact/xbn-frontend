@@ -417,7 +417,15 @@ const Market = () => {
                 position={'absolute'}
                 top={'-20%'}
               />
-              <Button w='100%' variant={'outline'}>
+              <Button
+                w='100%'
+                variant={'outline'}
+                onClick={() => {
+                  window.open(
+                    'https://notionforms.io/forms/propose-listing-form-gdmcn1',
+                  )
+                }}
+              >
                 Propose Listing
               </Button>
             </Box>
