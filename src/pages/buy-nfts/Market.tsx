@@ -387,6 +387,7 @@ const Market = () => {
           borderColor='gray.2'
           borderWidth={{ md: 1, sm: 0, xs: 0 }}
           borderRadius={{ md: '12px', sm: 0, xs: 0 }}
+          pb='40px'
         >
           <Box
             pt={{ md: '24px', sm: 0, xs: 0 }}
@@ -397,13 +398,14 @@ const Market = () => {
               sm: 'visible',
               xs: 'visible',
             }}
+            className='scroll-hover-show'
           >
             {/* Propose Listing */}
             <Box
               pos={'absolute'}
               bottom={0}
               pb='24px'
-              pt='10px'
+              pt='32px'
               bg='white'
               left={'24px'}
               right={'24px'}
@@ -419,7 +421,7 @@ const Market = () => {
                 w='190px'
                 right={0}
                 position={'absolute'}
-                top={'-20%'}
+                top={'4%'}
               />
               <Button
                 w='100%'
@@ -441,7 +443,7 @@ const Market = () => {
                 sm: 'none',
                 xs: 'none',
               }}
-              pb='20px'
+              pb='50px'
             >
               <Box
                 hidden={

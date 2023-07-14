@@ -765,6 +765,7 @@ const Lend = () => {
       <NoticeSlider data={noticeData} />
 
       <Tabs
+        marginTop={'20px'}
         isLazy
         index={tabKey}
         position='relative'

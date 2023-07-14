@@ -108,6 +108,24 @@ body {
   background: var(--chakra-colors-blue-1);
 }
 
+@media screen and (min-width: 768px) {
+  .scroll-hover-show::-webkit-scrollbar-track {
+    background: white;
+  }
+
+  .scroll-hover-show::-webkit-scrollbar-thumb {
+    background: white;
+  }
+}
+
+.scroll-hover-show:hover::-webkit-scrollbar-thumb {
+  background: var(--chakra-colors-gray-1);
+}
+
+.scroll-hover-show:hover::-webkit-scrollbar-track {
+  background: var(--chakra-colors-gray-5);
+}
+
 @keyframes loading {
   /*以百分比来规定改变发生的时间 也可以通过"from"和"to",等价于0% 和 100%*/
   0% {
