@@ -29,6 +29,7 @@ type ToolbarProps = {
   gridConfig: {
     gridValue: number
     setGridValue: (t: number) => void
+    props?: FlexProps
   }
 } & FlexProps
 
@@ -37,7 +38,7 @@ const Toolbar: FunctionComponent<ToolbarProps> = ({
   loadingProps,
   searchConfig: { searchValue, setSearchValue },
   sortConfig: { sortOptions, sortValue, setSortValue },
-  gridConfig: { gridValue, setGridValue },
+  gridConfig: { gridValue, setGridValue, props },
   ...rest
 }) => {
   const isH5 = useIsMobile()
@@ -117,7 +118,12 @@ const Toolbar: FunctionComponent<ToolbarProps> = ({
           }}
           borderColor={'var(--chakra-colors-gray-2)'}
         />
-        <Flex borderColor={'gray.2'} borderWidth={1} borderRadius={8}>
+        <Flex
+          borderColor={'gray.2'}
+          borderWidth={1}
+          borderRadius={8}
+          {...props}
+        >
           {[4, 3].map((item, i) => (
             <Flex
               p='14px'

@@ -327,7 +327,7 @@ const Market = () => {
     () => ({
       xl: grid,
       lg: grid,
-      md: grid,
+      md: 2,
       sm: 2,
       xs: 2,
     }),
@@ -365,7 +365,7 @@ const Market = () => {
           w={{
             xl: '360px',
             lg: '320px',
-            md: '100%',
+            md: '280px',
             sm: '100%',
             xs: '100%',
           }}
@@ -375,7 +375,9 @@ const Market = () => {
             xs: 'static',
           }}
           h={{
-            md: 'calc(100vh - 270px)',
+            md: noticeData?.length
+              ? 'calc(100vh - 340px)'
+              : 'calc(100vh - 270px)',
             sm: 'auto',
             xs: 'auto',
           }}
@@ -626,6 +628,12 @@ const Market = () => {
             gridConfig={{
               gridValue: grid,
               setGridValue: (t) => setGrid(t),
+              props: {
+                display: {
+                  lg: 'flex',
+                  md: 'none',
+                },
+              },
             }}
           />
 
@@ -670,7 +678,7 @@ const Market = () => {
                       imageSize={{
                         xl: grid === 4 ? '231px' : '314px',
                         lg: grid === 4 ? '208px' : '280px',
-                        md: grid === 4 ? '172px' : '234px',
+                        md: '220px',
                         sm: '174px',
                         xs: '174px',
                       }}
