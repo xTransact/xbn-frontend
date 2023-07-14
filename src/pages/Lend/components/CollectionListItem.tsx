@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react'
 
-import { CollectionTag, ImageWithFallback, SvgComponent } from '@/components'
+import { ImageWithFallback, SvgComponent } from '@/components'
 
 import type { FlexProps } from '@chakra-ui/react'
 import type { FunctionComponent } from 'react'
@@ -12,13 +12,22 @@ const CollectionListItem: FunctionComponent<
     isActive?: boolean
     count?: number
     iconSize?: number | string
+    rightIconId?: string
   } & FlexProps
-> = ({ data, onClick, isActive, iconSize = '44px', ...rest }) => {
+> = ({
+  data,
+  onClick,
+  isActive,
+  count,
+  iconSize = 6,
+  rightIconId = 'icon-checked',
+  ...rest
+}) => {
   return (
     <Flex
       key={`${data?.contractAddress}-${data?.nftCollection?.id}`}
       px='16px'
-      py='8px'
+      py='12px'
       alignItems={'center'}
       justifyContent='space-between'
       border={`1px solid var(--chakra-colors-gray-2)`}
@@ -31,7 +40,7 @@ const CollectionListItem: FunctionComponent<
       onClick={onClick}
       {...rest}
     >
-      <Flex alignItems={'center'} gap='10px' w='80%'>
+      <Flex alignItems={'center'} gap='16px' w='80%'>
         <ImageWithFallback
           src={
             data?.nftCollection?.imagePreviewUrl ||
@@ -41,36 +50,26 @@ const CollectionListItem: FunctionComponent<
           h={iconSize}
           borderRadius={8}
           fit='cover'
-          borderWidth={1}
-          borderStyle={'solid'}
-          borderColor={'gray.2'}
         />
-        <Flex flexDir={'column'} alignItems={'flex-start'}>
-          <Text
-            fontSize='14px'
-            // display='inline-block'
-            // overflow='hidden'
-            // whiteSpace='nowrap'
-            // textOverflow='ellipsis'
-            noOfLines={1}
-            fontFamily={'HarmonyOS Sans Sc Bold'}
-          >
-            {data?.nftCollection?.name || '--'}
-            &nbsp;
-          </Text>
-          {data?.tags && data?.tags?.length && (
-            <CollectionTag title={data?.tags[0]} maxW={'140px'} />
-          )}
-        </Flex>
+        <Text
+          fontSize='14px'
+          display='inline-block'
+          overflow='hidden'
+          whiteSpace='nowrap'
+          textOverflow='ellipsis'
+        >
+          {data?.nftCollection?.name || '--'}
+          &nbsp;
+        </Text>
+        {data?.nftCollection?.safelistRequestStatus === 'verified' && (
+          <SvgComponent svgId='icon-verified-fill' />
+        )}
       </Flex>
-      <SvgComponent
-        svgId='icon-verified-fill'
-        fontSize={{
-          md: '20px',
-          sm: '16px',
-          xs: '16px',
-        }}
-      />
+      {isActive ? (
+        <SvgComponent svgId={rightIconId} />
+      ) : (
+        !!count && <Text fontSize='14px'>{count}</Text>
+      )}
     </Flex>
   )
 }

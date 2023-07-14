@@ -35,6 +35,7 @@ import {
 } from '@/components'
 import { UNIT, NotificationType } from '@/constants'
 import { useBatchAsset, useWallet, useCatchContractError } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
@@ -456,7 +457,7 @@ const Loans = () => {
   }, [statuedLoans])
 
   return (
-    <Box my='60px'>
+    <RootLayout my='100px'>
       <Heading size={'2xl'} mb='60px'>
         Loans
       </Heading>
@@ -490,7 +491,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>
@@ -647,7 +654,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>
@@ -716,7 +729,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>
@@ -905,7 +924,7 @@ const Loans = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </Box>
+    </RootLayout>
   )
 }
 

@@ -18,6 +18,7 @@ interface ImportMetaEnv {
   readonly VITE_BASE_URL: string
   readonly VITE_TEST_BASE_URL: string
   readonly VITE_ETHERSCAN_IO_URL: string
+  readonly VITE_COLLECTION_NOTION_LINK: string
 }
 
 interface ImportMeta {

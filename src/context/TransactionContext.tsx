@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { useLocalStorageState, useRequest } from 'ahooks'
+import compact from 'lodash-es/compact'
 import isEmpty from 'lodash-es/isEmpty'
 import {
   useEffect,
@@ -12,11 +13,7 @@ import {
 
 import { apiGetActiveCollection } from '@/api'
 import type { NoticeItemType } from '@/components/notice-slider/NoticeSlider'
-import {
-  type NftCollection,
-  useNftCollectionsByContractAddressesQuery,
-  useNotice,
-} from '@/hooks'
+import { useNftCollectionsByContractAddressesQuery, useNotice } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
 import { clearUserToken, getUserToken } from '@/utils/auth'
 
@@ -27,7 +24,7 @@ export const TransactionContext = createContext<{
   connectLoading: boolean
   handleSwitchNetwork: () => Promise<any>
   handleDisconnect: () => void
-  collectionList: { contractAddress: string; nftCollection: NftCollection }[]
+  collectionList: XBNCollectionItemType[]
   collectionLoading: boolean
   noticeData?: NoticeItemType[]
   refreshNotice: () => void
@@ -56,13 +53,16 @@ export const TransactionsProvider = ({
 
   // collection 提取到外层
   const [collectionAddressArr, setCollectionAddressArr] = useState<string[]>([])
-  const { loading } = useRequest(apiGetActiveCollection, {
-    debounceWait: 100,
-    retryCount: 5,
-    onSuccess: (data) => {
-      setCollectionAddressArr(data.map((i) => i.contract_addr))
+  const { loading, data: xbnCollectionData } = useRequest(
+    apiGetActiveCollection,
+    {
+      debounceWait: 100,
+      retryCount: 5,
+      onSuccess: (data) => {
+        setCollectionAddressArr(data.map((i) => i.contract_addr))
+      },
     },
-  })
+  )
 
   const { loading: collectionLoading, data: collectionData } =
     useNftCollectionsByContractAddressesQuery({
@@ -82,8 +82,23 @@ export const TransactionsProvider = ({
     //   }
     // }),
     {
-      return collectionData?.nftCollectionsByContractAddresses || []
-    }, [collectionData])
+      const collectionFromGraphQL =
+        collectionData?.nftCollectionsByContractAddresses || []
+      const res = xbnCollectionData?.map((item) => {
+        const current = collectionFromGraphQL?.find(
+          (i) =>
+            i.contractAddress?.toLowerCase() ===
+            item.contract_addr?.toLowerCase(),
+        )
+        if (!current) return
+        return {
+          ...current,
+          priority: item?.priority,
+          tags: item?.tags,
+        }
+      })
+      return compact(res)
+    }, [collectionData, xbnCollectionData])
 
   const toast = useToast()
 
@@ -282,10 +297,7 @@ export const TransactionsProvider = ({
         handleDisconnect,
         isConnected: isConnected as boolean,
         // @ts-ignore
-        collectionList: collectionList as {
-          contractAddress: string
-          nftCollection: NftCollection
-        }[],
+        collectionList: collectionList as CollectionItemType[],
         collectionLoading: loading || collectionLoading,
         noticeData,
         refreshNotice: refreshNotice,

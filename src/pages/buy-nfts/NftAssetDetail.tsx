@@ -59,6 +59,7 @@ import {
   useCatchContractError,
   useNftCollectionsByContractAddressesQuery,
 } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { amortizationCalByDays } from '@/utils/calculation'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatFloat, getFullNum } from '@/utils/format'
@@ -96,27 +97,33 @@ const NFTDetailContainer: FunctionComponent<FlexProps> = ({
   children,
   ...rest
 }) => (
-  <Flex
-    justify={{
-      lg: 'space-between',
+  <RootLayout
+    px={{
+      xl: '20px',
     }}
-    alignItems='flex-start'
-    flexWrap={{ lg: 'nowrap', md: 'wrap' }}
-    gap={{
-      md: '40px',
-      sm: 0,
-      xs: 0,
-    }}
-    mb={{ md: '80px' }}
-    flexDir={{
-      md: 'row',
-      sm: 'column',
-      xs: 'column',
-    }}
-    {...rest}
   >
-    {children}
-  </Flex>
+    <Flex
+      justify={{
+        lg: 'space-between',
+      }}
+      alignItems='flex-start'
+      flexWrap={{ lg: 'nowrap', md: 'wrap' }}
+      gap={{
+        md: '40px',
+        sm: 0,
+        xs: 0,
+      }}
+      mb={{ md: '80px' }}
+      flexDir={{
+        md: 'row',
+        sm: 'column',
+        xs: 'column',
+      }}
+      {...rest}
+    >
+      {children}
+    </Flex>
+  </RootLayout>
 )
 
 const NftAssetDetail = () => {
@@ -155,6 +162,7 @@ const NftAssetDetail = () => {
     imagePreviewUrl: string
     safelistRequestStatus: string
     slug: string
+    id: string
   }>()
   const { loading: collectionLoading } =
     useNftCollectionsByContractAddressesQuery({
@@ -170,13 +178,14 @@ const NftAssetDetail = () => {
           isEmpty(nftCollectionsByContractAddresses)
         )
           return
-        const { name, slug, imagePreviewUrl, safelistRequestStatus } =
+        const { name, slug, imagePreviewUrl, safelistRequestStatus, id } =
           nftCollectionsByContractAddresses[0].nftCollection
         setCollection({
           name,
           imagePreviewUrl,
           slug,
           safelistRequestStatus,
+          id,
         })
       },
     })
@@ -646,26 +655,32 @@ const NftAssetDetail = () => {
     ],
   )
   if (isEmpty(detail) && !assetFetchLoading)
-    return <NotFound title='Asset not found' backTo='/buy-nfts/market' />
+    return (
+      <RootLayout>
+        <NotFound title='Asset not found' backTo='/buy-nfts/market' />
+      </RootLayout>
+    )
   if (!!loanStep) {
     return (
-      <MiddleStatus
-        imagePreviewUrl={detail?.asset?.imagePreviewUrl}
-        animationUrl={detail?.asset?.animationUrl}
-        onLoadingBack={() => {
-          refreshNotice()
-          setLoanStep(undefined)
-          return
-        }}
-        onSuccessBack={() => {
-          navigate('/loans')
-          return
-        }}
-        successTitle='Purchase completed'
-        successDescription='Loan has been initialized.'
-        step={loanStep}
-        loadingText='Buying this NFT from market. If unsuccessful, the down payment will be returned.'
-      />
+      <RootLayout>
+        <MiddleStatus
+          imagePreviewUrl={detail?.asset?.imagePreviewUrl}
+          animationUrl={detail?.asset?.animationUrl}
+          onLoadingBack={() => {
+            refreshNotice()
+            setLoanStep(undefined)
+            return
+          }}
+          onSuccessBack={() => {
+            navigate('/loans')
+            return
+          }}
+          successTitle='Purchase completed'
+          successDescription='Loan has been initialized.'
+          step={loanStep}
+          loadingText='Buying this NFT from market. If unsuccessful, the down payment will be returned.'
+        />
+      </RootLayout>
     )
   }
 
@@ -722,8 +737,8 @@ const NftAssetDetail = () => {
           height={700}
           borderRadius={16}
           w={{
-            xl: '500px',
-            lg: '400px',
+            xl: '600px',
+            lg: '500px',
             md: '80%',
           }}
           display={{
@@ -748,8 +763,8 @@ const NftAssetDetail = () => {
             md: 'center',
           }}
           w={{
-            xl: '500px',
-            lg: '400px',
+            xl: '600px',
+            lg: '500px',
             md: '100%',
           }}
           mt={'32px'}
@@ -769,8 +784,8 @@ const NftAssetDetail = () => {
             }}
             borderRadius={20}
             boxSize={{
-              xl: '500px',
-              lg: '400px',
+              xl: '600px',
+              lg: '500px',
               md: '100%',
             }}
             fit='contain'
@@ -783,8 +798,8 @@ const NftAssetDetail = () => {
       )}
       <Box
         w={{
-          xl: '620px',
-          lg: '500px',
+          xl: '690px',
+          lg: '640px',
           md: '100%',
           sm: '100%',
           xs: '100%',
@@ -803,6 +818,7 @@ const NftAssetDetail = () => {
               : '',
             verified: collection?.safelistRequestStatus === 'verified',
             platform,
+            collectionId: collection?.id,
           }}
           // onReFresh={}
           loading={assetFetchLoading}
@@ -887,7 +903,7 @@ const NftAssetDetail = () => {
               value={percentage}
               w={{
                 xl: '450px',
-                lg: '350px',
+                lg: '400px',
                 md: '436px',
                 sm: '230px',
                 xs: '220px',
@@ -1003,7 +1019,7 @@ const NftAssetDetail = () => {
                         })
                       }
                       p={{
-                        xl: '16px',
+                        xl: '12px',
                         lg: '10px',
                         md: '8px',
                         sm: '8px',

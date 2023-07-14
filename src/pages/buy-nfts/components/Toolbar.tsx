@@ -69,8 +69,8 @@ const Toolbar: FunctionComponent<ToolbarProps> = ({
       position='sticky'
       top={{
         md: '131px',
-        sm: isMoreThan ? '52px' : '107px',
-        xs: isMoreThan ? '52px' : '107px',
+        sm: isMoreThan ? '31px' : '107px',
+        xs: isMoreThan ? '31px' : '107px',
       }}
       zIndex={20}
       bg='white'

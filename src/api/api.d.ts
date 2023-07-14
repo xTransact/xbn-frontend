@@ -24,6 +24,9 @@ interface CollectionListItemType {
   contract_addr: string
   safelist_request_status?: 'not_requested' | 'verified'
   description?: string
+  // 暂定
+  priority: number
+  tags: string[]
 }
 
 interface AssetListItemType {

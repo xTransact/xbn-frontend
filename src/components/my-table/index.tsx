@@ -7,6 +7,7 @@ import {
   Tr,
   Flex,
   type FlexProps,
+  type BoxProps,
   type TableProps,
   type TextProps,
   Box,
@@ -16,6 +17,8 @@ import { useState, type ReactElement } from 'react'
 
 import { LoadingComponent, EmptyComponent, SvgComponent } from '..'
 import '../my-table/table.less'
+
+import type { LoadingComponentProps } from '../loading/LoadingComponent'
 
 type ColumnRenderType = (
   arg0: string | boolean | number,
@@ -29,7 +32,7 @@ export interface ColumnProps {
   align?: 'left' | 'right' | 'center'
   // thead
   thAlign?: 'left' | 'right' | 'center'
-  width?: number
+  width?: BoxProps['width']
   render?: ColumnRenderType
   sortable?: boolean
   fixedRight?: boolean
@@ -49,6 +52,7 @@ export type MyTableProps = TableProps & {
     thTextProps?: TextProps
     tdTextProps?: TextProps
   }
+  loadingConfig?: LoadingComponentProps
 }
 
 const MyTable = ({
@@ -70,6 +74,7 @@ const MyTable = ({
       fontWeight: '700',
     },
   },
+  loadingConfig,
 }: MyTableProps) => {
   const [sortParams, setSortParam] = useState({
     direction: '',
@@ -78,7 +83,14 @@ const MyTable = ({
   return (
     <Box position={'relative'}>
       {!!tableTitle && tableTitle()}
-      {<LoadingComponent loading={loading} minHeight='120px' top={'16px'} />}
+      {
+        <LoadingComponent
+          loading={loading}
+          minHeight='120px'
+          top={'16px'}
+          {...loadingConfig}
+        />
+      }
       {isEmpty(data) && (
         <Box h='260px'>
           <Box left={0} right={0} top={'24px'} bottom={0} pos='absolute'>
@@ -87,7 +99,11 @@ const MyTable = ({
         </Box>
       )}
       {!isEmpty(data) && (
-        <TableContainer position={'relative'} maxW={maxW || '100%'}>
+        <TableContainer
+          position={'relative'}
+          maxW={maxW || '100%'}
+          className='table-container'
+        >
           <ChakraTable
             variant='unstyled'
             style={{

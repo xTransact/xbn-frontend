@@ -60,12 +60,12 @@ import {
 import { UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
 import { useWallet, useBatchAsset, useGuide } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
-import CollectionListItem from '../buy-nfts/components/CollectionListItem'
-
 import AllPoolsDescription from './components/AllPoolsDescription'
+import CollectionListItem from './components/CollectionListItem'
 import MyPoolActionRender from './components/MyPoolActionRender'
 
 type Dictionary<T> = Record<string, T>
@@ -631,7 +631,12 @@ const Lend = () => {
         dataIndex: 'id',
         key: 'id',
         align: 'left',
-        width: 180,
+        width: {
+          lg: 200,
+          md: 150,
+          sm: 130,
+          xs: 130,
+        },
         thAlign: 'left',
         render: (_: any, info: any) => {
           // const currentInfo = batchNftListInfo?.get(
@@ -655,7 +660,6 @@ const Lend = () => {
                 borderRadius={4}
               />
               <Text
-                w={'60%'}
                 display='inline-block'
                 overflow='hidden'
                 whiteSpace='nowrap'
@@ -745,7 +749,7 @@ const Lend = () => {
   } = useDisclosure()
 
   return (
-    <Box mb='100px'>
+    <RootLayout mb='100px'>
       <LenderGuideModal isOpen={guideVisible} onClose={closeGuide} />
 
       <Box
@@ -835,7 +839,9 @@ const Lend = () => {
             >
               <SvgComponent svgId='icon-search' fill={'gray.3'} />
             </Flex>
-            {!isEmpty(poolList) && (
+            {((tabKey === TAB_KEY.COLLECTION_TAB &&
+              !isEmpty(activeCollectionList)) ||
+              (tabKey === TAB_KEY.MY_POOLS_TAB && !isEmpty(myPoolsData))) && (
               <Button
                 variant={'secondary'}
                 minW='200px'
@@ -995,8 +1001,9 @@ const Lend = () => {
                 borderRadius={12}
                 p={'24px'}
                 w={{
-                  lg: '25%',
-                  md: '30%',
+                  xl: '360px',
+                  lg: '300px',
+                  md: '260px',
                 }}
                 display={{
                   md: 'block',
@@ -1106,6 +1113,10 @@ const Lend = () => {
                       loading: loansLoading,
                       data: sortBy(loansData[0], (i) => -i.loan_start_time),
                       key: '1',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                     {
                       tableTitle: () => (
@@ -1133,6 +1144,10 @@ const Lend = () => {
                       data: sortBy(loansData[1], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '2',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                     {
                       tableTitle: () => (
@@ -1160,6 +1175,10 @@ const Lend = () => {
                       data: sortBy(loansData[2], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '3',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                   ]}
                 />
@@ -1303,7 +1322,7 @@ const Lend = () => {
         </DrawerContent>
       </Drawer>
       <ConnectWalletModal visible={isOpen} handleClose={onClose} />
-    </Box>
+    </RootLayout>
   )
 }
 

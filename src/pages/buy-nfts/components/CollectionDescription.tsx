@@ -4,7 +4,12 @@ import isEmpty from 'lodash-es/isEmpty'
 import range from 'lodash-es/range'
 import { useRef, useState, type FunctionComponent } from 'react'
 
-import { EmptyComponent, ImageWithFallback, SvgComponent } from '@/components'
+import {
+  CollectionTag,
+  EmptyComponent,
+  ImageWithFallback,
+  SvgComponent,
+} from '@/components'
 import type { NftCollection } from '@/hooks'
 import { formatFloat } from '@/utils/format'
 
@@ -13,7 +18,8 @@ const CollectionDescription: FunctionComponent<{
   loading?: boolean
   bestPoolAmount?: number
   floorPrice?: number
-}> = ({ data, loading, bestPoolAmount, floorPrice }) => {
+  tags?: string[]
+}> = ({ data, loading, bestPoolAmount, floorPrice, tags }) => {
   const [show, setShow] = useState(false)
   const ref = useRef<HTMLParagraphElement>(null)
   const offsetHeight = ref.current?.offsetHeight
@@ -21,7 +27,7 @@ const CollectionDescription: FunctionComponent<{
   if (loading) {
     return (
       <Flex flexDirection={'column'} mb={'24px'}>
-        <Flex mb={'40px'} gap={'12px'}>
+        <Flex mb={'40px'} gap={'24px'}>
           <Skeleton
             h='108px'
             w='108px'
@@ -31,13 +37,7 @@ const CollectionDescription: FunctionComponent<{
           />
           <Skeleton
             h='108px'
-            w={{
-              xl: '760px',
-              lg: '520px',
-              md: '100%',
-              sm: '100%',
-              xs: '100%',
-            }}
+            flex={1}
             startColor='rgba(27, 34, 44, 0.1)'
             endColor='rgba(27, 34, 44, 0.2)'
             borderRadius={16}
@@ -115,9 +115,12 @@ const CollectionDescription: FunctionComponent<{
             sm: '48px',
             xs: '48px',
           }}
+          borderWidth={2}
+          borderColor={'gray.2'}
+          borderStyle={'solid'}
         />
         <Box pos='relative'>
-          <Flex>
+          <Flex alignItems={'center'} flexWrap={'wrap'} gap={'8px'}>
             <Heading
               fontSize={{ md: '32px', sm: '20px', xs: '20px' }}
               display='flex'
@@ -127,6 +130,11 @@ const CollectionDescription: FunctionComponent<{
             {safelistRequestStatus === 'verified' && (
               <SvgComponent svgId='icon-verified-fill' />
             )}
+            <Flex gap={'10px'} flexWrap={'wrap'}>
+              {tags?.map((item) => (
+                <CollectionTag key={item} title={item} />
+              ))}
+            </Flex>
           </Flex>
 
           <Text
