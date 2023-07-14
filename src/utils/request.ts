@@ -17,7 +17,6 @@ const {
   VITE_APP_KEY,
   VITE_TEST_BASE_URL,
   VITE_BASE_URL,
-  VITE_ETHERSCAN_IO_URL,
 } = import.meta.env
 
 export const standaloneToast = createStandaloneToast({

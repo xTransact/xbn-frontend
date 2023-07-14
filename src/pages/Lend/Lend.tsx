@@ -55,6 +55,7 @@ import {
   type ColumnProps,
   SearchInput,
   LenderGuideModal,
+  NoticeSlider,
 } from '@/components'
 import { UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
@@ -126,6 +127,7 @@ const Lend = () => {
     currentAccount,
     collectionList,
     collectionLoading,
+    noticeData,
   } = useWallet()
 
   const { pathname } = useLocation()
@@ -764,6 +766,7 @@ const Lend = () => {
         />
       </Box>
       {/* <Joyride steps={steps} continuous run /> */}
+      <NoticeSlider data={noticeData} />
 
       <Tabs
         isLazy
@@ -852,6 +855,10 @@ const Lend = () => {
           }}
           ref={tabListRef}
           className='scroll-bar-hidden'
+          position='sticky'
+          top={{ md: '131px', sm: '131px', xs: '107px' }}
+          bg='white'
+          zIndex={13}
         >
           <TabList
             _active={{

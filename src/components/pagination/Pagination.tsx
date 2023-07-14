@@ -19,7 +19,7 @@ const PaginationItem: FunctionComponent<{
       justify={'center'}
       alignItems={'center'}
       _hover={{
-        background: isActive ? '' : 'blue.2',
+        background: isActive ? 'white' : 'blue.2',
       }}
     >
       <SvgComponent
@@ -62,14 +62,12 @@ const Index: FunctionComponent<PaginationProps> = ({
         })
         if (onChange) onChange(page, _pageSize)
       }}
-      itemRender={(page, type, element) => {
+      itemRender={(_, type, element) => {
         if (type === 'prev') {
           return <PaginationItem type='prev' isActive={current === 1} />
         }
         if (type === 'next') {
-          return (
-            <PaginationItem type='next' isActive={current === totalPage + 1} />
-          )
+          return <PaginationItem type='next' isActive={current === totalPage} />
         }
 
         return element

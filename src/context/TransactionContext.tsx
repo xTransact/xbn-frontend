@@ -11,9 +11,11 @@ import {
 } from 'react'
 
 import { apiGetActiveCollection } from '@/api'
+import type { NoticeItemType } from '@/components/notice-slider/NoticeSlider'
 import {
   type NftCollection,
   useNftCollectionsByContractAddressesQuery,
+  useNotice,
 } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
 import { clearUserToken, getUserToken } from '@/utils/auth'
@@ -27,6 +29,8 @@ export const TransactionContext = createContext<{
   handleDisconnect: () => void
   collectionList: { contractAddress: string; nftCollection: NftCollection }[]
   collectionLoading: boolean
+  noticeData?: NoticeItemType[]
+  refreshNotice: () => void
 }>({
   connectWallet: async () => {},
   currentAccount: '',
@@ -36,6 +40,8 @@ export const TransactionContext = createContext<{
   handleDisconnect: () => {},
   collectionList: [],
   collectionLoading: false,
+  noticeData: [],
+  refreshNotice: () => undefined,
 })
 
 const { ethereum } = window
@@ -46,6 +52,8 @@ export const TransactionsProvider = ({
   children: ReactElement
 }) => {
   const { runAsync: signAuth } = useAuth()
+  const isLogin = getUserToken()?.address
+
   // collection 提取到外层
   const [collectionAddressArr, setCollectionAddressArr] = useState<string[]>([])
   const { loading } = useRequest(apiGetActiveCollection, {
@@ -93,6 +101,14 @@ export const TransactionsProvider = ({
       defaultValue: false,
     },
   )
+
+  const { data: noticeData, refresh: refreshNotice } = useNotice(
+    currentAccount || '',
+    {
+      ready: !!isLogin && !!currentAccount,
+    },
+  )
+  console.log('🚀 ~ file: TransactionContext.tsx:52 ~ noticeData:', noticeData)
 
   const handleDisconnect = useCallback(() => {
     setCurrentAccount('')
@@ -271,6 +287,8 @@ export const TransactionsProvider = ({
           nftCollection: NftCollection
         }[],
         collectionLoading: loading || collectionLoading,
+        noticeData,
+        refreshNotice: refreshNotice,
       }}
     >
       {children}

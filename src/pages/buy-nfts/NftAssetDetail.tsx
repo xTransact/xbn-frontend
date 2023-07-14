@@ -124,7 +124,8 @@ const NftAssetDetail = () => {
   const { toastError, toast } = useCatchContractError()
   const [isAutoLeave, setIsAutoLeave] = useState(false)
   const [loanStep, setLoanStep] = useState<'loading' | 'success' | undefined>()
-  const { isOpen, onClose, currentAccount, interceptFn } = useWallet()
+  const { isOpen, onClose, currentAccount, interceptFn, refreshNotice } =
+    useWallet()
   const [platform, setPlatform] = useState<MARKET_TYPE_ENUM | undefined>()
 
   const assetVariable = useParams() as {
@@ -218,10 +219,6 @@ const NftAssetDetail = () => {
         })
       },
     },
-  )
-  console.log(
-    '🚀 ~ file: NftAssetDetail.tsx:175 ~ NftAssetDetail ~ floorPriceData:',
-    floorPriceData,
   )
 
   const { loading: ordersPriceFetchLoading, refresh: refreshOrderPrice } =
@@ -551,6 +548,8 @@ const NftAssetDetail = () => {
         // 监听 loan 是否生成
         // 如果 2 min 一直监听不到
         setTimeout(() => {
+          // 刷新通知接口数据
+          refreshNotice()
           setIsAutoLeave(true)
         }, 2 * 60 * 1000)
         xBankContract.events
@@ -565,6 +564,8 @@ const NftAssetDetail = () => {
             console.log(event, 'on data') // same results as the optional callback above
             setLoanStep('success')
             setSubscribeLoading(false)
+            // 刷新通知接口数据
+            refreshNotice()
           })
           .on('changed', console.log)
           .on('error', console.error)
@@ -588,6 +589,7 @@ const NftAssetDetail = () => {
     commodityWeiPrice,
     interceptFn,
     platform,
+    refreshNotice,
   ])
 
   useEffect(() => {
@@ -651,6 +653,7 @@ const NftAssetDetail = () => {
         imagePreviewUrl={detail?.asset?.imagePreviewUrl}
         animationUrl={detail?.asset?.animationUrl}
         onLoadingBack={() => {
+          refreshNotice()
           setLoanStep(undefined)
           return
         }}
