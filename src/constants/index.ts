@@ -6,11 +6,19 @@ export const XBANK_CONTRACT_ADDRESS = import.meta.env
   .VITE_XBANK_CONTRACT_ADDRESS
 export const WETH_CONTRACT_ADDRESS = import.meta.env.VITE_WETH_CONTRACT_ADDRESS
 
+/**
+ *   xs: '290px',
+  sm: '375px',
+  md: '768px',
+  lg: '968px',
+  xl: '1400px',
+  '2xl': '1800px',
+ */
 export const RESPONSIVE_MAX_W = {
-  xl: 1208,
-  lg: 968,
+  xl: 1376,
+  lg: 1200,
   md: 768,
-  sm: 390,
+  sm: 358,
   xs: '100%',
 }
 
@@ -173,4 +181,9 @@ export enum LOAN_ORDER_STATUS {
   Failed = 2048,
   // final    loan 生成成功
   Completed = 4096,
+}
+
+export enum NotificationType {
+  loan_in_generating = 'loan_in_generating',
+  loan_repayment = 'loan_repayment',
 }

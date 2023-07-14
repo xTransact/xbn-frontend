@@ -65,6 +65,7 @@ import {
   RATE_POWER_VALUES,
 } from '@/constants/interest'
 import { useCatchContractError, useWallet, type NftCollection } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { computePoolPoint, getMaxSingleLoanScore } from '@/utils/calculation'
 import { createXBankContract } from '@/utils/createContract'
 import { formatFloat } from '@/utils/format'
@@ -647,13 +648,21 @@ const Create = () => {
   console.log('score', calculateScore?.toNumber())
 
   if (!params || !['edit', 'create'].includes(params?.action)) {
-    return <NotFound />
+    return (
+      <RootLayout>
+        <NotFound />
+      </RootLayout>
+    )
   }
   if (params.action === 'edit' && (!state || isEmpty(state))) {
-    return <NotFound title='pool not found' />
+    return (
+      <RootLayout>
+        <NotFound title='pool not found' />
+      </RootLayout>
+    )
   }
   return (
-    <>
+    <RootLayout>
       <H5SecondaryHeader />
 
       <Box
@@ -1278,7 +1287,7 @@ const Create = () => {
           </Button>
         )}
       </Flex>
-    </>
+    </RootLayout>
   )
 }
 

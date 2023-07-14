@@ -154,3 +154,11 @@ export const apiGetLoanOrder: (query: {
     params: data,
   })
 }
+
+export const apiGetNotice: (params: {
+  wallet_address: string
+}) => Promise<NotificationsItemType[]> = async (params) => {
+  return await request.get(`/lending/api/v1/notifications`, {
+    params,
+  })
+}

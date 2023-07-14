@@ -1,5 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react'
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { components } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
@@ -61,6 +61,10 @@ function AsyncSelectCollection({
   ...rest
 }: any) {
   const { collectionList, collectionLoading } = useContext(TransactionContext)
+  const sortedCollectionList = useMemo(() => {
+    if (!collectionList) return []
+    return collectionList?.sort((a, b) => a.priority - b.priority)
+  }, [collectionList])
   // const [collectionAddressArr, setCollectionAddressArr] = useState<string[]>([])
   // const { loading } = useRequest(apiGetActiveCollection, {
   //   debounceWait: 100,
@@ -92,7 +96,7 @@ function AsyncSelectCollection({
           return
         } else {
           resolve(
-            collectionList?.filter((i) =>
+            sortedCollectionList?.filter((i) =>
               i?.nftCollection?.name
                 .toLowerCase()
                 .includes(inputValue.toLowerCase()),
@@ -100,7 +104,7 @@ function AsyncSelectCollection({
           )
         }
       }),
-    [collectionList, collectionLoading],
+    [sortedCollectionList, collectionLoading],
   )
 
   const [open, setOpen] = useState(false)

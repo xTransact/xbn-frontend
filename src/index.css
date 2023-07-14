@@ -85,12 +85,45 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--chakra-colors-gray-1);
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--chakra-colors-gray-5);
-  border-radius: 8px;
+  border-radius: 12px;
+}
+
+::selection {
+  color: white;
+  background: var(--chakra-colors-blue-1);
+}
+
+::-moz-selection {
+  color: white;
+  background: var(--chakra-colors-blue-1);
+}
+
+::-webkit-selection {
+  color: white;
+  background: var(--chakra-colors-blue-1);
+}
+
+@media screen and (min-width: 768px) {
+  .scroll-hover-show::-webkit-scrollbar-track {
+    background: white;
+  }
+
+  .scroll-hover-show::-webkit-scrollbar-thumb {
+    background: white;
+  }
+}
+
+.scroll-hover-show:hover::-webkit-scrollbar-thumb {
+  background: var(--chakra-colors-gray-1);
+}
+
+.scroll-hover-show:hover::-webkit-scrollbar-track {
+  background: var(--chakra-colors-gray-5);
 }
 
 @keyframes loading {

@@ -13,12 +13,12 @@ import {
   SimpleGrid,
   Text,
   useDisclosure,
+  Image,
 } from '@chakra-ui/react'
 import useDebounce from 'ahooks/lib/useDebounce'
 import useInfiniteScroll from 'ahooks/lib/useInfiniteScroll'
 import useRequest from 'ahooks/lib/useRequest'
 import bigNumber from 'bignumber.js'
-import filter from 'lodash-es/filter'
 import isEmpty from 'lodash-es/isEmpty'
 import max from 'lodash-es/max'
 import min from 'lodash-es/min'
@@ -26,11 +26,13 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { apiGetFloorPrice, apiGetPools } from '@/api'
+import ImgLabel from '@/assets/desire-label.png'
 import {
   BuyerGuideModal,
   ConnectWalletModal,
   EmptyComponent,
   LoadingComponent,
+  NoticeSlider,
   SearchInput,
 } from '@/components'
 import { TransactionContext } from '@/context/TransactionContext'
@@ -42,9 +44,9 @@ import {
   useNftCollectionAssetsLazyQuery,
   useWallet,
   type NftAsset,
-  type NftCollection,
   useGuide,
 } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { wei2Eth } from '@/utils/unit-conversion'
 
 import CollectionDescription from './components/CollectionDescription'
@@ -80,16 +82,14 @@ const Market = () => {
   const navigate = useNavigate()
   const pathData = useParams()
   const { search } = useLocation()
-  const { isOpen, onClose, interceptFn } = useWallet()
+  const { isOpen, onClose, interceptFn, noticeData } = useWallet()
   const {
     isOpen: drawVisible,
     onOpen: openDraw,
     onClose: closeDraw,
   } = useDisclosure()
-  const [selectCollection, setSelectCollection] = useState<{
-    contractAddress: string
-    nftCollection: NftCollection
-  }>()
+  const [selectCollection, setSelectCollection] =
+    useState<XBNCollectionItemType>()
   const [assetSearchValue, setAssetSearchValue] = useState('')
   const debounceSearchValue = useDebounce(assetSearchValue, { wait: 500 })
   const [collectionSearchValue, setCollectionSearchValue] = useState('')
@@ -131,9 +131,9 @@ const Market = () => {
   const collectionData = useMemo(() => {
     if (!collectionList) return
     if (isEmpty(collectionList)) return []
-    return collectionList.filter((i) =>
-      collectionWithPoolsIds.includes(i.contractAddress),
-    )
+    return collectionList
+      .filter((i) => collectionWithPoolsIds.includes(i.contractAddress))
+      .sort((a, b) => a.priority - b.priority)
   }, [collectionList, collectionWithPoolsIds])
 
   const initialCollection = useMemo(() => {
@@ -291,7 +291,7 @@ const Market = () => {
   const filteredCollectionList = useMemo(() => {
     if (!collectionData) return
     if (!debounceCollectionSearchValue) return collectionData || []
-    return filter(collectionData, (item) =>
+    return collectionData.filter((item) =>
       item.nftCollection.name
         .toLocaleLowerCase()
         .includes(debounceCollectionSearchValue.toLocaleLowerCase()),
@@ -327,7 +327,7 @@ const Market = () => {
     () => ({
       xl: grid,
       lg: grid,
-      md: grid,
+      md: 2,
       sm: 2,
       xs: 2,
     }),
@@ -338,12 +338,13 @@ const Market = () => {
     key: 'has-read-buyer-guide',
   })
   return (
-    <>
+    <RootLayout>
       <BuyerGuideModal isOpen={guideVisible} onClose={closeGuide} />
+
       <Box
         mb={{ md: '40px', sm: 0, xs: 0 }}
         mt={{
-          md: '60px',
+          md: '30px',
           sm: '16px',
           xs: '16px',
         }}
@@ -352,44 +353,81 @@ const Market = () => {
           Buy NFTs
         </Heading>
       </Box>
+      <NoticeSlider data={noticeData} />
 
       <Flex
-        mt={'10px'}
+        mt={'20px'}
         mb='100px'
-        gap={9}
+        gap={'36px'}
         flexWrap={{ lg: 'nowrap', md: 'wrap', sm: 'wrap', xs: 'wrap' }}
       >
         <Box
           w={{
-            xl: '300px',
-            lg: '260px',
-            md: '100%',
+            xl: '360px',
+            lg: '320px',
+            md: '280px',
             sm: '100%',
             xs: '100%',
           }}
+          position={{
+            md: 'sticky',
+            sm: 'static',
+            xs: 'static',
+          }}
+          h={{
+            md: noticeData?.length
+              ? 'calc(100vh - 340px)'
+              : 'calc(100vh - 270px)',
+            sm: 'auto',
+            xs: 'auto',
+          }}
+          top='151px'
+          bg='white'
+          zIndex={2}
+          borderColor='gray.2'
+          borderWidth={{ md: 1, sm: 0, xs: 0 }}
+          borderRadius={{ md: '12px', sm: 0, xs: 0 }}
+          pb='40px'
         >
           <Box
-            borderColor='gray.2'
-            borderWidth={{ md: 1, sm: 0, xs: 0 }}
-            borderRadius={{ md: '12px', sm: 0, xs: 0 }}
             pt={{ md: '24px', sm: 0, xs: 0 }}
             px={{ md: '24px', sm: 0, xs: 0 }}
-            // overflowY='auto'
-            overflowX={'visible'}
-            position={{
-              md: 'sticky',
-              sm: 'static',
-              xs: 'static',
-            }}
-            minH={{
-              md: '400px',
-              sm: '100px',
-              xs: '100px',
-            }}
-            top='151px'
           >
-            <Heading size={'md'} mb='16px'>
-              Collections
+            {/* Propose Listing */}
+            <Box
+              pos={'absolute'}
+              bottom={0}
+              pb='24px'
+              pt='32px'
+              bg='white'
+              left={'24px'}
+              right={'24px'}
+              display={{
+                md: 'block',
+                sm: 'none',
+                xs: 'none',
+              }}
+              zIndex={10}
+            >
+              <Image
+                src={ImgLabel}
+                w='190px'
+                right={0}
+                position={'absolute'}
+                top={'4%'}
+              />
+              <Button
+                w='100%'
+                variant={'outline'}
+                onClick={() => {
+                  window.open(import.meta.env.VITE_COLLECTION_NOTION_LINK)
+                }}
+              >
+                Propose Listing
+              </Button>
+            </Box>
+            <Heading fontSize={'16px'} mb='16px'>
+              Top Collections
             </Heading>
             {/* pc collection list */}
             <Box
@@ -398,7 +436,7 @@ const Market = () => {
                 sm: 'none',
                 xs: 'none',
               }}
-              pb='40px'
+              pb='50px'
             >
               <Box
                 hidden={
@@ -406,7 +444,7 @@ const Market = () => {
                 }
               >
                 <SearchInput
-                  placeholder='Collections...'
+                  placeholder='Search...'
                   isDisabled={collectionLoading || poolsLoading}
                   value={collectionSearchValue}
                   onChange={(e) => {
@@ -425,11 +463,24 @@ const Market = () => {
                   sm: 'none',
                   xs: 'none',
                 }}
+                h={{
+                  md: noticeData?.length
+                    ? 'calc(100vh - 560px)'
+                    : 'calc(100vh - 488px)',
+                  sm: 'auto',
+                  xs: 'auto',
+                }}
+                overflowY={{
+                  md: 'auto',
+                  sm: 'visible',
+                  xs: 'visible',
+                }}
+                className='scroll-hover-show'
               >
                 <LoadingComponent
                   loading={collectionLoading || poolsLoading}
                   top={0}
-                  minH={'220px'}
+                  minH={'180px'}
                 />
                 {isEmpty(filteredCollectionList) &&
                   !collectionLoading &&
@@ -453,7 +504,6 @@ const Market = () => {
                       selectCollection?.nftCollection?.id ===
                       item?.nftCollection?.id
                     }
-                    iconSize='26px'
                   />
                 ))}
               </List>
@@ -471,7 +521,6 @@ const Market = () => {
               <CollectionListItem
                 isActive
                 data={selectCollection}
-                rightIconId='icon-arrow-down'
                 onClick={openDraw}
               />
               <Divider mt='16px' />
@@ -482,9 +531,9 @@ const Market = () => {
               >
                 <DrawerOverlay />
                 <DrawerContent borderTopRadius={16} pb='40px'>
-                  <DrawerBody>
-                    <Heading fontSize={'24px'} pt='40px' pb='32px'>
-                      Collections
+                  <DrawerBody overflow={'initial'}>
+                    <Heading fontSize={'16px'} pt='20px' pb='16px'>
+                      Top Collections
                     </Heading>
                     <Box
                       hidden={
@@ -501,7 +550,13 @@ const Market = () => {
                       />
                     </Box>
 
-                    <List spacing='16px' mt='16px' position='relative'>
+                    <List
+                      spacing='16px'
+                      mt='16px'
+                      position='relative'
+                      overflowY={'auto'}
+                      h='300px'
+                    >
                       <LoadingComponent
                         loading={collectionLoading || poolsLoading}
                         top={0}
@@ -532,6 +587,26 @@ const Market = () => {
                         />
                       ))}
                     </List>
+                    <Box w={'100%'} mt='20px' position={'relative'}>
+                      <Image
+                        src={ImgLabel}
+                        w='190px'
+                        right={0}
+                        position={'absolute'}
+                        top='-70%'
+                      />
+                      <Button
+                        w='100%'
+                        variant={'outline'}
+                        onClick={() => {
+                          window.open(
+                            import.meta.env.VITE_COLLECTION_NOTION_LINK,
+                          )
+                        }}
+                      >
+                        Propose Listing
+                      </Button>
+                    </Box>
                   </DrawerBody>
                 </DrawerContent>
               </Drawer>
@@ -539,20 +614,13 @@ const Market = () => {
           </Box>
         </Box>
 
-        <Box
-          w={{
-            xl: '820px',
-            lg: '640px',
-            md: '100%',
-            sm: '100%',
-            xs: '100%',
-          }}
-        >
+        <Box flex={1}>
           <CollectionDescription
             loading={collectionLoading || poolsLoading || floorPriceLoading}
             data={selectCollection?.nftCollection}
             floorPrice={floorPrice}
             bestPoolAmount={bestPoolAmount}
+            tags={selectCollection?.tags}
           />
           <Toolbar
             loading={collectionLoading || poolsLoading}
@@ -568,6 +636,12 @@ const Market = () => {
             gridConfig={{
               gridValue: grid,
               setGridValue: (t) => setGrid(t),
+              props: {
+                display: {
+                  lg: 'flex',
+                  md: 'none',
+                },
+              },
             }}
           />
 
@@ -610,9 +684,9 @@ const Market = () => {
                     <MarketNftListCard
                       data={{ ...item, bestPoolAmount }}
                       imageSize={{
-                        xl: grid === 4 ? '190px' : '260px',
-                        lg: grid === 4 ? '152px' : '206px',
-                        md: grid === 4 ? '172px' : '234px',
+                        xl: grid === 4 ? '231px' : '314px',
+                        lg: grid === 4 ? '208px' : '280px',
+                        md: '220px',
                         sm: '174px',
                         xs: '174px',
                       }}
@@ -749,7 +823,7 @@ const Market = () => {
         </Box>
       </Flex>
       <ConnectWalletModal visible={isOpen} handleClose={onClose} />
-    </>
+    </RootLayout>
   )
 }
 

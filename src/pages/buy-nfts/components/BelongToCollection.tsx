@@ -1,5 +1,6 @@
 import { Box, type BoxProps, Heading, Flex, Text } from '@chakra-ui/react'
 import { type FunctionComponent } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { ImageWithFallback, SvgComponent } from '@/components'
 import { UNIT } from '@/constants'
@@ -12,21 +13,34 @@ const BelongToCollection: FunctionComponent<
       imagePreviewUrl?: string
       safelistRequestStatus?: string
       floorPrice?: number
+      id?: string
     }
   }
 > = ({
-  data: { name = '', imagePreviewUrl = '', safelistRequestStatus, floorPrice },
+  data: {
+    name = '',
+    imagePreviewUrl = '',
+    safelistRequestStatus,
+    floorPrice,
+    id,
+  },
   ...rest
 }) => {
+  const navigate = useNavigate()
   return (
     <Box
       {...rest}
       mt='60px'
       w={{
-        xl: '500px',
-        lg: '400px',
+        xl: '600px',
+        lg: '500px',
         sm: '100%',
         xs: '100%',
+      }}
+      cursor={id === undefined ? 'inherit' : 'pointer'}
+      onClick={() => {
+        if (id === undefined) return
+        navigate(`/buy-nfts/market/${id}`)
       }}
     >
       <Heading size={'lg'} mb='16px'>

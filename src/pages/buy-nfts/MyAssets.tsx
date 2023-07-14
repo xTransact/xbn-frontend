@@ -1,5 +1,4 @@
 import {
-  Box,
   Heading,
   Tabs,
   TabPanel,
@@ -30,6 +29,7 @@ import {
 } from '@/components'
 import { useBatchAsset, useWallet } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
+import RootLayout from '@/layouts/RootLayout'
 import type { UserTokenType } from '@/utils/auth'
 import { clearUserToken, getUserToken } from '@/utils/auth'
 
@@ -141,24 +141,24 @@ const MyAssets = () => {
     interceptFn()
   }, [interceptFn])
 
-  const [
-    grid,
-    // setGrid
-  ] = useState(4)
+  // const [
+  //   grid,
+  //   // setGrid
+  // ] = useState(5)
 
   const responsiveSpan = useMemo(
     () => ({
-      xl: grid,
-      lg: grid,
-      md: grid,
+      xl: 5,
+      lg: 5,
+      md: 3,
       sm: 2,
       xs: 2,
     }),
-    [grid],
+    [],
   )
 
   return (
-    <Box mb='100px'>
+    <RootLayout mb='100px'>
       <Flex
         py='20px'
         onClick={() => navigate(-1)}
@@ -293,6 +293,7 @@ const MyAssets = () => {
                     <EmptyComponent />
                   </GridItem>
                 )}
+
                 {data &&
                   data?.map((item) => {
                     // const assetInfo = batchNftListInfo?.get(JSON.stringify({
@@ -310,9 +311,10 @@ const MyAssets = () => {
                       <MyAssetNftListCard
                         key={`${item?.asset_contract_address}-${item?.token_id}`}
                         imageSize={{
-                          xl: grid === 4 ? '280px' : '445px',
-                          lg: grid === 4 ? '220px' : '298px',
-                          md: grid === 4 ? '170px' : '234px',
+                          '2xl': '260px',
+                          xl: '260px',
+                          lg: '225px',
+                          md: '243px',
                           sm: '174px',
                           xs: '160px',
                         }}
@@ -339,7 +341,7 @@ const MyAssets = () => {
       )}
 
       <ConnectWalletModal visible={isOpen} handleClose={onClose} />
-    </Box>
+    </RootLayout>
   )
 }
 

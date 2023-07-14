@@ -79,6 +79,7 @@ const components = {
       outline: {
         borderColor: 'blue.1',
         color: 'blue.1',
+        bg: 'white',
         _hover: {
           bg: 'white',
           opacity: 0.8,

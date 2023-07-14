@@ -55,16 +55,17 @@ import {
   type ColumnProps,
   SearchInput,
   LenderGuideModal,
+  NoticeSlider,
 } from '@/components'
 import { UNIT } from '@/constants'
 import type { NftCollection } from '@/hooks'
 import { useWallet, useBatchAsset, useGuide } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
 
-import CollectionListItem from '../buy-nfts/components/CollectionListItem'
-
 import AllPoolsDescription from './components/AllPoolsDescription'
+import CollectionListItem from './components/CollectionListItem'
 import MyPoolActionRender from './components/MyPoolActionRender'
 
 type Dictionary<T> = Record<string, T>
@@ -126,6 +127,7 @@ const Lend = () => {
     currentAccount,
     collectionList,
     collectionLoading,
+    noticeData,
   } = useWallet()
 
   const { pathname } = useLocation()
@@ -205,15 +207,12 @@ const Lend = () => {
           (i) => i.pool_maximum_interest_rate,
         )?.pool_maximum_interest_rate
 
-        const pool_amount = reduce(
+        const pool_size = reduce(
           currentCollectionPools,
-          (sum, i) => BigNumber(sum).plus(Number(i.pool_amount)),
-          BigNumber(0),
-        )
-
-        const pool_used_amount = reduce(
-          currentCollectionPools,
-          (sum, i) => BigNumber(sum).plus(Number(i.pool_used_amount)),
+          (sum, i) => {
+            const _size = BigNumber(i.pool_amount).minus(i.pool_used_amount)
+            return BigNumber(sum).plus(_size.lte(0) ? BigNumber(0) : _size)
+          },
           BigNumber(0),
         )
 
@@ -226,15 +225,14 @@ const Lend = () => {
         return {
           pool_maximum_percentage,
           pool_maximum_interest_rate,
-          pool_amount,
-          pool_used_amount,
+          pool_size,
           contractAddress,
           isContainMyPool,
           ...rest,
         }
       }),
-      'pool_amount',
-      (i) => Number(i.pool_amount),
+      'pool_size',
+      (i) => Number(i.pool_size),
     )
   }, [collectionList, allPoolsData, currentAccount])
 
@@ -428,16 +426,12 @@ const Lend = () => {
       },
       {
         title: 'Pool Size',
-        dataIndex: 'pool_amount',
-        key: 'pool_amount',
+        dataIndex: 'pool_size',
+        key: 'pool_size',
         align: 'center',
         thAlign: 'center',
-        render: (value: any, info: any) => (
-          <EthText>
-            {formatFloat(
-              wei2Eth(Number(value) - Number(info.pool_used_amount)),
-            )}
-          </EthText>
+        render: (value: any) => (
+          <EthText>{formatFloat(wei2Eth(value))}</EthText>
         ),
       },
       {
@@ -629,7 +623,12 @@ const Lend = () => {
         dataIndex: 'id',
         key: 'id',
         align: 'left',
-        width: 180,
+        width: {
+          lg: 200,
+          md: 150,
+          sm: 130,
+          xs: 130,
+        },
         thAlign: 'left',
         render: (_: any, info: any) => {
           // const currentInfo = batchNftListInfo?.get(
@@ -653,7 +652,6 @@ const Lend = () => {
                 borderRadius={4}
               />
               <Text
-                w={'60%'}
                 display='inline-block'
                 overflow='hidden'
                 whiteSpace='nowrap'
@@ -743,7 +741,7 @@ const Lend = () => {
   } = useDisclosure()
 
   return (
-    <Box mb='100px'>
+    <RootLayout mb='100px'>
       <LenderGuideModal isOpen={guideVisible} onClose={closeGuide} />
 
       <Box
@@ -764,8 +762,10 @@ const Lend = () => {
         />
       </Box>
       {/* <Joyride steps={steps} continuous run /> */}
+      <NoticeSlider data={noticeData} />
 
       <Tabs
+        marginTop={'20px'}
         isLazy
         index={tabKey}
         position='relative'
@@ -786,65 +786,6 @@ const Lend = () => {
           }
         }}
       >
-        {[TAB_KEY.COLLECTION_TAB, TAB_KEY.MY_POOLS_TAB].includes(tabKey) && (
-          <Flex
-            position={'absolute'}
-            right={0}
-            top={0}
-            gap={'16px'}
-            zIndex={3}
-            display={{
-              md: 'flex',
-              sm: 'none',
-              xs: 'none',
-            }}
-          >
-            <ScaleFade in={showSearch} initialScale={0.9}>
-              <SearchInput
-                value={
-                  tabKey === TAB_KEY.COLLECTION_TAB
-                    ? activeCollectionSearchValue
-                    : myPoolsSearchValue
-                }
-                onChange={(e) => {
-                  if (tabKey === TAB_KEY.COLLECTION_TAB) {
-                    setActiveCollectionSearchValue(e.target.value)
-                  }
-                  if (tabKey === TAB_KEY.MY_POOLS_TAB) {
-                    setMyPoolsSearchValue(e.target.value)
-                  }
-                }}
-              />
-            </ScaleFade>
-
-            <Flex
-              h='44px'
-              w='44px'
-              borderRadius={44}
-              justify='center'
-              alignItems={'center'}
-              cursor='pointer'
-              onClick={toggleShowSearch}
-              _hover={{
-                bg: `var(--chakra-colors-gray-5)`,
-              }}
-              hidden={showSearch}
-            >
-              <SvgComponent svgId='icon-search' fill={'gray.3'} />
-            </Flex>
-            {!isEmpty(poolList) && (
-              <Button
-                variant={'secondary'}
-                minW='200px'
-                onClick={() => interceptFn(() => navigate('/lending/create'))}
-                className='my-other-step'
-              >
-                + Create New Pool
-              </Button>
-            )}
-          </Flex>
-        )}
-
         <Box
           overflowX={{
             sm: 'hidden',
@@ -852,7 +793,71 @@ const Lend = () => {
           }}
           ref={tabListRef}
           className='scroll-bar-hidden'
+          position='sticky'
+          top={{ md: '131px', sm: '131px', xs: '107px' }}
+          bg='white'
+          zIndex={13}
         >
+          {[TAB_KEY.COLLECTION_TAB, TAB_KEY.MY_POOLS_TAB].includes(tabKey) && (
+            <Flex
+              position={'absolute'}
+              right={0}
+              top={'8px'}
+              gap={'16px'}
+              zIndex={3}
+              display={{
+                md: 'flex',
+                sm: 'none',
+                xs: 'none',
+              }}
+            >
+              <ScaleFade in={showSearch} initialScale={0.9}>
+                <SearchInput
+                  value={
+                    tabKey === TAB_KEY.COLLECTION_TAB
+                      ? activeCollectionSearchValue
+                      : myPoolsSearchValue
+                  }
+                  onChange={(e) => {
+                    if (tabKey === TAB_KEY.COLLECTION_TAB) {
+                      setActiveCollectionSearchValue(e.target.value)
+                    }
+                    if (tabKey === TAB_KEY.MY_POOLS_TAB) {
+                      setMyPoolsSearchValue(e.target.value)
+                    }
+                  }}
+                />
+              </ScaleFade>
+
+              <Flex
+                h='44px'
+                w='44px'
+                borderRadius={44}
+                justify='center'
+                alignItems={'center'}
+                cursor='pointer'
+                onClick={toggleShowSearch}
+                _hover={{
+                  bg: `var(--chakra-colors-gray-5)`,
+                }}
+                hidden={showSearch}
+              >
+                <SvgComponent svgId='icon-search' fill={'gray.3'} />
+              </Flex>
+              {((tabKey === TAB_KEY.COLLECTION_TAB &&
+                !isEmpty(activeCollectionList)) ||
+                (tabKey === TAB_KEY.MY_POOLS_TAB && !isEmpty(myPoolsData))) && (
+                <Button
+                  variant={'secondary'}
+                  minW='200px'
+                  onClick={() => interceptFn(() => navigate('/lending/create'))}
+                  className='my-other-step'
+                >
+                  + Create New Pool
+                </Button>
+              )}
+            </Flex>
+          )}
           <TabList
             _active={{
               color: 'blue.1',
@@ -988,8 +993,9 @@ const Lend = () => {
                 borderRadius={12}
                 p={'24px'}
                 w={{
-                  lg: '25%',
-                  md: '30%',
+                  xl: '360px',
+                  lg: '300px',
+                  md: '260px',
                 }}
                 display={{
                   md: 'block',
@@ -1099,6 +1105,10 @@ const Lend = () => {
                       loading: loansLoading,
                       data: sortBy(loansData[0], (i) => -i.loan_start_time),
                       key: '1',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                     {
                       tableTitle: () => (
@@ -1126,6 +1136,10 @@ const Lend = () => {
                       data: sortBy(loansData[1], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '2',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                     {
                       tableTitle: () => (
@@ -1153,6 +1167,10 @@ const Lend = () => {
                       data: sortBy(loansData[2], (i) => -i.loan_start_time),
                       loading: loansLoading,
                       key: '3',
+                      loadingConfig: {
+                        top: '30px',
+                        loading: loansLoading,
+                      },
                     },
                   ]}
                 />
@@ -1296,7 +1314,7 @@ const Lend = () => {
         </DrawerContent>
       </Drawer>
       <ConnectWalletModal visible={isOpen} handleClose={onClose} />
-    </Box>
+    </RootLayout>
   )
 }
 

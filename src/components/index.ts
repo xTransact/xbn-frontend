@@ -28,6 +28,7 @@ export { default as BuyerGuideModal } from './guide-modal/BuyerGuideModal'
 export { default as LenderGuideModal } from './guide-modal/LenderGuideModal'
 export { default as NoticeSlider } from './notice-slider/NoticeSlider'
 export { default as TooltipComponent } from './tooltip-component/TooltipComponent'
+export { default as CollectionTag } from './collection-tag/CollectionTag'
 
 export { type ColumnProps } from './my-table/index'
 export { MARKET_TYPE_ENUM } from './nft-origin/NftOrigin'

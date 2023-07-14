@@ -5,13 +5,18 @@ import {
   type SpinnerProps,
 } from '@chakra-ui/react'
 
+export type LoadingComponentProps = {
+  loading: boolean
+  spinnerProps?: SpinnerProps
+} & FlexProps
+
 const Index = ({
   loading,
   minHeight,
   top = '24px',
   spinnerProps,
   ...rest
-}: { loading: boolean; spinnerProps?: SpinnerProps } & FlexProps) => {
+}: LoadingComponentProps) => {
   if (!loading) {
     return null
   }

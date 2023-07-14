@@ -31,9 +31,11 @@ import {
   type ColumnProps,
   SvgComponent,
   LoadingComponent,
+  NoticeSlider,
 } from '@/components'
-import { UNIT } from '@/constants'
+import { UNIT, NotificationType } from '@/constants'
 import { useBatchAsset, useWallet, useCatchContractError } from '@/hooks'
+import RootLayout from '@/layouts/RootLayout'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
 import { formatAddress, formatFloat } from '@/utils/format'
 import { wei2Eth } from '@/utils/unit-conversion'
@@ -69,7 +71,14 @@ const MODEL_HEADER_PROPS: ModalHeaderProps = {
 
 const Loans = () => {
   // const navigate = useNavigate()
-  const { isOpen, onClose, interceptFn, currentAccount } = useWallet()
+  const {
+    isOpen,
+    onClose,
+    interceptFn,
+    currentAccount,
+    noticeData,
+    refreshNotice,
+  } = useWallet()
   const { toastError, toast } = useCatchContractError()
   const [repayLoadingMap, setRepayLoadingMap] =
     useState<Record<string, boolean>>()
@@ -161,6 +170,7 @@ const Loans = () => {
               title: 'successful repayment',
             })
             refresh()
+            refreshNotice()
           }, 3000)
         } catch (error: any) {
           toastError(error)
@@ -171,7 +181,7 @@ const Loans = () => {
         }
       })
     },
-    [interceptFn, currentAccount, refresh, toastError, toast],
+    [interceptFn, currentAccount, refresh, toastError, toast, refreshNotice],
   )
 
   const loansForBuyerColumns: ColumnProps[] = [
@@ -300,7 +310,7 @@ const Loans = () => {
       let lastTime = BigNumber(loan_start_time)
       if (BigNumber(repaid_principal).gt(0)) {
         // 如果已还金额大于 0
-        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息）
         const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
 
         // 已还次数 = 已还金额 / 每期还款金额
@@ -381,6 +391,7 @@ const Loans = () => {
           })
           refresh()
           setPrepayData(undefined)
+          refreshNotice()
         }, 3000)
       } catch (error: any) {
         toastError(error)
@@ -391,7 +402,15 @@ const Loans = () => {
         }))
       }
     })
-  }, [prepayData, refresh, toastError, toast, currentAccount, interceptFn])
+  }, [
+    prepayData,
+    refresh,
+    toastError,
+    toast,
+    currentAccount,
+    interceptFn,
+    refreshNotice,
+  ])
 
   const handleClose = useCallback(() => {
     if (!prepayData) return
@@ -419,7 +438,7 @@ const Loans = () => {
       if (BigNumber(repaid_principal).gt(0)) {
         // 如果已还金额大于 0
 
-        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息 ）
         const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
 
         // 已还次数 = 已还金额 / 每期还款金额
@@ -438,11 +457,16 @@ const Loans = () => {
   }, [statuedLoans])
 
   return (
-    <Box my='60px'>
+    <RootLayout my='100px'>
       <Heading size={'2xl'} mb='60px'>
         Loans
       </Heading>
 
+      <NoticeSlider
+        data={noticeData?.filter(
+          (i) => i.type === NotificationType.loan_repayment,
+        )}
+      />
       <Flex justify={'space-between'} mt='16px'>
         <Box w='100%'>
           <TableList
@@ -467,7 +491,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>
@@ -624,7 +654,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>
@@ -693,7 +729,13 @@ const Loans = () => {
                     dataIndex: 'nft_asset_info',
                     key: 'nft_asset_info',
                     align: 'left',
-                    width: 130,
+                    width: {
+                      xl: 240,
+                      lg: 200,
+                      md: 150,
+                      sm: 130,
+                      xs: 130,
+                    },
                     render: (_: any, info: any) => {
                       const currentInfo = bactNftListInfo?.find(
                         (i) =>
@@ -882,7 +924,7 @@ const Loans = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </Box>
+    </RootLayout>
   )
 }
 

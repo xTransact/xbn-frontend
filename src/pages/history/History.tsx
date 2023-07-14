@@ -43,11 +43,7 @@ import {
   EthText,
   Pagination,
 } from '@/components'
-import {
-  RESPONSIVE_MAX_W,
-  LOAN_ORDER_STATUS,
-  LISTING_ORDER_STATUS,
-} from '@/constants'
+import { LOAN_ORDER_STATUS, LISTING_ORDER_STATUS } from '@/constants'
 import { useBatchAsset, useWallet } from '@/hooks'
 import useAuth from '@/hooks/useAuth'
 import RootLayout from '@/layouts/RootLayout'
@@ -391,9 +387,11 @@ const History = () => {
           let status = '--'
           if (value === LOAN_ORDER_STATUS.Completed) {
             status = LOAN_ORDER_STATUS_TEXT.Succeeded
-          } else if (value === LOAN_ORDER_STATUS.Refunded) {
+          }
+          if (value === LOAN_ORDER_STATUS.Refunded) {
             status = LOAN_ORDER_STATUS_TEXT.Refunded
-          } else if (
+          }
+          if (
             [
               LOAN_ORDER_STATUS.New,
               LOAN_ORDER_STATUS.DownPaymentConfirmed,
@@ -405,9 +403,9 @@ const History = () => {
             ].includes(value)
           ) {
             status = LOAN_ORDER_STATUS_TEXT.Processing
-          } else {
-            status = LOAN_ORDER_STATUS_TEXT.Failed
           }
+          if (value === LOAN_ORDER_STATUS.Failed)
+            status = LOAN_ORDER_STATUS_TEXT.Failed
           return <Text>{status}</Text>
         },
       },
@@ -666,7 +664,7 @@ const History = () => {
   }
 
   return (
-    <RootLayout mb='100px' maxW={{ ...RESPONSIVE_MAX_W, xl: 1408 }}>
+    <RootLayout mb='100px'>
       <Box mt='60px' mb='40px'>
         <Heading fontWeight={'700'} fontSize={'48px'}>
           My Loan History
@@ -804,7 +802,6 @@ const History = () => {
                   total={loanData?.length}
                   pageSize={10}
                   onChange={(page) => {
-                    console.log('aaa', page)
                     if (loanPage === page) return
                     setLoanPage(page)
                   }}

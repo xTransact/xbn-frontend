@@ -24,6 +24,9 @@ interface CollectionListItemType {
   contract_addr: string
   safelist_request_status?: 'not_requested' | 'verified'
   description?: string
+  // 暂定
+  priority: number
+  tags: string[]
 }
 
 interface AssetListItemType {
@@ -326,4 +329,14 @@ interface RankDataType {
   info: RankItemType | null
   ranking_infos: RankItemType[]
   count: number
+}
+
+enum NotificationType {
+  loan_in_generating = 'loan_in_generating',
+  loan_repayment = 'loan_repayment',
+}
+interface NotificationsItemType {
+  left_time?: number
+  sum: number
+  type: NotificationType
 }
