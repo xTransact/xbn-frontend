@@ -32,6 +32,7 @@ import BigNumber from 'bignumber.js'
 import dayjs, { unix } from 'dayjs'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash-es/isEqual'
+import reduce from 'lodash-es/reduce'
 import {
   useMemo,
   useState,
@@ -307,7 +308,7 @@ const MyAssetNftListCard: FunctionComponent<
           safelistRequestStatus,
           fees,
           slug,
-          // isCreatorFeesEnforced,
+          isCreatorFeesEnforced,
         },
       } = currentCollection
       /**
@@ -315,10 +316,14 @@ const MyAssetNftListCard: FunctionComponent<
        * true => 不允许修改 => 则展示接口传过来的值；
        * false => 允许修改=> 则不管接口读取有没有具体值，都将Creator earnings改为0；
        */
-      // const sellerFee = isCreatorFeesEnforced
-      //   ? fees?.find((i) => i.name === 'seller_fees')?.value || 0
-      //   :
-      const sellerFee = fees?.find((i) => i.name === 'seller_fees')?.value || 0
+      const _sellerFee = reduce(
+        fees?.filter((i) => i.name === 'seller_fees'),
+        (sum, value) => sum + value.value,
+        0,
+      )
+      const sellerFee = !!isCreatorFeesEnforced ? _sellerFee : 0
+
+      // const sellerFee = fees?.find((i) => i.name === 'seller_fees')?.value || 0
       const marketPlaceFee =
         fees?.find((i) => i.name === 'opensea_fees')?.value || 0
       setCollectionData({
@@ -811,9 +816,7 @@ const MyAssetNftListCard: FunctionComponent<
             >
               {!!loanError ||
               !!collectionError ||
-              (!loanData && !fetchInfoLoading) ||
-              ((!floorPriceData || isEmpty(floorPriceData)) &&
-                !floorPriceLoading) ? (
+              (!loanLoading && isEmpty(loanData)) ? (
                 <Flex px='40px' pb='40px'>
                   <Alert
                     px={'40px'}
