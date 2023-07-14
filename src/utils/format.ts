@@ -53,4 +53,4 @@ const formatWei = (x?: BigNumber, y?: number) => {
   return eth2Wei(formatFloat(wei2Eth(x), y || FORMAT_NUMBER))
 }
 
-export { formatAddress, formatFloat, formatWei }
+export { formatAddress, formatFloat, formatWei, getFullNum }

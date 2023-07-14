@@ -31,8 +31,9 @@ import {
   type ColumnProps,
   SvgComponent,
   LoadingComponent,
+  NoticeSlider,
 } from '@/components'
-import { UNIT } from '@/constants'
+import { UNIT, NotificationType } from '@/constants'
 import { useBatchAsset, useWallet, useCatchContractError } from '@/hooks'
 import RootLayout from '@/layouts/RootLayout'
 import { createWeb3Provider, createXBankContract } from '@/utils/createContract'
@@ -70,7 +71,14 @@ const MODEL_HEADER_PROPS: ModalHeaderProps = {
 
 const Loans = () => {
   // const navigate = useNavigate()
-  const { isOpen, onClose, interceptFn, currentAccount } = useWallet()
+  const {
+    isOpen,
+    onClose,
+    interceptFn,
+    currentAccount,
+    noticeData,
+    refreshNotice,
+  } = useWallet()
   const { toastError, toast } = useCatchContractError()
   const [repayLoadingMap, setRepayLoadingMap] =
     useState<Record<string, boolean>>()
@@ -162,6 +170,7 @@ const Loans = () => {
               title: 'successful repayment',
             })
             refresh()
+            refreshNotice()
           }, 3000)
         } catch (error: any) {
           toastError(error)
@@ -172,7 +181,7 @@ const Loans = () => {
         }
       })
     },
-    [interceptFn, currentAccount, refresh, toastError, toast],
+    [interceptFn, currentAccount, refresh, toastError, toast, refreshNotice],
   )
 
   const loansForBuyerColumns: ColumnProps[] = [
@@ -301,7 +310,7 @@ const Loans = () => {
       let lastTime = BigNumber(loan_start_time)
       if (BigNumber(repaid_principal).gt(0)) {
         // 如果已还金额大于 0
-        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息）
         const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
 
         // 已还次数 = 已还金额 / 每期还款金额
@@ -382,6 +391,7 @@ const Loans = () => {
           })
           refresh()
           setPrepayData(undefined)
+          refreshNotice()
         }, 3000)
       } catch (error: any) {
         toastError(error)
@@ -392,7 +402,15 @@ const Loans = () => {
         }))
       }
     })
-  }, [prepayData, refresh, toastError, toast, currentAccount, interceptFn])
+  }, [
+    prepayData,
+    refresh,
+    toastError,
+    toast,
+    currentAccount,
+    interceptFn,
+    refreshNotice,
+  ])
 
   const handleClose = useCallback(() => {
     if (!prepayData) return
@@ -420,7 +438,7 @@ const Loans = () => {
       if (BigNumber(repaid_principal).gt(0)) {
         // 如果已还金额大于 0
 
-        // 已还本息 = 已还本金 + 已还利息 （lp 利息 + 协议利息）
+        // 已还本息 = 已还本金 + 已还利息 （lp 利息 ）
         const repaidAmount = BigNumber(repaid_principal).plus(repaid_interest)
 
         // 已还次数 = 已还金额 / 每期还款金额
@@ -444,6 +462,11 @@ const Loans = () => {
         Loans
       </Heading>
 
+      <NoticeSlider
+        data={noticeData?.filter(
+          (i) => i.type === NotificationType.loan_repayment,
+        )}
+      />
       <Flex justify={'space-between'} mt='16px'>
         <Box w='100%'>
           <TableList

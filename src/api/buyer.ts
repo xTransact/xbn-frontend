@@ -56,8 +56,7 @@ export const apiGetCollectionDetail: (variables: {
   return await request.post(`/lending/query`, {
     operationName: 'NftCollectionsByContractAddresses',
     variables,
-    query:
-      'query NftCollectionsByContractAddresses($assetContractAddresses: [String!]!) {\n  nftCollectionsByContractAddresses(\n    assetContractAddresses: $assetContractAddresses\n  ) {\n    contractAddress\n    nftCollection {\n      assetsCount\n      bannerImageUrl\n      chatUrl\n      createdAt\n      createdDate\n      description\n      discordUrl\n      externalUrl\n      featuredImageUrl\n      fees {\n        address\n        name\n        value\n        __typename\n      }\n      id\n      imagePreviewUrl\n      imageThumbnailUrl\n      imageUrl\n      instagramUsername\n      largeImageUrl\n      mediumUsername\n      name\n      nftCollectionStat {\n        averagePrice\n        count\n        createdAt\n        floorPrice\n        floorPriceRate\n        id\n        marketCap\n        numOwners\n        numReports\n        oneDayAveragePrice\n        oneDayChange\n        oneDaySales\n        oneDayVolume\n        sevenDayAveragePrice\n        sevenDayChange\n        sevenDaySales\n        sevenDayVolume\n        thirtyDayAveragePrice\n        thirtyDayChange\n        thirtyDaySales\n        thirtyDayVolume\n        totalSales\n        totalSupply\n        totalVolume\n        updatedAt\n        __typename\n      }\n      onlyProxiedTransfers\n      openseaBuyerFeeBasisPoints\n      openseaSellerFeeBasisPoints\n      payoutAddress\n      safelistRequestStatus\n      shortDescription\n      slug\n      subscriberCount\n      telegramUrl\n      twitterUsername\n      updatedAt\n      wikiUrl\n      nftCollectionMetaData {\n        subscribe\n        subscribeCount\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}',
+    query: `query NftCollectionsByContractAddresses($assetContractAddresses: [String!]!) {\n  nftCollectionsByContractAddresses(\n    assetContractAddresses: $assetContractAddresses\n  ) {\n    contractAddress\n    nftCollection {\n      assetsCount\n      bannerImageUrl\n      chatUrl\n      createdAt\n      createdDate\n      description\n      discordUrl\n      externalUrl\n      featuredImageUrl\n      fees {\n        address\n        name\n        value\n        __typename\n      }\n      id\n      imagePreviewUrl\n      imageThumbnailUrl\n      imageUrl\n      instagramUsername\n      largeImageUrl\n      mediumUsername\n      name\n      nftCollectionStat {\n        averagePrice\n        count\n        createdAt\n        floorPrice\n        floorPriceRate\n        id\n        marketCap\n        numOwners\n        numReports\n        oneDayAveragePrice\n        oneDayChange\n        oneDaySales\n        oneDayVolume\n        sevenDayAveragePrice\n        sevenDayChange\n        sevenDaySales\n        sevenDayVolume\n        thirtyDayAveragePrice\n        thirtyDayChange\n        thirtyDaySales\n        thirtyDayVolume\n        totalSales\n        totalSupply\n        totalVolume\n        updatedAt\n        __typename\n      }\n      onlyProxiedTransfers\n      openseaBuyerFeeBasisPoints\n      openseaSellerFeeBasisPoints\n      payoutAddress\n      safelistRequestStatus\n      shortDescription\n      slug\n      subscriberCount\n      telegramUrl\n      twitterUsername\n      updatedAt\n      wikiUrl\n      nftCollectionMetaData {\n        subscribe\n        subscribeCount\n        __typename\n      }\n      isCreatorFeesEnforced\n      __typename\n    }\n    __typename\n  }\n}`,
   })
 }
 
@@ -153,5 +152,13 @@ export const apiGetLoanOrder: (query: {
 }) => Promise<LoanOrderItemType[]> = async (data) => {
   return await request.get(`/lending/api/v1/loan-order`, {
     params: data,
+  })
+}
+
+export const apiGetNotice: (params: {
+  wallet_address: string
+}) => Promise<NotificationsItemType[]> = async (params) => {
+  return await request.get(`/lending/api/v1/notifications`, {
+    params,
   })
 }

@@ -32,6 +32,7 @@ import {
   ConnectWalletModal,
   EmptyComponent,
   LoadingComponent,
+  NoticeSlider,
   SearchInput,
 } from '@/components'
 import { TransactionContext } from '@/context/TransactionContext'
@@ -81,7 +82,7 @@ const Market = () => {
   const navigate = useNavigate()
   const pathData = useParams()
   const { search } = useLocation()
-  const { isOpen, onClose, interceptFn } = useWallet()
+  const { isOpen, onClose, interceptFn, noticeData } = useWallet()
   const {
     isOpen: drawVisible,
     onOpen: openDraw,
@@ -352,6 +353,7 @@ const Market = () => {
           Buy NFTs
         </Heading>
       </Box>
+      <NoticeSlider data={noticeData} />
 
       <Flex
         mt={'10px'}

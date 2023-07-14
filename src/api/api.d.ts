@@ -330,3 +330,13 @@ interface RankDataType {
   ranking_infos: RankItemType[]
   count: number
 }
+
+enum NotificationType {
+  loan_in_generating = 'loan_in_generating',
+  loan_repayment = 'loan_repayment',
+}
+interface NotificationsItemType {
+  left_time?: number
+  sum: number
+  type: NotificationType
+}
