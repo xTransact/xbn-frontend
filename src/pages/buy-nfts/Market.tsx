@@ -421,9 +421,7 @@ const Market = () => {
                 w='100%'
                 variant={'outline'}
                 onClick={() => {
-                  window.open(
-                    'https://notionforms.io/forms/propose-listing-form-gdmcn1',
-                  )
+                  window.open(import.meta.env.VITE_COLLECTION_NOTION_LINK)
                 }}
               >
                 Propose Listing
